@@ -1,0 +1,16 @@
+{
+    "author": ["inthedark.org#0666"],
+    "install_msg": "Thanks for installing the compiler cog",
+    "name": "Compiler",
+    "disabled": false,
+    "short": "Run code",
+    "description": "Run code using the TIO api.",
+    "tags": [
+        "utility",
+        "compiler"
+    ],
+    "required_cogs": {},
+    "requirements": [],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not store End User Data."
+}
