@@ -59,7 +59,7 @@ class Compiler(commands.Cog):
         request = site.new_request(lang, query)
         
         embed = discord.Embed(
-            title=f"{lang} code evaluation"
+            title=f"{lang} code evaluation",
             color=await ctx.embed_color(),
         )
         embed.add_field(name="**Result**", value=site.send(request))
