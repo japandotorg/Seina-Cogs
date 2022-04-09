@@ -25,7 +25,7 @@ SOFTWARE.
 from zlib import compress
 from gzip import decompress
 from functools import partial
-from urlib.request import Request, urlopen
+from urllib.request import Request, urlopen
 
 import aiohttp
 
