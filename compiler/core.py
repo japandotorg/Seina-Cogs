@@ -33,7 +33,7 @@ class Compiler(commands.Cog):
             "run"
         ]
     )
-    async def execute_code(self, ctx, lang: str, *args):
+    async def execute_code(self, ctx, lang: str, args=None):
         """
         Runs code in 600+ languages.
         
