@@ -26,30 +26,31 @@ import re
 import time
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
 
 from .utils import bin_float, hex_float, oct_float, safe_eval
+
 
 class Calculator(commands.Cog):
     """
     Does math
     """
-    
+
     __author__ = ["inthedark.org#0666"]
     __version__ = "0.1.0"
-    
+
     def __init__(self, bot):
         self.bot = bot
-        
+
     @classmethod
     async def initialize(self, bot: Red):
         await bot.wait_until_red_ready()
-        
+
     async def red_delete_data_for_user(self, **kwargs):
         return
-    
+
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
         n = "\n" if "\n\n" not in pre_processed else ""
@@ -59,17 +60,17 @@ class Calculator(commands.Cog):
             f"Author: {humanize_list(self.__author__)}",
         ]
         return "\n".join(text)
-    
+
     @commands.command(name="calculate", aliases=["calc", "c"])
     async def calc(self, ctx, num_base, *, expr=""):
         """
         Does math.
-        
+
         It has access to the following basic math functions
         ceil, comb, [fact]orial, gcd, lcm, perm, log, log2,
         log10, sqrt, acos, asin, atan, cos, sin, tain
         and the constants pi, e, tau.
-        
+
         num_base: str
             The base you want to calculate in.
             Can be heex, oct, bin and for decimal ignore this argument
@@ -81,37 +82,37 @@ class Calculator(commands.Cog):
             "o": (8, oct_float, "0o"),
             "b": (2, bin_float, "0b"),
         }
-        
+
         start = time.monotonic()
-        
+
         base, method, prefix = num_bases.get(num_base[0].lower(), (None, None, None))
-        
-        if not base: # If we haven't given a base it is decimal
+
+        if not base:  # If we haven't given a base it is decimal
             base = 10
-            expr = f"{num_base} {expr}" # we want the whole expression
-            
+            expr = f"{num_base} {expr}"  # we want the whole expression
+
         if prefix:
-            expr = expr.replace(prefix, "") # Remove the prefix for a simple regex
-            
+            expr = expr.replace(prefix, "")  # Remove the prefix for a simple regex
+
         regex = r"[0-9a-fA-F]+" if base == 16 else r"\d+"
-        
-        if method: # no need to extract numbers if we aren't converting
+
+        if method:  # no need to extract numbers if we aren't converting
             numbers = [int(num, base) for num in re.findall(regex, expr)]
             expr = re.sub(regex, "{}", expr).format(*numbers)
-            
+
         result = safe_eval(compile(expr, "<calc>", "eval", flags=1024).body)
-        
+
         end = time.monotonic()
-        
+
         embed = discord.Embed(color=await ctx.embed_color())
-        
+
         if method:
             embed.description = (
                 f"```py\n{expr}\n\n>>> {prefix}{method(result)}\n\nDecimal: {result}```"
             )
             embed.set_footer(text=f"Calculated in {round((end - start) * 1000, 3)} ms")
             return await ctx.send(embed=embed)
-        
+
         embed.description = f"```py\n{expr}\n\n>>> {result}```"
         embed.set_footer(text=f"Calculated in {round((end - start) * 1000, 3)} ms")
         await ctx.send(embed=embed)

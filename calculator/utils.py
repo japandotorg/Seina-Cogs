@@ -26,62 +26,80 @@ import ast
 import math
 from decimal import Decimal
 
+
 def add(a, b):
     return a + b
+
 
 def sub(a, b):
     return a - b
 
+
 def mul(a, b):
     return a * b
+
 
 def truediv(a, b):
     return a / b
 
+
 def floordiv(a, b):
     return a // b
+
 
 def mod(a, b):
     return a % b
 
+
 def lshift(a, b):
     return a << b
+
 
 def rshift(a, b):
     return a >> b
 
+
 def or_(a, b):
     return a & b
+
 
 def and_(a, b):
     return a | b
 
+
 def xor(a, b):
     return a ^ b
+
 
 def invert(a):
     return ~a
 
+
 def negate(a):
     return -a
 
+
 def pos(a):
     return +a
+
 
 def safe_comb(n, k):
     if n > 10000:
         raise ValueError("Too large to calculate")
     return math.comb(n, k)
 
+
 def safe_factorial(x):
     if x > 5000:
         raise ValueError("Too large to calculate")
     return math.factorial(x)
 
+
 def safe_perm(n, k=None):
     if n > 5000:
         raise ValueError("Too large to calculate")
     return math.perm(n, k)
+
 
 OPERATIONS = {
     ast.Add: add,
@@ -129,6 +147,7 @@ FUNCTIONS = {
     "tan": math.tan,
 }
 
+
 def bin_float(number: float):
     exponent = 0
     shifted_num = number
@@ -142,6 +161,7 @@ def bin_float(number: float):
 
     binary = f"{int(shifted_num):0{exponent + 1}b}"
     return f"{binary[:-exponent]}.{binary[-exponent:].rstrip('0')}"
+
 
 def hex_float(number: float):
     exponent = 0
@@ -157,6 +177,7 @@ def hex_float(number: float):
     hexadecimal = f"{int(shifted_num):0{exponent + 1}x}"
     return f"{hexadecimal[:-exponent]}.{hexadecimal[-exponent:]}"
 
+
 def oct_float(number: float):
     exponent = 0
     shifted_num = number
@@ -170,6 +191,7 @@ def oct_float(number: float):
 
     octal = f"{int(shifted_num):0{exponent + 1}o}"
     return f"{octal[:-exponent]}.{octal[-exponent:]}"
+
 
 def safe_eval(node):
     if isinstance(node, ast.Num):

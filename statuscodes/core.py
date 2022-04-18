@@ -25,30 +25,31 @@ SOFTWARE.
 import difflib
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
 
 from .util import STATUS_CODES
+
 
 class StatusCodes(commands.Cog):
     """
     Find the meaning behind various status codes.
     """
-    
+
     __author__ = "inthedark.org#0666"
     __version__ = "0.1.0"
-    
+
     def __init__(self, bot):
         self.bot = bot
-        
+
     @classmethod
     async def initialize(self, bot: Red):
         await bot.wait_until_red_ready()
-        
+
     async def red_delete_data_for_user(self, **kwargs):
         return
-    
+
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
         n = "\n" if "\n\n" not in pre_processed else ""
@@ -58,30 +59,30 @@ class StatusCodes(commands.Cog):
             f"Author: {humanize_list(self.__author__)}",
         ]
         return "\n".join(text)
-    
+
     @commands.command(name="statuscodes", aliases=["statuscode"])
     async def statuscodes(self, ctx, *, code=None):
         """
         Find the meaning behind various status codes.
         """
         embed = discord.Embed(color=await ctx.embed_color())
-        
+
         if not code:
             for codes in STATUS_CODES.values():
                 message = ""
-                
+
                 for code, tag in codes.items():
                     if not code.isdigit():
                         continue
                     message += f"\n{code} {tag}"
-                    
+
                 embed.add_field(
                     name=codes["title"],
                     value=f"{codes['message']}\n```prolog\n{message}\n```",
                     inline=False,
                 )
             return await ctx.send(embed=embed)
-        
+
         group = code[0]
         info = STATUS_CODES.get(group)
         if not info:
@@ -98,13 +99,11 @@ class StatusCodes(commands.Cog):
             )
             code = statuses[match[0]]
             info = STATUS_CODES.get(code[0])
-            
+
             if not info:
-                embed.description = (
-                    f"```No {code} status code found in the {group}xx group```"
-                )
+                embed.description = f"```No {code} status code found in the {group}xx group```"
                 return await ctx.send(embed=embed)
-            
-            embed.title =  info["title"]
+
+            embed.title = info["title"]
             embed.description = f"{info['message']}\n```prolog\n{code} {info[code]}```"
             await ctx.send(embed=embed)
