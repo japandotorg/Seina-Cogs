@@ -25,7 +25,9 @@ SOFTWARE.
 import difflib
 
 import discord
+from redbot.core.bot import Red
 from redbot.core import commands
+from redbot.core.utils.chat_formatting import humanize_list
 
 from .util import STATUS_CODES
 
@@ -40,8 +42,22 @@ class StatusCodes(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         
+    @classmethod
+    async def initialize(self, bot: Red):
+        await bot.wait_until_red_ready()
+        
     async def red_delete_data_for_user(self, **kwargs):
         return
+    
+    def format_help_for_context(self, ctx: commands.Context) -> str:
+        pre_processed = super().format_help_for_context(ctx) or ""
+        n = "\n" if "\n\n" not in pre_processed else ""
+        text = [
+            f"{pre_processed}{n}",
+            f"Cog Version: **{self.__version__}**",
+            f"Author: {humanize_list(self.__author__)}",
+        ]
+        return "\n".join(text)
     
     @commands.command(name="statuscodes", aliases=["statuscode"])
     async def statuscodes(self, ctx, *, code=None):

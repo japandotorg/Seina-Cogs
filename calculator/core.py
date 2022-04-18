@@ -26,6 +26,7 @@ import re
 import time
 
 import discord
+from redbot.core.bot import Red
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import humanize_list
 
@@ -41,6 +42,10 @@ class Calculator(commands.Cog):
     
     def __init__(self, bot):
         self.bot = bot
+        
+    @classmethod
+    async def initialize(self, bot: Red):
+        await bot.wait_until_red_ready()
         
     async def red_delete_data_for_user(self, **kwargs):
         return
