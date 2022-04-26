@@ -27,6 +27,7 @@ jobs:
           git add -A
           git commit -m "Style Reformatting"
           git push "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:${GITHUB_REF#refs/heads/}
+          
   lint_python:
     name: Lint Python
     runs-on: ubuntu-latest
