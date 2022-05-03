@@ -28,8 +28,8 @@ from io import BytesIO
 from typing import Any
 
 import discord
-from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
+from redbot.core import Config, checks, commands, modlog
 from redbot.core.utils.chat_formatting import box, humanize_list, inline, pagify
 
 from .utils import auth_check, get_user_confirmation
