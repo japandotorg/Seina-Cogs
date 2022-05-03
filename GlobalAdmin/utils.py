@@ -31,54 +31,62 @@ from redbot.core.bot import Red
 
 SendableEmoji = Union[str, discord.Emoji]
 
-YES_EMOJI = '\N{WHITE HEAVY CHECK MARK}'
-NO_EMOJI = '\N{CROSS MARK}'
+YES_EMOJI = "\N{WHITE HEAVY CHECK MARK}"
+NO_EMOJI = "\N{CROSS MARK}"
+
 
 async def get_user_preference(
     bot: Red, user: User, pref: str, *, unloaded_default=None
 ) -> Optional[Any]:
-    if pref in ('timezone',):
+    if pref in ("timezone",):
         raise ValueError("Invalid preference. Use the cog method to get this.")
-    
+
     cog: Any = bot.get_cog("UserPreferences")
     if cog is None:
         return unloaded_default
     return await cog.config.user(user).get_raw(pref)
 
+
 async def get_user_confirmation(
-    ctx, text: str,
-    yes_emoji: SendableEmoji = YES_EMOJI, no_emoji: SendableEmoji = NO_EMOJI,
-    timeout: int = 10, force_delete: Optional[bool] = None, show_feedback: bool = False
-) \
-    -> Literal[True, False, None]:
+    ctx,
+    text: str,
+    yes_emoji: SendableEmoji = YES_EMOJI,
+    no_emoji: SendableEmoji = NO_EMOJI,
+    timeout: int = 10,
+    force_delete: Optional[bool] = None,
+    show_feedback: bool = False,
+) -> Literal[True, False, None]:
     msg = await ctx.send(text)
     asyncio.create_task(msg.add_reaction(yes_emoji))
     asyncio.create_task(msg.add_reaction(no_emoji))
-    
+
     def check(reaction, user):
-        return (str(reaction.emoji) in [yes_emoji, no_emoji]
-                and user.id == ctx.author.id
-                and reaction.message.id == msg.id
+        return (
+            str(reaction.emoji) in [yes_emoji, no_emoji]
+            and user.id == ctx.author.id
+            and reaction.message.id == msg.id
         )
-        
+
     ret = False
     try:
-        r, u = await ctx.bot.wait_for('reaction_add', check=check, timeout=timeout)
+        r, u = await ctx.bot.wait_for("reaction_add", check=check, timeout=timeout)
         if r.emoji == yes_emoji:
             ret = True
     except asyncio.TimeoutError:
         ret = None
-        
+
     do_delete = force_delete
     if do_delete is None:
-        do_delete = await get_user_preference(ctx.bot, ctx.author, 'delete_confirmation', unloaded_default=True)
-        
+        do_delete = await get_user_preference(
+            ctx.bot, ctx.author, "delete_confirmation", unloaded_default=True
+        )
+
     if do_delete:
         try:
             await msg.delete()
         except discord.Forbidden:
             pass
-        
+
         if show_feedback:
             if ret is True:
                 await ctx.react_quietly(yes_emoji)
@@ -91,4 +99,3 @@ async def get_user_confirmation(
             await msg.remove_reaction(no_emoji, ctx.me)
 
     return ret
-            

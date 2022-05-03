@@ -28,11 +28,12 @@ from redbot.core import data_manager
 
 from .json_utils import *
 
-log = logging.getLogger('red.seina-cogs.globaladmin.objects')
+log = logging.getLogger("red.seina-cogs.globaladmin.objects")
+
 
 class CogSettings(object):
     SETTINGS_FILE_NAME = "legacy_settings.json"
-    
+
     def __init__(self, cog_name, bot=None):
         self.folder = str(data_manager.cog_data_path(raw_name=cog_name))
         self.file_path = os.path.join(self.folder, CogSettings.SETTINGS_FILE_NAME)
@@ -43,7 +44,9 @@ class CogSettings(object):
 
         self.default_settings = self.make_default_settings()
         if not os.path.isfile(self.file_path):
-            log.warning("CogSettings config for {} not found.  Creating default...".format(self.file_path))
+            log.warning(
+                "CogSettings config for {} not found.  Creating default...".format(self.file_path)
+            )
             self.bot_settings = self.default_settings
             self.save_settings()
         else:
@@ -77,7 +80,7 @@ class CogSettings(object):
             return [cls.intify(x) for x in key]
         elif isinstance(key, str) and key.isdigit():
             return int(key)
-        elif isinstance(key, str) and key.replace('.', '', 1).isdigit():
+        elif isinstance(key, str) and key.replace(".", "", 1).isdigit():
             return float(key)
         else:
-            return 
+            return

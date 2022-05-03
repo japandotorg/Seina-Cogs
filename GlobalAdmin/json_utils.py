@@ -22,14 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import os
-import time
 import json
 import logging
+import os
+import time
+
 import aiohttp
 import backoff
 
-log = logging.getLogger('red.seina-cogs.globaladmin.json_utils')
+log = logging.getLogger("red.seina-cogs.globaladmin.json_utils")
+
 
 def should_download(file_path, expiry_secs):
     if not os.path.exists(file_path):
@@ -63,7 +65,7 @@ def safe_read_json(file_path):
     try:
         return read_json_file(file_path)
     except (json.JSONDecodeError, FileNotFoundError):
-        log.error('failed to read {} got exception'.format(file_path), exc_info=True)
+        log.error("failed to read {} got exception".format(file_path), exc_info=True)
     return {}
 
 
@@ -82,17 +84,17 @@ async def async_cached_dadguide_request(file_path, file_url, expiry_secs):
         async with aiohttp.ClientSession() as session:
             async with session.get(file_url) as resp:
                 assert resp.status == 200
-                with open(file_path, 'wb') as f:
+                with open(file_path, "wb") as f:
                     f.write(await resp.read())
 
 
 def write_plain_file(file_path, text_data):
-    with open(file_path, "w", encoding='utf-8') as f:
+    with open(file_path, "w", encoding="utf-8") as f:
         f.write(text_data)
 
 
 def read_plain_file(file_path):
-    with open(file_path, "r", encoding='utf-8') as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         return f.read()
 
 
