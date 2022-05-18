@@ -17,7 +17,6 @@
     "disabled": false,
     "required_cogs": {},
     "requirements": [
-        "tsutils",
         "prettytable",
         "pytz",
         "pyodbc"
