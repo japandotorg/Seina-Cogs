@@ -1,0 +1,22 @@
+{
+    "author": [
+      "inthedark.org#0666"
+    ],
+    "description": "Keeps global tabs on sussy users.",
+    "end_user_data_statement": "No personal data is stored.",
+    "install_msg": "Use `[p]usernote` to get started.",
+    "short": "Global user notes",
+    "min_bot_version": "3.4.0",
+    "max_bot_version": "0.0.0",
+    "min_python_version": [
+      3,
+      8,
+      1
+    ],
+    "hidden": false,
+    "disabled": false,
+    "required_cogs": {},
+    "tags": [
+      "moderation"
+    ]
+  }
