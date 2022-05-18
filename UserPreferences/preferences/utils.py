@@ -6,9 +6,11 @@ from redbot.core.commands import Cog, Command
 
 from .helper import CogABCMeta
 
+
 class CogMixin(Cog, metaclass=CogABCMeta):
     @abstractmethod
-    def setup_self(self: "CogMixin") -> None: ...
+    def setup_self(self: "CogMixin") -> None:
+        ...
 
     @abstractmethod
     async def red_get_data_for_user(self: "CogMixin", *, user_id: int) -> Optional[str]:
@@ -25,18 +27,25 @@ class CogMixin(Cog, metaclass=CogABCMeta):
     async def get_mixin_user_data(self, user_id: int) -> List[str]:
         ret = []
         for mixin in self.active_mixins:
-            if (text := await super(mixin, self).red_get_data_for_user(user_id=user_id)):  # noqa
+            if text := await super(mixin, self).red_get_data_for_user(user_id=user_id):  # noqa
                 ret.append(str(text))
         return ret
 
     async def delete_mixin_user_data(self, requester: str, user_id: int) -> None:
         for mixin in self.active_mixins:
-            await super(mixin, self).red_delete_data_for_user(requester=requester, user_id=user_id)  # noqa
+            await super(mixin, self).red_delete_data_for_user(
+                requester=requester, user_id=user_id
+            )  # noqa
 
     @property
     def active_mixins(self) -> List[Type["CogMixin"]]:
-        return [class_ for class_ in self.__class__.__mro__ if issubclass(class_, CogMixin) and class_ != CogMixin]
-    
+        return [
+            class_
+            for class_ in self.__class__.__mro__
+            if issubclass(class_, CogMixin) and class_ != CogMixin
+        ]
+
+
 class MixinCommand:
     def __init__(self, function: Callable, parent: Optional[str] = None, **kwargs):
         self.function = function

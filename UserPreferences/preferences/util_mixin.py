@@ -2,6 +2,7 @@ from redbot.core import Config
 
 from .utils import CogMixin, mixin_command
 
+
 class UtilsPreference(CogMixin):
     config: Config
 
@@ -15,9 +16,8 @@ class UtilsPreference(CogMixin):
     async def red_delete_data_for_user(self, *, requester, user_id):
         await self.config.user_from_id(user_id).delete_confirmation.set(True)
 
-    @mixin_command('preferences')
+    @mixin_command("preferences")
     async def deleteconfirmations(self, ctx, delete: bool):
-        """ Set whether confirmation messages are deleted """
+        """Set whether confirmation messages are deleted"""
         await self.config.user(ctx.author).delete_confirmation.set(delete)
         await ctx.tick()
-        
