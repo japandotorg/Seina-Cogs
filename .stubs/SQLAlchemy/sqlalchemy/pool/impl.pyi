@@ -29,7 +29,13 @@ from .base import Pool
 
 class QueuePool(Pool):
     def __init__(
-        self, creator, pool_size: int = ..., max_overflow: int = ..., timeout: float = ..., use_lifo: bool = ..., **kw
+        self,
+        creator,
+        pool_size: int = ...,
+        max_overflow: int = ...,
+        timeout: float = ...,
+        use_lifo: bool = ...,
+        **kw,
     ) -> None: ...
     def recreate(self): ...
     def dispose(self) -> None: ...

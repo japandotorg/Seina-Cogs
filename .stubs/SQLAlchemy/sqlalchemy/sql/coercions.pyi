@@ -33,7 +33,14 @@ selectable: Any
 sqltypes: Any
 traversals: Any
 
-def expect(role, element, apply_propagate_attrs: Any | None = ..., argname: Any | None = ..., post_inspect: bool = ..., **kw): ...
+def expect(
+    role,
+    element,
+    apply_propagate_attrs: Any | None = ...,
+    argname: Any | None = ...,
+    post_inspect: bool = ...,
+    **kw,
+): ...
 def expect_as_key(role, element, **kw): ...
 def expect_col_expression_collection(role, expressions) -> None: ...
 

@@ -43,7 +43,10 @@ from .decl_api import (
     registry as registry,
     synonym_for as synonym_for,
 )
-from .descriptor_props import CompositeProperty as CompositeProperty, SynonymProperty as SynonymProperty
+from .descriptor_props import (
+    CompositeProperty as CompositeProperty,
+    SynonymProperty as SynonymProperty,
+)
 from .dynamic import AppenderQuery as AppenderQuery
 from .events import (
     AttributeEvents as AttributeEvents,
@@ -79,7 +82,11 @@ from .mapper import (
 )
 from .properties import ColumnProperty as ColumnProperty
 from .query import AliasOption as AliasOption, FromStatement as FromStatement, Query as Query
-from .relationships import RelationshipProperty as RelationshipProperty, foreign as foreign, remote as remote
+from .relationships import (
+    RelationshipProperty as RelationshipProperty,
+    foreign as foreign,
+    remote as remote,
+)
 from .scoping import scoped_session as scoped_session
 from .session import (
     ORMExecuteState as ORMExecuteState,

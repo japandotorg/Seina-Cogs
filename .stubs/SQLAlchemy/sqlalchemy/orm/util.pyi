@@ -40,7 +40,12 @@ from .base import (
     state_class_str as state_class_str,
     state_str as state_str,
 )
-from .interfaces import CriteriaOption, ORMColumnsClauseRole, ORMEntityColumnsClauseRole, ORMFromClauseRole
+from .interfaces import (
+    CriteriaOption,
+    ORMColumnsClauseRole,
+    ORMEntityColumnsClauseRole,
+    ORMFromClauseRole,
+)
 
 all_cascades: Any
 
@@ -87,7 +92,9 @@ class AliasedClass:
     ) -> None: ...
     def __getattr__(self, key): ...
 
-class AliasedInsp(ORMEntityColumnsClauseRole, ORMFromClauseRole, sql_base.MemoizedHasCacheKey, InspectionAttr):
+class AliasedInsp(
+    ORMEntityColumnsClauseRole, ORMFromClauseRole, sql_base.MemoizedHasCacheKey, InspectionAttr
+):
     mapper: Any
     selectable: Any
     name: Any
@@ -142,7 +149,13 @@ class LoaderCriteriaOption(CriteriaOption):
     def process_compile_state(self, compile_state) -> None: ...
     def get_global_criteria(self, attributes) -> None: ...
 
-def aliased(element, alias: Any | None = ..., name: Any | None = ..., flat: bool = ..., adapt_on_names: bool = ...): ...
+def aliased(
+    element,
+    alias: Any | None = ...,
+    name: Any | None = ...,
+    flat: bool = ...,
+    adapt_on_names: bool = ...,
+): ...
 def with_polymorphic(
     base,
     classes,
@@ -156,7 +169,9 @@ def with_polymorphic(
     _existing_alias: Any | None = ...,
 ) -> AliasedClass: ...
 
-class Bundle(ORMColumnsClauseRole, SupportsCloneAnnotations, sql_base.MemoizedHasCacheKey, InspectionAttr):
+class Bundle(
+    ORMColumnsClauseRole, SupportsCloneAnnotations, sql_base.MemoizedHasCacheKey, InspectionAttr
+):
     single_entity: bool
     is_clause_element: bool
     is_mapper: bool
@@ -194,11 +209,29 @@ class _ORMJoin(expression.Join):
         _right_memo: Any | None = ...,
         _extra_criteria=...,
     ) -> None: ...
-    def join(self, right, onclause: Any | None = ..., isouter: bool = ..., full: bool = ..., join_to_left: Any | None = ...): ...
-    def outerjoin(self, right, onclause: Any | None = ..., full: bool = ..., join_to_left: Any | None = ...): ...
+    def join(
+        self,
+        right,
+        onclause: Any | None = ...,
+        isouter: bool = ...,
+        full: bool = ...,
+        join_to_left: Any | None = ...,
+    ): ...
+    def outerjoin(
+        self, right, onclause: Any | None = ..., full: bool = ..., join_to_left: Any | None = ...
+    ): ...
 
-def join(left, right, onclause: Any | None = ..., isouter: bool = ..., full: bool = ..., join_to_left: Any | None = ...): ...
-def outerjoin(left, right, onclause: Any | None = ..., full: bool = ..., join_to_left: Any | None = ...): ...
+def join(
+    left,
+    right,
+    onclause: Any | None = ...,
+    isouter: bool = ...,
+    full: bool = ...,
+    join_to_left: Any | None = ...,
+): ...
+def outerjoin(
+    left, right, onclause: Any | None = ..., full: bool = ..., join_to_left: Any | None = ...
+): ...
 def with_parent(instance, prop, from_entity: Any | None = ...): ...
 def has_identity(object_): ...
 def was_deleted(object_): ...

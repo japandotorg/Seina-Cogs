@@ -33,7 +33,10 @@ SemanticAnalyzerPluginInterface = Any  # from mypy.plugin
 ProperType = Any  # from mypy.types
 
 def apply_mypy_mapped_attr(
-    cls, api: SemanticAnalyzerPluginInterface, item: NameExpr | StrExpr, attributes: list[util.SQLAlchemyAttribute]
+    cls,
+    api: SemanticAnalyzerPluginInterface,
+    item: NameExpr | StrExpr,
+    attributes: list[util.SQLAlchemyAttribute],
 ) -> None: ...
 def re_apply_declarative_assignments(
     cls, api: SemanticAnalyzerPluginInterface, attributes: list[util.SQLAlchemyAttribute]

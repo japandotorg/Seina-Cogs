@@ -54,4 +54,11 @@ class ObjectDeletedError(sa_exc.InvalidRequestError):
 class UnmappedColumnError(sa_exc.InvalidRequestError): ...
 
 class LoaderStrategyException(sa_exc.InvalidRequestError):
-    def __init__(self, applied_to_property_type, requesting_property, applies_to, actual_strategy_type, strategy_key) -> None: ...
+    def __init__(
+        self,
+        applied_to_property_type,
+        requesting_property,
+        applies_to,
+        actual_strategy_type,
+        strategy_key,
+    ) -> None: ...

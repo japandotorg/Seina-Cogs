@@ -73,9 +73,13 @@ class ORMCompileState(CompileState):
     @classmethod
     def get_column_descriptions(cls, statement): ...
     @classmethod
-    def orm_pre_session_exec(cls, session, statement, params, execution_options, bind_arguments, is_reentrant_invoke): ...
+    def orm_pre_session_exec(
+        cls, session, statement, params, execution_options, bind_arguments, is_reentrant_invoke
+    ): ...
     @classmethod
-    def orm_setup_cursor_result(cls, session, statement, params, execution_options, bind_arguments, result): ...
+    def orm_setup_cursor_result(
+        cls, session, statement, params, execution_options, bind_arguments, result
+    ): ...
 
 class ORMFromStatementCompileState(ORMCompileState):
     multi_row_eager_loaders: bool
@@ -134,7 +138,9 @@ class ORMSelectCompileState(ORMCompileState, SelectState):
 class _QueryEntity:
     use_id_for_hash: bool
     @classmethod
-    def to_compile_state(cls, compile_state, entities, entities_collection, is_current_entities): ...
+    def to_compile_state(
+        cls, compile_state, entities, entities_collection, is_current_entities
+    ): ...
 
 class _MapperEntity(_QueryEntity):
     expr: Any
@@ -143,7 +149,9 @@ class _MapperEntity(_QueryEntity):
     is_aliased_class: Any
     path: Any
     selectable: Any
-    def __init__(self, compile_state, entity, entities_collection, is_current_entities) -> None: ...
+    def __init__(
+        self, compile_state, entity, entities_collection, is_current_entities
+    ) -> None: ...
     supports_single_entity: bool
     use_id_for_hash: bool
     @property
@@ -160,7 +168,12 @@ class _BundleEntity(_QueryEntity):
     type: Any
     supports_single_entity: Any
     def __init__(
-        self, compile_state, expr, entities_collection, setup_entities: bool = ..., parent_bundle: Any | None = ...
+        self,
+        compile_state,
+        expr,
+        entities_collection,
+        setup_entities: bool = ...,
+        parent_bundle: Any | None = ...,
     ) -> None: ...
     @property
     def mapper(self): ...
@@ -188,7 +201,14 @@ class _RawColumnEntity(_ColumnEntity):
     translate_raw_column: Any
     column: Any
     entity_zero_or_selectable: Any
-    def __init__(self, compile_state, column, entities_collection, raw_column_index, parent_bundle: Any | None = ...) -> None: ...
+    def __init__(
+        self,
+        compile_state,
+        column,
+        entities_collection,
+        raw_column_index,
+        parent_bundle: Any | None = ...,
+    ) -> None: ...
     def corresponds_to(self, entity): ...
     def setup_compile_state(self, compile_state) -> None: ...
 
@@ -202,7 +222,13 @@ class _ORMColumnEntity(_ColumnEntity):
     mapper: Any
     column: Any
     def __init__(
-        self, compile_state, column, entities_collection, parententity, raw_column_index, parent_bundle: Any | None = ...
+        self,
+        compile_state,
+        column,
+        entities_collection,
+        parententity,
+        raw_column_index,
+        parent_bundle: Any | None = ...,
     ) -> None: ...
     def corresponds_to(self, entity): ...
     def setup_compile_state(self, compile_state) -> None: ...

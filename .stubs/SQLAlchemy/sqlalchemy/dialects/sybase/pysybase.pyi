@@ -25,7 +25,11 @@ SOFTWARE.
 from typing import Any
 
 from sqlalchemy import types as sqltypes
-from sqlalchemy.dialects.sybase.base import SybaseDialect, SybaseExecutionContext, SybaseSQLCompiler
+from sqlalchemy.dialects.sybase.base import (
+    SybaseDialect,
+    SybaseExecutionContext,
+    SybaseSQLCompiler,
+)
 
 class _SybNumeric(sqltypes.Numeric):
     def result_processor(self, dialect, type_): ...

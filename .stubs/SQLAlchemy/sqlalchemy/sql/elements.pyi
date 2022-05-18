@@ -41,7 +41,9 @@ def literal(value, type_: Any | None = ...): ...
 def outparam(key, type_: Any | None = ...): ...
 def not_(clause): ...
 
-class ClauseElement(roles.SQLRole, SupportsWrappingAnnotations, MemoizedHasCacheKey, HasCopyInternals, Traversible):
+class ClauseElement(
+    roles.SQLRole, SupportsWrappingAnnotations, MemoizedHasCacheKey, HasCopyInternals, Traversible
+):
     __visit_name__: str
     supports_execution: bool
     stringify_dialect: str
@@ -184,7 +186,13 @@ class True_(SingletonConstant, roles.ConstExprRole, ColumnElement[Literal[True]]
     @memoized_property
     def type(self): ...
 
-class ClauseList(roles.InElementRole, roles.OrderByRole, roles.ColumnsClauseRole, roles.DMLColumnRole, ClauseElement):
+class ClauseList(
+    roles.InElementRole,
+    roles.OrderByRole,
+    roles.ColumnsClauseRole,
+    roles.DMLColumnRole,
+    ClauseElement,
+):
     __visit_name__: str
     operator: Any
     group: Any
@@ -306,7 +314,13 @@ class BinaryExpression(ColumnElement[Any]):
     negate: Any
     modifiers: Any
     def __init__(
-        self, left, right, operator, type_: Any | None = ..., negate: Any | None = ..., modifiers: Any | None = ...
+        self,
+        left,
+        right,
+        operator,
+        type_: Any | None = ...,
+        negate: Any | None = ...,
+        modifiers: Any | None = ...,
     ) -> None: ...
     def __bool__(self): ...
     __nonzero__: Any
@@ -365,7 +379,11 @@ class WithinGroup(ColumnElement[Any]):
     def __init__(self, element, *order_by) -> None: ...
     def __reduce__(self): ...
     def over(
-        self, partition_by: Any | None = ..., order_by: Any | None = ..., range_: Any | None = ..., rows: Any | None = ...
+        self,
+        partition_by: Any | None = ...,
+        order_by: Any | None = ...,
+        range_: Any | None = ...,
+        rows: Any | None = ...,
     ): ...
     @memoized_property
     def type(self): ...
@@ -377,7 +395,11 @@ class FunctionFilter(ColumnElement[Any]):
     def __init__(self, func, *criterion) -> None: ...
     def filter(self, *criterion): ...
     def over(
-        self, partition_by: Any | None = ..., order_by: Any | None = ..., range_: Any | None = ..., rows: Any | None = ...
+        self,
+        partition_by: Any | None = ...,
+        order_by: Any | None = ...,
+        range_: Any | None = ...,
+        rows: Any | None = ...,
     ): ...
     def self_group(self, against: Any | None = ...): ...
     @memoized_property
@@ -405,7 +427,13 @@ class NamedColumn(ColumnElement[Any]):
     @memoized_property
     def description(self): ...
 
-class ColumnClause(roles.DDLReferredColumnRole, roles.LabeledColumnExprRole, roles.StrAsPlainColumnRole, Immutable, NamedColumn):
+class ColumnClause(
+    roles.DDLReferredColumnRole,
+    roles.LabeledColumnExprRole,
+    roles.StrAsPlainColumnRole,
+    Immutable,
+    NamedColumn,
+):
     table: Any
     is_literal: bool
     __visit_name__: str
@@ -415,7 +443,9 @@ class ColumnClause(roles.DDLReferredColumnRole, roles.LabeledColumnExprRole, rol
     server_onupdate: Any
     key: Any
     type: Any
-    def __init__(self, text, type_: Any | None = ..., is_literal: bool = ..., _selectable: Any | None = ...) -> None: ...
+    def __init__(
+        self, text, type_: Any | None = ..., is_literal: bool = ..., _selectable: Any | None = ...
+    ) -> None: ...
     def get_children(self, column_tables: bool = ..., **kw): ...  # type: ignore[override]
     @property
     def entity_namespace(self): ...
@@ -474,7 +504,9 @@ class conv(_truncated_label): ...
 
 class _anonymous_label(_truncated_label):
     @classmethod
-    def safe_construct(cls, seed, body, enclosing_label: Any | None = ..., sanitize_key: bool = ...): ...
+    def safe_construct(
+        cls, seed, body, enclosing_label: Any | None = ..., sanitize_key: bool = ...
+    ): ...
     def __add__(self, other): ...
     def __radd__(self, other): ...
     def apply_map(self, map_): ...

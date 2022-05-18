@@ -49,7 +49,12 @@ class FBDialect_kinterbasdb(FBDialect):
     concurrency_level: Any
     retaining: Any
     def __init__(
-        self, type_conv: int = ..., concurrency_level: int = ..., enable_rowcount: bool = ..., retaining: bool = ..., **kwargs
+        self,
+        type_conv: int = ...,
+        concurrency_level: int = ...,
+        enable_rowcount: bool = ...,
+        retaining: bool = ...,
+        **kwargs,
     ) -> None: ...
     @classmethod
     def dbapi(cls): ...

@@ -106,7 +106,11 @@ class Numeric(_LookupExpressionAdapter, TypeEngine):
     decimal_return_scale: Any
     asdecimal: Any
     def __init__(
-        self, precision: Any | None = ..., scale: Any | None = ..., decimal_return_scale: Any | None = ..., asdecimal: bool = ...
+        self,
+        precision: Any | None = ...,
+        scale: Any | None = ...,
+        decimal_return_scale: Any | None = ...,
+        asdecimal: bool = ...,
     ) -> None: ...
     def get_dbapi_type(self, dbapi): ...
     def literal_processor(self, dialect): ...
@@ -121,7 +125,12 @@ class Float(Numeric):
     precision: Any
     asdecimal: Any
     decimal_return_scale: Any
-    def __init__(self, precision: Any | None = ..., asdecimal: bool = ..., decimal_return_scale: Any | None = ...) -> None: ...
+    def __init__(
+        self,
+        precision: Any | None = ...,
+        asdecimal: bool = ...,
+        decimal_return_scale: Any | None = ...,
+    ) -> None: ...
     def result_processor(self, dialect, coltype): ...
 
 class DateTime(_LookupExpressionAdapter, TypeEngine):
@@ -208,7 +217,13 @@ class PickleType(TypeDecorator):
     protocol: Any
     pickler: Any
     comparator: Any
-    def __init__(self, protocol=..., pickler: Any | None = ..., comparator: Any | None = ..., impl: Any | None = ...) -> None: ...
+    def __init__(
+        self,
+        protocol=...,
+        pickler: Any | None = ...,
+        comparator: Any | None = ...,
+        impl: Any | None = ...,
+    ) -> None: ...
     def __reduce__(self): ...
     def bind_processor(self, dialect): ...
     def result_processor(self, dialect, coltype): ...
@@ -219,7 +234,9 @@ class Boolean(Emulated, TypeEngine, SchemaType):  # type: ignore[misc]
     native: bool
     create_constraint: Any
     name: Any
-    def __init__(self, create_constraint: bool = ..., name: Any | None = ..., _create_events: bool = ...) -> None: ...
+    def __init__(
+        self, create_constraint: bool = ..., name: Any | None = ..., _create_events: bool = ...
+    ) -> None: ...
     @property
     def python_type(self): ...
     def literal_processor(self, dialect): ...
@@ -236,7 +253,12 @@ class Interval(Emulated, _AbstractInterval, TypeDecorator):  # type: ignore[misc
     native: Any
     second_precision: Any
     day_precision: Any
-    def __init__(self, native: bool = ..., second_precision: Any | None = ..., day_precision: Any | None = ...) -> None: ...
+    def __init__(
+        self,
+        native: bool = ...,
+        second_precision: Any | None = ...,
+        day_precision: Any | None = ...,
+    ) -> None: ...
     @property
     def python_type(self): ...
     def adapt_to_emulated(self, impltype, **kw): ...
@@ -290,7 +312,13 @@ class ARRAY(SchemaEventTarget, Indexable, Concatenable, TypeEngine):
     item_type: Any
     as_tuple: Any
     dimensions: Any
-    def __init__(self, item_type, as_tuple: bool = ..., dimensions: Any | None = ..., zero_indexes: bool = ...) -> None: ...
+    def __init__(
+        self,
+        item_type,
+        as_tuple: bool = ...,
+        dimensions: Any | None = ...,
+        zero_indexes: bool = ...,
+    ) -> None: ...
     @property
     def hashable(self): ...
     @property

@@ -114,7 +114,12 @@ class RelationshipProperty(StrategizedProperty):
     class Comparator(PropComparator[_T], Generic[_T]):
         prop: Any
         def __init__(
-            self, prop, parentmapper, adapt_to_entity: Any | None = ..., of_type: Any | None = ..., extra_criteria=...
+            self,
+            prop,
+            parentmapper,
+            adapt_to_entity: Any | None = ...,
+            of_type: Any | None = ...,
+            extra_criteria=...,
         ) -> None: ...
         def adapt_to_entity(self, adapt_to_entity): ...
         @memoized_property
@@ -135,9 +140,19 @@ class RelationshipProperty(StrategizedProperty):
         def property(self): ...
 
     def merge(
-        self, session, source_state, source_dict, dest_state, dest_dict, load, _recursive, _resolve_conflict_map
+        self,
+        session,
+        source_state,
+        source_dict,
+        dest_state,
+        dest_dict,
+        load,
+        _recursive,
+        _resolve_conflict_map,
     ) -> None: ...
-    def cascade_iterator(self, type_, state, dict_, visited_states, halt_on: Any | None = ...) -> None: ...
+    def cascade_iterator(
+        self, type_, state, dict_, visited_states, halt_on: Any | None = ...
+    ) -> None: ...
     @memoized_property
     def entity(self): ...
     @memoized_property
@@ -194,7 +209,14 @@ class JoinCondition:
     def local_columns(self): ...
     @memoized_property
     def foreign_key_columns(self): ...
-    def join_targets(self, source_selectable, dest_selectable, aliased, single_crit: Any | None = ..., extra_criteria=...): ...
+    def join_targets(
+        self,
+        source_selectable,
+        dest_selectable,
+        aliased,
+        single_crit: Any | None = ...,
+        extra_criteria=...,
+    ): ...
     def create_lazy_clause(self, reverse_direction: bool = ...): ...
 
 class _ColInAnnotations:

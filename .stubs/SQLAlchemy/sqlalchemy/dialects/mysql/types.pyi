@@ -33,7 +33,9 @@ class _NumericType:
 
 class _FloatType(_NumericType, sqltypes.Float):
     scale: Any
-    def __init__(self, precision: Any | None = ..., scale: Any | None = ..., asdecimal: bool = ..., **kw) -> None: ...
+    def __init__(
+        self, precision: Any | None = ..., scale: Any | None = ..., asdecimal: bool = ..., **kw
+    ) -> None: ...
 
 class _IntegerType(_NumericType, sqltypes.Integer):
     display_width: Any
@@ -61,23 +63,33 @@ class _MatchType(sqltypes.Float, sqltypes.MatchType):  # type: ignore  # incompa
 
 class NUMERIC(_NumericType, sqltypes.NUMERIC):
     __visit_name__: str
-    def __init__(self, precision: Any | None = ..., scale: Any | None = ..., asdecimal: bool = ..., **kw) -> None: ...
+    def __init__(
+        self, precision: Any | None = ..., scale: Any | None = ..., asdecimal: bool = ..., **kw
+    ) -> None: ...
 
 class DECIMAL(_NumericType, sqltypes.DECIMAL):
     __visit_name__: str
-    def __init__(self, precision: Any | None = ..., scale: Any | None = ..., asdecimal: bool = ..., **kw) -> None: ...
+    def __init__(
+        self, precision: Any | None = ..., scale: Any | None = ..., asdecimal: bool = ..., **kw
+    ) -> None: ...
 
 class DOUBLE(_FloatType):
     __visit_name__: str
-    def __init__(self, precision: Any | None = ..., scale: Any | None = ..., asdecimal: bool = ..., **kw) -> None: ...
+    def __init__(
+        self, precision: Any | None = ..., scale: Any | None = ..., asdecimal: bool = ..., **kw
+    ) -> None: ...
 
 class REAL(_FloatType, sqltypes.REAL):
     __visit_name__: str
-    def __init__(self, precision: Any | None = ..., scale: Any | None = ..., asdecimal: bool = ..., **kw) -> None: ...
+    def __init__(
+        self, precision: Any | None = ..., scale: Any | None = ..., asdecimal: bool = ..., **kw
+    ) -> None: ...
 
 class FLOAT(_FloatType, sqltypes.FLOAT):
     __visit_name__: str
-    def __init__(self, precision: Any | None = ..., scale: Any | None = ..., asdecimal: bool = ..., **kw) -> None: ...
+    def __init__(
+        self, precision: Any | None = ..., scale: Any | None = ..., asdecimal: bool = ..., **kw
+    ) -> None: ...
     def bind_processor(self, dialect) -> None: ...
 
 class INTEGER(_IntegerType, sqltypes.INTEGER):

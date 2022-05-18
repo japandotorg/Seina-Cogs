@@ -124,7 +124,13 @@ class PyWrapper(ColumnOperators[_T], Generic[_T]):
     fn: Any
     track_bound_values: Any
     def __init__(
-        self, fn, name, to_evaluate, closure_index: Any | None = ..., getter: Any | None = ..., track_bound_values: bool = ...
+        self,
+        fn,
+        name,
+        to_evaluate,
+        closure_index: Any | None = ...,
+        getter: Any | None = ...,
+        track_bound_values: bool = ...,
     ) -> None: ...
     def __call__(self, *arg, **kw): ...
     def operate(self, op, *other, **kwargs): ...

@@ -55,7 +55,16 @@ class DeleteDMLState(DMLState):
     statement: Any
     def __init__(self, statement, compiler, **kw) -> None: ...
 
-class UpdateBase(roles.DMLRole, HasCTE, HasCompileState, DialectKWArgs, HasPrefixes, ReturnsRows, Executable, ClauseElement):
+class UpdateBase(
+    roles.DMLRole,
+    HasCTE,
+    HasCompileState,
+    DialectKWArgs,
+    HasPrefixes,
+    ReturnsRows,
+    Executable,
+    ClauseElement,
+):
     __visit_name__: str
     named_with_column: bool
     is_dml: bool
