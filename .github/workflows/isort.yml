@@ -16,3 +16,4 @@ jobs:
         name: Install isort
       - run: "python -m isort --check-only --diff --profile black -l 99 ."
         name: Style checking with isort
+        
