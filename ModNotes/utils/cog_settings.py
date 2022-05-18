@@ -16,7 +16,9 @@ class CogSettings(object):
 
         self.default_settings = self.make_default_settings()
         if not os.path.isfile(self.file_path):
-            log.warning("CogSettings config for {} not found.  Creating default...".format(self.file_path))
+            log.warning(
+                "CogSettings config for {} not found.  Creating default...".format(self.file_path)
+            )
             self.bot_settings = self.default_settings
             self.save_settings()
         else:
@@ -50,8 +52,7 @@ class CogSettings(object):
             return [cls.intify(x) for x in key]
         elif isinstance(key, str) and key.isdigit():
             return int(key)
-        elif isinstance(key, str) and key.replace('.', '', 1).isdigit():
+        elif isinstance(key, str) and key.replace(".", "", 1).isdigit():
             return float(key)
         else:
             return key
-        
