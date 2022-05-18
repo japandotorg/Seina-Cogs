@@ -53,7 +53,12 @@ class async_scoped_session(ScopedSessionMixin):
     async def connection(self, **kw): ...
     async def delete(self, instance): ...
     async def execute(
-        self, statement, params: Any | None = ..., execution_options=..., bind_arguments: Any | None = ..., **kw
+        self,
+        statement,
+        params: Any | None = ...,
+        execution_options=...,
+        bind_arguments: Any | None = ...,
+        **kw,
     ): ...
     def expire(self, instance, attribute_names: Any | None = ...) -> None: ...
     def expire_all(self) -> None: ...
@@ -69,22 +74,46 @@ class async_scoped_session(ScopedSessionMixin):
         with_for_update: Any | None = ...,
         identity_token: Any | None = ...,
     ): ...
-    def get_bind(self, mapper: Any | None = ..., clause: Any | None = ..., bind: Any | None = ..., **kw): ...
+    def get_bind(
+        self, mapper: Any | None = ..., clause: Any | None = ..., bind: Any | None = ..., **kw
+    ): ...
     def is_modified(self, instance, include_collections: bool = ...): ...
     async def merge(self, instance, load: bool = ..., options: Any | None = ...): ...
-    async def refresh(self, instance, attribute_names: Any | None = ..., with_for_update: Any | None = ...): ...
+    async def refresh(
+        self, instance, attribute_names: Any | None = ..., with_for_update: Any | None = ...
+    ): ...
     async def rollback(self): ...
     async def scalar(
-        self, statement, params: Any | None = ..., execution_options=..., bind_arguments: Any | None = ..., **kw
+        self,
+        statement,
+        params: Any | None = ...,
+        execution_options=...,
+        bind_arguments: Any | None = ...,
+        **kw,
     ): ...
     async def scalars(
-        self, statement, params: Any | None = ..., execution_options=..., bind_arguments: Any | None = ..., **kw
+        self,
+        statement,
+        params: Any | None = ...,
+        execution_options=...,
+        bind_arguments: Any | None = ...,
+        **kw,
     ): ...
     async def stream(
-        self, statement, params: Any | None = ..., execution_options=..., bind_arguments: Any | None = ..., **kw
+        self,
+        statement,
+        params: Any | None = ...,
+        execution_options=...,
+        bind_arguments: Any | None = ...,
+        **kw,
     ): ...
     async def stream_scalars(
-        self, statement, params: Any | None = ..., execution_options=..., bind_arguments: Any | None = ..., **kw
+        self,
+        statement,
+        params: Any | None = ...,
+        execution_options=...,
+        bind_arguments: Any | None = ...,
+        **kw,
     ): ...
     @property
     def dirty(self): ...

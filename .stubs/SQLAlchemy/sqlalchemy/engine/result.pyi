@@ -124,7 +124,13 @@ class FrozenResult:
 class IteratorResult(Result):
     iterator: Any
     raw: Any
-    def __init__(self, cursor_metadata, iterator, raw: Any | None = ..., _source_supports_scalars: bool = ...) -> None: ...
+    def __init__(
+        self,
+        cursor_metadata,
+        iterator,
+        raw: Any | None = ...,
+        _source_supports_scalars: bool = ...,
+    ) -> None: ...
 
 def null_result() -> IteratorResult: ...
 
@@ -134,7 +140,12 @@ class ChunkedIteratorResult(IteratorResult):
     iterator: Any
     dynamic_yield_per: Any
     def __init__(
-        self, cursor_metadata, chunks, source_supports_scalars: bool = ..., raw: Any | None = ..., dynamic_yield_per: bool = ...
+        self,
+        cursor_metadata,
+        chunks,
+        source_supports_scalars: bool = ...,
+        raw: Any | None = ...,
+        dynamic_yield_per: bool = ...,
     ) -> None: ...
 
 class MergedResult(IteratorResult):

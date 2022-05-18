@@ -52,10 +52,25 @@ class DependencyProcessor:
 
 class OneToManyDP(DependencyProcessor):
     def per_property_dependencies(
-        self, uow, parent_saves, child_saves, parent_deletes, child_deletes, after_save, before_delete
+        self,
+        uow,
+        parent_saves,
+        child_saves,
+        parent_deletes,
+        child_deletes,
+        after_save,
+        before_delete,
     ) -> None: ...
     def per_state_dependencies(
-        self, uow, save_parent, delete_parent, child_action, after_save, before_delete, isdelete, childisdelete
+        self,
+        uow,
+        save_parent,
+        delete_parent,
+        child_action,
+        after_save,
+        before_delete,
+        isdelete,
+        childisdelete,
     ) -> None: ...
     def presort_deletes(self, uowcommit, states) -> None: ...
     def presort_saves(self, uowcommit, states) -> None: ...
@@ -65,10 +80,25 @@ class OneToManyDP(DependencyProcessor):
 class ManyToOneDP(DependencyProcessor):
     def __init__(self, prop) -> None: ...
     def per_property_dependencies(
-        self, uow, parent_saves, child_saves, parent_deletes, child_deletes, after_save, before_delete
+        self,
+        uow,
+        parent_saves,
+        child_saves,
+        parent_deletes,
+        child_deletes,
+        after_save,
+        before_delete,
     ) -> None: ...
     def per_state_dependencies(
-        self, uow, save_parent, delete_parent, child_action, after_save, before_delete, isdelete, childisdelete
+        self,
+        uow,
+        save_parent,
+        delete_parent,
+        child_action,
+        after_save,
+        before_delete,
+        isdelete,
+        childisdelete,
     ) -> None: ...
     def presort_deletes(self, uowcommit, states) -> None: ...
     def presort_saves(self, uowcommit, states) -> None: ...
@@ -87,10 +117,25 @@ class DetectKeySwitch(DependencyProcessor):
 
 class ManyToManyDP(DependencyProcessor):
     def per_property_dependencies(
-        self, uow, parent_saves, child_saves, parent_deletes, child_deletes, after_save, before_delete
+        self,
+        uow,
+        parent_saves,
+        child_saves,
+        parent_deletes,
+        child_deletes,
+        after_save,
+        before_delete,
     ) -> None: ...
     def per_state_dependencies(
-        self, uow, save_parent, delete_parent, child_action, after_save, before_delete, isdelete, childisdelete
+        self,
+        uow,
+        save_parent,
+        delete_parent,
+        child_action,
+        after_save,
+        before_delete,
+        isdelete,
+        childisdelete,
     ) -> None: ...
     def presort_deletes(self, uowcommit, states) -> None: ...
     def presort_saves(self, uowcommit, states) -> None: ...

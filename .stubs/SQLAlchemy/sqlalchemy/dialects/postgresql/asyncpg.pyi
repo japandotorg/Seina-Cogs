@@ -27,7 +27,17 @@ from typing import Any
 from ...engine import AdaptedConnection
 from ...sql import sqltypes
 from . import json
-from .base import ENUM, INTERVAL, OID, REGCLASS, UUID, PGCompiler, PGDialect, PGExecutionContext, PGIdentifierPreparer
+from .base import (
+    ENUM,
+    INTERVAL,
+    OID,
+    REGCLASS,
+    UUID,
+    PGCompiler,
+    PGDialect,
+    PGExecutionContext,
+    PGIdentifierPreparer,
+)
 
 class AsyncpgTime(sqltypes.Time):
     def get_dbapi_type(self, dbapi): ...

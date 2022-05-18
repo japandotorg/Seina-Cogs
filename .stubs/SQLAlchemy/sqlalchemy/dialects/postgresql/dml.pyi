@@ -42,7 +42,10 @@ class Insert(StandardInsert):
         where: Any | None = ...,
     ) -> None: ...
     def on_conflict_do_nothing(
-        self, constraint: Any | None = ..., index_elements: Any | None = ..., index_where: Any | None = ...
+        self,
+        constraint: Any | None = ...,
+        index_elements: Any | None = ...,
+        index_where: Any | None = ...,
     ) -> None: ...
 
 insert: Any
@@ -52,7 +55,12 @@ class OnConflictClause(ClauseElement):
     constraint_target: Any
     inferred_target_elements: Any
     inferred_target_whereclause: Any
-    def __init__(self, constraint: Any | None = ..., index_elements: Any | None = ..., index_where: Any | None = ...) -> None: ...
+    def __init__(
+        self,
+        constraint: Any | None = ...,
+        index_elements: Any | None = ...,
+        index_where: Any | None = ...,
+    ) -> None: ...
 
 class OnConflictDoNothing(OnConflictClause):
     __visit_name__: str

@@ -56,7 +56,11 @@ from .base import (
     DropEnumType as DropEnumType,
 )
 from .dml import Insert as Insert, insert as insert
-from .ext import ExcludeConstraint as ExcludeConstraint, aggregate_order_by as aggregate_order_by, array_agg as array_agg
+from .ext import (
+    ExcludeConstraint as ExcludeConstraint,
+    aggregate_order_by as aggregate_order_by,
+    array_agg as array_agg,
+)
 from .hstore import HSTORE as HSTORE, hstore as hstore
 from .json import JSON as JSON, JSONB as JSONB
 from .ranges import (

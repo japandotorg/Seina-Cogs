@@ -33,7 +33,13 @@ from .descriptor_props import (
 from .interfaces import PropComparator, StrategizedProperty
 from .relationships import RelationshipProperty as RelationshipProperty
 
-__all__ = ["ColumnProperty", "CompositeProperty", "ConcreteInheritedProperty", "RelationshipProperty", "SynonymProperty"]
+__all__ = [
+    "ColumnProperty",
+    "CompositeProperty",
+    "ConcreteInheritedProperty",
+    "RelationshipProperty",
+    "SynonymProperty",
+]
 
 class ColumnProperty(StrategizedProperty):
     logger: Any
@@ -59,7 +65,15 @@ class ColumnProperty(StrategizedProperty):
     def do_init(self) -> None: ...
     def copy(self): ...
     def merge(
-        self, session, source_state, source_dict, dest_state, dest_dict, load, _recursive, _resolve_conflict_map
+        self,
+        session,
+        source_state,
+        source_dict,
+        dest_state,
+        dest_dict,
+        load,
+        _recursive,
+        _resolve_conflict_map,
     ) -> None: ...
 
     class Comparator(util.MemoizedSlots, PropComparator[Any]):

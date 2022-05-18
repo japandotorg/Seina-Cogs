@@ -34,17 +34,40 @@ class AsyncSession(ReversibleProxy):
     binds: Any
     sync_session_class: Any
     sync_session: Any
-    def __init__(self, bind: Any | None = ..., binds: Any | None = ..., sync_session_class: Any | None = ..., **kw) -> None: ...
-    async def refresh(self, instance, attribute_names: Any | None = ..., with_for_update: Any | None = ...): ...
+    def __init__(
+        self,
+        bind: Any | None = ...,
+        binds: Any | None = ...,
+        sync_session_class: Any | None = ...,
+        **kw,
+    ) -> None: ...
+    async def refresh(
+        self, instance, attribute_names: Any | None = ..., with_for_update: Any | None = ...
+    ): ...
     async def run_sync(self, fn, *arg, **kw): ...
     async def execute(
-        self, statement, params: Any | None = ..., execution_options=..., bind_arguments: Any | None = ..., **kw
+        self,
+        statement,
+        params: Any | None = ...,
+        execution_options=...,
+        bind_arguments: Any | None = ...,
+        **kw,
     ): ...
     async def scalar(
-        self, statement, params: Any | None = ..., execution_options=..., bind_arguments: Any | None = ..., **kw
+        self,
+        statement,
+        params: Any | None = ...,
+        execution_options=...,
+        bind_arguments: Any | None = ...,
+        **kw,
     ): ...
     async def scalars(
-        self, statement, params: Any | None = ..., execution_options=..., bind_arguments: Any | None = ..., **kw
+        self,
+        statement,
+        params: Any | None = ...,
+        execution_options=...,
+        bind_arguments: Any | None = ...,
+        **kw,
     ): ...
     async def get(
         self,
@@ -56,17 +79,29 @@ class AsyncSession(ReversibleProxy):
         identity_token: Any | None = ...,
     ): ...
     async def stream(
-        self, statement, params: Any | None = ..., execution_options=..., bind_arguments: Any | None = ..., **kw
+        self,
+        statement,
+        params: Any | None = ...,
+        execution_options=...,
+        bind_arguments: Any | None = ...,
+        **kw,
     ): ...
     async def stream_scalars(
-        self, statement, params: Any | None = ..., execution_options=..., bind_arguments: Any | None = ..., **kw
+        self,
+        statement,
+        params: Any | None = ...,
+        execution_options=...,
+        bind_arguments: Any | None = ...,
+        **kw,
     ): ...
     async def delete(self, instance): ...
     async def merge(self, instance, load: bool = ..., options: Any | None = ...): ...
     async def flush(self, objects: Any | None = ...) -> None: ...
     def get_transaction(self): ...
     def get_nested_transaction(self): ...
-    def get_bind(self, mapper: Any | None = ..., clause: Any | None = ..., bind: Any | None = ..., **kw): ...
+    def get_bind(
+        self, mapper: Any | None = ..., clause: Any | None = ..., bind: Any | None = ..., **kw
+    ): ...
     async def connection(self, **kw): ...
     def begin(self, **kw): ...
     def begin_nested(self, **kw): ...

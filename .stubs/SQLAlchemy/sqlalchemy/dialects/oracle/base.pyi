@@ -58,7 +58,9 @@ NVARCHAR2 = NVARCHAR
 
 class NUMBER(sqltypes.Numeric, sqltypes.Integer):
     __visit_name__: str
-    def __init__(self, precision: Any | None = ..., scale: Any | None = ..., asdecimal: Any | None = ...) -> None: ...
+    def __init__(
+        self, precision: Any | None = ..., scale: Any | None = ..., asdecimal: Any | None = ...
+    ) -> None: ...
     def adapt(self, impltype): ...
 
 class DOUBLE_PRECISION(sqltypes.Float):
@@ -83,7 +85,9 @@ class INTERVAL(sqltypes.NativeForEmulated, sqltypes._AbstractInterval):
     __visit_name__: str
     day_precision: Any
     second_precision: Any
-    def __init__(self, day_precision: Any | None = ..., second_precision: Any | None = ...) -> None: ...
+    def __init__(
+        self, day_precision: Any | None = ..., second_precision: Any | None = ...
+    ) -> None: ...
     def as_generic(self, allow_nulltype: bool = ...): ...
     def coerce_compared_value(self, op, value): ...
 
@@ -224,18 +228,38 @@ class OracleDialect(default.DefaultDialect):
     def get_table_options(self, connection, table_name, schema: Any | None = ..., **kw): ...
     def get_columns(self, connection, table_name, schema: Any | None = ..., **kw): ...
     def get_table_comment(
-        self, connection, table_name, schema: Any | None = ..., resolve_synonyms: bool = ..., dblink: str = ..., **kw
+        self,
+        connection,
+        table_name,
+        schema: Any | None = ...,
+        resolve_synonyms: bool = ...,
+        dblink: str = ...,
+        **kw,
     ): ...
     def get_indexes(
-        self, connection, table_name, schema: Any | None = ..., resolve_synonyms: bool = ..., dblink: str = ..., **kw
+        self,
+        connection,
+        table_name,
+        schema: Any | None = ...,
+        resolve_synonyms: bool = ...,
+        dblink: str = ...,
+        **kw,
     ): ...
     def get_pk_constraint(self, connection, table_name, schema: Any | None = ..., **kw): ...
     def get_foreign_keys(self, connection, table_name, schema: Any | None = ..., **kw): ...
     def get_unique_constraints(self, connection, table_name, schema: Any | None = ..., **kw): ...
     def get_view_definition(
-        self, connection, view_name, schema: Any | None = ..., resolve_synonyms: bool = ..., dblink: str = ..., **kw
+        self,
+        connection,
+        view_name,
+        schema: Any | None = ...,
+        resolve_synonyms: bool = ...,
+        dblink: str = ...,
+        **kw,
     ): ...
-    def get_check_constraints(self, connection, table_name, schema: Any | None = ..., include_all: bool = ..., **kw): ...
+    def get_check_constraints(
+        self, connection, table_name, schema: Any | None = ..., include_all: bool = ..., **kw
+    ): ...
 
 class _OuterJoinColumn(ClauseElement):
     __visit_name__: str
