@@ -40,7 +40,8 @@ import pytz
 from redbot.core import checks, commands, data_manager
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box, inline, pagify
-from tsutils.time import DISCORD_DEFAULT_TZ
+
+DISCORD_DEFAULT_TZ = pytz.timezone('US/Pacific')
 
 warnings.filterwarnings("ignore")
 log = logging.getLogger("red.seina-cogs.activitylog")
