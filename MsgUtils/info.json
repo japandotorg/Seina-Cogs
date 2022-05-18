@@ -1,0 +1,15 @@
+{
+    "author": ["inthedark.org#0666"],
+    "install_msg": "Thanks for installing the msgutils cog",
+    "name": "MsgUtils",
+    "disabled": false,
+    "short": "dump stuff",
+    "description": "Useful message utilities.",
+    "tags": [
+        "utility"
+    ],
+    "required_cogs": {},
+    "requirements": [],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not store End User Data."
+}
