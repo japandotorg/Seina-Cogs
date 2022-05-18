@@ -1,7 +1,8 @@
 # Seina-Cogs V3
 [![Red-DiscordBot](https://img.shields.io/badge/Red--DiscordBot-V3-red.svg)](https://github.com/Cog-Creators/Red-DiscordBot) [![Discord.py](https://img.shields.io/badge/Discord.py-rewrite-blue.svg)](https://github.com/Rapptz/discord.py/tree/rewrite)
 
-Lemon's Cogs for [Red-DiscordBot](https://github.com/Cog-Creators/Red-DiscordBot/tree/V3/develop).\n
+Lemon's Cogs for [Red-DiscordBot](https://github.com/Cog-Creators/Red-DiscordBot/tree/V3/develop).
+
 To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://github.com/japandotorg/Seina-Cogs/`
 
 ## About Cogs
