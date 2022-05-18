@@ -27,9 +27,9 @@ from io import BytesIO
 from typing import Union
 
 import discord
+from redbot.core.bot import Red
 from discord import Object, User
 from redbot.core import checks, commands
-from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box, humanize_list, inline, pagify
 
 from .objects import CogSettings
