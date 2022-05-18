@@ -24,18 +24,18 @@ SOFTWARE.
 
 ## Thanks TrustyJAID <https://github.com/TrustyJAID/Trusty-cogs/blob/master/.utils/utils.py>
 
+import glob
+import json
+import logging
 import os
 import re
 import sys
-import json
-import glob
-import click
-import logging
-import tabulate
-
-from pathlib import Path
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import List, Mapping, Optional
+
+import click
+import tabulate
 from babel.lists import format_list as babel_list
 
 DEFAULT_INFO = {
@@ -80,6 +80,7 @@ HEADER = (
     "Thank you to everyone in the official [red server](https://discord.gg/red) for always being nice and helpful"
 )
 
+
 @dataclass
 class InfoJson:
     author: List[str]
@@ -100,7 +101,7 @@ class InfoJson:
     end_user_data_statement: str = (
         "This cog does not persistently store data or metadata about users."
     )
-    
+
     @classmethod
     def from_json(cls, data: dict):
         author = []
@@ -121,7 +122,7 @@ class InfoJson:
         end_user_data_statement = (
             "This cog does not persistently store data or metadata about users."
         )
-        
+
         if "author" in data:
             author = data["author"]
         if "description" in data:
@@ -164,7 +165,7 @@ class InfoJson:
             # min_python_version = [3, 8, 0]
         if "end_user_data_statement" in data:
             end_user_data_statement = data["end_user_data_statement"]
-            
+
         return cls(
             author,
             description,
@@ -183,15 +184,17 @@ class InfoJson:
             min_python_version,
             end_user_data_statement,
         )
-        
+
+
 def save_json(folder, data):
     with open(folder, "w") as newfile:
         json.dump(data, newfile, indent=4, sort_keys=True, separators=(",", " : "))
-        
+
+
 @click.group()
 def cli():
     """Utilities for Cog creation!"""
-    pass
+
 
 @cli.command()
 def mass_fix():
@@ -206,7 +209,8 @@ def mass_fix():
         except Exception:
             log.exception(f"Error reading info.json in {folder}")
             continue
-        
+
+
 @cli.command()
 @click.option(
     "--key",
@@ -234,9 +238,7 @@ def edit(key, value):
 
 @cli.command()
 @click.option("--author", default=DEFAULT_AUTHOR, help="Author of the cog", prompt=True)
-@click.option(
-    "--name", prompt="Enter the name of the cog", help="Name of the cog being added"
-)
+@click.option("--name", prompt="Enter the name of the cog", help="Name of the cog being added")
 @click.option(
     "--description",
     prompt="Enter a longer description for the cog.",
@@ -279,21 +281,15 @@ def edit(key, value):
     prompt=True,
     type=bool,
 )
-@click.option(
-    "--required-cogs", default={}, help="Required cogs for this cog to function."
-)
-@click.option(
-    "--requirements", prompt=True, default=[], help="Requirements for the cog."
-)
+@click.option("--required-cogs", default={}, help="Required cogs for this cog to function.")
+@click.option("--requirements", prompt=True, default=[], help="Requirements for the cog.")
 @click.option(
     "--tags",
     default=[],
     prompt=True,
     help="Any tags to help people find the cog better.",
 )
-@click.option(
-    "--permissions", prompt=True, default=[], help="Any permissions the cog requires."
-)
+@click.option("--permissions", prompt=True, default=[], help="Any permissions the cog requires.")
 @click.option(
     "--min-python-version",
     default=[3, 8, 0],
@@ -356,7 +352,7 @@ def make(
     )
     log.debug(data_obj)
     save_json(f"{ROOT}/{name}/info.json", data_obj.__dict__)
-    
+
 
 @cli.command()
 @click.option("--include-hidden", default=False)
@@ -474,9 +470,7 @@ def makereadme():
                         _version = maybe_version.group(1)
         if info and not (info.disabled or info.hidden):
             to_append = [info.name, _version]
-            description = (
-                f"<details><summary>{info.short}</summary>{info.description}</details>"
-            )
+            description = f"<details><summary>{info.short}</summary>{info.description}</details>"
             to_append.append(description)
             to_append.append(babel_list(info.author, style="standard", locale="en"))
             table_data.append(to_append)
@@ -543,4 +537,3 @@ def run_cli():
 
 if __name__ == "__main__":
     run_cli()
-    
