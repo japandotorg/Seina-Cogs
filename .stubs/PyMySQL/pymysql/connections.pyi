@@ -28,7 +28,12 @@ from socket import socket as _socket
 from typing import Any, AnyStr, Generic, TypeVar, overload
 
 from .charset import charset_by_id as charset_by_id, charset_by_name as charset_by_name
-from .constants import CLIENT as CLIENT, COMMAND as COMMAND, FIELD_TYPE as FIELD_TYPE, SERVER_STATUS as SERVER_STATUS
+from .constants import (
+    CLIENT as CLIENT,
+    COMMAND as COMMAND,
+    FIELD_TYPE as FIELD_TYPE,
+    SERVER_STATUS as SERVER_STATUS,
+)
 from .cursors import Cursor
 from .util import byte2int as byte2int, int2byte as int2byte
 
