@@ -28,5 +28,5 @@ __red_end_user_data_statement__ = "No personal data is stored."
 
 
 async def setup(bot):
-    cog = await MsgUtils.initialize(bot)
-    bot.add_cog(cog)
+    # cog = await MsgUtils.initialize(bot)
+    bot.add_cog(MsgUtils(bot))
