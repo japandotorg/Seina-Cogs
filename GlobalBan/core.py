@@ -45,10 +45,9 @@ class GlobalBan(commands.Cog):
     __author__ = ["inthedark.org#0666"]
     __version__ = "0.1.2"
 
-    def __init__(self, bot: Red, author: discord.User, *args, **kwargs):
+    def __init__(self, bot: Red, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.bot = bot
-        self.author = author
 
         self.config = Config.get_conf(self, identifier=66642069)
         self.config.register_global(banned={}, opted=[])
@@ -212,7 +211,7 @@ class GlobalBan(commands.Cog):
                         try:
                             await guild.ban(
                                 discord.Object(id=uid),
-                                reason=f"Global ban initiated by {self.author} with reason: {reason}",
+                                reason=f"Global banned with reason: {reason}",
                                 delete_message_days=0,
                             )
                         except discord.errors.NotFound:
@@ -220,7 +219,7 @@ class GlobalBan(commands.Cog):
                     else:
                         await guild.ban(
                             m,
-                            reason=f"Global ban initiated by {self.author} with reason: {reason}",
+                            reason=f"Global banned with reason: {reason}",
                             delete_message_days=0,
                         )
 
@@ -230,7 +229,7 @@ class GlobalBan(commands.Cog):
                         created_at=datetime.datetime.now(datetime.timezone.utc),
                         action_type="globalban",
                         user=m,
-                        reason=f"Global ban initiated by {self.author} with reason: {reason}",
+                        reason=f"Global banned with reason: {reason}",
                     )
 
                 except discord.Forbidden:
