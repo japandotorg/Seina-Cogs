@@ -179,7 +179,7 @@ class GlobalBan(commands.Cog):
     @globalban.command(name="list")
     @auth_check("globalban")
     async def _list(self, ctx):
-        """ Check who're on the global ban list. """
+        """Check who're on the global ban list."""
         o = "\n".join(k + "\t" + v for k, v in (await self.config.banned()).items())
         if not o:
             await ctx.send(inline("There are no banned users."))
@@ -210,12 +210,18 @@ class GlobalBan(commands.Cog):
                     if m is None:
                         try:
                             await guild.ban(
-                                discord.Object(id=uid), reason="Global ban initiated by {ctx.author} with reason: {reason}", delete_message_days=0
+                                discord.Object(id=uid),
+                                reason="Global ban initiated by {ctx.author} with reason: {reason}",
+                                delete_message_days=0,
                             )
                         except discord.errors.NotFound:
                             pass
                     else:
-                        await guild.ban(m, reason="Global ban initiated by {ctx.author} with reason: {reason}", delete_message_days=0)
+                        await guild.ban(
+                            m,
+                            reason="Global ban initiated by {ctx.author} with reason: {reason}",
+                            delete_message_days=0,
+                        )
                     await modlog.create_case(
                         bot=self.bot,
                         guild=guild,
