@@ -29,8 +29,8 @@ from io import BytesIO
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.commands import Context
-from userpreferences.preferences.timezone import TimezonePreference
-from userpreferences.preferences.util_mixin import UtilsPreference
+from .preferences.timezone import TimezonePreference
+from .preferences.util_mixin import UtilsPreference
 
 log = logging.getLogger("red.seina-cogs.userpreferences")
 
