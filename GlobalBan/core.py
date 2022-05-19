@@ -187,7 +187,7 @@ class GlobalBan(commands.Cog):
         for page in pagify(o):
             await ctx.send(box(page))
 
-    async def update_gbs(self, ctx: commands.Context):
+    async def update_gbs(self, ctx, **kwargs):
         for gid in await self.config.opted():
             guild = self.bot.get_guild(int(gid))
 
