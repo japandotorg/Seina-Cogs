@@ -222,7 +222,7 @@ class GlobalBan(commands.Cog):
                             reason=f"Global ban initiated by {ctx.author} with reason: {reason}",
                             delete_message_days=0,
                         )
-                        
+
                     await modlog.create_case(
                         bot=self.bot,
                         guild=guild,
