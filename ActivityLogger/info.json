@@ -18,6 +18,7 @@
     "required_cogs": {},
     "requirements": [
         "prettytable",
+        "aioodbc",
         "pytz",
         "pyodbc"
     ],
