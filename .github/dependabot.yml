@@ -13,4 +13,3 @@ updates:
       interval: "weekly"
     commit-message:
       prefix: "[meta]"
-      
