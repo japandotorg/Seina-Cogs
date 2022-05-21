@@ -58,7 +58,7 @@ class GlobalBan(commands.Cog):
             gadmin.register_perm("globalban")
 
     @classmethod
-    async def initialize(self, bot: Red):
+    async def initialize(cls, bot: Red):
         await bot.wait_until_red_ready()
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
@@ -233,9 +233,7 @@ class GlobalBan(commands.Cog):
                     )
 
                 except discord.Forbidden:
-                    log.warning(
-                        "Failed to ban user with ID {} in guild {}".format(uid, guild.name)
-                    )
+                    log.warning(f"Failed to ban user with ID {uid} in guild {guild.name}")
 
     async def remove_gbs_guild(self, gid):
         guild = self.bot.get_guild(int(gid))
