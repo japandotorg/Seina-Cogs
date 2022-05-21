@@ -39,7 +39,7 @@ class MsgUtils(commands.Cog):
         self.bot = bot
 
     @classmethod
-    async def initialize(self, bot: Red):
+    async def initialize(cls, bot: Red):
         await bot.wait_until_red_ready()
 
     async def red_get_data_for_user(self, *, user_id):

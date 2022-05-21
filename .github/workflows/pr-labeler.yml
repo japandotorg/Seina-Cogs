@@ -12,4 +12,3 @@ jobs:
           configuration-path: .github/pr-labeler.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
