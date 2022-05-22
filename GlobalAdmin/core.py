@@ -53,7 +53,7 @@ class GlobalAdmin(commands.Cog):
         self.settings = GlobalAdminSettings("globaladmin")
 
     @classmethod
-    async def initialize(self, bot: Red):
+    async def initialize(cls, bot: Red):
         await bot.wait_until_red_ready()
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
@@ -130,7 +130,7 @@ class GlobalAdmin(commands.Cog):
         List the avaliable perms
         """
         msg = "Perms:\n"
-        mlen = max([len(k) for k in self.settings.get_perms().keys()])
+        mlen = max(len(k) for k in self.settings.get_perms().keys())
 
         for perm, default in self.settings.get_perms().items():
             msg += " - {}{}(default: {})\n".format(perm, " " * (mlen - len(perm) + 3), default)
@@ -165,7 +165,7 @@ class GlobalAdmin(commands.Cog):
         List all users with a perm
         """
         us = self.settings.get_users_with_perm(perm_name)
-        us = [str(self.bot.get_user(u) or "Unknown ({})".format(u)) for u in us]
+        us = [str(self.bot.get_user(u) or f"Unknown ({u})") for u in us]
 
         if not us:
             await ctx.send(inline("No users have this perm."))
@@ -178,11 +178,10 @@ class GlobalAdmin(commands.Cog):
 
 class GlobalAdminSettings(CogSettings):
     def make_default_settings(self):
-        config = {
+        return {
             "perms": {},
             "users": {},
         }
-        return config
 
     def add_user_perm(self, user_id, perm, value=True):
         if perm not in self.bot_settings["perms"]:
@@ -219,16 +218,16 @@ class GlobalAdminSettings(CogSettings):
 
     def get_perm(self, user_id, perm, default=False):
         defaults = {}
-        defaults.update(self.bot_settings["perms"])
-        defaults.update(self.bot_settings["users"].get(user_id, {}))
+        defaults |= self.bot_settings["perms"]
+        defaults |= self.bot_settings["users"].get(user_id, {})
         return defaults.get(perm, default)
 
     def get_perms(self):
         return self.bot_settings["perms"]
 
     def get_users_with_perm(self, perm):
-        out = []
-        for user in self.bot_settings["users"]:
-            if perm in self.bot_settings["users"][user]:
-                out.append(user)
-        return out
+        return [
+            user
+            for user in self.bot_settings["users"]
+            if perm in self.bot_settings["users"][user]
+        ]
