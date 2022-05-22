@@ -96,9 +96,7 @@ class ModNotes(commands.Cog):
         note = notes[note_num - 1]
         notes.remove(note)
         self.settings.setNotesForUser(ctx.guild.id, user.id, notes)
-        await ctx.send(
-            inline(f"Removed note {note_num}. User has {len(notes)} remaining.")
-        )
+        await ctx.send(inline(f"Removed note {note_num}. User has {len(notes)} remaining."))
 
         await ctx.send(box(note))
 

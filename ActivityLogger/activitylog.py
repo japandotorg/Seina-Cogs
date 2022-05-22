@@ -290,9 +290,7 @@ class ActivityLogger(commands.Cog):
         avg_time = round(sum(self.insert_timing) / size, 4)
         max_time = round(max(self.insert_timing), 4)
         min_time = round(min(self.insert_timing), 4)
-        await ctx.send(
-            inline(f"{size} inserts, min={min_time} max={max_time} avg={avg_time}")
-        )
+        await ctx.send(inline(f"{size} inserts, min={min_time} max={max_time} avg={avg_time}"))
 
     @commands.command()
     @checks.is_owner()
@@ -424,9 +422,7 @@ class ActivityLogger(commands.Cog):
         column_data.extend(
             (missing_col, missing_col)
             for missing_col in [
-                col
-                for col in results_columns
-                if col not in [c[0] for c in column_data]
+                col for col in results_columns if col not in [c[0] for c in column_data]
             ]
         )
 

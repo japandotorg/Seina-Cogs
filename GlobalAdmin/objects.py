@@ -44,9 +44,7 @@ class CogSettings(object):
 
         self.default_settings = self.make_default_settings()
         if not os.path.isfile(self.file_path):
-            log.warning(
-                f"CogSettings config for {self.file_path} not found.  Creating default..."
-            )
+            log.warning(f"CogSettings config for {self.file_path} not found.  Creating default...")
 
             self.bot_settings = self.default_settings
             self.save_settings()

@@ -227,7 +227,5 @@ class GlobalAdminSettings(CogSettings):
 
     def get_users_with_perm(self, perm):
         return [
-            user
-            for user in self.bot_settings["users"]
-            if perm in self.bot_settings["users"][user]
+            user for user in self.bot_settings["users"] if perm in self.bot_settings["users"][user]
         ]
