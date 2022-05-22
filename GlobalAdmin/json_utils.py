@@ -35,16 +35,17 @@ log = logging.getLogger("red.seina-cogs.globaladmin.json_utils")
 
 def should_download(file_path, expiry_secs):
     if not os.path.exists(file_path):
-        log.debug(f"file does not exist, downloading {file_path}")
+        log.debug("file does not exist, downloading " + file_path)
         return True
 
     ftime = os.path.getmtime(file_path)
     file_age = time.time() - ftime
 
-    if file_age <= expiry_secs:
+    if file_age > expiry_secs:
+        log.debug("file {} too old, download it".format(file_path))
+        return True
+    else:
         return False
-    log.debug(f"file {file_path} too old, download it")
-    return True
 
 
 def write_json_file(file_path, js_data):
@@ -64,7 +65,7 @@ def safe_read_json(file_path):
     try:
         return read_json_file(file_path)
     except (json.JSONDecodeError, FileNotFoundError):
-        log.error(f"failed to read {file_path} got exception", exc_info=True)
+        log.error("failed to read {} got exception".format(file_path), exc_info=True)
     return {}
 
 

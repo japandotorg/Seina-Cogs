@@ -67,11 +67,11 @@ class ModNotes(commands.Cog):
         """Sends the notes for a user."""
         notes = self.settings.getNotesForUser(ctx.guild.id, user.id)
         if not notes:
-            await ctx.send(box(f"No notes for {user.name}"))
+            await ctx.send(box("No notes for {}".format(user.name)))
             return
 
         for idx, note in enumerate(notes):
-            await ctx.send(inline(f"Note {idx + 1} of {len(notes)}:"))
+            await ctx.send(inline("Note {} of {}:".format(idx + 1, len(notes))))
             await ctx.send(box(note))
 
     @usernotes.command()
@@ -79,10 +79,10 @@ class ModNotes(commands.Cog):
     async def add(self, ctx, user: discord.User, *, note_text: str):
         """Add a note to a user."""
         timestamp = str(ctx.message.created_at)[:-7]
-        msg = f"Added by {ctx.author.name} ({timestamp}): {note_text}"
+        msg = "Added by {} ({}): {}".format(ctx.author.name, timestamp, note_text)
         server_id = ctx.guild.id
         notes = self.settings.addNoteForUser(server_id, user.id, msg)
-        await ctx.send(inline(f"Done. User {user.name} now has {len(notes)} notes"))
+        await ctx.send(inline("Done. User {} now has {} notes".format(user.name, len(notes))))
 
     @usernotes.command()
     @checks.mod_or_permissions(manage_guild=True)
@@ -90,14 +90,15 @@ class ModNotes(commands.Cog):
         """Delete a specific note for a user."""
         notes = self.settings.getNotesForUser(ctx.guild.id, user.id)
         if len(notes) < note_num:
-            await ctx.send(box(f"Note not found for {user.name}"))
+            await ctx.send(box("Note not found for {}".format(user.name)))
             return
 
         note = notes[note_num - 1]
         notes.remove(note)
         self.settings.setNotesForUser(ctx.guild.id, user.id, notes)
-        await ctx.send(inline(f"Removed note {note_num}. User has {len(notes)} remaining."))
-
+        await ctx.send(
+            inline("Removed note {}. User has {} remaining.".format(note_num, len(notes)))
+        )
         await ctx.send(box(note))
 
     @usernotes.command()
@@ -105,10 +106,10 @@ class ModNotes(commands.Cog):
     async def list(self, ctx):
         """Lists all users and note counts for the server."""
         user_notes = self.settings.getUserNotes(ctx.guild.id)
-        msg = f"Notes for {len(user_notes)} users"
+        msg = "Notes for {} users".format(len(user_notes))
         for user_id, notes in user_notes.items():
             user = ctx.guild.get_member(user_id)
-            user_text = f"{user.name} ({user.id})" if user else user_id
+            user_text = "{} ({})".format(user.name, user.id) if user else user_id
             msg += "\n\t{} : {}".format(len(notes), user_text)
 
         for page in pagify(msg):
@@ -117,7 +118,8 @@ class ModNotes(commands.Cog):
 
 class ModNotesSettings(CogSettings):
     def make_default_settings(self):
-        return {"servers": {}}
+        config = {"servers": {}}
+        return config
 
     def servers(self):
         return self.bot_settings["servers"]

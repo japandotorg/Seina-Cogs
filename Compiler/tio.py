@@ -41,7 +41,7 @@ def _to_tio_string(couple: tuple) -> bytes:
     if not obj:
         return b""
     elif type(obj) == list:
-        content = [f"V{name}", str(len(obj))] + obj
+        content = ["V" + name, str(len(obj))] + obj
         return to_bytes("\0".join(content) + "\0")
     else:
         return to_bytes(f"F{name}\0{len(to_bytes(obj))}\0{obj}\0")

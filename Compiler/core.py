@@ -42,7 +42,7 @@ class Compiler(commands.Cog):
         self.bot = bot
 
     @classmethod
-    async def initialize(cls, bot: Red):
+    async def initialize(self, bot: Red):
         await bot.wait_until_red_ready()
 
     async def red_delete_data_for_user(self, **kwargs):
@@ -71,7 +71,7 @@ class Compiler(commands.Cog):
         """
         query = " ".join(args[:])
 
-        query = query.replace(f"```{lang}", "")
+        query = query.replace(("```" + lang), "")
 
         if lang == "python3":
             query = query.replace('"', "'")

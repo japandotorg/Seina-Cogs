@@ -260,9 +260,9 @@ class ActivityLogger(commands.Cog):
             return
 
         if os.name != "nt" and sys.platform != "win32":
-            dsn = f"Driver=SQLite3;Database={self.db_path}"
+            dsn = "Driver=SQLite3;Database=" + self.db_path
         else:
-            dsn = f"Driver=SQLite3 ODBC Driver;Database={self.db_path}"
+            dsn = "Driver=SQLite3 ODBC Driver;Database=" + self.db_path
         self.pool = await aioodbc.create_pool(
             dsn=dsn, autocommit=True, after_created=conn_attributes
         )
@@ -290,7 +290,9 @@ class ActivityLogger(commands.Cog):
         avg_time = round(sum(self.insert_timing) / size, 4)
         max_time = round(max(self.insert_timing), 4)
         min_time = round(min(self.insert_timing), 4)
-        await ctx.send(inline(f"{size} inserts, min={min_time} max={max_time} avg={avg_time}"))
+        await ctx.send(
+            inline("{} inserts, min={} max={} avg={}".format(size, min_time, max_time, avg_time))
+        )
 
     @commands.command()
     @checks.is_owner()
@@ -301,7 +303,7 @@ class ActivityLogger(commands.Cog):
         Will keep the bot from locking up trying to insert records.
         """
         self.lock = not self.lock
-        await ctx.send(inline(f"Locked is now {self.lock}"))
+        await ctx.send(inline("Locked is now {}".format(self.lock)))
 
     @commands.group()
     @commands.guild_only()
@@ -419,12 +421,10 @@ class ActivityLogger(commands.Cog):
             column_data = ALL_COLUMNS
 
         column_data = [r for r in column_data if r[0] in results_columns]
-        column_data.extend(
-            (missing_col, missing_col)
-            for missing_col in [
-                col for col in results_columns if col not in [c[0] for c in column_data]
-            ]
-        )
+        for missing_col in [
+            col for col in results_columns if col not in [c[0] for c in column_data]
+        ]:
+            column_data.append((missing_col, missing_col))
 
         column_names = [c[0] for c in column_data]
         column_headers = [c[1] for c in column_data]
@@ -438,7 +438,7 @@ class ActivityLogger(commands.Cog):
             if idx > max_rows:
                 break
 
-            table_row = []
+            table_row = list()
             cols = next(zip(*row.cursor_description))
 
             for col in column_names:
@@ -470,13 +470,12 @@ class ActivityLogger(commands.Cog):
 
             tbl.add_row(table_row)
 
-        return (
-            "{} results fetched in {}s\n{}".format(
+        result_text = ""
+        if verbose:
+            result_text = "{} results fetched in {}s\n{}".format(
                 len(rows), round(execution_time, 2), tbl.get_string()
             )
-            if verbose
-            else ""
-        )
+        return result_text
 
     @commands.Cog.listener("on_message_edit")
     async def on_message_edit(self, before, after):
@@ -531,10 +530,10 @@ class ActivityLogger(commands.Cog):
         self.insert_timing.append(execution_time)
 
     async def purge(self):
-        before = datetime.now() - timedelta(days=(7 * 3))
+        before = datetime.today() - timedelta(days=(7 * 3))
         values = [before]
         log.debug("Purging old logs")
         async with self.pool.acquire() as conn:
             async with conn.cursor() as cur:
                 await cur.execute(DELETE_BEFORE_QUERY, values)
-                log.debug(f"Purged {cur.rowcount}")
+                log.debug("Purged {}".format(cur.rowcount))

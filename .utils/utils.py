@@ -104,12 +104,33 @@ class InfoJson:
 
     @classmethod
     def from_json(cls, data: dict):
-        required_cogs: Mapping = {}
-        author = data.get("author", [])
-        description = data.get("description", "")
-        install_msg = data.get("install_msg", "Thanks for installing")
-        short = data.get("short", "Thanks for installing")
+        author = []
+        description = ""
+        install_msg = "Thanks for installing"
+        short = "Thanks for installing"
         min_bot_version = "3.1.8"
+        max_bot_version = "0.0.0"
+        name = ""
+        required_cogs: Mapping = {}
+        requirements = []
+        tags = []
+        hidden = False
+        disabled = False
+        type = "COG"
+        permissions = []
+        min_python_version = []
+        end_user_data_statement = (
+            "This cog does not persistently store data or metadata about users."
+        )
+
+        if "author" in data:
+            author = data["author"]
+        if "description" in data:
+            description = data["description"]
+        if "install_msg" in data:
+            install_msg = data["install_msg"]
+        if "short" in data:
+            short = data["short"]
         if "bot_version" in data:
             min_bot_version = data["bot_version"]
             if isinstance(min_bot_version, list):
@@ -117,24 +138,33 @@ class InfoJson:
         if "min_bot_version" in data:
             min_bot_version = data["min_bot_version"]
             # min_bot_version = "3.3.0"
-        max_bot_version = data.get("max_bot_version", "0.0.0")
-        name = data.get("name", "")
+        if "max_bot_version" in data:
+            max_bot_version = data["max_bot_version"]
+            # max_bot_version = "0.0.0"
+        if "name" in data:
+            name = data["name"]
         if "required_cogs" in data:
             if isinstance(data["required_cogs"], list):
                 required_cogs = {}
             else:
                 required_cogs = data["required_cogs"]
-        requirements = data.get("requirements", [])
-        tags = data.get("tags", [])
-        hidden = data.get("hidden", False)
-        disabled = data.get("disabled", False)
-        type = data.get("type", "COG")
-        permissions = data.get("permissions", [])
-        min_python_version = data.get("min_python_version", [])
-        end_user_data_statement = data.get(
-            "end_user_data_statement",
-            "This cog does not persistently store data or metadata about users.",
-        )
+        if "requirements" in data:
+            requirements = data["requirements"]
+        if "tags" in data:
+            tags = data["tags"]
+        if "hidden" in data:
+            hidden = data["hidden"]
+        if "disabled" in data:
+            disabled = data["disabled"]
+        if "type" in data:
+            type = data["type"]
+        if "permissions" in data:
+            permissions = data["permissions"]
+        if "min_python_version" in data:
+            min_python_version = data["min_python_version"]
+            # min_python_version = [3, 8, 0]
+        if "end_user_data_statement" in data:
+            end_user_data_statement = data["end_user_data_statement"]
 
         return cls(
             author,
@@ -435,9 +465,10 @@ def makereadme():
             if _version == "":
                 with open(file, "r", encoding="utf-8") as infile:
                     data = infile.read()
-                    if maybe_version := VER_REG.search(data):
+                    maybe_version = VER_REG.search(data)
+                    if maybe_version:
                         _version = maybe_version.group(1)
-        if info and not info.disabled and not info.hidden:
+        if info and not (info.disabled or info.hidden):
             to_append = [info.name, _version]
             description = f"<details><summary>{info.short}</summary>{info.description}</details>"
             to_append.append(description)
@@ -465,7 +496,9 @@ def makerequirements():
     """
     requirements = set()
     with open(ROOT / "requirements.txt", "r") as infile:
-        current_reqs = {_req.strip() for _req in infile.readlines()}
+        current_reqs = set()
+        for _req in infile.readlines():
+            current_reqs.add(_req.strip())
     for folder in os.listdir(ROOT):
         if folder.startswith(".") or folder.startswith("_"):
             continue
@@ -488,7 +521,7 @@ def makerequirements():
     if current_reqs == requirements:
         log.info("Same requirements, ignoring")
         return
-    requirements_txt = "{reqs}\n".format(reqs="\n".join(reqs))
+    requirements_txt = "{reqs}\n".format(reqs="\n".join(r for r in reqs))
     with open(ROOT / "requirements.txt", "w") as outfile:
         outfile.write(requirements_txt)
 
