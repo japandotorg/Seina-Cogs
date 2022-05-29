@@ -44,7 +44,7 @@ class NitrolessEmoteConverter(commands.Converter):
 
 class ImageConverter(commands.Converter):
     @staticmethod
-    async def convert(self):
+    async def convert(self, ctx, argument: str):
         pass
     
     async def fake_asset_read(ctx, *, url):
