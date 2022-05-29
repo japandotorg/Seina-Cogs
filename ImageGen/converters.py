@@ -75,17 +75,19 @@ class ImageConverter(commands.Converter):
                 return asset_bytes
 
         raise commands.BadArgument()
-    
+
     async def converted_to_buffer(self, source: Argument) -> bytes:
         if isinstance(source, (discord.Member, discord.User)):
             source = await source.display_avatar.read()
-            
+
         elif isinstance(source, discord.PartialEmoji):
             source = await source.read()
-            
+
         return source
-    
-    async def convert(self, ctx: commands.Context, argument: str, *, raise_on_failure: bool = True) -> Optional[bytes]:
+
+    async def convert(
+        self, ctx: commands.Context, argument: str, *, raise_on_failure: bool = True
+    ) -> Optional[bytes]:
         for converter in self._converters:
             try:
                 source = await converter().convert(ctx, argument)
@@ -98,5 +100,5 @@ class ImageConverter(commands.Converter):
                 raise commands.BadArgument("Failed to fetch an image frrom argument")
             else:
                 return None
-        
+
         return await self.converted_to_buffer(source)
