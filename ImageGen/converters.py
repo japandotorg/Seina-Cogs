@@ -72,11 +72,8 @@ class ImageConverter(commands.Converter):
 
         raise commands.BadArgument()
 
-    async def converted_to_buffer(self, source: discord.Member | discord.User | discord.PartialEmoji) -> bytes:
-        if isinstance(source, (discord.Member, discord.User)):
-            source = await source.display_avatar.read()
-
-        elif isinstance(source, discord.PartialEmoji):
+    async def converted_to_buffer(self, source: discord.PartialEmoji) -> bytes:
+        if isinstance(source, discord.PartialEmoji):
             source = await source.read()
 
         return source
