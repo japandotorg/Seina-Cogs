@@ -70,11 +70,5 @@ class ImageConverter(commands.Converter):
 
             if asset_bytes:
                 return asset_bytes
-<<<<<<< HEAD
             
         raise commands.BadArgument()
-    
-=======
-
-        raise commands.BadArgument()
->>>>>>> 29a7bef1e3eaf963c28c96185bdf3ed43ddfb6f3

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """
 MIT License
 
@@ -24,9 +23,8 @@ SOFTWARE.
 """
 
 from typing import Union, Optional, Any
-=======
+
 from typing import Any, Optional, Union
->>>>>>> 29a7bef1e3eaf963c28c96185bdf3ed43ddfb6f3
 
 import discord
 from discord import Embed, Member, User
