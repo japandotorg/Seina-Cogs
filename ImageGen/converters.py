@@ -22,10 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Union
+from typing import Union, TypeAlias, TYPE_CHECKING
 
 import discord
 from redbot.core import commands
+
+if TYPE_CHECKING:
+    Argument: TypeAlias = discord.Member | discord.User | discord.PartialEmoji | bytes
 
 __all__ = ["NitrolessEmoteConverter", "ImageConverter"]
 
@@ -72,3 +75,28 @@ class ImageConverter(commands.Converter):
                 return asset_bytes
 
         raise commands.BadArgument()
+    
+    async def converted_to_buffer(self, source: Argument) -> bytes:
+        if isinstance(source, (discord.Member, discord.User)):
+            source = await source.display_avatar.read()
+            
+        elif isinstance(source, discord.PartialEmoji):
+            source = await source.read()
+            
+        return source
+    
+    async def convert(self, ctx: commands.Context, argument: str, *, raise_on_failure: bool = True) -> Optional[bytes]:
+        for converter in self._converters:
+            try:
+                source = await converter().convert(ctx, argument)
+            except commands.BadArgument:
+                continue
+            else:
+                break
+        else:
+            if raise_on_failure:
+                raise commands.BadArgument("Failed to fetch an image frrom argument")
+            else:
+                return None
+        
+        return await self.converted_to_buffer(source)
