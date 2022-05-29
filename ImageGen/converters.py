@@ -44,9 +44,6 @@ class NitrolessEmoteConverter(commands.Converter):
 
 class ImageConverter(commands.Converter):
     @staticmethod
-    async def convert():
-        pass
-
     async def fake_asset_read(ctx, *, url):
         asset = discord.Asset(ctx.bot._connection, url=url, key="")
 
