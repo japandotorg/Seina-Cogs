@@ -21,7 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
+import io
+import re
+import aiohttp
 from typing import Optional, Union
 
 import discord
@@ -73,26 +75,24 @@ class ImageConverter(commands.Converter):
 
         raise commands.BadArgument()
 
-    async def converted_to_buffer(self, source: discord.PartialEmoji) -> bytes:
-        if isinstance(source, discord.PartialEmoji):
-            source = await source.read()
-
-        return source
-
-    async def convert(
-        self, ctx: commands.Context, argument: str, *, raise_on_failure: bool = True
-    ) -> Optional[bytes]:
-        for converter in self._converters:
-            try:
-                source = await converter().convert(ctx, argument)
-            except commands.BadArgument:
-                continue
-            else:
-                break
+    async def convert(self, ctx, argument):
+        r = re.search(r'<a?:\w+:\d{18}>', argument)
+        if r:
+            emoji = await commands.EmojiConverter().convert(ctx, argument)
+            asset = emoji.url_as(format='png')
+            data = io.BytesIO(await asset.read())
+            return data
+        elif re.search(r'https?://.+\.(png|jpg|jpeg)', argument):
+            async with aiohttp.ClientSession() as session:
+                async with session.get(argument) as resp:
+                    if resp.status == 200:
+                        return io.BytesIO(await resp.read())
         else:
-            if raise_on_failure:
-                raise commands.BadArgument("Failed to fetch an image frrom argument")
+            try:
+                user = await commands.MemberConverter().convert(ctx, argument)
+            except commands.MemberNotFound:
+                await ctx.send(f'`{argument}`')
             else:
-                return None
-
-        return await self.converted_to_buffer(source)
+                avatar = user.avatar_url_as(format='png')
+                data = io.BytesIO(await avatar.read())
+                return data
