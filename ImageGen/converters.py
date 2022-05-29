@@ -22,13 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Union, TypeAlias, TYPE_CHECKING
+from typing import Union, TYPE_CHECKING
 
 import discord
 from redbot.core import commands
 
 if TYPE_CHECKING:
-    Argument: TypeAlias = discord.Member | discord.User | discord.PartialEmoji | bytes
+    Argument: discord.Member
 
 __all__ = ["NitrolessEmoteConverter", "ImageConverter"]
 
