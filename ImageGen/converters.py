@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import discord
 from redbot.core import commands
