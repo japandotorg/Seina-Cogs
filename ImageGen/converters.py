@@ -22,12 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Union, Optional
+from typing import Optional, Union
 
 import discord
 from redbot.core import commands
 
 __all__ = ["NitrolessEmoteConverter", "ImageConverter"]
+
 
 class NitrolessEmoteConverter(commands.Converter):
     async def convert(self, ctx, argument: str) -> Union[discord.Emoji, discord.PartialEmoji]:
@@ -72,7 +73,9 @@ class ImageConverter(commands.Converter):
 
         raise commands.BadArgument()
 
-    async def converted_to_buffer(self, source: discord.Member | discord.User | discord.PartialEmoji) -> bytes:
+    async def converted_to_buffer(
+        self, source: discord.Member | discord.User | discord.PartialEmoji
+    ) -> bytes:
         if isinstance(source, (discord.Member, discord.User)):
             source = await source.display_avatar.read()
 
