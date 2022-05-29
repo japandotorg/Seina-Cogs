@@ -70,5 +70,5 @@ class ImageConverter(commands.Converter):
 
             if asset_bytes:
                 return asset_bytes
-            
+
         raise commands.BadArgument()
