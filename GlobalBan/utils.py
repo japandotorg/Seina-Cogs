@@ -51,7 +51,7 @@ def auth_check(perm: str, default: bool = False):
 async def get_user_preference(
     bot: Red, user: User, pref: str, *, unloaded_default=None
 ) -> Optional[Any]:
-    if pref in ("timezone",):
+    if pref in {"timezone"}:
         raise ValueError("Invalid preference. Use the cog method to get this.")
 
     cog: Any = bot.get_cog("UserPreferences")

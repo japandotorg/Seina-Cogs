@@ -23,9 +23,9 @@ SOFTWARE.
 """
 import io
 import re
-import aiohttp
-from typing import Optional, Union
+from typing import Union
 
+import aiohttp
 import discord
 from redbot.core import commands
 
@@ -76,13 +76,13 @@ class ImageConverter(commands.Converter):
         raise commands.BadArgument()
 
     async def convert(self, ctx, argument):
-        r = re.search(r'<a?:\w+:\d{18}>', argument)
+        r = re.search(r"<a?:\w+:\d{18}>", argument)
         if r:
             emoji = await commands.EmojiConverter().convert(ctx, argument)
-            asset = emoji.url_as(format='png')
+            asset = emoji.url_as(format="png")
             data = io.BytesIO(await asset.read())
             return data
-        elif re.search(r'https?://.+\.(png|jpg|jpeg)', argument):
+        elif re.search(r"https?://.+\.(png|jpg|jpeg)", argument):
             async with aiohttp.ClientSession() as session:
                 async with session.get(argument) as resp:
                     if resp.status == 200:
@@ -91,8 +91,8 @@ class ImageConverter(commands.Converter):
             try:
                 user = await commands.MemberConverter().convert(ctx, argument)
             except commands.MemberNotFound:
-                await ctx.send(f'`{argument}`')
+                await ctx.send(f"`{argument}`")
             else:
-                avatar = user.avatar_url_as(format='png')
+                avatar = user.avatar_url_as(format="png")
                 data = io.BytesIO(await avatar.read())
                 return data

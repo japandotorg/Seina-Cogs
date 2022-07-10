@@ -44,9 +44,8 @@ class CogSettings(object):
 
         self.default_settings = self.make_default_settings()
         if not os.path.isfile(self.file_path):
-            log.warning(
-                "CogSettings config for {} not found.  Creating default...".format(self.file_path)
-            )
+            log.warning(f"CogSettings config for {self.file_path} not found.  Creating default...")
+
             self.bot_settings = self.default_settings
             self.save_settings()
         else:
@@ -63,7 +62,7 @@ class CogSettings(object):
 
     def check_folder(self):
         if not os.path.exists(self.folder):
-            log.info("Creating {}".format(self.folder))
+            log.info(f"Creating {self.folder}")
             os.makedirs(self.folder)
 
     def save_settings(self):
