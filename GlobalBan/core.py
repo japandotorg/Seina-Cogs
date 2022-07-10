@@ -112,7 +112,7 @@ class GlobalBan(commands.Cog):
             [be.user.id for be in await ctx.guild.bans()]
         )
         async with ctx.typing():
-            await self.update_gbs()
+            await self.update_gbs(ctx)
         await ctx.tick()
 
     @globalban.command()
@@ -146,7 +146,7 @@ class GlobalBan(commands.Cog):
         async with self.config.banned() as banned:
             banned[str(user_id)] = reason
         async with ctx.typing():
-            await self.update_gbs()
+            await self.update_gbs(ctx)
         await ctx.tick()
 
     @globalban.command()
@@ -187,7 +187,7 @@ class GlobalBan(commands.Cog):
         for page in pagify(o):
             await ctx.send(box(page))
 
-    async def update_gbs(self):
+    async def update_gbs(self, ctx):
         for gid in await self.config.opted():
             guild = self.bot.get_guild(int(gid))
 
@@ -211,7 +211,7 @@ class GlobalBan(commands.Cog):
                         try:
                             await guild.ban(
                                 discord.Object(id=uid),
-                                reason=f"Global banned with reason: {reason}",
+                                reason=f"Global ban initiated by {ctx.author} with the reason: {reason}",
                                 delete_message_days=0,
                             )
                         except discord.errors.NotFound:
@@ -219,7 +219,7 @@ class GlobalBan(commands.Cog):
                     else:
                         await guild.ban(
                             m,
-                            reason=f"Global banned with reason: {reason}",
+                            reason=f"Global ban initiated by {ctx.author} with the reason: {reason}",
                             delete_message_days=0,
                         )
 
@@ -229,7 +229,7 @@ class GlobalBan(commands.Cog):
                         created_at=datetime.datetime.now(datetime.timezone.utc),
                         action_type="globalban",
                         user=m,
-                        reason=f"Global banned with reason: {reason}",
+                        reason=f"Global ban initiated by {ctx.author} with the reason: {reason}",
                     )
 
                 except discord.Forbidden:
