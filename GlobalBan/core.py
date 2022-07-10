@@ -58,7 +58,7 @@ class GlobalBan(commands.Cog):
             gadmin.register_perm("globalban")
 
     @classmethod
-    async def initialize(cls, bot: Red):
+    async def initialize(self, bot: Red):
         await bot.wait_until_red_ready()
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
@@ -187,7 +187,7 @@ class GlobalBan(commands.Cog):
         for page in pagify(o):
             await ctx.send(box(page))
 
-    async def update_gbs(self, ctx):
+    async def update_gbs(self):
         for gid in await self.config.opted():
             guild = self.bot.get_guild(int(gid))
 
@@ -211,7 +211,7 @@ class GlobalBan(commands.Cog):
                         try:
                             await guild.ban(
                                 discord.Object(id=uid),
-                                reason=f"Banned by {ctx.author}: {reason}",
+                                reason=f"Global banned with reason: {reason}",
                                 delete_message_days=0,
                             )
                         except discord.errors.NotFound:
@@ -233,7 +233,9 @@ class GlobalBan(commands.Cog):
                     )
 
                 except discord.Forbidden:
-                    log.warning(f"Failed to ban user with ID {uid} in guild {guild.name}")
+                    log.warning(
+                        "Failed to ban user with ID {} in guild {}".format(uid, guild.name)
+                    )
 
     async def remove_gbs_guild(self, gid):
         guild = self.bot.get_guild(int(gid))
