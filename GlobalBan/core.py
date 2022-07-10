@@ -187,7 +187,7 @@ class GlobalBan(commands.Cog):
         for page in pagify(o):
             await ctx.send(box(page))
 
-    async def update_gbs(self):
+    async def update_gbs(self, ctx):
         for gid in await self.config.opted():
             guild = self.bot.get_guild(int(gid))
 
@@ -211,7 +211,7 @@ class GlobalBan(commands.Cog):
                         try:
                             await guild.ban(
                                 discord.Object(id=uid),
-                                reason=f"Global banned with reason: {reason}",
+                                reason=f"Banned by {ctx.author}: {reason}",
                                 delete_message_days=0,
                             )
                         except discord.errors.NotFound:
