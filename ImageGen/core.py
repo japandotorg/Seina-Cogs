@@ -510,7 +510,7 @@ class ImageGen(commands.Cog):
             await ctx.send(embed=embed, file=file)
 
     @commands.command()
-    async def wasted(self, ctx, membere: discord.Member = None):
+    async def wasted(self, ctx, member: discord.Member = None):
         """
         Wasted in GTA style lmao!
         """
