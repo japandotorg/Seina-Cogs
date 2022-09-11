@@ -1,0 +1,20 @@
+{
+    "author": ["inthedark.org#0666"],
+    "install_msg": "Thanks for installing the chemistry cog",
+    "name": "Chemistry",
+    "disabled": false,
+    "short": "Chemistry stuff",
+    "description": "Calculate molecular mass directly from discord.",
+    "tags": [
+        "utility",
+        "chemistry",
+        "molarmass",
+        "chem"
+    ],
+    "required_cogs": {},
+    "requirements": [
+        "molmass==2021.6.18"
+    ],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not store End User Data."
+}
