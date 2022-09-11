@@ -27,8 +27,9 @@ from bs4 import BeautifulSoup # type: ignore
 from fake_useragent import UserAgent # type: ignore
 
 import discord
-from redbot.core.bot import Red # type: ignore
-from redbot.core import commands # type: ignore
+import requests
+from redbot.core import commands  # type: ignore
+from redbot.core.bot import Red  # type: ignore
 
 USER_AGENT = UserAgent()
 HEADERS = {
@@ -37,30 +38,30 @@ HEADERS = {
 
 FREE_GAMES = 'https://www.epicgames.com/store/ru/browse?sortBy=releaseDate&sortDir=DESC&priceTier=tierFree&count=1000'
 
+
 class EpicGames(commands.Cog):
     """
     A simple cog to get data from the free games promotion api.
     """
-    
+
     __author__ = ["inthedark.org#0666"]
     __version__ = "0.1.0"
-    
+
     async def red_delete_data_for_user(self, **kwargs):
         return
-    
+
     def __init__(self, bot: Red):
         self.bot: Red = bot
-        
+
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
         n = "\n" if "\n\n" not in pre_processed else ""
         text = [
             f"{pre_processed}{n}",
-            f"Cog Version: **{self.__version__}**"
-            f"Author: **{self.__author__}**"
+            f"Cog Version: **{self.__version__}**" f"Author: **{self.__author__}**",
         ]
         return "\n".join(text)
-    
+
     @commands.guild_only()
     @commands.command(name="epicgames", aliases=["freegames", "egs", "freegame"])
     async def _epic_games(self, ctx: commands.Context):
