@@ -76,9 +76,7 @@ class EpicGames(commands.Cog):
                     now = False
 
                 embed: discord.Embed = discord.Embed(
-                    title=("Free game right now!" if now else "Free game coming soon!")
-                    + ": "
-                    + game["title"],
+                    title=game["title"],
                     color=(discord.Color.green() if now else discord.Color.red()),
                 )
                 embed.add_field(
