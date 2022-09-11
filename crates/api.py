@@ -22,10 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import aiohttp
 from typing import Final, Tuple, Union
 
+import aiohttp
+
 BASE_URL: Final[str] = "https://crates.io/api/v1"
+
 
 class CratesIOAPI:
     def __init__(
@@ -33,20 +35,14 @@ class CratesIOAPI:
         session: aiohttp.ClientSession,
     ):
         self.session: aiohttp.ClientSession = session
-        
-    async def _get_crate_data(
-        self,
-        crate: str
-    ) -> Union[dict, None]:
+
+    async def _get_crate_data(self, crate: str) -> Union[dict, None]:
         response: aiohttp.ClientResponse = await self.session.get(BASE_URL + f"/crates/{crate}")
         if response.status == 200:
             return await response.json()
-        
+
     async def _keyfetch_or_none(
-        self,
-        endpoint: str,
-        key: Union[str, list],
-        list_index: Union[int, None] = None
+        self, endpoint: str, key: Union[str, list], list_index: Union[int, None] = None
     ) -> Union[Tuple[dict, list, str], Tuple[int, bool, None]]:
         response: aiohttp.ClientResponse = await self.session.get(BASE_URL + endpoint)
         if response.status == 200:
@@ -57,22 +53,23 @@ class CratesIOAPI:
                 else:
                     for k in key:
                         data = data[k]
-                
+
                 if list_index is not None and isinstance(data, list):
                     return data[list_index]
                 return data
             except KeyError:
                 return None
-            
+
     async def _get_crate_downloads(self, crate: str) -> Union[list, None]:
-        return await self._keyfetch_or_none(f"/crates/{crate}/downloads", ["meta", "extra_downloads"])
-    
+        return await self._keyfetch_or_none(
+            f"/crates/{crate}/downloads", ["meta", "extra_downloads"]
+        )
+
     async def _get_crate_owners(self, crate: str) -> Union[list, None]:
         return await self._keyfetch_or_none(f"/crates/{crate}owners", "users")
-    
+
     async def _get_crate_owner_users(self, crate: str) -> Union[list, None]:
         return await self._keyfetch_or_none(f"/crates/{crate}/owner_user", "users")
-    
+
     async def _get_crate_owner_teams(self, crate: str) -> Union[list, None]:
         return await self._keyfetch_or_none(f"/crates/{crate}owner_team", "teams")
-    
