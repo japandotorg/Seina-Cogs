@@ -22,10 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import NewType
+import json
+from pathlib import Path
 
-__all__: tuple = (
-    "CratesIOCrate"
-)
+from redbot.core.bot import Red # type: ignore
 
-CratesIOCrate = NewType('CratesIOProject', str)
+from .core import Crates
+
+with open(Path(__file__).parent / "info.json") as fp:
+    __red_end_user_data_statement__ = json.load(fp)["end_user_data_statement"]
+
+
+async def setup(bot: Red):
+    cog = Crates(bot)
+    bot.add_cog(cog)
