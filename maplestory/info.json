@@ -1,0 +1,16 @@
+{
+    "author": ["inthedark.org#0666"],
+    "install_msg": "Thanks for installing the maple story cog.",
+    "name": "MapleStory",
+    "disabled": false,
+    "short": "A simple maple story related cog.",
+    "description": "Get user info from the maple story API.",
+    "tags": [
+        "utility",
+        "maplestory"
+    ],
+    "required_cogs": {},
+    "requirements": [],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not store End User Data."
+}
