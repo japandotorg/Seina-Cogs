@@ -47,10 +47,9 @@ class Crates(commands.Cog):
     def __init__(
         self,
         bot: Red,
-        session: aiohttp.ClientSession,
     ):
         self.bot: Red = bot
-        self.session: aiohttp.ClientSession = session
+        self.session: aiohttp.ClientSession = aiohttp.ClientSession()
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""

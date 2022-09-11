@@ -25,7 +25,6 @@ SOFTWARE.
 import json
 from pathlib import Path
 
-import aiohttp
 from redbot.core.bot import Red  # type: ignore
 
 from .core import Crates
@@ -34,6 +33,6 @@ with open(Path(__file__).parent / "info.json") as fp:
     __red_end_user_data_statement__ = json.load(fp)["end_user_data_statement"]
 
 
-async def setup(bot: Red, session: aiohttp.ClientSession):
-    cog = Crates(bot, session)
+async def setup(bot: Red):
+    cog = Crates(bot)
     bot.add_cog(cog)
