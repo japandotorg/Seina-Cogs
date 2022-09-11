@@ -23,14 +23,14 @@ SOFTWARE.
 """
 
 import pytz
-from datetime import datetime, time, date
+from datetime import datetime
 
 import discord
-import requests
 from redbot.core import commands  # type: ignore
 from redbot.core.bot import Red  # type: ignore
 
 from .utils import _fetch_free_games # type: ignore
+
 
 class EpicGames(commands.Cog):
     """
