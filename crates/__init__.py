@@ -36,5 +36,5 @@ with open(Path(__file__).parent / "info.json") as fp:
 
 
 async def setup(bot: Red, session: aiohttp.ClientSession):
-    cog = Crates(bot)
+    cog = Crates(bot, session)
     bot.add_cog(cog)
