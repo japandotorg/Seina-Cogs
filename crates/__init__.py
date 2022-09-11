@@ -23,10 +23,9 @@ SOFTWARE.
 """
 
 import json
-import aiohttp
 from pathlib import Path
 
-
+import aiohttp
 from redbot.core.bot import Red  # type: ignore
 
 from .core import Crates
