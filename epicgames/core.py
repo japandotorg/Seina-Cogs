@@ -22,21 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import requests
-from bs4 import BeautifulSoup # type: ignore
-from fake_useragent import UserAgent # type: ignore
-
 import discord
 import requests
+from bs4 import BeautifulSoup  # type: ignore
+from fake_useragent import UserAgent  # type: ignore
 from redbot.core import commands  # type: ignore
 from redbot.core.bot import Red  # type: ignore
 
 USER_AGENT = UserAgent()
-HEADERS = {
-    "User-Agent": USER_AGENT.random
-}
+HEADERS = {"User-Agent": USER_AGENT.random}
 
-FREE_GAMES = 'https://www.epicgames.com/store/ru/browse?sortBy=releaseDate&sortDir=DESC&priceTier=tierFree&count=1000'
+FREE_GAMES = "https://www.epicgames.com/store/ru/browse?sortBy=releaseDate&sortDir=DESC&priceTier=tierFree&count=1000"
 
 
 class EpicGames(commands.Cog):
@@ -69,24 +65,22 @@ class EpicGames(commands.Cog):
         Finds free game info from epic games promotional api.
         """
         HEADERS["User-Agent"] = USER_AGENT.random
-        
+
         response = requests.get(FREE_GAMES, headers=HEADERS)
-        
+
         soup = BeautifulSoup(response.content, "html.parser")
         items = soup.find_all("li", class_="css-lrwy1y")
-        
+
         games = []
-        
+
         for _item in items:
             if not _item.find("div", class_="css-1h2ruwl").get_text(strip=True) in games:
                 games.append(_item.find("div", class_="css-1h2ruwl").get_text(strip=True))
-                
+
         games = "\n".join(games)
-        
+
         embed: discord.Embed = discord.Embed(
-            title="Free Epic Games",
-            description=games,
-            color=await ctx.embed_color()
+            title="Free Epic Games", description=games, color=await ctx.embed_color()
         )
-        
+
         await ctx.send(embed=embed)
