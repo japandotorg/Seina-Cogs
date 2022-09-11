@@ -23,19 +23,20 @@ SOFTWARE.
 """
 
 import discord
-from redbot.core.bot import Red # type: ignore
-from redbot.core import commands # type: ignore
+from redbot.core import commands  # type: ignore
+from redbot.core.bot import Red  # type: ignore
 
 from .utils import _fetch_user
+
 
 class MapleStory(commands.Cog):
     """
     Retrives information from the MapleStory API.
     """
-    
+
     __author__ = ["inthedark.org#0666"]
     __version__ = "0.1.0"
-    
+
     async def red_delete_data_for_user(self, **kwargs):
         """
         No data to delete.
@@ -53,7 +54,7 @@ class MapleStory(commands.Cog):
             f"Cog Version: **{self.__version__}**" f"Author: **{self.__author__}**",
         ]
         return "\n".join(text)
-    
+
     @commands.guild_only()
     @commands.command(name="maplestory", aliases=["mpinfo"])
     async def _maple_story(self, ctx: commands.Context, *args):
@@ -64,7 +65,7 @@ class MapleStory(commands.Cog):
         data = _fetch_user(username)
         overall_data = data[0]
         world_data = data[1]
-        
+
         info = (
             "```prolog\n"
             "**Overall Rank** : {}"
@@ -82,17 +83,11 @@ class MapleStory(commands.Cog):
             overall_data["Level"],
             overall_data["Exp"],
         )
-        
+
         embed: discord.Embed = discord.Embed(
-            title=overall_data["CharacterName"],
-            color=await ctx.embed_color()
+            title=overall_data["CharacterName"], color=await ctx.embed_color()
         )
-        embed.add_field(
-            name="Info:",
-            value=info
-        )
-        embed.set_image(
-            url=overall_data["CharacterImgUrl"]
-        )
-        
+        embed.add_field(name="Info:", value=info)
+        embed.set_image(url=overall_data["CharacterImgUrl"])
+
         await ctx.send(embed=embed)

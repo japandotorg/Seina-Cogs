@@ -24,18 +24,15 @@ SOFTWARE.
 
 import requests
 
+
 def _fetch_user(username: str):
     """
     Fetches the username from the maplestory api.
     """
     overall_url = f"https://maplestory.nexon.net/api/ranking?id=overall&id2=legendary&rebootIndex=0&character_name={username}&page_index=1"
     o_response = requests.get(overall_url).json()
-    
+
     world_url = f"https://maplestory.nexon.net/api/ranking?id=overall&id2=legendary&rebootIndex={(1 if (o_response[0]['WorldID'] == 45 ) else 2)}&character_name={username}&page_index=1"
     w_response = requests.get(world_url).json()
-    
-    return [
-        o_response[0],
-        w_response[0]
-    ]
-    
+
+    return [o_response[0], w_response[0]]
