@@ -22,22 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import requests
-from bs4 import BeautifulSoup # type: ignore
-from fake_useragent import UserAgent # type: ignore
+import pytz
+from datetime import datetime, time, date
 
 import discord
 import requests
 from redbot.core import commands  # type: ignore
 from redbot.core.bot import Red  # type: ignore
 
-USER_AGENT = UserAgent()
-HEADERS = {
-    "User-Agent": USER_AGENT.random
-}
-
-FREE_GAMES = 'https://www.epicgames.com/store/ru/browse?sortBy=releaseDate&sortDir=DESC&priceTier=tierFree&count=1000'
-
+from .utils import _fetch_free_games # type: ignore
 
 class EpicGames(commands.Cog):
     """
@@ -68,25 +61,48 @@ class EpicGames(commands.Cog):
         """
         Finds free game info from epic games promotional api.
         """
-        HEADERS["User-Agent"] = USER_AGENT.random
+        data = _fetch_free_games()
         
-        response = requests.get(FREE_GAMES, headers=HEADERS)
-        
-        soup = BeautifulSoup(response.content, "html.parser")
-        items = soup.find_all("li", class_="css-lrwy1y")
-        
-        games = []
-        
-        for _item in items:
-            if not _item.find("div", class_="css-1h2ruwl").get_text(strip=True) in games:
-                games.append(_item.find("div", class_="css-1h2ruwl").get_text(strip=True))
+        for game in data['data']['Catalog']['searchStore']['elements']:
+            if game['price']['totalPrice']['originalPrice'] != 0 and game['promotions'] is not None:
+                now = False
                 
-        games = "\n".join(games)
-        
-        embed: discord.Embed = discord.Embed(
-            title="Free Epic Games",
-            description=games,
-            color=await ctx.embed_color()
-        )
-        
-        await ctx.send(embed=embed)
+                if (len(game['promotions']['promotionalOffers']) > 0):
+                    now = True
+                elif (len(game['promotions']['upcomingPromotionalOffers']) > 0):
+                    now = False
+                    
+                embed: discord.Embed = discord.Embed(
+                    title=("Free game right now!" if now else "Free game coming soon!") + ": " + game['title'],
+                    color=(discord.Color.green() if now else discord.Color.red())
+                )
+                embed.add_field(
+                    name="Publisher:",
+                    value=game['seller']['name'],
+                    inline=False,
+                )
+                embed.add_field(
+                    name="Original Price:",
+                    value=game['price']['totalPrice']['fmtPrice']['originalPrice'],
+                    inline=False,
+                )
+                
+                game_data = datetime.strptime(
+                    game['promotions'][('promotionalOffers' if now else 'upcomingPromotionalOffers')][0]['promotionalOffers'][0][('endDate' if now else 'startDate')], "%Y-%m-%dT%H:%M:%S.%fZ"
+                ).replace(tzinfo=pytz.utc)
+                
+                embed.add_field(
+                    name=("Ends:" if now else "Starts:"),
+                    value=game_data.astimezone(
+                        pytz.timezone("US/Eastern")
+                    ).strftime(
+                        "%Y-%m-%d %H:%M"
+                    ) + " EST"
+                )
+                
+                for image in game['KeyImages']:
+                    if image['type'] == 'OfferImageWide':
+                        url = image['url']
+                        embed.set_image(url=url)
+                        
+                await ctx.send(embed=embed)
