@@ -22,14 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import pytz
 from datetime import datetime
 
 import discord
+import pytz
 from redbot.core import commands  # type: ignore
 from redbot.core.bot import Red  # type: ignore
 
-from .utils import _fetch_free_games # type: ignore
+from .utils import _fetch_free_games  # type: ignore
 
 
 class EpicGames(commands.Cog):
@@ -62,47 +62,55 @@ class EpicGames(commands.Cog):
         Finds free game info from epic games promotional api.
         """
         data = _fetch_free_games()
-        
-        for game in data['data']['Catalog']['searchStore']['elements']:
-            if game['price']['totalPrice']['originalPrice'] != 0 and game['promotions'] is not None:
+
+        for game in data["data"]["Catalog"]["searchStore"]["elements"]:
+            if (
+                game["price"]["totalPrice"]["originalPrice"] != 0
+                and game["promotions"] is not None
+            ):
                 now = False
-                
-                if (len(game['promotions']['promotionalOffers']) > 0):
+
+                if len(game["promotions"]["promotionalOffers"]) > 0:
                     now = True
-                elif (len(game['promotions']['upcomingPromotionalOffers']) > 0):
+                elif len(game["promotions"]["upcomingPromotionalOffers"]) > 0:
                     now = False
-                    
+
                 embed: discord.Embed = discord.Embed(
-                    title=("Free game right now!" if now else "Free game coming soon!") + ": " + game['title'],
-                    color=(discord.Color.green() if now else discord.Color.red())
+                    title=("Free game right now!" if now else "Free game coming soon!")
+                    + ": "
+                    + game["title"],
+                    color=(discord.Color.green() if now else discord.Color.red()),
                 )
                 embed.add_field(
                     name="Publisher:",
-                    value=game['seller']['name'],
+                    value=game["seller"]["name"],
                     inline=False,
                 )
                 embed.add_field(
                     name="Original Price:",
-                    value=game['price']['totalPrice']['fmtPrice']['originalPrice'],
+                    value=game["price"]["totalPrice"]["fmtPrice"]["originalPrice"],
                     inline=False,
                 )
-                
+
                 game_data = datetime.strptime(
-                    game['promotions'][('promotionalOffers' if now else 'upcomingPromotionalOffers')][0]['promotionalOffers'][0][('endDate' if now else 'startDate')], "%Y-%m-%dT%H:%M:%S.%fZ"
+                    game["promotions"][
+                        ("promotionalOffers" if now else "upcomingPromotionalOffers")
+                    ][0]["promotionalOffers"][0][("endDate" if now else "startDate")],
+                    "%Y-%m-%dT%H:%M:%S.%fZ",
                 ).replace(tzinfo=pytz.utc)
-                
+
                 embed.add_field(
                     name=("Ends:" if now else "Starts:"),
-                    value=game_data.astimezone(
-                        pytz.timezone("US/Eastern")
-                    ).strftime(
+                    value=game_data.astimezone(pytz.timezone("US/Eastern")).strftime(
                         "%Y-%m-%d %H:%M"
-                    ) + " EST"
+                    )
+                    + " EST",
                 )
                 
                 for image in game['keyImages']:
                     if image['type'] == 'OfferImageWide':
                         url = image['url']
+
                         embed.set_image(url=url)
-                        
+
                 await ctx.send(embed=embed)
