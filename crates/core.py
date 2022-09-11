@@ -29,7 +29,7 @@ from redbot.core.bot import Red  # type: ignore
 from redbot.core import commands # type: ignore
 
 from .api import *
-from .typehints import *
+from .typehints import CratesIOCrate
 
 class Crates(commands.Cog):
     """
