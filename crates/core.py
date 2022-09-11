@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import aiohttp
 from typing import Optional
 
 import discord
@@ -43,8 +44,13 @@ class Crates(commands.Cog):
     async def red_delete_data_for_user(self, **kwargs):
         return
 
-    def __init__(self, bot: Red):
+    def __init__(
+        self, 
+        bot: Red,
+        session: aiohttp.ClientSession,
+    ):
         self.bot: Red = bot
+        self.session: aiohttp.ClientSession = session
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
