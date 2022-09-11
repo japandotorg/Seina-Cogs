@@ -106,10 +106,10 @@ class EpicGames(commands.Cog):
                     )
                     + " EST",
                 )
-                
-                for image in game['keyImages']:
-                    if image['type'] == 'OfferImageWide':
-                        url = image['url']
+
+                for image in game["keyImages"]:
+                    if image["type"] == "OfferImageWide":
+                        url = image["url"]
 
                         embed.set_image(url=url)
 
