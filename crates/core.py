@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import aiohttp
 from typing import Optional
 
+import aiohttp
 import discord
 from redbot.core import commands  # type: ignore
 from redbot.core.bot import Red  # type: ignore
@@ -45,7 +45,7 @@ class Crates(commands.Cog):
         return
 
     def __init__(
-        self, 
+        self,
         bot: Red,
         session: aiohttp.ClientSession,
     ):
