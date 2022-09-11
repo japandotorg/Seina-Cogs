@@ -69,7 +69,7 @@ class Crates(commands.Cog):
     @_crates.command(name="info", aliases=["i"])
     @commands.cooldown(5, 30, commands.BucketType.user)
     async def _into(self, ctx: commands.Context, crate: CratesIOCrate) -> None:
-        data: Optional[dict] = await CratesIOAPI._get_crate_data(crate.lower())
+        data: Optional[dict] = await CratesIOAPI._get_crate_data(crate=crate.lower())
         if data:
             owners: list = await CratesIOAPI._get_crate_owners(crate=crate.lower())
             crate_url: str = f"https://crates.io/crates/{data['crate']['name']}"
