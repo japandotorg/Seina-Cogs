@@ -71,7 +71,7 @@ class Crates(commands.Cog):
     async def _into(self, ctx: commands.Context, crate: CratesIOCrate) -> None:
         data: Optional[dict] = await CratesIOAPI._get_crate_data(crate.lower())
         if data:
-            owners: list = await CratesIOAPI._get_crate_owners(crate.lower())
+            owners: list = await CratesIOAPI._get_crate_owners(crate=crate.lower())
             crate_url: str = f"https://crates.io/crates/{data['crate']['name']}"
             embed: discord.Embed = discord.Embed(
                 color=await ctx.embed_color(),
