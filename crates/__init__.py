@@ -25,7 +25,7 @@ SOFTWARE.
 import json
 from pathlib import Path
 
-from redbot.core.bot import Red # type: ignore
+from redbot.core.bot import Red  # type: ignore
 
 from .core import Crates
 

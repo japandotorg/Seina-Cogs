@@ -24,8 +24,6 @@ SOFTWARE.
 
 from typing import NewType
 
-__all__: tuple = (
-    "CratesIOCrate"
-)
+__all__: tuple = "CratesIOCrate"
 
-CratesIOCrate = NewType('CratesIOProject', str)
+CratesIOCrate = NewType("CratesIOProject", str)
