@@ -67,12 +67,12 @@ class MapleStory(commands.Cog):
         
         info = (
             "```prolog\n"
-            "**Overall Rank** : {}"
-            "**World**        : {}"
-            "**World Rank**   : {}"
-            "**Job**          : {}"
-            "**Level**        : {}"
-            "**Exp**          : {}"
+            "Overall Rank : {}\n"
+            "World        : {}\n"
+            "World Rank   : {}\n"
+            "Job          : {}\n"
+            "Level        : {}\n"
+            "Exp          : {}\n"
             "\n```"
         ).format(
             overall_data["Rank"],
