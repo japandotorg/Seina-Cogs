@@ -38,6 +38,8 @@ from redbot.core.i18n import Translator, cog_i18n  # type: ignore
 from redbot.core.utils.chat_formatting import box  # type: ignore
 from tabulate import tabulate
 
+from .ansi import EightBitANSI
+
 BaseCog = getattr(commands, "Cog", object)
 
 log: logging.Logger = logging.getLogger("red.seinacogs.tools")
@@ -235,8 +237,8 @@ class SeinaTools(BaseCog):
         table = box(
             tabulate(
                 (
-                    ("Guilds", len(self.bot.guilds)),
-                    ("Channels", len(tuple(self.bot.get_all_channels()))),
+                    (EightBitANSI.paint_red("Guild"), EightBitANSI.paint_white(len(self.bot.guilds))),
+                    (EightBitANSI.paint_red("Channels"), len(tuple(self.bot.get_all_channels()))),
                     ("Users", sum(len(i.members) for i in self.bot.guilds)),
                     ("DMs", len(self.bot.private_channels)),
                     ("Latency", str(round(self.bot.latency * 1000, 2)) + "ms"),
