@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import io
 import logging
-from typing import Dict, Literal, Union, Optional
+from typing import Dict, Literal, Optional, Union
 
 import aiohttp
 import discord
