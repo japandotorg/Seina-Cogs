@@ -308,7 +308,7 @@ class SeinaTools(BaseCog):
         token = keys.get("api_key")
 
         if not token:
-            await ctx.send("You have no provided an api key yet.")
+            await ctx.send("You have not provided an api key yet.")
         else:
             async with self.session.get(url) as response:
                 data = io.BytesIO(await response.read())
