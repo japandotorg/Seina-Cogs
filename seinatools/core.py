@@ -227,7 +227,7 @@ class SeinaTools(BaseCog):
                 ),
                 tablefmt="fancy_grid",
             ),
-            lang="ml",
+            lang="prolog",
         )
 
         embedded = await self.config.embed()
