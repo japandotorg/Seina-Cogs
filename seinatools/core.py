@@ -109,34 +109,34 @@ class SeinaTools(BaseCog):
         """
         guild = guild or ctx.guild
         channel_member = channel_member or "members"
-        
+
         URL = f"https://discord.com/api/guilds/{guild.id if isinstance(guild, discord.Guild) else guild}/widget.json"
         data = await self.session.get(URL)
-        
+
         json: Dict[str, Any] = await data.json()
-        
+
         if "message" in json:
             return await ctx.reply(f"{ctx.author.mention} can not spy that server")
-        
+
         name = json["name"]
         id_ = json["id"]
         instant_invite = json["instant_invite"]
         presence_count = json["presence_count"]
-        
+
         embed: discord.Embed = discord.Embed(
             title=name,
             color=await ctx.embed_color(),
             timestamp=ctx.message.created_at,
         )
-        
+
         if instant_invite:
             embed.url = instant_invite
-            
+
         embed.set_footer(text=f"{id_}")
         embed.description = f"**Presence Count:** {presence_count}"
-        
+
         embed_list = [embed]
-        
+
         for channel in json["channels"]:
             embed_chan = discord.Embed(
                 title=channel["name"],
@@ -146,9 +146,9 @@ class SeinaTools(BaseCog):
             ).set_footer(text=channel["id"])
 
             embed_list.append(embed_chan)
-            
+
         embed_list_member = [embed]
-        
+
         for member in json["members"]:
             id_ = member["id"]
             username = member["username"]
@@ -172,7 +172,7 @@ class SeinaTools(BaseCog):
                 .set_thumbnail(url=avatar_url)
             )
             em.description = f"**Status:** {status.upper()}\n**In VC?** {bool(vc)} ({f'<#{str(vc)}>' if vc else None})"
-            
+
         if vc:
             em.add_field(name="VC Channel ID", value=str(vc), inline=True)
             em.add_field(name="Suppress?", value=suppress, inline=True)
@@ -180,9 +180,9 @@ class SeinaTools(BaseCog):
             em.add_field(name="Self Deaf?", value=self_deaf, inline=True)
             em.add_field(name="Deaf?", value=deaf, inline=True)
             em.add_field(name="Mute?", value=mute, inline=True)
-            
+
         embed_list_member.append(em)
-        
+
         if channel_member.lower() in ("channels",):
             paginator = Paginator(pages=embed_list)
             await paginator.start(ctx=ctx)
