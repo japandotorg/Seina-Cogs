@@ -12,5 +12,6 @@
     "required_cogs": {},
     "requirements": [],
     "type": "COG",
-    "end_user_data_statement": "This cog does not store End User Data."
+    "end_user_data_statement": "This cog does not store End User Data.",
+    "hidden": true
 }
