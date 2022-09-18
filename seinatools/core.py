@@ -95,6 +95,22 @@ class SeinaTools(BaseCog):
         else:
             cause = error
             log.exception(f"SeinaTools :: Errored :: \n{cause}\n")
+            
+    async def initialize(self):
+        await self.bot.wait_until_red_ready()
+        keys = await self.bot.get_shared_api_tokens("removebg")
+        token = keys.get("api_key")
+        if token:
+            pass
+        else:
+            if not await config.sent_message():
+                await self.bot.send_to_owners(
+                    "Thanks for installing my utility cog."
+                    "This cog has a removebackground command which uses "
+                    "an api key from the <https://www.remove.bg/> website. "
+                    "You can easily get the api key from <https://www.remove.bg/api#remove-background>."
+                )
+                await self.config.sent_message.set(True)
 
     @commands.is_owner()
     @commands.command(name="spy")
@@ -244,7 +260,7 @@ class SeinaTools(BaseCog):
             return await ctx.send(table)
 
     @commands.is_owner()
-    @commands.command(name="screenshot", aliases=["ss"])
+    @commands.command(name="screenshot", aliases=["ss"]) # https://discord.com/channels/133049272517001216/133251234164375552/941197661426565150
     async def _screenshot(self, ctx: commands.Context, url: str, wait: Optional[int] = None):
         """
         Screenshots a given url directly inside discord.
