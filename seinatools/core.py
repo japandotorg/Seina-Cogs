@@ -35,7 +35,7 @@ from pygicord import Paginator
 from redbot.core import Config, commands  # type: ignore
 from redbot.core.bot import Red  # type: ignore
 from redbot.core.i18n import Translator, cog_i18n  # type: ignore
-from redbot.core.utils.chat_formatting import box # type: ignore
+from redbot.core.utils.chat_formatting import box  # type: ignore
 from tabulate import tabulate
 
 BaseCog = getattr(commands, "Cog", object)
@@ -227,7 +227,7 @@ class SeinaTools(BaseCog):
                 ),
                 tablefmt="fancy_grid",
             ),
-            lang="ml"
+            lang="ml",
         )
 
         embedded = await self.config.embed()
