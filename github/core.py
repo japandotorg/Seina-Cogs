@@ -252,7 +252,7 @@ class Github(commands.Cog):
         if not links:
             return
         
-        resp = self.format_embed(links)
+        resp = await self.format_embed(links)
         await message.channel.send(embed=resp)
         
     @commands.group(name="githubset", aliases=["ghset"])
