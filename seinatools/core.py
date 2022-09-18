@@ -100,9 +100,7 @@ class SeinaTools(BaseCog):
         await self.bot.wait_until_red_ready()
         keys = await self.bot.get_shared_api_tokens("removebg")
         token = keys.get("api_key")
-        if token:
-            pass
-        else:
+        if not token:
             if not await config.sent_message():
                 await self.bot.send_to_owners(
                     "Thanks for installing my utility cog."
@@ -112,7 +110,9 @@ class SeinaTools(BaseCog):
                     "This is how you can add the api key - `[p]set api removebg api_key,key`"
                 )
                 await self.config.sent_message.set(True)
-
+        else:
+            pass
+                
     @commands.is_owner()
     @commands.command(name="spy")
     async def _spy(
