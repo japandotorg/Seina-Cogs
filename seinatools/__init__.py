@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 import json
+import asyncio
 from pathlib import Path
 
 from redbot.core.bot import Red  # type: ignore
@@ -36,3 +37,4 @@ with open(Path(__file__).parent / "info.json") as fp:
 def setup(bot: Red):
     cog = SeinaTools(bot)
     bot.add_cog(cog)
+    asyncio.create_task(cog.initialize())
