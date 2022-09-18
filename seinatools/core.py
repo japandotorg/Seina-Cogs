@@ -35,6 +35,7 @@ from pygicord import Paginator
 from redbot.core import Config, commands  # type: ignore
 from redbot.core.bot import Red  # type: ignore
 from redbot.core.i18n import Translator, cog_i18n  # type: ignore
+from redbot.core.utils.chat_formatting import box # type: ignore
 from tabulate import tabulate
 
 BaseCog = getattr(commands, "Cog", object)
@@ -213,17 +214,20 @@ class SeinaTools(BaseCog):
         """
         Yet another botstat command for [botname].
         """
-        table = tabulate(
-            (
-                ("Guilds", len(self.bot.guilds)),
-                ("Channels", len(tuple(self.bot.get_all_channels()))),
-                ("Users", sum(len(i.members) for i in self.bot.guilds)),
-                ("DMs", len(self.bot.private_channels)),
-                ("Latency", str(round(self.bot.latency * 1000, 2)) + "ms"),
-                ("Cogs", len(self.bot.cogs)),
-                ("Commands", len(tuple(self.bot.walk_commands()))),
+        table = box(
+            tabulate(
+                (
+                    ("Guilds", len(self.bot.guilds)),
+                    ("Channels", len(tuple(self.bot.get_all_channels()))),
+                    ("Users", sum(len(i.members) for i in self.bot.guilds)),
+                    ("DMs", len(self.bot.private_channels)),
+                    ("Latency", str(round(self.bot.latency * 1000, 2)) + "ms"),
+                    ("Cogs", len(self.bot.cogs)),
+                    ("Commands", len(tuple(self.bot.walk_commands()))),
+                ),
+                tablefmt="fancy_grid",
             ),
-            tablefmt="fancy_grid",
+            lang="ml"
         )
 
         embedded = await self.config.embed()
