@@ -195,7 +195,7 @@ class SeinaTools(BaseCog):
             return
         
     @commands.is_owner()
-    @commands.command(name="botstatset")
+    @commands.group(name="botstatset")
     async def _botstatset(self, ctx: commands.Context):
         """
         Settings for the botstat command.
