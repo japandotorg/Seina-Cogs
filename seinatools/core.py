@@ -241,12 +241,27 @@ class SeinaTools(BaseCog):
                         EightBitANSI.paint_red("Guild"),
                         EightBitANSI.paint_white(len(self.bot.guilds)),
                     ),
-                    (EightBitANSI.paint_red("Channels"), EightBitANSI.paint_white(len(tuple(self.bot.get_all_channels())))),
-                    (EightBitANSI.paint_red("Users"), EightBitANSI.paint_white(sum(len(i.members) for i in self.bot.guilds))),
-                    (EightBitANSI.paint_red("DMs"), EightBitANSI.paint_white(len(self.bot.private_channels))),
-                    (EightBitANSI.paint_red("Latency"), EightBitANSI.paint_white(str(round(self.bot.latency * 1000, 2)) + "ms")),
+                    (
+                        EightBitANSI.paint_red("Channels"),
+                        EightBitANSI.paint_white(len(tuple(self.bot.get_all_channels()))),
+                    ),
+                    (
+                        EightBitANSI.paint_red("Users"),
+                        EightBitANSI.paint_white(sum(len(i.members) for i in self.bot.guilds)),
+                    ),
+                    (
+                        EightBitANSI.paint_red("DMs"),
+                        EightBitANSI.paint_white(len(self.bot.private_channels)),
+                    ),
+                    (
+                        EightBitANSI.paint_red("Latency"),
+                        EightBitANSI.paint_white(str(round(self.bot.latency * 1000, 2)) + "ms"),
+                    ),
                     (EightBitANSI.paint_red("Cogs"), EightBitANSI.paint_white(len(self.bot.cogs))),
-                    (EightBitANSI.paint_red("Commands"), EightBitANSI.paint_white(len(tuple(self.bot.walk_commands())))),
+                    (
+                        EightBitANSI.paint_red("Commands"),
+                        EightBitANSI.paint_white(len(tuple(self.bot.walk_commands()))),
+                    ),
                 ),
                 tablefmt="fancy_grid",
             ),
