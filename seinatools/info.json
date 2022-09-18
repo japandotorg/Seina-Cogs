@@ -1,0 +1,20 @@
+{
+    "author": ["inthedark.org#0666"],
+    "install_msg": "Thanks for installing the tools cog.",
+    "name": "SeinaTools",
+    "disabled": false,
+    "short": "A simple tools cog for the bot owners.",
+    "description": "Some cool tools for the bot owners.",
+    "tags": [
+        "utility",
+        "tools"
+    ],
+    "required_cogs": {},
+    "requirements": [
+        "tabulate",
+        "pygicord==1.1.0",
+        "playwright==1.22.0"
+    ],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not store End User Data."
+}
