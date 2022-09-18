@@ -63,7 +63,7 @@ class SeinaTools(BaseCog):
 
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
 
-        default_global = {"embed": False, "send_message": False}
+        default_global = {"embed": False, "notice": False}
         self.config.register_global(**default_global)
 
     async def red_get_data_for_user(self, *, user_id: int):
@@ -101,7 +101,7 @@ class SeinaTools(BaseCog):
         keys = await self.bot.get_shared_api_tokens("removebg")
         token = keys.get("api_key")
         if not token:
-            if not await config.sent_message():
+            if not await self.config.notice():
                 await self.bot.send_to_owners(
                     "Thanks for installing my utility cog."
                     "This cog has a removebackground command which uses "
@@ -109,7 +109,7 @@ class SeinaTools(BaseCog):
                     "You can easily get the api key from <https://www.remove.bg/api#remove-background>.\n"
                     "This is how you can add the api key - `[p]set api removebg api_key,key`"
                 )
-                await self.config.sent_message.set(True)
+                await self.config.notice.set(True)
         else:
             pass
                 
