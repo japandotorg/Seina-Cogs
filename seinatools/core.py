@@ -83,7 +83,7 @@ class SeinaTools(BaseCog):
         text = [
             f"{pre_processed}{n}",
             f"Author: **{self.__author__}**",
-            f"Cog Version: **{self.__cog_version__}**",
+            f"Cog Version: **{self.__version__}**",
         ]
         return "\n".join(text)
 
