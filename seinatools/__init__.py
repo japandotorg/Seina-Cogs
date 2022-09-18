@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import json
 import asyncio
+import json
 from pathlib import Path
 
 from redbot.core.bot import Red  # type: ignore
