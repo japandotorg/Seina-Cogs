@@ -237,7 +237,10 @@ class SeinaTools(BaseCog):
         table = box(
             tabulate(
                 (
-                    (EightBitANSI.paint_red("Guild"), EightBitANSI.paint_white(len(self.bot.guilds))),
+                    (
+                        EightBitANSI.paint_red("Guild"),
+                        EightBitANSI.paint_white(len(self.bot.guilds)),
+                    ),
                     (EightBitANSI.paint_red("Channels"), len(tuple(self.bot.get_all_channels()))),
                     ("Users", sum(len(i.members) for i in self.bot.guilds)),
                     ("DMs", len(self.bot.private_channels)),
