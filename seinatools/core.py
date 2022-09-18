@@ -297,7 +297,7 @@ class SeinaTools(BaseCog):
                 file_.close()
 
         await ctx.send(file=file)
-        
+
     @commands.is_owner()
     @commands.command(name="removebackground", aliases=["removebg", "rembg"])
     async def _remove_background(self, ctx: commands.Context, *, url: str):
