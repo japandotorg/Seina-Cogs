@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import io
 import logging
-from typing import Dict, Literal, Optional, Union
+from typing import Dict, Literal, Optional, Union, Any
 
 import aiohttp
 import discord
@@ -63,7 +63,7 @@ class SeinaTools(BaseCog):
 
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
 
-        default_global = {"embed": False}
+        default_global = {"embed": False, "send_message": False}
         self.config.register_global(**default_global)
 
     async def red_get_data_for_user(self, *, user_id: int):
