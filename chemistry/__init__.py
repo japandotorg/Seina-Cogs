@@ -24,7 +24,7 @@ SOFTWARE.
 import json
 from pathlib import Path
 
-from redbot.core.bot import Red # type: ignore
+from redbot.core.bot import Red  # type: ignore
 
 from .core import Chemistry
 
@@ -35,4 +35,3 @@ with open(Path(__file__).parent / "info.json") as fp:
 def setup(bot: Red):
     cog = Chemistry(bot)
     bot.add_cog(cog)
-    
