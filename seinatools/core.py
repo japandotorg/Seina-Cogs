@@ -108,7 +108,8 @@ class SeinaTools(BaseCog):
                     "Thanks for installing my utility cog."
                     "This cog has a removebackground command which uses "
                     "an api key from the <https://www.remove.bg/> website. "
-                    "You can easily get the api key from <https://www.remove.bg/api#remove-background>."
+                    "You can easily get the api key from <https://www.remove.bg/api#remove-background>.\n"
+                    "This is how you can add the api key - `[p]set api removebg api_key,key`"
                 )
                 await self.config.sent_message.set(True)
 
@@ -294,3 +295,29 @@ class SeinaTools(BaseCog):
                 file_.close()
 
         await ctx.send(file=file)
+        
+    @commands.is_owner()
+    @commands.command(name="removebackground", aliases=["removebg", "rembg"])
+    async def _remove_background(self, ctx: commands.Context, *, url: str):
+        """
+        Remove background from image url.
+        """
+        keys = await self.bot.get_shared_api_tokens("removebg")
+        token = keys.get("api_key")
+        
+        async with self.session.get(url) as response:
+            data = io.BytesIO(await response.read())
+            
+        resp = await self.session.post(
+            "https://api.remove.bg/v1.0/removebg",
+            data = {
+                "size": "auto",
+                "image_file": data
+            },
+            headers={
+                "X-Api-Key": f"{token}"
+            }
+        )
+        
+        img = io.BytesIO(await resp.read())
+        await ctx.send(file=discord.File(img, "nobg.png"))
