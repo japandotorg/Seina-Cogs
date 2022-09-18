@@ -110,8 +110,9 @@ class SeinaTools(BaseCog):
                     "This is how you can add the api key - `[p]set api removebg api_key,key`"
                 )
                 await self.config.notice.set(True)
-        else:
-            pass
+
+    def cog_unload(self):
+        self.bot.loop.create_task(self.session.close())
 
     @commands.is_owner()
     @commands.command(name="spy")
