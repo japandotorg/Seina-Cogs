@@ -112,7 +112,7 @@ class SeinaTools(BaseCog):
                 await self.config.sent_message.set(True)
         else:
             pass
-                
+
     @commands.is_owner()
     @commands.command(name="spy")
     async def _spy(
@@ -306,23 +306,18 @@ class SeinaTools(BaseCog):
         """
         keys = await self.bot.get_shared_api_tokens("removebg")
         token = keys.get("api_key")
-        
+
         if not token:
             await ctx.send("You have no provided an api key yet.")
         else:
             async with self.session.get(url) as response:
                 data = io.BytesIO(await response.read())
-                
+
             resp = await self.session.post(
                 "https://api.remove.bg/v1.0/removebg",
-                data = {
-                    "size": "auto",
-                    "image_file": data
-                },
-                headers={
-                    "X-Api-Key": f"{token}"
-                }
+                data={"size": "auto", "image_file": data},
+                headers={"X-Api-Key": f"{token}"},
             )
-            
+
             img = io.BytesIO(await resp.read())
             await ctx.send(file=discord.File(img, "nobg.png"))
