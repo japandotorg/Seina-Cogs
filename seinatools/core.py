@@ -165,7 +165,7 @@ class SeinaTools(BaseCog):
             em = (
                 discord.Embed(
                     title=f"Username: {username}#{discriminator}",
-                    color=ctx.author.color,
+                    color=await ctx.embed_color(),
                     timestamp=ctx.message.created_at,
                 )
                 .set_footer(text=f"{id_}")
