@@ -1,4 +1,4 @@
-# https://github.com/Drapersniper/PyLav/blob/master/pylav/utils/theme.py
+# Shamelessly stolen from https://github.com/Drapersniper/PyLav/blob/master/pylav/utils/theme.py
 
 from __future__ import annotations
 
