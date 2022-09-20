@@ -239,7 +239,7 @@ class Github(commands.Cog):
 
         if not links:
             return
-        
+
         resp = await self.format_embed(links)
         await message.channel.send(embed=resp)
 
