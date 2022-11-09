@@ -114,6 +114,7 @@ class RainbowRole(BaseCog):  # type: ignore
             if rainbow_role:
                 try:
                     await rainbow_role.edit(
+                        reason="Automatic rainbow role color change.",
                         color=discord.Colour.from_rgb(
                             COLORS[self.color][0],
                             COLORS[self.color][1],
