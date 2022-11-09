@@ -371,7 +371,7 @@ class SeinaTools(BaseCog):  # type: ignore
             else:
                 await ctx.send(
                     "Already running a GIT session in this channel. Resume the GIT with `{}git resume.`".format(
-                        ctx.prefix
+                        ctx.clean_prefix
                     )
                 )
             return
@@ -380,7 +380,7 @@ class SeinaTools(BaseCog):  # type: ignore
 
         await ctx.send(
             "Enter git commands to execute or equivalent. `exit()` or `quit` to exit. `{}git pause` to pause.".format(
-                ctx.prefix
+                ctx.clean_prefix
             )
         )
 
