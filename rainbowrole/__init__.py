@@ -36,4 +36,3 @@ with open(Path(__file__).parent / "info.json") as fp:
 def setup(bot: Red):
     cog = RainbowRole(bot)
     bot.add_cog(cog)
-    
