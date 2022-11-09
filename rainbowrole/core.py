@@ -115,7 +115,7 @@ class RainbowRole(BaseCog):  # type: ignore
                             COLORS[self.color][0],
                             COLORS[self.color][1],
                             COLORS[self.color][2],
-                        )
+                        ),
                     )
                 except:
                     self.log.info("Oops! Something went wrong.", exc_info=True)
