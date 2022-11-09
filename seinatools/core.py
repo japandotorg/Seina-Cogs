@@ -29,6 +29,7 @@ import logging
 import shlex
 import subprocess
 import sys
+import asyncio
 from typing import Any, Dict, Literal, Optional, Union
 
 import aiohttp
@@ -407,7 +408,10 @@ class SeinaTools(BaseCog):  # type: ignore
                 stdout, stderr = process.stdout, process.stderr
             else:
                 process = await asyncio.create_subprocess_exec(
-                    "git", *shlex.split(resp[4:]), stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                    "git", 
+                    *shlex.split(response[4:]), 
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.PIPE
                 )
                 stdout, stderr = await process.communicate()
 
