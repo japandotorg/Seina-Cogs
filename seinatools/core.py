@@ -30,8 +30,8 @@ from typing import Any, Dict, Literal, Optional, Union
 
 import aiohttp
 import discord
-from playwright.async_api import async_playwright # type: ignore
-from pygicord import Paginator # type: ignore
+from playwright.async_api import async_playwright  # type: ignore
+from pygicord import Paginator  # type: ignore
 from redbot.core import Config, commands  # type: ignore
 from redbot.core.bot import Red  # type: ignore
 from redbot.core.i18n import Translator, cog_i18n  # type: ignore
