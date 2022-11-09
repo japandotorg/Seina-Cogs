@@ -175,12 +175,12 @@ class Github(commands.Cog):
                 description_list.append(f"[{result.return_code}] {result.message}")
 
         ctx = self.bot.get_context(message)
-        
+
         resp: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
             description="\n".join(description_list),
         )
-            
+
         resp.set_author(name="Github")
         return resp
 
