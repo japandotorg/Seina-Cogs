@@ -26,6 +26,9 @@ from __future__ import annotations
 
 import io
 import logging
+import shlex
+import subprocess
+import sys
 from typing import Any, Dict, Literal, Optional, Union
 
 import aiohttp
@@ -36,6 +39,7 @@ from redbot.core import Config, commands  # type: ignore
 from redbot.core.bot import Red  # type: ignore
 from redbot.core.i18n import Translator, cog_i18n  # type: ignore
 from redbot.core.utils.chat_formatting import box  # type: ignore
+from redbot.core.utils.predicates import MessagePredicate  # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
@@ -67,6 +71,8 @@ class SeinaTools(BaseCog):  # type: ignore
 
         default_global = {"embed": False, "notice": False}
         self.config.register_global(**default_global)
+
+        self.sessions = {}
 
     async def red_get_data_for_user(self, *, user_id: int):
         """
@@ -342,3 +348,97 @@ class SeinaTools(BaseCog):  # type: ignore
 
             img = io.BytesIO(await resp.read())
             await ctx.send(file=discord.File(img, "nobg.png"))
+
+    @commands.group(
+        name="git",
+        aliases=["githubcli", "gitcli"],
+        invoke_without_command=True,
+        hidden=True,
+    )
+    @commands.is_owner()
+    async def _git_cli(
+        self,
+        ctx: commands.Context,
+    ):
+        """
+        Open an interactive GIT.
+        """
+        if ctx.channel.id in self.sessions:
+            if self.sessions[ctx.channel.id]:
+                await ctx.send(
+                    "Already running a GIT session in this channel. Exit it with `quit`."
+                )
+            else:
+                await ctx.send(
+                    "Already running a GIT session in this channel. Resume the GIT with `{}git resume.`".format(
+                        ctx.prefix
+                    )
+                )
+            return
+
+        self.sessions[ctx.channel.id] = True
+
+        await ctx.send(
+            "Enter git commands to execute or equivalent. `exit()` or `quit` to exit. `{}git pause` to pause.".format(
+                ctx.prefix
+            )
+        )
+
+        while True:
+            response = await self.bot.wait_for("message", check=MessagePredicate.regex(r"^`", ctx))
+
+            if not self.sessions[ctx.channel.id]:
+                continue
+
+            cleaned = response.content  # type: ignore
+
+            if cleaned in ("quit", "exit", "exit()"):
+                await ctx.send("Exiting.")
+                del self.sessions[ctx.channel.id]
+                break
+
+            if sys.platform == "win32":
+                process = subprocess.run(
+                    "git " + response[4:],
+                    shell=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                )
+                stdout, stderr = process.stdout, process.stderr
+            else:
+                process = await asyncio.create_subprocess_exec(
+                    "git", *shlex.split(resp[4:]), stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                )
+                stdout, stderr = await process.communicate()
+
+            stdout = stdout.decode()
+            stderr = stderr.decode()
+
+            response = ""
+
+            await ctx.send(
+                "```diff\n{}\n{}```".format(
+                    stdout.replace("```", "`\u200b`\u200b`"),
+                    stderr.replace("```", "`\u200b`\u200b`"),
+                )
+            )
+
+        await ctx.send("You have successfully left the GIT cli.")
+
+    @_git_cli.command(name="pause", aliases=["resume"])
+    async def _pause(self, ctx: commands.Context, toggle: Optional[bool] = None):
+        """
+        Pause/resumes the GIT running in the current channel.
+        """
+        if ctx.channel.id not in self.sessions:
+            await ctx.send("There is no currently running GIT session in this channel.")
+            return
+
+        if toggle is None:
+            toggle = not self.sessions[ctx.channel.id]
+        self.sessions[ctx.channel.id] = toggle
+
+        if toggle:
+            await ctx.send("The GIT session in this channel has been resumed.")
+        else:
+            await ctx.send("The GIT session in this channel is not paused.")
