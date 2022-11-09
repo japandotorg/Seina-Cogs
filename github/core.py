@@ -219,7 +219,7 @@ class Github(commands.Cog):
                 return
 
             issues = list(dict.fromkeys(issues))
-            
+
             ctx = self.bot.get_context(message)
 
             if len(issues) > MAXIMUM_ISSUES:
