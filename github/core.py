@@ -174,10 +174,8 @@ class Github(commands.Cog):
             elif isinstance(result, FetchError):
                 description_list.append(f"[{result.return_code}] {result.message}")
 
-        ctx = self.bot.get_context(message)
-
         resp: discord.Embed = discord.Embed(
-            color=await ctx.embed_color(),
+            color=discord.Color.random(),
             description="\n".join(description_list),
         )
 
