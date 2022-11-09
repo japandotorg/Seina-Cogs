@@ -193,15 +193,15 @@ class SeinaTools(BaseCog):
             )
             em.description = f"**Status:** {status.upper()}\n**In VC?** {bool(vc)} ({f'<#{str(vc)}>' if vc else None})"
 
-        if vc:
-            em.add_field(name="VC Channel ID", value=str(vc), inline=True)
-            em.add_field(name="Suppress?", value=suppress, inline=True)
-            em.add_field(name="Self Mute?", value=self_mute, inline=True)
-            em.add_field(name="Self Deaf?", value=self_deaf, inline=True)
-            em.add_field(name="Deaf?", value=deaf, inline=True)
-            em.add_field(name="Mute?", value=mute, inline=True)
+            if vc:
+                em.add_field(name="VC Channel ID", value=str(vc), inline=True)
+                em.add_field(name="Suppress?", value=suppress, inline=True)
+                em.add_field(name="Self Mute?", value=self_mute, inline=True)
+                em.add_field(name="Self Deaf?", value=self_deaf, inline=True)
+                em.add_field(name="Deaf?", value=deaf, inline=True)
+                em.add_field(name="Mute?", value=mute, inline=True)
 
-        embed_list_member.append(em)
+            embed_list_member.append(em)
 
         if channel_member.lower() in ("channels",):
             paginator = Paginator(pages=embed_list)
