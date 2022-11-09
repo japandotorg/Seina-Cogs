@@ -30,8 +30,8 @@ from typing import Any, Dict, Literal, Optional, Union
 
 import aiohttp
 import discord
-from playwright.async_api import async_playwright
-from pygicord import Paginator
+from playwright.async_api import async_playwright # type: ignore
+from pygicord import Paginator # type: ignore
 from redbot.core import Config, commands  # type: ignore
 from redbot.core.bot import Red  # type: ignore
 from redbot.core.i18n import Translator, cog_i18n  # type: ignore
@@ -50,7 +50,7 @@ _: Translator = Translator("SeinaTools", __file__)
 
 
 @cog_i18n(_)
-class SeinaTools(BaseCog):
+class SeinaTools(BaseCog):  # type: ignore
     """
     Owner configuration tools for [botname].
     """
@@ -121,8 +121,8 @@ class SeinaTools(BaseCog):
     async def _spy(
         self,
         ctx: commands.Context,
-        guild: Union[discord.Guild, int] = None,
-        channel_member: str = None,
+        guild: Union[discord.Guild, int] = None,  # type: ignore
+        channel_member: str = None,  # type: ignore
     ):
         """
         Yet another fun spy command.
@@ -239,28 +239,28 @@ class SeinaTools(BaseCog):
                 (
                     (
                         EightBitANSI.paint_red("Guild"),
-                        EightBitANSI.paint_white(len(self.bot.guilds)),
+                        EightBitANSI.paint_white(len(self.bot.guilds)),  # type: ignore
                     ),
                     (
                         EightBitANSI.paint_red("Channels"),
-                        EightBitANSI.paint_white(len(tuple(self.bot.get_all_channels()))),
+                        EightBitANSI.paint_white(len(tuple(self.bot.get_all_channels()))),  # type: ignore
                     ),
                     (
                         EightBitANSI.paint_red("Users"),
-                        EightBitANSI.paint_white(sum(len(i.members) for i in self.bot.guilds)),
+                        EightBitANSI.paint_white(sum(len(i.members) for i in self.bot.guilds)),  # type: ignore
                     ),
                     (
                         EightBitANSI.paint_red("DMs"),
-                        EightBitANSI.paint_white(len(self.bot.private_channels)),
+                        EightBitANSI.paint_white(len(self.bot.private_channels)),  # type: ignore
                     ),
                     (
                         EightBitANSI.paint_red("Latency"),
                         EightBitANSI.paint_white(str(round(self.bot.latency * 1000, 2)) + "ms"),
                     ),
-                    (EightBitANSI.paint_red("Cogs"), EightBitANSI.paint_white(len(self.bot.cogs))),
+                    (EightBitANSI.paint_red("Cogs"), EightBitANSI.paint_white(len(self.bot.cogs))),  # type: ignore
                     (
                         EightBitANSI.paint_red("Commands"),
-                        EightBitANSI.paint_white(len(tuple(self.bot.walk_commands()))),
+                        EightBitANSI.paint_white(len(tuple(self.bot.walk_commands()))),  # type: ignore
                     ),
                 ),
                 tablefmt="fancy_grid",

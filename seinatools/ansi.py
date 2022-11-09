@@ -21,13 +21,13 @@ class EightBitANSI:
         underline: bool = False,
         italic: bool = False,
     ) -> str:
-        color = [getattr(cls, color, "39")]
+        color = [getattr(cls, color, "39")]  # type: ignore
         if bold:
-            color.append(cls.bold)
+            color.append(cls.bold)  # type: ignore
         if italic:
-            color.append(cls.italic)
+            color.append(cls.italic)  # type: ignore
         if underline:
-            color.append(cls.underline)
+            color.append(cls.underline)  # type: ignore
 
         color_code = f"{cls.escape}{';'.join(color)}m"
         color_reset = f"{cls.escape}{cls.reset}m"
