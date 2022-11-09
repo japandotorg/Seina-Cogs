@@ -221,9 +221,9 @@ class Github(commands.Cog):
             issues = list(dict.fromkeys(issues))
 
             if len(issues) > MAXIMUM_ISSUES:
-                
+
                 ctx = self.bot.get_context(message)
-                
+
                 embed: discord.Embed = discord.Embed(
                     color=await ctx.embed_color(),
                     description=f"Too many issues/PRs! (maximum of {MAXIMUM_ISSUES})",
