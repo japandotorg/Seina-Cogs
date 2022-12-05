@@ -123,7 +123,7 @@ class RainbowRole(BaseCog):  # type: ignore
         self.color = self.color + 1 if self.color + 1 <= 7 else 0
 
     @change_color.before_loop
-    async def before_oscallha(self):
+    async def before_color_change(self):
         await self.bot.wait_until_red_ready()
 
     def cog_unload(self):
