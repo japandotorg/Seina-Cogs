@@ -24,20 +24,20 @@ SOFTWARE.
 
 from __future__ import annotations
 
+import asyncio
 import io
 import logging
-from typing import Any, Dict, Literal, Optional, Union, Mapping
+from typing import Any, Dict, Literal, Mapping, Optional, Union
 
 import aiohttp
 import discord
-import asyncio
 from playwright.async_api import async_playwright  # type: ignore
 from pygicord import Paginator  # type: ignore
 from redbot.core import Config, commands  # type: ignore
 from redbot.core.bot import Red  # type: ignore
 from redbot.core.i18n import Translator, cog_i18n  # type: ignore
 from redbot.core.utils.chat_formatting import box  # type: ignore
-from redbot.core.utils.views import SetApiView # type: ignore
+from redbot.core.utils.views import SetApiView  # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
@@ -69,7 +69,7 @@ class SeinaTools(BaseCog):  # type: ignore
 
         default_global: Dict[str, bool] = {"embed": False, "notice": False}
         self.config.register_global(**default_global)
-        
+
         self._cog_ready: asyncio.Event = asyncio.Event()
 
     async def red_get_data_for_user(self, *, user_id: int):
@@ -120,19 +120,19 @@ class SeinaTools(BaseCog):  # type: ignore
                         await self.config.notice.set(True)
                     except (discord.NotFound, discord.HTTPException):
                         log.exception(f"Failed to send the notice message!")
-                        
+
                 self._cog_ready.set()
         except Exception:
             log.exception("Error to start the cog.", exc_info=True)
-            
+
         self._cog_ready.set()
-        
+
     async def cog_before_invoke(self, ctx: commands.Context) -> None:
-        await self._cog_ready.wait()    
+        await self._cog_ready.wait()
 
     async def cog_unload(self):
         self.bot.loop.create_task(self.session.close())
-        
+
     @commands.Cog.listener()
     async def on_red_api_tokens_update(
         self, service_name: str, api_tokens: Mapping[str, str]
@@ -345,7 +345,7 @@ class SeinaTools(BaseCog):  # type: ignore
 
     @commands.is_owner()
     @commands.group(
-        name="removebackground", 
+        name="removebackground",
         aliases=["removebg", "rembg"],
         invoke_without_command=True,
     )
@@ -372,7 +372,7 @@ class SeinaTools(BaseCog):  # type: ignore
 
                 img = io.BytesIO(await resp.read())
                 await ctx.send(file=discord.File(img, "nobg.png"))
-                
+
     @_remove_background.command(name="creds", aliases=["setapikey", "setapi"])
     async def _remove_background_creds(self, ctx: commands.Context):
         """
@@ -384,7 +384,7 @@ class SeinaTools(BaseCog):  # type: ignore
             "2. Go to the <https://www.remove.bg/api#api-changelog> page.\n"
             '3. Click "Get API Key".\n'
             '4. Click "+ New API key" if you don\'t already have one.\n'
-            '5. Fill out the dialog with a key label of your choice.\n'
+            "5. Fill out the dialog with a key label of your choice.\n"
             "6. Copy your api key into:\n"
             "`{prefix}set api removebg api_key,<your_api_key_here>`.\n"
         ).format(prefix=ctx.prefix)
