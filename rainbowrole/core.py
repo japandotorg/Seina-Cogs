@@ -101,7 +101,6 @@ class RainbowRole(BaseCog):  # type: ignore
         The task that is responsible for the color change every x seconds.
         """
         for guild in self.bot.guilds:
-
             toggle = self.config.guild(guild).toggle()
             if not toggle:
                 return
