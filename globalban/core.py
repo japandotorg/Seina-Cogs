@@ -58,7 +58,7 @@ class GlobalBan(commands.Cog):
             gadmin.register_perm("globalban")
 
     @classmethod
-    async def initialize(self, bot: Red):
+    async def initialize(cls, bot: Red):
         await bot.wait_until_red_ready()
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
