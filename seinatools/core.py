@@ -392,8 +392,7 @@ class SeinaTools(BaseCog):  # type: ignore
         view = SetApiView("removebg", keys)
         if await ctx.embed_requested():
             embed: discord.Embed = discord.Embed(
-                description=message, 
-                color=await ctx.embed_color()
+                description=message, color=await ctx.embed_color()
             )
             await ctx.send(embed=embed, view=view)
         else:
