@@ -58,7 +58,7 @@ class SeinaTools(BaseCog):  # type: ignore
     """
 
     __author__ = "inthedark.org#0666"
-    __version__ = "0.1.1"
+    __version__ = "0.1.2"
 
     def __init__(self, bot: Red):
         self.bot: Red = bot
@@ -237,73 +237,67 @@ class SeinaTools(BaseCog):  # type: ignore
             return
 
     @commands.is_owner()
-    @commands.group(name="botstatset")
-    async def _botstatset(self, ctx: commands.Context):
+    @commands.group(name="botstat", aliases=["botstatset"], invoke_without_command=True)
+    async def _botstat(self, ctx: commands.Context, /):
         """
-        Settings for the botstat command.
+        Yet another botstat command for [botname].
         """
+        if ctx.invoked_subcommand is None:
+            table = box(
+                tabulate(
+                    (
+                        (
+                            EightBitANSI.paint_red("Guild"),
+                            EightBitANSI.paint_white(len(self.bot.guilds)),  # type: ignore
+                        ),
+                        (
+                            EightBitANSI.paint_red("Channels"),
+                            EightBitANSI.paint_white(len(tuple(self.bot.get_all_channels()))),  # type: ignore
+                        ),
+                        (
+                            EightBitANSI.paint_red("Users"),
+                            EightBitANSI.paint_white(sum(len(i.members) for i in self.bot.guilds)),  # type: ignore
+                        ),
+                        (
+                            EightBitANSI.paint_red("DMs"),
+                            EightBitANSI.paint_white(len(self.bot.private_channels)),  # type: ignore
+                        ),
+                        (
+                            EightBitANSI.paint_red("Latency"),
+                            EightBitANSI.paint_white(str(round(self.bot.latency * 1000, 2)) + "ms"),
+                        ),
+                        (EightBitANSI.paint_red("Cogs"), EightBitANSI.paint_white(len(self.bot.cogs))),  # type: ignore
+                        (
+                            EightBitANSI.paint_red("Commands"),
+                            EightBitANSI.paint_white(len(tuple(self.bot.walk_commands()))),  # type: ignore
+                        ),
+                    ),
+                    tablefmt="fancy_grid",
+                ),
+                lang="ansi",
+            )
 
+            embedded = await self.config.embed()
+
+            if embedded:
+                return await ctx.send(
+                    embed=discord.Embed(
+                        title=f"{ctx.me.name} Stats",
+                        description=table,
+                        color=await ctx.embed_color(),
+                    )
+                )
+            else:
+                return await ctx.send(table)
+            
     @commands.is_owner()
-    @_botstatset.command(name="embed")
+    @_botstat.command(name="embed")
     async def _embed(self, ctx: commands.Context, true_or_false: bool):
         """
         Toggle whether botstats should use embeds.
         """
         await self.config.embed.set(true_or_false)
         return await ctx.tick()
-
-    @commands.is_owner()
-    @commands.command(name="botstat")
-    async def _botstat(self, ctx: commands.Context):
-        """
-        Yet another botstat command for [botname].
-        """
-        table = box(
-            tabulate(
-                (
-                    (
-                        EightBitANSI.paint_red("Guild"),
-                        EightBitANSI.paint_white(len(self.bot.guilds)),  # type: ignore
-                    ),
-                    (
-                        EightBitANSI.paint_red("Channels"),
-                        EightBitANSI.paint_white(len(tuple(self.bot.get_all_channels()))),  # type: ignore
-                    ),
-                    (
-                        EightBitANSI.paint_red("Users"),
-                        EightBitANSI.paint_white(sum(len(i.members) for i in self.bot.guilds)),  # type: ignore
-                    ),
-                    (
-                        EightBitANSI.paint_red("DMs"),
-                        EightBitANSI.paint_white(len(self.bot.private_channels)),  # type: ignore
-                    ),
-                    (
-                        EightBitANSI.paint_red("Latency"),
-                        EightBitANSI.paint_white(str(round(self.bot.latency * 1000, 2)) + "ms"),
-                    ),
-                    (EightBitANSI.paint_red("Cogs"), EightBitANSI.paint_white(len(self.bot.cogs))),  # type: ignore
-                    (
-                        EightBitANSI.paint_red("Commands"),
-                        EightBitANSI.paint_white(len(tuple(self.bot.walk_commands()))),  # type: ignore
-                    ),
-                ),
-                tablefmt="fancy_grid",
-            ),
-            lang="ansi",
-        )
-
-        embedded = await self.config.embed()
-
-        if embedded:
-            return await ctx.send(
-                embed=discord.Embed(
-                    title=f"{ctx.me.name} Stats",
-                    description=table,
-                    color=await ctx.embed_color(),
-                )
-            )
-        else:
-            return await ctx.send(table)
 
     @commands.is_owner()
     @commands.command(
