@@ -123,7 +123,7 @@ class SeinaTools(BaseCog):  # type: ignore
 
                 self._cog_ready.set()
         except Exception:
-            log.exception("Error to start the cog.", exc_info=True)
+            log.exception("Error starting the cog.", exc_info=True)
 
         self._cog_ready.set()
 
