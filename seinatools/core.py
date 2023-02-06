@@ -24,7 +24,6 @@ SOFTWARE.
 
 from __future__ import annotations
 
-import asyncio
 import io
 import logging
 from typing import Any, Dict, Literal, Mapping, Optional, Union
@@ -69,8 +68,6 @@ class SeinaTools(BaseCog):  # type: ignore
 
         default_global: Dict[str, bool] = {"embed": False, "notice": False}
         self.config.register_global(**default_global)
-
-        self._cog_ready: asyncio.Event = asyncio.Event()
 
     async def red_get_data_for_user(self, *, user_id: int):
         """
@@ -120,15 +117,12 @@ class SeinaTools(BaseCog):  # type: ignore
                         await self.config.notice.set(True)
                     except (discord.NotFound, discord.HTTPException):
                         log.exception(f"Failed to send the notice message!")
-
-                self._cog_ready.set()
+    
         except Exception:
             log.exception("Error starting the cog.", exc_info=True)
 
-        self._cog_ready.set()
-
     async def cog_before_invoke(self, ctx: commands.Context) -> None:
-        await self._cog_ready.wait()
+        pass
 
     async def cog_unload(self):
         self.bot.loop.create_task(self.session.close())
