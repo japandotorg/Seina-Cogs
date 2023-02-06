@@ -264,7 +264,9 @@ class SeinaTools(BaseCog):  # type: ignore
                         ),
                         (
                             EightBitANSI.paint_red("Latency"),
-                            EightBitANSI.paint_white(str(round(self.bot.latency * 1000, 2)) + "ms"),
+                            EightBitANSI.paint_white(
+                                str(round(self.bot.latency * 1000, 2)) + "ms"
+                            ),
                         ),
                         (EightBitANSI.paint_red("Cogs"), EightBitANSI.paint_white(len(self.bot.cogs))),  # type: ignore
                         (
@@ -289,7 +291,7 @@ class SeinaTools(BaseCog):  # type: ignore
                 )
             else:
                 return await ctx.send(table)
-            
+
     @commands.is_owner()
     @_botstat.command(name="embed")
     async def _embed(self, ctx: commands.Context, true_or_false: bool):
