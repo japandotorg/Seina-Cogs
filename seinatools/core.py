@@ -26,16 +26,18 @@ from __future__ import annotations
 
 import io
 import logging
-from typing import Any, Dict, Literal, Optional, Union
+from typing import Any, Dict, Literal, Optional, Union, Mapping
 
 import aiohttp
 import discord
+import asyncio
 from playwright.async_api import async_playwright  # type: ignore
 from pygicord import Paginator  # type: ignore
 from redbot.core import Config, commands  # type: ignore
 from redbot.core.bot import Red  # type: ignore
 from redbot.core.i18n import Translator, cog_i18n  # type: ignore
 from redbot.core.utils.chat_formatting import box  # type: ignore
+from redbot.core.utils.views import SetApiView # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
@@ -56,7 +58,7 @@ class SeinaTools(BaseCog):  # type: ignore
     """
 
     __author__ = "inthedark.org#0666"
-    __version__ = "0.1.0"
+    __version__ = "0.1.1"
 
     def __init__(self, bot: Red):
         self.bot: Red = bot
@@ -65,8 +67,10 @@ class SeinaTools(BaseCog):  # type: ignore
 
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
 
-        default_global = {"embed": False, "notice": False}
+        default_global: Dict[str, bool] = {"embed": False, "notice": False}
         self.config.register_global(**default_global)
+        
+        self._cog_ready: asyncio.Event = asyncio.Event()
 
     async def red_get_data_for_user(self, *, user_id: int):
         """
@@ -98,23 +102,43 @@ class SeinaTools(BaseCog):  # type: ignore
             cause = error
             log.exception(f"SeinaTools :: Errored :: \n{cause}\n")
 
-    async def initialize(self):
+    async def cog_load(self):
         await self.bot.wait_until_red_ready()
         keys = await self.bot.get_shared_api_tokens("removebg")
-        token = keys.get("api_key")
-        if not token:
-            if not await self.config.notice():
-                await self.bot.send_to_owners(
-                    "Thanks for installing my utility cog."
-                    "This cog has a removebackground command which uses "
-                    "an api key from the <https://www.remove.bg/> website. "
-                    "You can easily get the api key from <https://www.remove.bg/api#remove-background>.\n"
-                    "This is how you can add the api key - `[p]set api removebg api_key,key`"
-                )
-                await self.config.notice.set(True)
+        try:
+            token = keys.get("api_key")
+            if not token:
+                if not await self.config.notice():
+                    try:
+                        await self.bot.send_to_owners(
+                            "Thanks for installing my utility cog."
+                            "This cog has a removebackground command which uses "
+                            "an api key from the <https://www.remove.bg/> website. "
+                            "You can easily get the api key from <https://www.remove.bg/api#remove-background>.\n"
+                            "This is how you can add the api key - `[p]set api removebg api_key,key`"
+                        )
+                        await self.config.notice.set(True)
+                    except (discord.NotFound, discord.HTTPException):
+                        log.exception(f"Failed to send the notice message!")
+                        
+                self._cog_ready.set()
+        except Exception:
+            log.exception("Error to start the cog.", exc_info=True)
+            
+        self._cog_ready.set()
+        
+    async def cog_before_invoke(self, ctx: commands.Context) -> None:
+        await self._cog_ready.wait()    
 
-    def cog_unload(self):
+    async def cog_unload(self):
         self.bot.loop.create_task(self.session.close())
+        
+    @commands.Cog.listener()
+    async def on_red_api_tokens_update(
+        self, service_name: str, api_tokens: Mapping[str, str]
+    ) -> None:
+        if service_name == "removebg":
+            await self.cog_load()
 
     @commands.is_owner()
     @commands.command(name="spy")
@@ -320,25 +344,54 @@ class SeinaTools(BaseCog):  # type: ignore
         await ctx.send(file=file)
 
     @commands.is_owner()
-    @commands.command(name="removebackground", aliases=["removebg", "rembg"])
+    @commands.group(
+        name="removebackground", 
+        aliases=["removebg", "rembg"],
+        invoke_without_command=True,
+    )
+    @commands.bot_has_permissions(embed_links=True)
     async def _remove_background(self, ctx: commands.Context, *, url: str):
         """
         Remove background from image url.
         """
-        keys = await self.bot.get_shared_api_tokens("removebg")
-        token = keys.get("api_key")
+        if ctx.invoked_subcommand is None:
+            keys = await self.bot.get_shared_api_tokens("removebg")
+            token = keys.get("api_key")
 
-        if not token:
-            await ctx.send("You have not provided an api key yet.")
+            if not token:
+                await ctx.send("You have not provided an api key yet.")
+            else:
+                async with self.session.get(url) as response:
+                    data = io.BytesIO(await response.read())
+
+                resp = await self.session.post(
+                    "https://api.remove.bg/v1.0/removebg",
+                    data={"size": "auto", "image_file": data},
+                    headers={"X-Api-Key": f"{token}"},
+                )
+
+                img = io.BytesIO(await resp.read())
+                await ctx.send(file=discord.File(img, "nobg.png"))
+                
+    @_remove_background.command(name="creds", aliases=["setapikey", "setapi"])
+    async def _remove_background_creds(self, ctx: commands.Context):
+        """
+        Instructions to set the removebg API token.
+        """
+        message = (
+            "1. Go to the remove.bg website and login with your account.\n"
+            "(https://remove.bg)\n"
+            "2. Go to the <https://www.remove.bg/api#api-changelog> page.\n"
+            '3. Click "Get API Key".\n'
+            '4. Click "+ New API key" if you don\'t already have one.\n'
+            '5. Fill out the dialog with a key label of your choice.\n'
+            "6. Copy your api key into:\n"
+            "`{prefix}set api removebg api_key,<your_api_key_here>`.\n"
+        ).format(prefix=ctx.prefix)
+        keys = {"api_key": ""}
+        view = SetApiView("removebg", keys)
+        if await ctx.embed_requested():
+            embed: discord.Embed = discord.Embed(description=message)
+            await ctx.send(embed=embed, view=view)
         else:
-            async with self.session.get(url) as response:
-                data = io.BytesIO(await response.read())
-
-            resp = await self.session.post(
-                "https://api.remove.bg/v1.0/removebg",
-                data={"size": "auto", "image_file": data},
-                headers={"X-Api-Key": f"{token}"},
-            )
-
-            img = io.BytesIO(await resp.read())
-            await ctx.send(file=discord.File(img, "nobg.png"))
+            await ctx.send(message, view=view)
