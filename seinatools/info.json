@@ -13,7 +13,7 @@
     "requirements": [
         "tabulate",
         "pygicord==1.1.0",
-        "playwright==1.22.0"
+        "playwright==1.30.0"
     ],
     "type": "COG",
     "end_user_data_statement": "This cog does not store End User Data."
