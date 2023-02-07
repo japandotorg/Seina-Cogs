@@ -37,4 +37,4 @@ with open(Path(__file__).parent / "info.json") as fp:
 async def setup(bot: Red):
     cog = SeinaTools(bot)
     await bot.add_cog(cog)
-    asyncio.create_task(cog.cog_load())
+    asyncio.create_task(cog.initialize())

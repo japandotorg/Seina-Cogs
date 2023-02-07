@@ -99,7 +99,7 @@ class SeinaTools(BaseCog):  # type: ignore
             cause = error
             log.exception(f"SeinaTools :: Errored :: \n{cause}\n")
 
-    async def cog_load(self):
+    async def initialize(self):
         await self.bot.wait_until_red_ready()
         keys = await self.bot.get_shared_api_tokens("removebg")
         try:
