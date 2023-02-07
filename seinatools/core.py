@@ -117,7 +117,7 @@ class SeinaTools(BaseCog):  # type: ignore
                         await self.config.notice.set(True)
                     except (discord.NotFound, discord.HTTPException):
                         log.exception(f"Failed to send the notice message!")
-    
+
         except Exception:
             log.exception("Error starting the cog.", exc_info=True)
 
