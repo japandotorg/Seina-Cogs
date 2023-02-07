@@ -22,10 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from redbot.core.bot import Red
+
 from .core import GlobalBan
 
 __red_end_user_data_statement__ = "No personal data is stored in this cog."
 
 
-def setup(bot):
-    bot.add_cog(GlobalBan(bot))
+async def setup(bot: Red):
+    cog = GlobalBan(bot)
+    await bot.add_cog(cog)
