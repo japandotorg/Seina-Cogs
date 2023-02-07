@@ -92,13 +92,12 @@ class GlobalBan(commands.Cog):
         data = "No data is stored for user with ID {}.\n".format(user_id)
         return {"user_data.txt": BytesIO(data.encode())}
 
-    @commands.group(aliases=["gb", "gban"], invoke_without_command=True)
+    @commands.group(aliases=["gb", "gban"])
     async def globalban(self, ctx: commands.Context) -> None:
         """
         Global ban related commands.
         """
-        if ctx.invoked_subcommand is None:
-            return await ctx.send_help()
+        pass
 
     @globalban.command()
     @checks.admin_or_permissions(administrator=True)
