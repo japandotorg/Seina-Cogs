@@ -97,7 +97,6 @@ class GlobalBan(commands.Cog):
         """
         Global ban related commands.
         """
-        pass
 
     @globalban.command()
     @checks.admin_or_permissions(administrator=True)
