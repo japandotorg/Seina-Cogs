@@ -25,9 +25,7 @@ SOFTWARE.
 import datetime
 import logging
 from io import BytesIO
-from typing import (
-    Any, Literal, TypeVar, Type, Dict, List, Optional, Final
-)
+from typing import Any, Dict, Final, List, Literal, Optional, Type, TypeVar
 
 import discord
 from redbot.core import Config, checks, commands, modlog
@@ -83,7 +81,9 @@ class GlobalBan(commands.Cog):
         data = "No data is stored for user with ID {}.\n".format(user_id)
         return {"user_data.txt": BytesIO(data.encode())}
 
-    async def red_delete_data_for_user(self, *, requester: Type[RTT], user_id: int) -> Dict[str, BytesIO]:
+    async def red_delete_data_for_user(
+        self, *, requester: Type[RTT], user_id: int
+    ) -> Dict[str, BytesIO]:
         """
         Delete a user's personal data.
 
@@ -117,9 +117,7 @@ class GlobalBan(commands.Cog):
                 return
             opted.append(ctx.guild.id)
         ban_entries = [entry async for entry in ctx.guild.bans()]
-        await self.config.guild(ctx.guild).banlist.set(
-            [be.user.id for be in ban_entries]
-        )
+        await self.config.guild(ctx.guild).banlist.set([be.user.id for be in ban_entries])
         async with ctx.typing():
             await self.update_gbs(ctx)
         await ctx.tick()
@@ -148,7 +146,9 @@ class GlobalBan(commands.Cog):
 
     @globalban.command()
     @auth_check("globalban")
-    async def ban(self, ctx: commands.Context, user_id: int, *, reason: Optional[str] = "") -> None:
+    async def ban(
+        self, ctx: commands.Context, user_id: int, *, reason: Optional[str] = ""
+    ) -> None:
         """
         Globally Ban a user across all opted-in servers.
         """
@@ -160,7 +160,9 @@ class GlobalBan(commands.Cog):
 
     @globalban.command()
     @auth_check("globalban")
-    async def editreason(self, ctx: commands.Context, user_id: int, *, reason: Optional[str] = "") -> None:
+    async def editreason(
+        self, ctx: commands.Context, user_id: int, *, reason: Optional[str] = ""
+    ) -> None:
         """Edit a user's ban reason."""
         async with self.config.banned() as banned:
             if str(user_id) not in banned:
