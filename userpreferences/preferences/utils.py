@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 from abc import abstractmethod
-from typing import Callable, List, Optional, Type, TypeVar, Literal, Any, List
+from typing import Any, Callable, List, Literal, Optional, Type, TypeVar
 
 import redbot.core.commands as commands
 from redbot.core.commands import Cog, Command
@@ -37,7 +37,6 @@ RTT = TypeVar("RTT", bound="RequestType")
 
 
 class CogMixin(Cog, metaclass=CogABCMeta):
-    
     @abstractmethod
     def setup_self(self: "CogMixin") -> None:
         ...
@@ -47,7 +46,9 @@ class CogMixin(Cog, metaclass=CogABCMeta):
         ...
 
     @abstractmethod
-    async def red_delete_data_for_user(self: "CogMixin", *, requester: Type[RTT], user_id: int) -> None:
+    async def red_delete_data_for_user(
+        self: "CogMixin", *, requester: Type[RTT], user_id: int
+    ) -> None:
         ...
 
     def setup_mixins(self) -> None:

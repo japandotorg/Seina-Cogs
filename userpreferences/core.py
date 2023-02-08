@@ -25,7 +25,7 @@ SOFTWARE.
 import logging
 import pickle
 from io import BytesIO
-from typing import Any, Dict, Literal, TypeVar, Type, Final, List
+from typing import Any, Dict, Final, List, Literal, Type, TypeVar
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
@@ -44,7 +44,7 @@ log: logging.Logger = logging.getLogger("red.seina-cogs.userpreferences")
 
 class UserPreferences(TimezonePreference, UtilsPreference):
     """Stores user Preferences for users."""
-    
+
     __author__: Final[List[str]] = ["inthedark.org#0666"]
     __version__: Final[str] = "0.1.1"
 
@@ -54,11 +54,11 @@ class UserPreferences(TimezonePreference, UtilsPreference):
 
         self.config: Config = Config.get_conf(self, identifier=6969420666420)
         self.setup_mixins()
-        
+
     @classmethod
     async def initialize(cls, bot: Red) -> None:
         return await bot.wait_until_red_ready()
-    
+
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
         n = "\n" if "\n\n" not in pre_processed else ""

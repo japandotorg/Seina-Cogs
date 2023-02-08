@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Type, TypeVar, Literal
+from typing import Literal, Type, TypeVar
 
 from redbot.core import Config, commands
 

@@ -24,9 +24,9 @@ SOFTWARE.
 
 from typing import Any
 
-from .core import UserPreferences
-
 from redbot.core.bot import Red
+
+from .core import UserPreferences
 
 __red_end_user_data_statement__ = "All explicitly stored user preferences are kept persistantly."
 
