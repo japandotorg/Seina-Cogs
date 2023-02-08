@@ -24,8 +24,13 @@ SOFTWARE.
 
 from .core import GlobalAdmin
 
+from typing import Any
+
+from redbot.core.bot import Red
+
 __red_end_user_data_statement__ = "No personal data is stored for this cog."
 
 
-def setup(bot):
-    bot.add_cog(GlobalAdmin(bot))
+async def setup(bot: Red) -> None:
+    cog: Any = GlobalAdmin(bot)
+    await bot.add_cog(cog)

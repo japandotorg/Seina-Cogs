@@ -30,10 +30,12 @@ import time
 import aiohttp
 import backoff
 
-log = logging.getLogger("red.seina-cogs.globaladmin.json_utils")
+from typing import Any, Union, Dict
+
+log: logging.Logger = logging.getLogger("red.seina-cogs.globaladmin.json_utils")
 
 
-def should_download(file_path, expiry_secs):
+def should_download(file_path: str, expiry_secs: int) -> bool:
     if not os.path.exists(file_path):
         log.debug(f"file does not exist, downloading {file_path}")
         return True
@@ -47,17 +49,17 @@ def should_download(file_path, expiry_secs):
     return True
 
 
-def write_json_file(file_path, js_data):
+def write_json_file(file_path: str, js_data: Any) -> None:
     with open(file_path, "w") as f:
         json.dump(js_data, f, indent=4)
 
 
-def read_json_file(file_path):
+def read_json_file(file_path: str) -> Any:
     with open(file_path) as f:
         return json.load(f)
 
 
-def safe_read_json(file_path):
+def safe_read_json(file_path: str) -> Union[Any, Dict]:
     """
     This returns an empty dict rather than raising an error if the file contains invalid json
     """
@@ -68,7 +70,7 @@ def safe_read_json(file_path):
     return {}
 
 
-def validate_json(fp):
+def validate_json(fp: str) -> bool:
     try:
         json.load(open(fp))
         return True
@@ -78,7 +80,7 @@ def validate_json(fp):
 
 @backoff.on_exception(backoff.expo, aiohttp.ClientError, max_time=60)
 @backoff.on_exception(backoff.expo, aiohttp.ServerDisconnectedError, max_time=60)
-async def async_cached_dadguide_request(file_path, file_url, expiry_secs):
+async def async_cached_dadguide_request(file_path: str, file_url: str, expiry_secs: int) -> None:
     if should_download(file_path, expiry_secs):
         async with aiohttp.ClientSession() as session:
             async with session.get(file_url) as resp:
@@ -87,23 +89,26 @@ async def async_cached_dadguide_request(file_path, file_url, expiry_secs):
                     f.write(await resp.read())
 
 
-def write_plain_file(file_path, text_data):
+def write_plain_file(file_path: str, text_data: Union[str, bytes]) -> None:
     with open(file_path, "w", encoding="utf-8") as f:
-        f.write(text_data)
+        if isinstance(text_data, str):
+            f.write(text_data)
+        elif isinstance(text_data, bytes):
+            f.write(text_data.decode())
 
 
-def read_plain_file(file_path):
+def read_plain_file(file_path: str) -> str:
     with open(file_path, "r", encoding="utf-8") as f:
         return f.read()
 
 
-async def async_plain_request(file_url):
+async def async_plain_request(file_url: str) -> str:
     async with aiohttp.ClientSession() as session:
         async with session.get(file_url) as resp:
             return await resp.text()
 
 
-async def async_cached_plain_request(file_path, file_url, expiry_secs):
+async def async_cached_plain_request(file_path: str, file_url: str, expiry_secs: int) -> str:
     if should_download(file_path, expiry_secs):
         resp = await async_plain_request(file_url)
         write_plain_file(file_path, resp)

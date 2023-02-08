@@ -24,7 +24,7 @@ SOFTWARE.
 
 import logging
 from io import BytesIO
-from typing import Union
+from typing import Union, List, Final, Any, Dict, Literal, TypeVar, Type
 
 import discord
 from discord import Object, User
@@ -35,7 +35,11 @@ from redbot.core.utils.chat_formatting import box, humanize_list, inline, pagify
 from .objects import CogSettings
 from .utils import get_user_confirmation
 
-log = logging.getLogger("red.seina-cogs.globaladmin")
+RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
+
+RTT = TypeVar("RTT", bound="RequestType")
+
+log: logging.Logger = logging.getLogger("red.seina-cogs.globaladmin")
 
 
 class GlobalAdmin(commands.Cog):
@@ -43,18 +47,21 @@ class GlobalAdmin(commands.Cog):
     Set up authentication for admins for other cogs via tsutils
     """
 
-    __author__ = ["inthedark.org#0666"]
-    __version__ = "0.1.0"
+    __author__: Final[List[str]] = ["inthedark.org#0666"]
+    __version__: Final[str] = "0.1.1"
 
-    def __init__(self, bot, *args, **kwargs):
+    def __init__(self, bot: Red, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
-        self.bot = bot
+        self.bot: Red = bot
 
-        self.settings = GlobalAdminSettings("globaladmin")
+        self.settings: GlobalAdminSettings = GlobalAdminSettings(
+            cog_name="globaladmin",
+            bot=Red,
+        )
 
     @classmethod
-    async def initialize(cls, bot: Red):
-        await bot.wait_until_red_ready()
+    async def initialize(cls, bot: Red) -> None:
+        return await bot.wait_until_red_ready()
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
@@ -66,39 +73,44 @@ class GlobalAdmin(commands.Cog):
         ]
         return "\n".join(text)
 
-    async def red_get_data_for_user(self, *, user_id):
+    async def red_get_data_for_user(self, *, user_id: int) -> Dict[str, BytesIO]:
         """
         Get a user's personal data.
         """
-        data = "No data is stored for user with ID {}.\n".format(user_id)
+        data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
         return {"user_data.txt": BytesIO(data.encode())}
 
-    async def red_delete_data_for_user(self, *, requester, user_id):
+    async def red_delete_data_for_user(self, *, requester: Type[RTT], user_id: int) -> Dict[str, BytesIO]:
         """
         Delete a user's personal data.
         No personal data is stored in this cog.
         """
-        return
+        data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
+        return {"user_data.txt": BytesIO(data.encode())}
 
-    @commands.group(aliases=["ga", "gadmin"])
+    @commands.group(aliases=["ga", "gadmin"], invoke_without_command=True)
     @checks.is_owner()
-    async def globaladmin(self, ctx):
+    async def globaladmin(self, ctx: commands.Context) -> None:
         """
         Global Admin Commands
         """
+        if ctx.invoked_subcommand is None:
+            return await ctx.send_help()
 
-    @globaladmin.group(aliases=["auths"])
-    async def perms(self, ctx):
+    @globaladmin.group(aliases=["auths"], invoke_without_command=True)
+    async def perms(self, ctx: commands.Context):
         """
         Perm commands
         Cogs automatically register their perms with gadmin; you don't need to add them
         """
+        if ctx.invoked_subcommand is None:
+            return await ctx.send_help()
 
-    def register_perm(self, perm_name, default=False):
+    def register_perm(self, perm_name: str, default: bool = False) -> None:
         self.settings.add_perm(perm_name, default)
 
     @perms.command()
-    async def reset(self, ctx, perm_name):
+    async def reset(self, ctx: commands.Context, perm_name: str) -> None:
         """
         Restore defaults for a perm for all users
         """
@@ -112,7 +124,7 @@ class GlobalAdmin(commands.Cog):
         await ctx.tick()
 
     @perms.command()
-    async def unregister(self, ctx, perm_name):
+    async def unregister(self, ctx: commands.Context, perm_name: str) -> None:
         """
         Completely remove a perm from storage
         """
@@ -125,12 +137,12 @@ class GlobalAdmin(commands.Cog):
         await ctx.tick()
 
     @perms.command(name="list")
-    async def perm_list(self, ctx):
+    async def perm_list(self, ctx: commands.Context) -> None:
         """
         List the avaliable perms
         """
-        msg = "Perms:\n"
-        mlen = max(len(k) for k in self.settings.get_perms().keys())
+        msg: str = "Perms:\n"
+        mlen: int = max(len(k) for k in self.settings.get_perms().keys())
 
         for perm, default in self.settings.get_perms().items():
             msg += " - {}{}(default: {})\n".format(perm, " " * (mlen - len(perm) + 3), default)
@@ -138,7 +150,7 @@ class GlobalAdmin(commands.Cog):
             await ctx.send(box(page))
 
     @globaladmin.command(aliases=["setperm", "setadmin", "addadmin", "addperm"])
-    async def grant(self, ctx, user: discord.User, perm, value: bool = True):
+    async def grant(self, ctx: commands.Context, user: discord.User, perm: str, value: bool = True) -> None:
         """
         Grant a user a perm
         """
@@ -149,7 +161,7 @@ class GlobalAdmin(commands.Cog):
         await ctx.tick()
 
     @globaladmin.command()
-    async def deny(self, ctx, user: discord.User, perm, value: bool = False):
+    async def deny(self, ctx: commands.Context, user: discord.User, perm: str, value: bool = False) -> None:
         """
         Deny a user a perm
         """
@@ -160,7 +172,7 @@ class GlobalAdmin(commands.Cog):
         await ctx.tick()
 
     @globaladmin.command()
-    async def listusers(self, ctx, perm_name):
+    async def listusers(self, ctx: commands.Context, perm_name: str) -> None:
         """
         List all users with a perm
         """
@@ -177,13 +189,13 @@ class GlobalAdmin(commands.Cog):
 
 
 class GlobalAdminSettings(CogSettings):
-    def make_default_settings(self):
+    def make_default_settings(self) -> Dict[str, Dict]:
         return {
             "perms": {},
             "users": {},
         }
 
-    def add_user_perm(self, user_id, perm, value=True):
+    def add_user_perm(self, user_id: int, perm: str, value: bool = True) -> Union[Literal[-1], None]:
         if perm not in self.bot_settings["perms"]:
             return -1
         if user_id not in self.bot_settings["users"]:
@@ -191,22 +203,22 @@ class GlobalAdminSettings(CogSettings):
         self.bot_settings["users"][user_id][perm] = value
         self.save_settings()
 
-    def add_perm(self, perm, default=False):
+    def add_perm(self, perm: str, default: bool = False) -> None:
         self.bot_settings["perms"][perm] = default
         self.save_settings()
 
-    def rm_perm(self, perm):
+    def rm_perm(self, perm: str) -> None:
         if perm in self.bot_settings["perms"]:
             del self.bot_settings["perms"][perm]
         self.save_settings()
 
-    def refresh_perm(self, perm):
+    def refresh_perm(self, perm: str) -> None:
         for user in self.bot_settings["users"]:
             if perm in self.bot_settings["users"][user]:
                 del self.bot_settings["users"][user][perm]
         self.save_settings()
 
-    def rm_user_perm(self, user_id, perm):
+    def rm_user_perm(self, user_id: int, perm: str) -> Union[Literal[-1], None]:
         if perm not in self.bot_settings["perms"]:
             return -1
         if user_id not in self.bot_settings["users"]:
@@ -216,8 +228,8 @@ class GlobalAdminSettings(CogSettings):
         del self.bot_settings["users"][user_id][perm]
         self.save_settings()
 
-    def get_perm(self, user_id, perm, default=False):
-        defaults = {}
+    def get_perm(self, user_id: int, perm: str, default: bool = False):
+        defaults: dict = {}
         defaults |= self.bot_settings["perms"]
         defaults |= self.bot_settings["users"].get(user_id, {})
         return defaults.get(perm, default)
@@ -225,7 +237,7 @@ class GlobalAdminSettings(CogSettings):
     def get_perms(self):
         return self.bot_settings["perms"]
 
-    def get_users_with_perm(self, perm):
+    def get_users_with_perm(self, perm: str) -> List:
         return [
             user for user in self.bot_settings["users"] if perm in self.bot_settings["users"][user]
         ]

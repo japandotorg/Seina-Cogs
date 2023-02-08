@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import asyncio
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal, Optional, Union, Final
 
 import discord
 from discord import User
@@ -31,12 +31,12 @@ from redbot.core.bot import Red
 
 SendableEmoji = Union[str, discord.Emoji]
 
-YES_EMOJI = "\N{WHITE HEAVY CHECK MARK}"
-NO_EMOJI = "\N{CROSS MARK}"
+YES_EMOJI: Final[str] = "\N{WHITE HEAVY CHECK MARK}"
+NO_EMOJI: Final[str] = "\N{CROSS MARK}"
 
 
 async def get_user_preference(
-    bot: Red, user: User, pref: str, *, unloaded_default=None
+    bot: Red, user: User, pref: str, *, unloaded_default: Any = None
 ) -> Optional[Any]:
     if pref in {"timezone"}:
         raise ValueError("Invalid preference. Use the cog method to get this.")

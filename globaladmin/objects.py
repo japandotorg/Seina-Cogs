@@ -23,22 +23,24 @@ SOFTWARE.
 """
 
 import logging
+from typing import Dict
 
+from redbot.core.bot import Red
 from redbot.core import data_manager
 
 from .json_utils import *
 
-log = logging.getLogger("red.seina-cogs.globaladmin.objects")
+log: logging.Logger = logging.getLogger("red.seina-cogs.globaladmin.objects")
 
 
 class CogSettings(object):
-    SETTINGS_FILE_NAME = "legacy_settings.json"
+    SETTINGS_FILE_NAME: str = "legacy_settings.json"
 
-    def __init__(self, cog_name, bot=None):
-        self.folder = str(data_manager.cog_data_path(raw_name=cog_name))
-        self.file_path = os.path.join(self.folder, CogSettings.SETTINGS_FILE_NAME)
+    def __init__(self, cog_name: str, bot: Red = None) -> None:
+        self.folder: str = str(data_manager.cog_data_path(raw_name=cog_name))
+        self.file_path: str = os.path.join(self.folder, CogSettings.SETTINGS_FILE_NAME)
 
-        self.bot = bot
+        self.bot: Red = bot
 
         self.check_folder()
 
@@ -46,11 +48,11 @@ class CogSettings(object):
         if not os.path.isfile(self.file_path):
             log.warning(f"CogSettings config for {self.file_path} not found.  Creating default...")
 
-            self.bot_settings = self.default_settings
+            self.bot_settings: Dict = self.default_settings
             self.save_settings()
         else:
             current = self.intify(read_json_file(self.file_path))
-            updated = False
+            updated: bool = False
             for key in self.default_settings.keys():
                 if key not in current.keys():
                     current[key] = self.default_settings[key]
@@ -60,19 +62,19 @@ class CogSettings(object):
             if updated:
                 self.save_settings()
 
-    def check_folder(self):
+    def check_folder(self) -> None:
         if not os.path.exists(self.folder):
             log.info(f"Creating {self.folder}")
             os.makedirs(self.folder)
 
-    def save_settings(self):
+    def save_settings(self) -> None:
         write_json_file(self.file_path, self.bot_settings)
 
-    def make_default_settings(self):
+    def make_default_settings(self) -> Dict:
         return {}
 
     @classmethod
-    def intify(cls, key):
+    def intify(cls, key: Any) -> Any:
         if isinstance(key, dict):
             return {cls.intify(k): cls.intify(v) for k, v in key.items()}
         elif isinstance(key, (list, tuple)):
@@ -82,4 +84,4 @@ class CogSettings(object):
         elif isinstance(key, str) and key.replace(".", "", 1).isdigit():
             return float(key)
         else:
-            return
+            return key
