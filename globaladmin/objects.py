@@ -25,8 +25,8 @@ SOFTWARE.
 import logging
 from typing import Dict
 
-from redbot.core.bot import Red
 from redbot.core import data_manager
+from redbot.core.bot import Red
 
 from .json_utils import *
 

@@ -26,11 +26,10 @@ import json
 import logging
 import os
 import time
+from typing import Any, Dict, Union
 
 import aiohttp
 import backoff
-
-from typing import Any, Union, Dict
 
 log: logging.Logger = logging.getLogger("red.seina-cogs.globaladmin.json_utils")
 

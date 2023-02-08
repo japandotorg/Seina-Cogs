@@ -24,7 +24,7 @@ SOFTWARE.
 
 import logging
 from io import BytesIO
-from typing import Union, List, Final, Any, Dict, Literal, TypeVar, Type
+from typing import Any, Dict, Final, List, Literal, Type, TypeVar, Union
 
 import discord
 from discord import Object, User
@@ -80,7 +80,9 @@ class GlobalAdmin(commands.Cog):
         data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
         return {"user_data.txt": BytesIO(data.encode())}
 
-    async def red_delete_data_for_user(self, *, requester: Type[RTT], user_id: int) -> Dict[str, BytesIO]:
+    async def red_delete_data_for_user(
+        self, *, requester: Type[RTT], user_id: int
+    ) -> Dict[str, BytesIO]:
         """
         Delete a user's personal data.
         No personal data is stored in this cog.
@@ -150,7 +152,9 @@ class GlobalAdmin(commands.Cog):
             await ctx.send(box(page))
 
     @globaladmin.command(aliases=["setperm", "setadmin", "addadmin", "addperm"])
-    async def grant(self, ctx: commands.Context, user: discord.User, perm: str, value: bool = True) -> None:
+    async def grant(
+        self, ctx: commands.Context, user: discord.User, perm: str, value: bool = True
+    ) -> None:
         """
         Grant a user a perm
         """
@@ -161,7 +165,9 @@ class GlobalAdmin(commands.Cog):
         await ctx.tick()
 
     @globaladmin.command()
-    async def deny(self, ctx: commands.Context, user: discord.User, perm: str, value: bool = False) -> None:
+    async def deny(
+        self, ctx: commands.Context, user: discord.User, perm: str, value: bool = False
+    ) -> None:
         """
         Deny a user a perm
         """
@@ -195,7 +201,9 @@ class GlobalAdminSettings(CogSettings):
             "users": {},
         }
 
-    def add_user_perm(self, user_id: int, perm: str, value: bool = True) -> Union[Literal[-1], None]:
+    def add_user_perm(
+        self, user_id: int, perm: str, value: bool = True
+    ) -> Union[Literal[-1], None]:
         if perm not in self.bot_settings["perms"]:
             return -1
         if user_id not in self.bot_settings["users"]:

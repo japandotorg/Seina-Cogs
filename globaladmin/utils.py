@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import asyncio
-from typing import Any, Literal, Optional, Union, Final
+from typing import Any, Final, Literal, Optional, Union
 
 import discord
 from discord import User
