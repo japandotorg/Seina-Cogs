@@ -26,7 +26,7 @@ import codecs
 import pickle
 import re
 from datetime import datetime, timedelta, timezone, tzinfo
-from typing import Optional, Any, TypeVar, Literal, Type
+from typing import Any, Literal, Optional, Type, TypeVar
 
 import pytz
 from discord import User
@@ -37,6 +37,7 @@ from .utils import CogMixin, mixin_group
 RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
 RTT = TypeVar("RTT", bound="RequestType")
+
 
 class TimezonePreference(CogMixin):
     config: Config
