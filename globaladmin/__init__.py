@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .core import GlobalAdmin
-
 from typing import Any
 
 from redbot.core.bot import Red
+
+from .core import GlobalAdmin
 
 __red_end_user_data_statement__ = "No personal data is stored for this cog."
 
