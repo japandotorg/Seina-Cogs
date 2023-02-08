@@ -24,7 +24,7 @@ SOFTWARE.
 
 import re
 import time
-from typing import List, Final, Any, Optional
+from typing import Any, Final, List
 
 import discord
 from redbot.core import commands
