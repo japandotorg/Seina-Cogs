@@ -23,15 +23,21 @@ SOFTWARE.
 """
 
 from abc import abstractmethod
-from typing import Callable, List, Optional, Type
+from typing import Callable, List, Optional, Type, TypeVar, Literal, Any, List
 
 import redbot.core.commands as commands
 from redbot.core.commands import Cog, Command
 
 from .helper import CogABCMeta
+from .utils import CogMixin
+
+RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
+
+RTT = TypeVar("RTT", bound="RequestType")
 
 
 class CogMixin(Cog, metaclass=CogABCMeta):
+    
     @abstractmethod
     def setup_self(self: "CogMixin") -> None:
         ...
@@ -41,7 +47,7 @@ class CogMixin(Cog, metaclass=CogABCMeta):
         ...
 
     @abstractmethod
-    async def red_delete_data_for_user(self: "CogMixin", *, requester: str, user_id: int) -> None:
+    async def red_delete_data_for_user(self: "CogMixin", *, requester: Type[RTT], user_id: int) -> None:
         ...
 
     def setup_mixins(self) -> None:
@@ -55,7 +61,7 @@ class CogMixin(Cog, metaclass=CogABCMeta):
                 ret.append(str(text))
         return ret
 
-    async def delete_mixin_user_data(self, requester: str, user_id: int) -> None:
+    async def delete_mixin_user_data(self, requester: Type[RTT], user_id: int) -> None:
         for mixin in self.active_mixins:
             await super(mixin, self).red_delete_data_for_user(
                 requester=requester, user_id=user_id
@@ -71,10 +77,10 @@ class CogMixin(Cog, metaclass=CogABCMeta):
 
 
 class MixinCommand:
-    def __init__(self, function: Callable, parent: Optional[str] = None, **kwargs):
-        self.function = function
-        self.parent = parent
-        self.kwargs = kwargs
+    def __init__(self, function: Callable, parent: Optional[str] = None, **kwargs: Any) -> None:
+        self.function: Callable = function
+        self.parent: Optional[str] = parent
+        self.kwargs: Any = kwargs
 
     def setup(self, cog: Cog, parent: Optional[Command] = None) -> None:
         parent = parent or self.parent or commands
@@ -85,13 +91,13 @@ class MixinCommand:
 
 
 class MixinGroup:
-    def __init__(self, function: Callable, parent: Optional[str] = None, **kwargs):
-        self.function = function
-        self.parent = parent
-        self.kwargs = kwargs
-        self.children = []
+    def __init__(self, function: Callable, parent: Optional[str] = None, **kwargs: Any) -> None:
+        self.function: Callable = function
+        self.parent: Optional[str] = parent
+        self.kwargs: Any = kwargs
+        self.children: List = []
 
-    def command(self, **kwargs) -> Callable[[Callable], MixinCommand]:
+    def command(self, **kwargs: Any) -> Callable[[Callable], MixinCommand]:
         def _decorator(func: Callable) -> MixinCommand:
             child = MixinCommand(func, **kwargs)
             self.children.append(child)
@@ -99,7 +105,7 @@ class MixinGroup:
 
         return _decorator
 
-    def group(self, **kwargs) -> Callable[[Callable], "MixinGroup"]:
+    def group(self, **kwargs: Any) -> Callable[[Callable], "MixinGroup"]:
         def _decorator(func: Callable) -> MixinGroup:
             child = MixinGroup(func, **kwargs)
             self.children.append(child)
@@ -131,14 +137,14 @@ def add_command_to_cog(command: Command, cog: Cog) -> None:
         parent.add_command(command)
 
 
-def mixin_command(parent: Optional[str], **kwargs) -> Callable[[Callable], MixinCommand]:
+def mixin_command(parent: Optional[str], **kwargs: Any) -> Callable[[Callable], MixinCommand]:
     def _decorator(func: Callable) -> MixinCommand:
         return MixinCommand(func, parent, **kwargs)
 
     return _decorator
 
 
-def mixin_group(parent: Optional[str], **kwargs) -> Callable[[Callable], MixinGroup]:
+def mixin_group(parent: Optional[str], **kwargs: Any) -> Callable[[Callable], MixinGroup]:
     def _decorator(func: Callable) -> MixinGroup:
         return MixinGroup(func, parent, **kwargs)
 

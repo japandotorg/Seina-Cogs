@@ -26,31 +26,34 @@ import codecs
 import pickle
 import re
 from datetime import datetime, timedelta, timezone, tzinfo
-from typing import Optional
+from typing import Optional, Any, TypeVar, Literal, Type
 
 import pytz
 from discord import User
-from redbot.core import Config
+from redbot.core import Config, commands
 
 from .utils import CogMixin, mixin_group
 
+RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
+
+RTT = TypeVar("RTT", bound="RequestType")
 
 class TimezonePreference(CogMixin):
     config: Config
 
-    def setup_self(self):
+    def setup_self(self) -> None:
         self.timezone.setup(self)
         self.config.register_user(timezone=None)
 
-    async def red_get_data_for_user(self, *, user_id):
+    async def red_get_data_for_user(self, *, user_id: int) -> Any:
         if (tz := await self.config.user_by_id(user_id).timezone()) is not None:
             return f"Timezone: `{pickle.loads(tz)}`"
 
-    async def red_delete_data_for_user(self, *, requester, user_id):
+    async def red_delete_data_for_user(self, *, requester: Type[RTT], user_id: int) -> None:
         await self.config.user_from_id(user_id).timezone.set(None)
 
     @mixin_group("preferences", aliases=["tz"], invoke_without_command=True)
-    async def timezone(self, ctx, *, tzstr):
+    async def timezone(self, ctx: commands.Context, *, tzstr: str) -> None:
         """Set your timezone"""
         if (tz := self.tzstr_to_timezone(tzstr)) is None:
             return await ctx.send(f"Unable to find a timezone matching `{tzstr}`.")
@@ -58,7 +61,7 @@ class TimezonePreference(CogMixin):
         await ctx.send(f"Your timezone has been set to `{tz.tzname(datetime(2141, 1, 1))}`.")
 
     @timezone.command(name="clear", aliases=["remove", "rm", "delete", "del"])
-    async def tz_clear(self, ctx):
+    async def tz_clear(self, ctx: commands.Context) -> None:
         """Clear your timezone"""
         await self.config.timezone.set(None)
         await ctx.send("Your stored timezone has been cleared.")

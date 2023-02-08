@@ -22,10 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from typing import Any
+
 from .core import UserPreferences
+
+from redbot.core.bot import Red
 
 __red_end_user_data_statement__ = "All explicitly stored user preferences are kept persistantly."
 
 
-def setup(bot):
-    bot.add_cog(UserPreferences(bot))
+async def setup(bot: Red) -> None:
+    cog: Any = UserPreferences(bot)
+    await bot.add_cog(cog)
