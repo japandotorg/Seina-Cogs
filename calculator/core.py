@@ -24,6 +24,7 @@ SOFTWARE.
 
 import re
 import time
+from typing import List, Final, Any, Optional
 
 import discord
 from redbot.core import commands
@@ -38,17 +39,17 @@ class Calculator(commands.Cog):
     Does math
     """
 
-    __author__ = ["inthedark.org#0666"]
-    __version__ = "0.1.0"
+    __author__: Final[List[str]] = ["inthedark.org#0666"]
+    __version__: Final[str] = "0.1.0"
 
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self, bot: Red) -> None:
+        self.bot: Red = bot
 
     @classmethod
-    async def initialize(cls, bot: Red):
+    async def initialize(cls, bot: Red) -> None:
         await bot.wait_until_red_ready()
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def red_delete_data_for_user(self, **kwargs: Any):
         return
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
@@ -62,7 +63,7 @@ class Calculator(commands.Cog):
         return "\n".join(text)
 
     @commands.command(name="calculate", aliases=["calc", "c"])
-    async def calc(self, ctx, num_base, *, expr=""):
+    async def calc(self, ctx: commands.Context, num_base: str, *, expr: str = "") -> None:
         """
         Does math.
 

@@ -26,82 +26,84 @@ import ast
 import math
 from decimal import Decimal
 
+from typing import Any, Dict
+
 
 def add(a, b):
     return a + b
 
 
-def sub(a, b):
+def sub(a, b) -> Any:
     return a - b
 
 
-def mul(a, b):
+def mul(a, b) -> Any:
     return a * b
 
 
-def truediv(a, b):
+def truediv(a, b) -> Any:
     return a / b
 
 
-def floordiv(a, b):
+def floordiv(a, b) -> Any:
     return a // b
 
 
-def mod(a, b):
+def mod(a, b) -> Any:
     return a % b
 
 
-def lshift(a, b):
+def lshift(a, b) -> Any:
     return a << b
 
 
-def rshift(a, b):
+def rshift(a, b) -> Any:
     return a >> b
 
 
-def or_(a, b):
+def or_(a, b) -> Any:
     return a & b
 
 
-def and_(a, b):
+def and_(a, b) -> Any:
     return a | b
 
 
-def xor(a, b):
+def xor(a, b) -> Any:
     return a ^ b
 
 
-def invert(a):
+def invert(a) -> Any:
     return ~a
 
 
-def negate(a):
+def negate(a) -> Any:
     return -a
 
 
-def pos(a):
+def pos(a) -> Any:
     return +a
 
 
-def safe_comb(n, k):
+def safe_comb(n, k) -> Any:
     if n > 10000:
         raise ValueError("Too large to calculate")
     return math.comb(n, k)
 
 
-def safe_factorial(x):
+def safe_factorial(x) -> Any:
     if x > 5000:
         raise ValueError("Too large to calculate")
     return math.factorial(x)
 
 
-def safe_perm(n, k=None):
+def safe_perm(n, k=None) -> Any:
     if n > 5000:
         raise ValueError("Too large to calculate")
     return math.perm(n, k)
 
 
-OPERATIONS = {
+OPERATIONS: Dict[Any, Any] = {
     ast.Add: add,
     ast.Sub: sub,
     ast.Mult: mul,
@@ -116,19 +118,19 @@ OPERATIONS = {
     ast.BitXor: xor,
 }
 
-UNARYOPS = {
+UNARYOPS: Dict[Any, Any] = {
     ast.Invert: invert,
     ast.USub: negate,
     ast.UAdd: pos,
 }
 
-CONSTANTS = {
+CONSTANTS: Dict[str, Any] = {
     "pi": math.pi,
     "e": math.e,
     "tau": math.tau,
 }
 
-FUNCTIONS = {
+FUNCTIONS: Dict[str, Any] = {
     "ceil": math.ceil,
     "comb": safe_comb,
     "fact": safe_factorial,
@@ -148,7 +150,7 @@ FUNCTIONS = {
 }
 
 
-def bin_float(number: float):
+def bin_float(number: float) -> str:
     exponent = 0
     shifted_num = number
 
@@ -163,7 +165,7 @@ def bin_float(number: float):
     return f"{binary[:-exponent]}.{binary[-exponent:].rstrip('0')}"
 
 
-def hex_float(number: float):
+def hex_float(number: float) -> str:
     exponent = 0
     shifted_num = number
 
@@ -178,7 +180,7 @@ def hex_float(number: float):
     return f"{hexadecimal[:-exponent]}.{hexadecimal[-exponent:]}"
 
 
-def oct_float(number: float):
+def oct_float(number: float) -> str:
     exponent = 0
     shifted_num = number
 
@@ -193,7 +195,7 @@ def oct_float(number: float):
     return f"{octal[:-exponent]}.{octal[-exponent:]}"
 
 
-def safe_eval(node):
+def safe_eval(node) -> Any:
     if isinstance(node, ast.Num):
         return node.n if isinstance(node.n, int) else Decimal(str(node.n))
 
