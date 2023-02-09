@@ -22,7 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from io import BytesIO
 from datetime import datetime
+from typing import Dict, Any, Final, List
 
 import discord
 import pytz
@@ -37,11 +39,17 @@ class EpicGames(commands.Cog):
     A simple cog to get data from the free games promotion api.
     """
 
-    __author__ = ["inthedark.org#0666"]
-    __version__ = "0.1.0"
+    __author__: Final[List[str]] = ["inthedark.org#0666"]
+    __version__: Final[str] = "0.1.0"
 
-    async def red_delete_data_for_user(self, **kwargs):
-        return
+    async def red_delete_data_for_user(self, **kwargs: Any) -> Dict[str, BytesIO]:
+        """
+        Delete a user's personal data.
+        No personal data is stored in this cog.
+        """
+        user_id: Any = kwargs.get("user_id")
+        data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
+        return {"user_data.txt": BytesIO(data.encode())}
 
     def __init__(self, bot: Red):
         self.bot: Red = bot
@@ -57,11 +65,11 @@ class EpicGames(commands.Cog):
 
     @commands.guild_only()
     @commands.command(name="epicgames", aliases=["freegames", "egs", "freegame"])
-    async def _epic_games(self, ctx: commands.Context):
+    async def _epic_games(self, ctx: commands.Context) -> None:
         """
         Finds free game info from epic games promotional api.
         """
-        data = _fetch_free_games()
+        data: Any = _fetch_free_games()
 
         for game in data["data"]["Catalog"]["searchStore"]["elements"]:
             if (

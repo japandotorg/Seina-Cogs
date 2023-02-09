@@ -23,10 +23,11 @@ SOFTWARE.
 """
 
 import requests
+from typing import Any, Final
 
-FREE_GAMES = "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=en-US&country=CA&allowCountries=CA"
+FREE_GAMES: Final[str] = "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=en-US&country=CA&allowCountries=CA"
 
 
-def _fetch_free_games():
+def _fetch_free_games() -> Any:
     response = requests.get(FREE_GAMES).json()
     return response
