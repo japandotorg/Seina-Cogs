@@ -256,8 +256,6 @@ class Github(commands.Cog):
         """
         Commands for the Github configuration settings.
         """
-        if ctx.invoked_subcommand is None:
-            pass
 
     @_githubset.command(name="toggle", aliases=["t"])
     @commands.guildowner_or_permissions(administrator=True)

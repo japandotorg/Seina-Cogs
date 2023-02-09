@@ -104,19 +104,18 @@ class SeinaTools(BaseCog):  # type: ignore
         keys = await self.bot.get_shared_api_tokens("removebg")
         try:
             token = keys.get("api_key")
-            if not token:
-                if not await self.config.notice():
-                    try:
-                        await self.bot.send_to_owners(
-                            "Thanks for installing my utility cog."
-                            "This cog has a removebackground command which uses "
-                            "an api key from the <https://www.remove.bg/> website. "
-                            "You can easily get the api key from <https://www.remove.bg/api#remove-background>.\n"
-                            "This is how you can add the api key - `[p]set api removebg api_key,key`"
-                        )
-                        await self.config.notice.set(True)
-                    except (discord.NotFound, discord.HTTPException):
-                        log.exception(f"Failed to send the notice message!")
+            if not token and not await self.config.notice():
+                try:
+                    await self.bot.send_to_owners(
+                        "Thanks for installing my utility cog."
+                        "This cog has a removebackground command which uses "
+                        "an api key from the <https://www.remove.bg/> website. "
+                        "You can easily get the api key from <https://www.remove.bg/api#remove-background>.\n"
+                        "This is how you can add the api key - `[p]set api removebg api_key,key`"
+                    )
+                    await self.config.notice.set(True)
+                except (discord.NotFound, discord.HTTPException):
+                    log.exception("Failed to send the notice message!")
 
         except Exception:
             log.exception("Error starting the cog.", exc_info=True)
@@ -259,10 +258,13 @@ class SeinaTools(BaseCog):  # type: ignore
                         (
                             EightBitANSI.paint_red("Latency"),
                             EightBitANSI.paint_white(
-                                str(round(self.bot.latency * 1000, 2)) + "ms"
+                                f"{str(round(self.bot.latency * 1000, 2))}ms"
                             ),
                         ),
-                        (EightBitANSI.paint_red("Cogs"), EightBitANSI.paint_white(len(self.bot.cogs))),  # type: ignore
+                        (
+                            EightBitANSI.paint_red("Cogs"),
+                            EightBitANSI.paint_white(len(self.bot.cogs)),
+                        ),
                         (
                             EightBitANSI.paint_red("Commands"),
                             EightBitANSI.paint_white(len(tuple(self.bot.walk_commands()))),  # type: ignore
@@ -344,24 +346,23 @@ class SeinaTools(BaseCog):  # type: ignore
         """
         Remove background from image url.
         """
-        if ctx.invoked_subcommand is None:
-            keys = await self.bot.get_shared_api_tokens("removebg")
-            token = keys.get("api_key")
+        if ctx.invoked_subcommand is not None:
+            return
+        keys = await self.bot.get_shared_api_tokens("removebg")
+        if token := keys.get("api_key"):
+            async with self.session.get(url) as response:
+                data = io.BytesIO(await response.read())
 
-            if not token:
-                await ctx.send("You have not provided an api key yet.")
-            else:
-                async with self.session.get(url) as response:
-                    data = io.BytesIO(await response.read())
+            resp = await self.session.post(
+                "https://api.remove.bg/v1.0/removebg",
+                data={"size": "auto", "image_file": data},
+                headers={"X-Api-Key": f"{token}"},
+            )
 
-                resp = await self.session.post(
-                    "https://api.remove.bg/v1.0/removebg",
-                    data={"size": "auto", "image_file": data},
-                    headers={"X-Api-Key": f"{token}"},
-                )
-
-                img = io.BytesIO(await resp.read())
-                await ctx.send(file=discord.File(img, "nobg.png"))
+            img = io.BytesIO(await resp.read())
+            await ctx.send(file=discord.File(img, "nobg.png"))
+        else:
+            await ctx.send("You have not provided an api key yet.")
 
     @_remove_background.command(name="creds", aliases=["setapikey", "setapi"])
     async def _remove_background_creds(self, ctx: commands.Context):
