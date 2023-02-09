@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from io import BytesIO
+from typing import Any, Dict, Final, List
+
 import discord
 from redbot.core import commands  # type: ignore
 from redbot.core.bot import Red  # type: ignore
@@ -34,22 +37,25 @@ class MapleStory(commands.Cog):
     Retrives information from the MapleStory API.
     """
 
-    __author__ = ["inthedark.org#0666"]
-    __version__ = "0.1.0"
+    __author__: Final[List[str]] = ["inthedark.org#0666"]
+    __version__: Final[str] = "0.1.0"
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def red_delete_data_for_user(self, **kwargs: Any) -> Dict[str, BytesIO]:
         """
-        No data to delete.
+        Delete a user's personal data.
+        No personal data is stored in this cog.
         """
-        return
+        user_id: Any = kwargs.get("user_id")
+        data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
+        return {"user_data.txt": BytesIO(data.encode())}
 
-    def __init__(self, bot: Red):
+    def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
         n = "\n" if "\n\n" not in pre_processed else ""
-        text = [
+        text: List[str] = [
             f"{pre_processed}{n}",
             f"Cog Version: **{self.__version__}**" f"Author: **{self.__author__}**",
         ]
@@ -57,16 +63,16 @@ class MapleStory(commands.Cog):
 
     @commands.guild_only()
     @commands.command(name="maplestory", aliases=["mpinfo"])
-    async def _maple_story(self, ctx: commands.Context, *args):
+    async def _maple_story(self, ctx: commands.Context, *args: str) -> None:
         """
         A simple command which fetches user information from the maplestory API servers.
         """
-        username = " ".join(args)
-        data = _fetch_user(username)
-        overall_data = data[0]
-        world_data = data[1]
+        username: str = " ".join(args)
+        data: List[Any] = _fetch_user(username)
+        overall_data: Any = data[0]
+        world_data: Any = data[1]
 
-        info = (
+        info: str = (
             "```prolog\n"
             "Overall Rank : {}\n"
             "World        : {}\n"

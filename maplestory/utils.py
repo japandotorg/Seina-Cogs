@@ -23,9 +23,10 @@ SOFTWARE.
 """
 
 import requests
+from typing import List, Any
 
 
-def _fetch_user(username: str):
+def _fetch_user(username: str) -> List[Any]:
     """
     Fetches the username from the maplestory api.
     """
