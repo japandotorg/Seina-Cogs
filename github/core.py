@@ -38,11 +38,15 @@ GITHUB_API_URL: t.Final[str] = "https://api.github.com"
 
 REQUEST_HEADERS: t.Dict[str, str] = {"Accept": "application/vnd.github.v3+json"}
 
-REPOSITORY_ENDPOINT: t.Final[str] = "https://api.github.com/orgs/{org}/repos?per_page=100&type=public"
+REPOSITORY_ENDPOINT: t.Final[
+    str
+] = "https://api.github.com/orgs/{org}/repos?per_page=100&type=public"
 ISSUE_ENDPOINT: t.Final[str] = "https://api.github.com/repos/{user}/{repository}/issues/{number}"
 PR_ENDPOINT: t.Final[str] = "https://api.github.com/repos/{user}/{repository}/pulls/{number}"
 
-CODE_BLOCK_RE: t.Pattern[str] = re.compile(r"^`([^`\n]+)`" r"|```(.+?)```", re.DOTALL | re.MULTILINE)
+CODE_BLOCK_RE: t.Pattern[str] = re.compile(
+    r"^`([^`\n]+)`" r"|```(.+?)```", re.DOTALL | re.MULTILINE
+)
 
 MAXIMUM_ISSUES: int = 5
 
