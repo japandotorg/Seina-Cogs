@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from io import BytesIO
 from datetime import datetime
-from typing import Dict, Any, Final, List
+from io import BytesIO
+from typing import Any, Dict, Final, List
 
 import discord
 import pytz
