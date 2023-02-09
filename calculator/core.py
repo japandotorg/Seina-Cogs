@@ -25,7 +25,7 @@ SOFTWARE.
 import re
 import time
 from io import BytesIO
-from typing import Any, Final, List, Dict
+from typing import Any, Dict, Final, List
 
 import discord
 from redbot.core import commands
