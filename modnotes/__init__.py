@@ -22,10 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from redbot.core.bot import Red
+
 from .core import ModNotes
+from typing import Any
 
-__red_end_user_data_statement__ = "No personal data is stored."
+__red_end_user_data_statement__: str = "No personal data is stored."
 
 
-def setup(bot):
-    bot.add_cog(ModNotes(bot))
+async def setup(bot: Red) -> None:
+    cog: Any = ModNotes(bot)
+    await bot.add_cog(cog)
