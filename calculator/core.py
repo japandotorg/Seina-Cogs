@@ -24,7 +24,8 @@ SOFTWARE.
 
 import re
 import time
-from typing import Any, Final, List
+from io import BytesIO
+from typing import Any, Final, List, Dict
 
 import discord
 from redbot.core import commands
@@ -40,7 +41,7 @@ class Calculator(commands.Cog):
     """
 
     __author__: Final[List[str]] = ["inthedark.org#0666"]
-    __version__: Final[str] = "0.1.0"
+    __version__: Final[str] = "0.1.1"
 
     def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
@@ -49,8 +50,14 @@ class Calculator(commands.Cog):
     async def initialize(cls, bot: Red) -> None:
         await bot.wait_until_red_ready()
 
-    async def red_delete_data_for_user(self, **kwargs: Any):
-        return
+    async def red_delete_data_for_user(self, **kwargs: Any) -> Dict[str, BytesIO]:
+        """
+        Delete a user's personal data.
+        No personal data is stored in this cog.
+        """
+        user_id: Any = kwargs.get("user_id")
+        data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
+        return {"user_data.txt": BytesIO(data.encode())}
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
@@ -78,13 +85,13 @@ class Calculator(commands.Cog):
         expr: str
             A expression to calculate.
         """
-        num_bases = {
+        num_bases: Dict[str, Any] = {
             "h": (16, hex_float, "0x"),
             "o": (8, oct_float, "0o"),
             "b": (2, bin_float, "0b"),
         }
 
-        start = time.monotonic()
+        start: float = time.monotonic()
 
         base, method, prefix = num_bases.get(num_base[0].lower(), (None, None, None))
 
@@ -101,11 +108,11 @@ class Calculator(commands.Cog):
             numbers = [int(num, base) for num in re.findall(regex, expr)]
             expr = re.sub(regex, "{}", expr).format(*numbers)
 
-        result = safe_eval(compile(expr, "<calc>", "eval", flags=1024).body)
+        result: Any = safe_eval(compile(expr, "<calc>", "eval", flags=1024).body)
 
-        end = time.monotonic()
+        end: float = time.monotonic()
 
-        embed = discord.Embed(color=await ctx.embed_color())
+        embed: discord.Embed = discord.Embed(color=await ctx.embed_color())
 
         if method:
             embed.description = (
