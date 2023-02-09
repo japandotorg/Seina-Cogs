@@ -24,15 +24,16 @@ SOFTWARE.
 
 import json
 from pathlib import Path
+from typing import Any
 
 from redbot.core.bot import Red  # type: ignore
 
 from .core import Github
 
 with open(Path(__file__).parent / "info.json") as fp:
-    __red_end_user_data_statement__ = json.load(fp)["end_user_data_statement"]
+    __red_end_user_data_statement__: Any = json.load(fp)["end_user_data_statement"]
 
 
-def setup(bot: Red):
-    cog = Github(bot)
-    bot.add_cog(cog)
+async def setup(bot: Red) -> None:
+    cog: Any = Github(bot)
+    await bot.add_cog(cog)
