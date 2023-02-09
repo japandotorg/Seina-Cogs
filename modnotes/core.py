@@ -24,12 +24,12 @@ SOFTWARE.
 
 import logging
 from io import BytesIO
-from typing import Any, Dict, Any, Literal, TypeVar, Type, Final, List, Union
+from typing import Any, Dict, Final, List, Literal, Type, TypeVar, Union
 
 import discord
 from redbot.core import checks, commands
 from redbot.core.bot import Red
-from redbot.core.utils.chat_formatting import box, inline, pagify, humanize_list
+from redbot.core.utils.chat_formatting import box, humanize_list, inline, pagify
 
 from .utils.cog_settings import CogSettings
 
@@ -42,7 +42,7 @@ log: logging.Logger = logging.getLogger("red.seina-cogs.modnotes.core")
 
 class ModNotes(commands.Cog):
     """Keep tabs on sussy users"""
-    
+
     __author__: Final[List[str]] = ["inthedark.org#0666"]
     __version__: Final[str] = "0.1.1"
 
@@ -56,14 +56,16 @@ class ModNotes(commands.Cog):
         data: Any = "No data is stored for user with ID {}.\n".format(user_id)
         return {"user_data.txt": BytesIO(data.encode())}
 
-    async def red_delete_data_for_user(self, *, requester: Type[RTT], user_id: int) -> Dict[str, BytesIO]:
+    async def red_delete_data_for_user(
+        self, *, requester: Type[RTT], user_id: int
+    ) -> Dict[str, BytesIO]:
         """
         Delete a user's personal data.
         No personal data is stored in this cog.
         """
         data: Any = "No data is stored for user with ID {}.\n".format(user_id)
         return {"user_data.txt": BytesIO(data.encode())}
-    
+
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
         n = "\n" if "\n\n" not in pre_processed else ""
@@ -73,7 +75,7 @@ class ModNotes(commands.Cog):
             f"Author: {humanize_list(self.__author__)}",
         ]
         return "\n".join(text)
-    
+
     @commands.group(aliases=["usernote", "modnotes", "modnote"])
     @commands.guild_only()
     @checks.mod_or_permissions(manage_guild=True)
@@ -144,11 +146,8 @@ class ModNotes(commands.Cog):
 
 
 class ModNotesSettings(CogSettings):
-    
     def make_default_settings(self) -> Dict[str, Any]:
-        return {
-            "servers": {}
-        }
+        return {"servers": {}}
 
     def servers(self) -> Any:
         return self.bot_settings["servers"]
