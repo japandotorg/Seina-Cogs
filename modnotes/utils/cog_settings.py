@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
 
-from redbot.core.bot import Red
 from redbot.core import data_manager
+from redbot.core.bot import Red
 
 from .json_utils import *
 
