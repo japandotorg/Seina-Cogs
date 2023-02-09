@@ -1,6 +1,6 @@
 import re
 from io import BytesIO
-from typing import Final, List, Any, Dict, Pattern
+from typing import Any, Dict, Final, List, Pattern
 
 import discord
 import molmass  # type: ignore
