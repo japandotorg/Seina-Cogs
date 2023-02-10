@@ -105,8 +105,7 @@ class RainbowRole(BaseCog):  # type: ignore
             if not toggle:
                 return
 
-            rainbow_role = self.config.guild(guild).rainbow_role()
-            if rainbow_role:
+            if rainbow_role := self.config.guild(guild).rainbow_role():
                 try:
                     await rainbow_role.edit(
                         reason="Automatic rainbow role color change.",
@@ -119,7 +118,7 @@ class RainbowRole(BaseCog):  # type: ignore
                 except:
                     self.log.info("Oops! Something went wrong.", exc_info=True)
 
-        self.color = self.color + 1 if self.color + 1 <= 7 else 0
+        self.color = self.color + 1 if self.color <= 6 else 0
 
     @change_color.before_loop
     async def before_color_change(self):

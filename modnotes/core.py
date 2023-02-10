@@ -53,7 +53,7 @@ class ModNotes(commands.Cog):
 
     async def red_get_data_for_user(self, *, user_id: int) -> Dict[str, BytesIO]:
         """Get a user's personal data."""
-        data: Any = "No data is stored for user with ID {}.\n".format(user_id)
+        data: Any = f"No data is stored for user with ID {user_id}.\n"
         return {"user_data.txt": BytesIO(data.encode())}
 
     async def red_delete_data_for_user(
@@ -63,7 +63,7 @@ class ModNotes(commands.Cog):
         Delete a user's personal data.
         No personal data is stored in this cog.
         """
-        data: Any = "No data is stored for user with ID {}.\n".format(user_id)
+        data: Any = f"No data is stored for user with ID {user_id}.\n"
         return {"user_data.txt": BytesIO(data.encode())}
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
@@ -84,8 +84,6 @@ class ModNotes(commands.Cog):
         Moderator notes for users.
         This module allows you to create notes to share between moderators.
         """
-        if ctx.invoke_subcommand is None:
-            pass
 
     @usernotes.command()
     @checks.mod_or_permissions(manage_guild=True)
@@ -137,9 +135,9 @@ class ModNotes(commands.Cog):
                 user = ctx.guild.get_member(user_id)
             except (discord.NotFound, discord.HTTPException):
                 user = None
-                log.debug(f"Unable to get the member, using `user_id` instead!", exc_info=True)
+                log.debug("Unable to get the member, using `user_id` instead!", exc_info=True)
             user_text: Union[str, Any] = f"{user.name} ({user.id})" if user else user_id
-            msg += "\n\t{} : {}".format(len(notes), user_text)
+            msg += f"\n\t{len(notes)} : {user_text}"
 
         for page in pagify(msg):
             await ctx.send(box(page))

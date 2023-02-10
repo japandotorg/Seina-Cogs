@@ -78,7 +78,7 @@ class UserPreferences(TimezonePreference, UtilsPreference):
 
         data = "\n".join(await self.get_mixin_user_data(user_id))
         if not data:
-            data = "No data is stored for user with ID {}.\n".format(user_id)
+            data = f"No data is stored for user with ID {user_id}.\n"
         return {"user_data.txt": BytesIO(data.encode())}
 
     async def red_delete_data_for_user(self, *, requester: Type[RTT], user_id: int) -> None:

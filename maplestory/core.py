@@ -46,7 +46,7 @@ class MapleStory(commands.Cog):
         No personal data is stored in this cog.
         """
         user_id: Any = kwargs.get("user_id")
-        data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
+        data: Final[str] = f"No data is stored for user with ID {user_id}.\n"
         return {"user_data.txt": BytesIO(data.encode())}
 
     def __init__(self, bot: Red) -> None:
@@ -72,23 +72,7 @@ class MapleStory(commands.Cog):
         overall_data: Any = data[0]
         world_data: Any = data[1]
 
-        info: str = (
-            "```prolog\n"
-            "Overall Rank : {}\n"
-            "World        : {}\n"
-            "World Rank   : {}\n"
-            "Job          : {}\n"
-            "Level        : {}\n"
-            "Exp          : {}\n"
-            "\n```"
-        ).format(
-            overall_data["Rank"],
-            overall_data["WorldName"],
-            world_data["Rank"],
-            overall_data["JobName"],
-            overall_data["Level"],
-            overall_data["Exp"],
-        )
+        info: str = f'```prolog\nOverall Rank : {overall_data["Rank"]}\nWorld        : {overall_data["WorldName"]}\nWorld Rank   : {world_data["Rank"]}\nJob          : {overall_data["JobName"]}\nLevel        : {overall_data["Level"]}\nExp          : {overall_data["Exp"]}\n\n```'
 
         embed: discord.Embed = discord.Embed(
             title=overall_data["CharacterName"], color=await ctx.embed_color()
