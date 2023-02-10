@@ -23,20 +23,21 @@ SOFTWARE.
 """
 
 import logging
-from typing import Literal, Optional, Union
+from io import BytesIO
+from typing import Literal, Optional, Union, List, Tuple, Final, Dict, Any
 
 import discord
 from discord.ext import tasks
 from redbot.core import Config, commands  # type: ignore
 from redbot.core.bot import Red  # type: ignore
 
-BaseCog = getattr(commands, "Cog", object)
+BaseCog: commands.Cog = getattr(commands, "Cog", object)
 
 log: logging.Logger = logging.getLogger("red.seinacogs.rainbowrole")
 
 RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
-COLORS = [
+COLORS: List[Tuple[int, int, int]] = [
     (255, 62, 62),
     (255, 147, 62),
     (255, 215, 62),
@@ -53,42 +54,44 @@ class RainbowRole(BaseCog):  # type: ignore
     Create and manage a Rainbow Role in your server.
     """
 
-    __version__ = "0.1.0"
-    __author__ = "inthedark.org#0666"
+    __version__: Final[str] = ("0.1.0")
+    __author__: Final[List[str]] = [("inthedark.org#0666")]
 
-    def __init__(self, bot: Red):
+    def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
         self.config: Config = Config.get_conf(
             self, identifier=759180080328081450, force_registration=True
         )
-        self.log = logging.LoggerAdapter(log, {"version": self.__version__})
+        self.log: logging.LoggerAdapter[logging.Logger] = logging.LoggerAdapter(log, {"version": self.__version__})
 
-        default_guild = {
+        default_guild: Dict[str, Any] = {
             "rainbow_role": None,
             "toggled": False,
         }
 
         self.config.register_guild(**default_guild)
 
-        self.color = 0
+        self.color: int = 0
         self.change_color.start()
 
-    async def red_get_data_for_user(self, *, user_id: int):
+    async def red_get_data_for_user(self, *, user_id: int) -> Dict[str, BytesIO]:
         """
         Nothing to get.
         """
-        return {}
+        data: Any = "No data is stored for user with ID {}.\n".format(user_id)
+        return {"user_data.txt": BytesIO(data.encode())}
 
-    async def red_delete_data_for_user(self, *, requester: RequestType, user_id: int):
+    async def red_delete_data_for_user(self, *, requester: RequestType, user_id: int) -> Dict[str, BytesIO]:
         """
         Nothing to delete.
         """
-        return {}
+        data: Any = "No data is stored for user with ID {}.\n".format(user_id)
+        return {"user_data.txt": BytesIO(data.encode())}
 
-    def format_help_for_context(self, ctx: commands.Context):
+    def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
         n = "\n" if "\n\n" not in pre_processed else ""
-        text = [
+        text: List[str] = [
             f"{pre_processed}{n}",
             f"Author: **{self.__author__}**",
             f"Cog Version: **{self.__version__}**",
@@ -96,12 +99,12 @@ class RainbowRole(BaseCog):  # type: ignore
         return "\n".join(text)
 
     @tasks.loop(seconds=90.0)
-    async def change_color(self):
+    async def change_color(self) -> None:
         """
         The task that is responsible for the color change every x seconds.
         """
         for guild in self.bot.guilds:
-            toggle = self.config.guild(guild).toggle()
+            toggle: bool = self.config.guild(guild).toggle()
             if not toggle:
                 return
 
@@ -116,28 +119,31 @@ class RainbowRole(BaseCog):  # type: ignore
                             COLORS[self.color][2],
                         ),
                     )
-                except:
-                    self.log.info("Oops! Something went wrong.", exc_info=True)
+                except (discord.Forbidden, discord.HTTPException, Exception):
+                    self.log.exception("Oops! Something went wrong.", exc_info=True)
 
-        self.color = self.color + 1 if self.color + 1 <= 7 else 0
+        self.color: int = self.color + 1 if self.color + 1 <= 7 else 0
 
     @change_color.before_loop
-    async def before_color_change(self):
+    async def before_color_change(self) -> None:
         await self.bot.wait_until_red_ready()
+        
+    async def cog_load(self) -> None:
+        pass
 
-    def cog_unload(self):
+    async def cog_unload(self) -> None:
         self.bot.loop.create_task(self.change_color.stop())
 
-    @commands.group()
+    @commands.group(name="rainbowset", invoke_without_command=True)
     @commands.guildowner_or_permissions(administrator=True)
-    async def set(self, ctx: commands.Context):
+    async def _rainbow_set(self, ctx: commands.Context) -> None:
         """Group commands for the rainbow role settings."""
         if ctx.invoked_subcommand is None:
             await ctx.send_help("set")
 
-    @set.command()
+    @_rainbow_set.command()
     @commands.guildowner_or_permissions(administrator=True)
-    async def toggle(self, ctx: commands.Context, true_or_false: Optional[bool] = None):
+    async def toggle(self, ctx: commands.Context, true_or_false: Optional[bool] = None) -> None:
         """
         Toggle the rainbow role task.
         """
@@ -147,13 +153,13 @@ class RainbowRole(BaseCog):  # type: ignore
         await self.config.guild(ctx.guild).toggle(true_or_false)
         return await ctx.tick()
 
-    @set.command()
+    @_rainbow_set.command()
     @commands.guildowner_or_permissions(administrator=True)
     async def role(
         self,
         ctx: commands.Context,
         role: Optional[Union[discord.Role, int]] = None,
-    ):
+    ) -> None:
         """
         Set your rainbow role using this command.
         """
