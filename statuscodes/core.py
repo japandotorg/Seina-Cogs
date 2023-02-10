@@ -24,7 +24,7 @@ SOFTWARE.
 
 import difflib
 from io import BytesIO
-from typing import Literal, List, Final, Any, Dict, TypeVar, Type, Tuple
+from typing import Any, Dict, Final, List, Literal, Tuple, Type, TypeVar
 
 import discord
 from redbot.core import commands
@@ -46,12 +46,7 @@ class StatusCodes(commands.Cog):
     __author__: Final[List[str]] = ["inthedark.org#0666"]
     __version__: Final[str] = "0.1.0"
 
-    def __init__(
-        self, 
-        bot: Red, 
-        *args: Tuple[Any, ...], 
-        **kwargs: Dict[str, Any]
-    ) -> None:
+    def __init__(self, bot: Red, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> None:
         super().__init__(*args, **kwargs)
         self.bot: Red = bot
 
@@ -84,7 +79,7 @@ class StatusCodes(commands.Cog):
         return "\n".join(text)
 
     @commands.command(name="statuscodes", aliases=["statuscode"])
-    async def statuscodes(self, ctx: commands.Context, *, code = None) -> None:
+    async def statuscodes(self, ctx: commands.Context, *, code=None) -> None:
         """
         Find the meaning behind various status codes.
         """
