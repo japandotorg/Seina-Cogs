@@ -24,12 +24,12 @@ SOFTWARE.
 
 import re
 from io import BytesIO
-from typing import Dict, Any, Literal, TypeVar, Type, List, Final
+from typing import Any, Dict, Final, List, Literal, Type, TypeVar
 
 import discord
 from redbot.core import commands
 from redbot.core.bot import Red
-from redbot.core.utils.chat_formatting import box, inline, humanize_list
+from redbot.core.utils.chat_formatting import box, humanize_list, inline
 
 RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
@@ -38,7 +38,7 @@ RTT = TypeVar("RTT", bound="RequestType")
 
 class MsgUtils(commands.Cog):
     """Utilities to view raw messages"""
-    
+
     __author__: Final[List[str]] = ["inthedark.org#0666"]
     __version__: Final[str] = "0.1.1"
 
@@ -54,14 +54,16 @@ class MsgUtils(commands.Cog):
         data: Any = "No data is stored for user with ID {}.\n".format(user_id)
         return {"user_data.txt": BytesIO(data.encode())}
 
-    async def red_delete_data_for_user(self, *, requester: Type[RTT], user_id: int) -> Dict[str, BytesIO]:
+    async def red_delete_data_for_user(
+        self, *, requester: Type[RTT], user_id: int
+    ) -> Dict[str, BytesIO]:
         """
         Delete a user's personal data.
         No personal data is stored in this cog.
         """
         data: Any = "No data is stored for user with ID {}.\n".format(user_id)
         return {"user_data.txt": BytesIO(data.encode())}
-    
+
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
         n = "\n" if "\n\n" not in pre_processed else ""
@@ -72,7 +74,9 @@ class MsgUtils(commands.Cog):
         ]
         return "\n".join(text)
 
-    async def _dump(self, ctx: commands.Context, channel: discord.TextChannel, msg_id: int) -> None:
+    async def _dump(
+        self, ctx: commands.Context, channel: discord.TextChannel, msg_id: int
+    ) -> None:
         if msg_id:
             try:
                 msg: discord.Message = await channel.fetch_message(msg_id)
@@ -90,7 +94,9 @@ class MsgUtils(commands.Cog):
 
     @commands.command()
     @commands.mod_or_permissions(manage_messages=True)
-    async def editmsg(self, ctx: commands.Context, channel: discord.TextChannel, msg_id: int, *, new_msg: str) -> None:
+    async def editmsg(
+        self, ctx: commands.Context, channel: discord.TextChannel, msg_id: int, *, new_msg: str
+    ) -> None:
         """
         Gven a channel and an ID for a message printed in that channel, replaces it
         """
@@ -111,7 +117,9 @@ class MsgUtils(commands.Cog):
 
     @commands.command()
     @commands.mod_or_permissions(manage_messages=True)
-    async def dumpchannel(self, ctx: commands.Context, channel: discord.TextChannel, msg_id: int) -> None:
+    async def dumpchannel(
+        self, ctx: commands.Context, channel: discord.TextChannel, msg_id: int
+    ) -> None:
         """
         Gven a channel and an ID for a message printed in that channel, dumps it
         boxed wth formatted escaped and some issues cleaned up.
