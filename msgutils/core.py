@@ -24,40 +24,58 @@ SOFTWARE.
 
 import re
 from io import BytesIO
+from typing import Dict, Any, Literal, TypeVar, Type, List, Final
 
 import discord
 from redbot.core import commands
 from redbot.core.bot import Red
-from redbot.core.utils.chat_formatting import box, inline
+from redbot.core.utils.chat_formatting import box, inline, humanize_list
+
+RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
+
+RTT = TypeVar("RTT", bound="RequestType")
 
 
 class MsgUtils(commands.Cog):
     """Utilities to view raw messages"""
+    
+    __author__: Final[List[str]] = ["inthedark.org#0666"]
+    __version__: Final[str] = "0.1.1"
 
-    def __init__(self, bot: Red, *args, **kwargs):
+    def __init__(self, bot: Red, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.bot = bot
+        self.bot: Red = bot
 
-    @classmethod
-    async def initialize(cls, bot: Red):
-        await bot.wait_until_red_ready()
+    async def cog_load(self) -> None:
+        await self.bot.wait_until_red_ready()
 
-    async def red_get_data_for_user(self, *, user_id):
+    async def red_get_data_for_user(self, *, user_id: int) -> Dict[str, BytesIO]:
         """Get a user's personal data."""
-        data = "No data is stored for user with ID {}.\n".format(user_id)
+        data: Any = "No data is stored for user with ID {}.\n".format(user_id)
         return {"user_data.txt": BytesIO(data.encode())}
 
-    async def red_delete_data_for_user(self, *, requester, user_id):
+    async def red_delete_data_for_user(self, *, requester: Type[RTT], user_id: int) -> Dict[str, BytesIO]:
         """
         Delete a user's personal data.
         No personal data is stored in this cog.
         """
-        return
+        data: Any = "No data is stored for user with ID {}.\n".format(user_id)
+        return {"user_data.txt": BytesIO(data.encode())}
+    
+    def format_help_for_context(self, ctx: commands.Context) -> str:
+        pre_processed = super().format_help_for_context(ctx) or ""
+        n = "\n" if "\n\n" not in pre_processed else ""
+        text: List[str] = [
+            f"{pre_processed}{n}",
+            f"Cog Version: **{self.__version__}**",
+            f"Author: {humanize_list(self.__author__)}",
+        ]
+        return "\n".join(text)
 
-    async def _dump(self, ctx, channel: discord.TextChannel = None, msg_id: int = None):
+    async def _dump(self, ctx: commands.Context, channel: discord.TextChannel, msg_id: int) -> None:
         if msg_id:
             try:
-                msg = await channel.fetch_message(msg_id)
+                msg: discord.Message = await channel.fetch_message(msg_id)
             except discord.NotFound:
                 await ctx.send("Invalid message id")
                 return
@@ -72,12 +90,12 @@ class MsgUtils(commands.Cog):
 
     @commands.command()
     @commands.mod_or_permissions(manage_messages=True)
-    async def editmsg(self, ctx, channel: discord.TextChannel, msg_id: int, *, new_msg: str):
+    async def editmsg(self, ctx: commands.Context, channel: discord.TextChannel, msg_id: int, *, new_msg: str) -> None:
         """
         Gven a channel and an ID for a message printed in that channel, replaces it
         """
         try:
-            msg = await channel.fetch_message(msg_id)
+            msg: discord.Message = await channel.fetch_message(msg_id)
         except discord.NotFound:
             await ctx.send(inline("Cannot find the message, check the channel and message id."))
             return
@@ -93,7 +111,7 @@ class MsgUtils(commands.Cog):
 
     @commands.command()
     @commands.mod_or_permissions(manage_messages=True)
-    async def dumpchannel(self, ctx, channel: discord.TextChannel, msg_id: int = None):
+    async def dumpchannel(self, ctx: commands.Context, channel: discord.TextChannel, msg_id: int) -> None:
         """
         Gven a channel and an ID for a message printed in that channel, dumps it
         boxed wth formatted escaped and some issues cleaned up.
@@ -102,7 +120,7 @@ class MsgUtils(commands.Cog):
 
     @commands.command()
     @commands.mod_or_permissions(manage_messages=True)
-    async def dumpmsg(self, ctx, msg_id: int = None):
+    async def dumpmsg(self, ctx: commands.Context, msg_id: int) -> None:
         """
         Gven an ID for a message printed in the current channel, dumps it
         boxed wth formatted escaped and some issues cleaned up.
@@ -111,7 +129,7 @@ class MsgUtils(commands.Cog):
 
     @commands.command(aliases=["dumpexactmsg"])
     @commands.mod_or_permissions(manage_messages=True)
-    async def dumpmsgexact(self, ctx, msg_id: int):
+    async def dumpmsgexact(self, ctx: commands.Context, msg_id: int) -> None:
         """
         Given a ID for a message printed in the current channel, dumps it
         boxed with formatting escaped.
