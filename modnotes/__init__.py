@@ -22,10 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from typing import Any
+
 from redbot.core.bot import Red
 
 from .core import ModNotes
-from typing import Any
 
 __red_end_user_data_statement__: str = "No personal data is stored."
 
