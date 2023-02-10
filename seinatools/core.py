@@ -387,3 +387,59 @@ class SeinaTools(BaseCog):  # type: ignore
             await ctx.send(embed=embed, view=view)
         else:
             await ctx.send(message, view=view)
+            
+    @commands.command(name="snowflake", aliases=["snowflakeinfo"])
+    @commands.max_concurrency(1, per=commands.BucketType.user)
+    async def _snowflake(
+        self,
+        ctx: commands.Context,
+        *,
+        target: Union[
+            discord.User,
+            discord.Member,
+            discord.Role,
+            discord.Thread,
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.StageChannel,
+            discord.Guild,
+            discord.Emoji,
+            discord.Invite,
+            discord.Template,
+            discord.CategoryChannel,
+            discord.DMChannel,
+            discord.GroupChannel,
+        ],
+    ) -> None:
+        """
+        Get info about a snowflake ID.
+        """
+        embed: discord.Embed = discord.Embed(
+            title="Snowflake Info",
+            color=await ctx.embed_color(),
+            timestamp=discord.utils.utcnow(),
+        )
+        embed.add_field(
+            name="Type:",
+            value=f"{target.__class__.__name__}",
+            inline=True,
+        )
+        embed.add_field(
+            name="Created At:",
+            value=f"{discord.utils.format_dt(target.created_at)}"
+            if target.created_at is not None
+            else "None",
+            inline=True,
+        )
+        embed.add_field(
+            name="ID:",
+            value=f"{getattr(target, 'id', 'NA')}",
+            inline=True,
+        )
+        embed.set_footer(
+            text=f"Requested by {ctx.author}",
+        )
+        await ctx.reply(
+            embed=embed, 
+            mention_author=discord.AllowedMentions(replied_user=False),
+        )
