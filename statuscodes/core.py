@@ -23,6 +23,8 @@ SOFTWARE.
 """
 
 import difflib
+from io import BytesIO
+from typing import Literal, List, Final, Any, Dict, TypeVar, Type, Tuple
 
 import discord
 from redbot.core import commands
@@ -31,29 +33,50 @@ from redbot.core.utils.chat_formatting import humanize_list
 
 from .util import STATUS_CODES
 
+RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
+
+RTT = TypeVar("RTT", bound="RequestType")
+
 
 class StatusCodes(commands.Cog):
     """
     Find the meaning behind various status codes.
     """
 
-    __author__ = "inthedark.org#0666"
-    __version__ = "0.1.0"
+    __author__: Final[List[str]] = ["inthedark.org#0666"]
+    __version__: Final[str] = "0.1.0"
 
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(
+        self, 
+        bot: Red, 
+        *args: Tuple[Any, ...], 
+        **kwargs: Dict[str, Any]
+    ) -> None:
+        super().__init__(*args, **kwargs)
+        self.bot: Red = bot
 
-    @classmethod
-    async def initialize(cls, bot: Red):
-        await bot.wait_until_red_ready()
+    async def cog_load(self) -> None:
+        await self.bot.wait_until_red_ready()
 
-    async def red_delete_data_for_user(self, **kwargs):
-        return
+    async def red_get_data_for_user(self, *, user_id: int) -> Dict[str, BytesIO]:
+        """Get a user's personal data."""
+        data: Any = "No data is stored for user with ID {}.\n".format(user_id)
+        return {"user_data.txt": BytesIO(data.encode())}
+
+    async def red_delete_data_for_user(
+        self, *, requester: Type[RTT], user_id: int
+    ) -> Dict[str, BytesIO]:
+        """
+        Delete a user's personal data.
+        No personal data is stored in this cog.
+        """
+        data: Any = "No data is stored for user with ID {}.\n".format(user_id)
+        return {"user_data.txt": BytesIO(data.encode())}
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
         n = "\n" if "\n\n" not in pre_processed else ""
-        text = [
+        text: List[str] = [
             f"{pre_processed}{n}",
             f"Cog Version: **{self.__version__}**",
             f"Author: {humanize_list(self.__author__)}",
@@ -61,7 +84,7 @@ class StatusCodes(commands.Cog):
         return "\n".join(text)
 
     @commands.command(name="statuscodes", aliases=["statuscode"])
-    async def statuscodes(self, ctx, *, code=None):
+    async def statuscodes(self, ctx: commands.Context, *, code = None) -> None:
         """
         Find the meaning behind various status codes.
         """

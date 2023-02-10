@@ -22,7 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-STATUS_CODES = {
+from typing import Dict
+
+STATUS_CODES: Dict[str, Dict[str, str]] = {
     "1": {
         "title": "1xx informational response",
         "message": "An informational response indicates that the request was received and understood.",
