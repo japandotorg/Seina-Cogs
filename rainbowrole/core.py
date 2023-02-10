@@ -24,7 +24,7 @@ SOFTWARE.
 
 import logging
 from io import BytesIO
-from typing import Literal, Optional, Union, List, Tuple, Final, Dict, Any
+from typing import Any, Dict, Final, List, Literal, Optional, Tuple, Union
 
 import discord
 from discord.ext import tasks
@@ -54,7 +54,7 @@ class RainbowRole(BaseCog):  # type: ignore
     Create and manage a Rainbow Role in your server.
     """
 
-    __version__: Final[str] = ("0.1.0")
+    __version__: Final[str] = "0.1.0"
     __author__: Final[List[str]] = [("inthedark.org#0666")]
 
     def __init__(self, bot: Red) -> None:
@@ -62,7 +62,9 @@ class RainbowRole(BaseCog):  # type: ignore
         self.config: Config = Config.get_conf(
             self, identifier=759180080328081450, force_registration=True
         )
-        self.log: logging.LoggerAdapter[logging.Logger] = logging.LoggerAdapter(log, {"version": self.__version__})
+        self.log: logging.LoggerAdapter[logging.Logger] = logging.LoggerAdapter(
+            log, {"version": self.__version__}
+        )
 
         default_guild: Dict[str, Any] = {
             "rainbow_role": None,
@@ -81,7 +83,9 @@ class RainbowRole(BaseCog):  # type: ignore
         data: Any = "No data is stored for user with ID {}.\n".format(user_id)
         return {"user_data.txt": BytesIO(data.encode())}
 
-    async def red_delete_data_for_user(self, *, requester: RequestType, user_id: int) -> Dict[str, BytesIO]:
+    async def red_delete_data_for_user(
+        self, *, requester: RequestType, user_id: int
+    ) -> Dict[str, BytesIO]:
         """
         Nothing to delete.
         """
@@ -127,7 +131,7 @@ class RainbowRole(BaseCog):  # type: ignore
     @change_color.before_loop
     async def before_color_change(self) -> None:
         await self.bot.wait_until_red_ready()
-        
+
     async def cog_load(self) -> None:
         pass
 
