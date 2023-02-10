@@ -32,13 +32,15 @@ import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Mapping, Optional
+from types import MappingProxyType
+from typing import List, Mapping, Optional, Any, Dict, TextIO, Pattern, Final, final, Union
+from typing_extensions import Annotated, Self
 
 import click
 import tabulate
 from babel.lists import format_list as babel_list
 
-DEFAULT_INFO = {
+DEFAULT_INFO: Dict[str, Any] = {
     "author": [],
     "install_msg": "",
     "name": "",
@@ -51,9 +53,9 @@ DEFAULT_INFO = {
 }
 
 logging.basicConfig(filename="scripts.log", level=logging.INFO)
-log = logging.getLogger(__file__)
-handler = logging.StreamHandler(sys.stdout)
-formatter = logging.Formatter(
+log: logging.Logger = logging.getLogger(__file__)
+handler: logging.StreamHandler[TextIO] = logging.StreamHandler(sys.stdout)
+formatter: logging.Formatter = logging.Formatter(
     "[{asctime}] [{levelname}] {name}: {message}",
     datefmt="%Y-%m-%d %H:%M:%S",
     style="{",
@@ -61,13 +63,13 @@ formatter = logging.Formatter(
 handler.setFormatter(formatter)
 log.addHandler(handler)
 
-ROOT = Path(__file__).parent.resolve().parents[0]
+ROOT: Path = Path(__file__).parent.resolve().parents[0]
 
-VER_REG = re.compile(r"\_\_version\_\_ = \"(\d+\.\d+\.\d+)", flags=re.I)
+VER_REG: Pattern[str] = re.compile(r"\_\_version\_\_ = \"(\d+\.\d+\.\d+)", flags=re.I)
 
-DEFAULT_AUTHOR = ["inthedark.org#0666"]
+DEFAULT_AUTHOR: List[str] = ["inthedark.org#0666"]
 
-HEADER = (
+HEADER: Final[str] = (
     "# Seina-Cogs V3\n"
     "[![Red-DiscordBot](https://img.shields.io/badge/Red--DiscordBot-V3-red.svg)](https://github.com/Cog-Creators/Red-DiscordBot)"
     "[![Discord.py](https://img.shields.io/badge/Discord.py-rewrite-blue.svg)](https://github.com/Rapptz/discord.py/tree/rewrite)\n\n"
@@ -81,6 +83,7 @@ HEADER = (
 )
 
 
+@final
 @dataclass
 class InfoJson:
     author: List[str]
@@ -103,7 +106,7 @@ class InfoJson:
     )
 
     @classmethod
-    def from_json(cls, data: dict):
+    def from_json(cls, data: Dict[Any, Any]) -> Self:
         required_cogs: Mapping = {}
         author = data.get("author", [])
         description = data.get("description", "")
@@ -156,18 +159,18 @@ class InfoJson:
         )
 
 
-def save_json(folder, data):
+def save_json(folder: str, data: Union[MappingProxyType, Any]) -> None:
     with open(folder, "w") as newfile:
         json.dump(data, newfile, indent=4, sort_keys=True, separators=(",", " : "))
 
 
 @click.group()
-def cli():
+def cli() -> None:
     """Utilities for Cog creation!"""
 
 
 @cli.command()
-def mass_fix():
+def mass_fix() -> None:
     """Ensure all info.json files are up-to-date with current standards"""
     for folder in os.listdir(f"{ROOT}/"):
         if folder.startswith("."):
@@ -192,7 +195,7 @@ def mass_fix():
     prompt="Enter the value for the key you want changed.",
     help="The value you want the key edited to.",
 )
-def edit(key, value):
+def edit(key: str, value: Annotated[Union[str, int], click.types.STRING, click.types.INT]):
     for folder in os.listdir(f"{ROOT}/"):
         if folder.startswith("."):
             continue
@@ -327,7 +330,7 @@ def make(
 @cli.command()
 @click.option("--include-hidden", default=False)
 @click.option("--include-disabled", default=False)
-def countlines(include_hidden: bool = False, include_disabled: bool = False):
+def countlines(include_hidden: bool = False, include_disabled: bool = False) -> List[Any]:
     """Count the number of lines of .py files in all folders"""
     total = 0
     totals = []
@@ -377,7 +380,7 @@ def countlines(include_hidden: bool = False, include_disabled: bool = False):
 @cli.command()
 @click.option("--include-hidden", default=False)
 @click.option("--include-disabled", default=False)
-def countchars(include_hidden: bool = False, include_disabled: bool = False):
+def countchars(include_hidden: bool = False, include_disabled: bool = False) -> List[Any]:
     """Count the number of lines of .py files in all folders"""
     total = 0
     totals = []
@@ -414,7 +417,7 @@ def countchars(include_hidden: bool = False, include_disabled: bool = False):
 
 
 @cli.command()
-def makereadme():
+def makereadme() -> None:
     """Generate README.md from info about all cogs"""
     table_data = []
     for folder in os.listdir(ROOT):
@@ -459,7 +462,7 @@ def makereadme():
 
 
 @cli.command()
-def makerequirements():
+def makerequirements() -> None:
     """Generate a requirements.txt for all cogs.
     Useful when setting up the bot in a new venv and requirements are missing.
     """
@@ -493,7 +496,7 @@ def makerequirements():
         outfile.write(requirements_txt)
 
 
-def run_cli():
+def run_cli() -> None:
     try:
         cli()
     except KeyboardInterrupt:
