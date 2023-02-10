@@ -80,7 +80,7 @@ class RainbowRole(BaseCog):  # type: ignore
         """
         Nothing to get.
         """
-        data: Any = "No data is stored for user with ID {}.\n".format(user_id)
+        data: Any = f"No data is stored for user with ID {user_id}.\n"
         return {"user_data.txt": BytesIO(data.encode())}
 
     async def red_delete_data_for_user(
@@ -89,7 +89,7 @@ class RainbowRole(BaseCog):  # type: ignore
         """
         Nothing to delete.
         """
-        data: Any = "No data is stored for user with ID {}.\n".format(user_id)
+        data: Any = f"No data is stored for user with ID {user_id}.\n"
         return {"user_data.txt": BytesIO(data.encode())}
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
@@ -112,8 +112,7 @@ class RainbowRole(BaseCog):  # type: ignore
             if not toggle:
                 return
 
-            rainbow_role = self.config.guild(guild).rainbow_role()
-            if rainbow_role:
+            if rainbow_role := self.config.guild(guild).rainbow_role():
                 try:
                     await rainbow_role.edit(
                         reason="Automatic rainbow role color change.",
@@ -126,7 +125,7 @@ class RainbowRole(BaseCog):  # type: ignore
                 except (discord.Forbidden, discord.HTTPException, Exception):
                     self.log.exception("Oops! Something went wrong.", exc_info=True)
 
-        self.color: int = self.color + 1 if self.color + 1 <= 7 else 0
+        self.color: int = self.color + 1 if self.color <= 6 else 0
 
     @change_color.before_loop
     async def before_color_change(self) -> None:

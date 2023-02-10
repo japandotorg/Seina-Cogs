@@ -51,7 +51,7 @@ class MsgUtils(commands.Cog):
 
     async def red_get_data_for_user(self, *, user_id: int) -> Dict[str, BytesIO]:
         """Get a user's personal data."""
-        data: Any = "No data is stored for user with ID {}.\n".format(user_id)
+        data: Any = f"No data is stored for user with ID {user_id}.\n"
         return {"user_data.txt": BytesIO(data.encode())}
 
     async def red_delete_data_for_user(
@@ -61,7 +61,7 @@ class MsgUtils(commands.Cog):
         Delete a user's personal data.
         No personal data is stored in this cog.
         """
-        data: Any = "No data is stored for user with ID {}.\n".format(user_id)
+        data: Any = f"No data is stored for user with ID {user_id}.\n"
         return {"user_data.txt": BytesIO(data.encode())}
 
     def format_help_for_context(self, ctx: commands.Context) -> str:

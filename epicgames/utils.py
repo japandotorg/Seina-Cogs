@@ -32,5 +32,4 @@ FREE_GAMES: Final[
 
 
 def _fetch_free_games() -> Any:
-    response = requests.get(FREE_GAMES).json()
-    return response
+    return requests.get(FREE_GAMES).json()

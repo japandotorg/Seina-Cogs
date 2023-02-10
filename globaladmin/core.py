@@ -77,7 +77,7 @@ class GlobalAdmin(commands.Cog):
         """
         Get a user's personal data.
         """
-        data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
+        data: Final[str] = f"No data is stored for user with ID {user_id}.\n"
         return {"user_data.txt": BytesIO(data.encode())}
 
     async def red_delete_data_for_user(
@@ -87,7 +87,7 @@ class GlobalAdmin(commands.Cog):
         Delete a user's personal data.
         No personal data is stored in this cog.
         """
-        data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
+        data: Final[str] = f"No data is stored for user with ID {user_id}.\n"
         return {"user_data.txt": BytesIO(data.encode())}
 
     @commands.group(aliases=["ga", "gadmin"], invoke_without_command=True)
@@ -147,7 +147,7 @@ class GlobalAdmin(commands.Cog):
         mlen: int = max(len(k) for k in self.settings.get_perms().keys())
 
         for perm, default in self.settings.get_perms().items():
-            msg += " - {}{}(default: {})\n".format(perm, " " * (mlen - len(perm) + 3), default)
+            msg += f' - {perm}{" " * (mlen - len(perm) + 3)}(default: {default})\n'
         for page in pagify(msg):
             await ctx.send(box(page))
 
