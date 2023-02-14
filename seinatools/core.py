@@ -411,7 +411,7 @@ class SeinaTools(BaseCog):  # type: ignore
     @commands.group(name="spotify", invoke_without_command=True)
     async def _spotify(self, ctx: commands.Context, user: Optional[discord.Member] = None) -> None:
         """
-        View user's now playing spotify status from their discord activity.
+        View the specified user's (defaults to author) now playing spotify status from their discord activity.
         """
         if ctx.invoked_subcommand is None:
             if not user:
@@ -433,10 +433,20 @@ class SeinaTools(BaseCog):  # type: ignore
 
             settings = await self.config.all()
             emoji = Emoji.from_data(settings.get("emoji"))
+            
+            view = discord.ui.View()
+            view.add_item(
+                discord.ui.Button(
+                    label="Listen on Spotify",
+                    url=f"{spotify.track_url}",
+                    emoji=emoji.as_emoji(),
+                )
+            )
 
             await ctx.send(
                 f"{emoji.as_emoji()} **{user}** is listening to **{spotify.title}**!",
                 file=discord.File(image, "spotify.png"),
+                view=view,
             )
 
     @_spotify.command(name="emoji")
