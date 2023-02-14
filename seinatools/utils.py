@@ -23,18 +23,17 @@ SOFTWARE.
 """
 
 import logging
-from typing import Dict, Union, TYPE_CHECKING, Any
-from emoji.unicode_codes import UNICODE_EMOJI_ENGLISH # type: ignore
+from typing import TYPE_CHECKING, Any, Dict, Union
 
+from emoji.unicode_codes import UNICODE_EMOJI_ENGLISH  # type: ignore
 from redbot.core import commands
 
 log: logging.Logger = logging.getLogger("red.seinacogs.tools.utils")
 
-__all__: list[str] = [
-    
-]
+__all__: list[str] = []
 
 NoneType = type(None)
+
 
 class Emoji:
     def __init__(self, data: Dict[str, Any]) -> None:
@@ -42,7 +41,7 @@ class Emoji:
         self.id = data.get("id", None)
         self.animated = data.get("animated", None)
         self.custom = self.id is not None
-        
+
     @classmethod
     def from_data(cls, data: Union[str, Dict[str, Any]]):
         log.debug(data)
@@ -51,19 +50,21 @@ class Emoji:
         if isinstance(data, str):
             return cls({"name": data})
         return cls(data)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {"name": self.name, "id": self.id}
-    
+
     def as_emoji(self) -> str:
         if not self.custom:
             return self.name
         animated = "a" if self.animated else ""
         return f"<{animated}:{self.name}:{self.id}>"
 
+
 if TYPE_CHECKING:
     EmojiConverter = Union[Emoji, NoneType]
 else:
+
     class EmojiConverter(commands.PartialEmojiConverter):
         async def convert(self, ctx: commands.Context, arg: str) -> Union[Emoji, NoneType]:
             if arg.lower() == "none":
@@ -72,4 +73,3 @@ else:
             data = arg if arg in UNICODE_EMOJI_ENGLISH.keys() else await super().convert(ctx, arg)
             data = getattr(data, "to_dict", lambda: data)()
             return Emoji.from_data(data)
-        
