@@ -405,6 +405,7 @@ class SeinaTools(BaseCog):  # type: ignore
             await ctx.send(message, view=view)
 
     perms = {"embed_links": True}
+
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
@@ -419,7 +420,7 @@ class SeinaTools(BaseCog):  # type: ignore
 
             async with ctx.channel.typing():
                 spotify = discord.utils.find(
-                    lambda pres: isinstance(pres, discord.Spotify), user.activities # type: ignore
+                    lambda pres: isinstance(pres, discord.Spotify), user.activities  # type: ignore
                 )
 
                 if spotify is None:
