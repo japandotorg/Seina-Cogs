@@ -33,12 +33,12 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import MappingProxyType
-from typing import List, Mapping, Optional, Any, Dict, TextIO, Pattern, Final, final, Union
-from typing_extensions import Annotated, Self
+from typing import Any, Dict, Final, List, Mapping, Optional, Pattern, TextIO, Union, final
 
 import click
 import tabulate
 from babel.lists import format_list as babel_list
+from typing_extensions import Annotated, Self
 
 DEFAULT_INFO: Dict[str, Any] = {
     "author": [],
