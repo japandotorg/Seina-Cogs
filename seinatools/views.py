@@ -26,21 +26,20 @@ from typing import Optional
 
 import discord
 
+
 class SpotifyView(discord.ui.View):
-    
     def __init__(
-        self, 
-        label: str ="Listen on Spotify", 
-        emoji: Optional[str] = None, 
+        self,
+        label: str = "Listen on Spotify",
+        emoji: Optional[str] = None,
         url: Optional[str] = None,
     ) -> None:
         super().__init__()
-        
+
         self.add_item(
             discord.ui.Button(
-                label=label, 
-                emoji=emoji, 
+                label=label,
+                emoji=emoji,
                 url=url,
             )
         )
-        
