@@ -433,7 +433,7 @@ class SeinaTools(BaseCog):  # type: ignore
 
             settings = await self.config.all()
             emoji = Emoji.from_data(settings.get("emoji"))
-            
+
             view = discord.ui.View()
             view.add_item(
                 discord.ui.Button(
