@@ -69,7 +69,7 @@ class SeinaTools(BaseCog):  # type: ignore
 
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
 
-        self.jeyyapi: jeyyapi.JeyyAPIClient = jeyyapi.JeyyAPIClient(session=self.session)
+        self.spotify: jeyyapi.JeyyAPIClient = jeyyapi.JeyyAPIClient(session=self.session)
 
         default_global: Dict[str, Any] = {
             "embed": False,
@@ -405,14 +405,13 @@ class SeinaTools(BaseCog):  # type: ignore
             await ctx.send(message, view=view)
 
     perms = {"embed_links": True}
-
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
     @commands.group(name="spotify", invoke_without_command=True)
     async def _spotify(self, ctx: commands.Context, user: Optional[discord.Member] = None) -> None:  # type: ignore
         """
-        View the specified user's (defaults to author) now playing spotify status from their discord activity.
+        View the specified (defaults to author) user's now playing spotify status from their discord activity.
         """
         if ctx.invoked_subcommand is None:
             if not user:
@@ -420,7 +419,7 @@ class SeinaTools(BaseCog):  # type: ignore
 
             async with ctx.channel.typing():
                 spotify = discord.utils.find(
-                    lambda pres: isinstance(pres, discord.Spotify), user.activities
+                    lambda pres: isinstance(pres, discord.Spotify), user.activities # type: ignore
                 )
 
                 if spotify is None:
@@ -430,7 +429,7 @@ class SeinaTools(BaseCog):  # type: ignore
                     )
                     return await ctx.send(embed=embed)
 
-                image = await self.jeyyapi.spotify_from_object(spotify)
+                image: io.BytesIO = await self.spotify.spotify_from_object(spotify)
 
             settings: Any = await self.config.all()
             emoji: Optional[Emoji] = Emoji.from_data(settings.get("emoji"))
