@@ -26,11 +26,11 @@ from __future__ import annotations
 
 import io
 import logging
-from typing import Any, Dict, Literal, Mapping, Optional, Union, Final, List
+from typing import Any, Dict, Final, List, Literal, Mapping, Optional, Union
 
-import jeyyapi
 import aiohttp
 import discord
+import jeyyapi
 from playwright.async_api import async_playwright  # type: ignore
 from pygicord import Paginator  # type: ignore
 from redbot.core import Config, commands  # type: ignore
@@ -41,7 +41,7 @@ from redbot.core.utils.views import SetApiView  # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
-from .utils import EmojiConverter, Emoji
+from .utils import Emoji, EmojiConverter
 
 BaseCog = getattr(commands, "Cog", object)
 
@@ -67,7 +67,7 @@ class SeinaTools(BaseCog):  # type: ignore
         self.config: Config = Config.get_conf(self, identifier=666, force_registration=True)
 
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
-        
+
         self.jeyyapi: jeyyapi.JeyyAPIClient = jeyyapi.JeyyAPIClient(session=self.session)
 
         default_global: Dict[str, Any] = {
@@ -75,10 +75,12 @@ class SeinaTools(BaseCog):  # type: ignore
             "notice": False,
             "emoji": {},
         }
-        
+
         self.config.register_global(**default_global)
-        
-    async def red_get_data_for_user(self, *, requester: RequestType, user_id: int) -> Dict[str, io.BytesIO]:
+
+    async def red_get_data_for_user(
+        self, *, requester: RequestType, user_id: int
+    ) -> Dict[str, io.BytesIO]:
         """
         Nothing to delete.
         """
@@ -401,9 +403,8 @@ class SeinaTools(BaseCog):  # type: ignore
         else:
             await ctx.send(message, view=view)
 
-    perms = {
-        "embed_links": True
-    }
+    perms = {"embed_links": True}
+
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
@@ -429,17 +430,15 @@ class SeinaTools(BaseCog):  # type: ignore
                     return await ctx.send(embed=embed)
 
                 image = await self.jeyyapi.spotify_from_object(spotify)
-                
+
             settings = await self.config.all()
-            emoji = [
-                Emoji.from_data(settings.get(x)) for x in ["emoji"]
-            ]
-                
+            emoji = [Emoji.from_data(settings.get(x)) for x in ["emoji"]]
+
             await ctx.send(
                 f"{emoji} **{user}** is listening to **{spotify.title}**",
                 file=discord.File(image, f"spotify.png"),
             )
-            
+
     @_spotify.command(name="emoji")
     async def _spotify_embed(self, ctx: commands.Context, emoji: EmojiConverter) -> None:
         """Set an emoji to be used with the spotify command."""
