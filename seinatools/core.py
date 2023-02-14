@@ -432,7 +432,7 @@ class SeinaTools(BaseCog):  # type: ignore
                 image = await self.jeyyapi.spotify_from_object(spotify)
 
             settings: Any = await self.config.all()
-            emoji: Union[Emoji, None] = Emoji.from_data(settings.get("emoji"))
+            emoji: Optional[Emoji] = Emoji.from_data(settings.get("emoji"))
 
             view: discord.ui.View = SpotifyView(
                 label="Listen on Spotify",
