@@ -405,7 +405,6 @@ class SeinaTools(BaseCog):  # type: ignore
             await ctx.send(message, view=view)
 
     perms = {"embed_links": True}
-
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
