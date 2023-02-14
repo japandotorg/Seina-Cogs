@@ -404,7 +404,6 @@ class SeinaTools(BaseCog):  # type: ignore
             await ctx.send(message, view=view)
 
     perms = {"embed_links": True}
-
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
@@ -432,11 +431,11 @@ class SeinaTools(BaseCog):  # type: ignore
                 image = await self.jeyyapi.spotify_from_object(spotify)
 
             settings = await self.config.all()
-            emoji = [Emoji.from_data(settings.get(x)) for x in ["emoji"]]
+            emoji = Emoji.from_data(settings.get("emoji"))
 
             await ctx.send(
                 f"{emoji} **{user}** is listening to **{spotify.title}**",
-                file=discord.File(image, f"spotify.png"),
+                file=discord.File(image, "spotify.png"),
             )
 
     @_spotify.command(name="emoji")
