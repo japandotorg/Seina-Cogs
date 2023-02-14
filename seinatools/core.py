@@ -30,7 +30,7 @@ from typing import Any, Dict, Final, List, Literal, Mapping, Optional, Union
 
 import aiohttp
 import discord
-import jeyyapi # type: ignore
+import jeyyapi  # type: ignore
 from playwright.async_api import async_playwright  # type: ignore
 from pygicord import Paginator  # type: ignore
 from redbot.core import Config, commands  # type: ignore
@@ -41,8 +41,8 @@ from redbot.core.utils.views import SetApiView  # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
-from .views import SpotifyView
 from .utils import Emoji, EmojiConverter
+from .views import SpotifyView
 
 BaseCog = getattr(commands, "Cog", object)
 
@@ -410,7 +410,7 @@ class SeinaTools(BaseCog):  # type: ignore
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
     @commands.group(name="spotify", invoke_without_command=True)
-    async def _spotify(self, ctx: commands.Context, user: Optional[discord.Member] = None) -> None: # type: ignore
+    async def _spotify(self, ctx: commands.Context, user: Optional[discord.Member] = None) -> None:  # type: ignore
         """
         View the specified user's (defaults to author) now playing spotify status from their discord activity.
         """
@@ -434,15 +434,15 @@ class SeinaTools(BaseCog):  # type: ignore
 
             settings: Any = await self.config.all()
             emoji: Union[Emoji, None] = Emoji.from_data(settings.get("emoji"))
-            
+
             view: discord.ui.View = SpotifyView(
                 label="Listen on Spotify",
-                emoji=emoji.as_emoji(), # type: ignore
-                url=f"{spotify.track_url}", # type: ignore
+                emoji=emoji.as_emoji(),  # type: ignore
+                url=f"{spotify.track_url}",  # type: ignore
             )
 
             await ctx.send(
-                f"{emoji.as_emoji()} **{user}** is listening to **{spotify.title}**!", # type: ignore
+                f"{emoji.as_emoji()} **{user}** is listening to **{spotify.title}**!",  # type: ignore
                 file=discord.File(image, "spotify.png"),
                 view=view,
             )
