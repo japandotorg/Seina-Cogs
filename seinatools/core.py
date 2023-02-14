@@ -30,7 +30,7 @@ from typing import Any, Dict, Final, List, Literal, Mapping, Optional, Union
 
 import aiohttp
 import discord
-import jeyyapi
+import jeyyapi # type: ignore
 from playwright.async_api import async_playwright  # type: ignore
 from pygicord import Paginator  # type: ignore
 from redbot.core import Config, commands  # type: ignore
@@ -41,6 +41,7 @@ from redbot.core.utils.views import SetApiView  # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
+from .views import SpotifyView
 from .utils import Emoji, EmojiConverter
 
 BaseCog = getattr(commands, "Cog", object)
@@ -409,7 +410,7 @@ class SeinaTools(BaseCog):  # type: ignore
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
     @commands.group(name="spotify", invoke_without_command=True)
-    async def _spotify(self, ctx: commands.Context, user: Optional[discord.Member] = None) -> None:
+    async def _spotify(self, ctx: commands.Context, user: Optional[discord.Member] = None) -> None: # type: ignore
         """
         View the specified user's (defaults to author) now playing spotify status from their discord activity.
         """
@@ -431,20 +432,17 @@ class SeinaTools(BaseCog):  # type: ignore
 
                 image = await self.jeyyapi.spotify_from_object(spotify)
 
-            settings = await self.config.all()
-            emoji = Emoji.from_data(settings.get("emoji"))
+            settings: Any = await self.config.all()
+            emoji: Union[Emoji, None] = Emoji.from_data(settings.get("emoji"))
             
-            view = discord.ui.View()
-            view.add_item(
-                discord.ui.Button(
-                    label="Listen on Spotify",
-                    url=f"{spotify.track_url}",
-                    emoji=emoji.as_emoji(),
-                )
+            view: discord.ui.View = SpotifyView(
+                label="Listen on Spotify",
+                emoji=emoji.as_emoji(), # type: ignore
+                url=f"{spotify.track_url}", # type: ignore
             )
 
             await ctx.send(
-                f"{emoji.as_emoji()} **{user}** is listening to **{spotify.title}**!",
+                f"{emoji.as_emoji()} **{user}** is listening to **{spotify.title}**!", # type: ignore
                 file=discord.File(image, "spotify.png"),
                 view=view,
             )
