@@ -435,7 +435,7 @@ class SeinaTools(BaseCog):  # type: ignore
             emoji = Emoji.from_data(settings.get("emoji"))
 
             await ctx.send(
-                f"{emoji} **{user}** is listening to **{spotify.title}**",
+                f"{emoji.as_emoji} **{user}** is listening to **{spotify.title}**",
                 file=discord.File(image, "spotify.png"),
             )
 
