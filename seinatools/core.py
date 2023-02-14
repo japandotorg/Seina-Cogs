@@ -26,8 +26,9 @@ from __future__ import annotations
 
 import io
 import logging
-from typing import Any, Dict, Literal, Mapping, Optional, Union
+from typing import Any, Dict, Literal, Mapping, Optional, Union, Final, List
 
+import jeyyapi
 import aiohttp
 import discord
 from playwright.async_api import async_playwright  # type: ignore
@@ -35,11 +36,12 @@ from pygicord import Paginator  # type: ignore
 from redbot.core import Config, commands  # type: ignore
 from redbot.core.bot import Red  # type: ignore
 from redbot.core.i18n import Translator, cog_i18n  # type: ignore
-from redbot.core.utils.chat_formatting import box  # type: ignore
+from redbot.core.utils.chat_formatting import box, humanize_list  # type: ignore
 from redbot.core.utils.views import SetApiView  # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
+from .utils import EmojiConverter, Emoji
 
 BaseCog = getattr(commands, "Cog", object)
 
@@ -53,45 +55,56 @@ _: Translator = Translator("SeinaTools", __file__)
 @cog_i18n(_)
 class SeinaTools(BaseCog):  # type: ignore
     """
-    Owner configuration tools for [botname].
+    Utility tools for [botname].
     """
 
-    __author__ = "inthedark.org#0666"
-    __version__ = "0.1.2"
+    __author__: Final[List[str]] = ["inthedark.org#0666"]
+    __version__: Final[str] = "0.1.2"
 
-    def __init__(self, bot: Red):
+    def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
 
         self.config: Config = Config.get_conf(self, identifier=666, force_registration=True)
 
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
+        
+        self.jeyyapi: jeyyapi.JeyyAPIClient = jeyyapi.JeyyAPIClient(session=self.session)
 
-        default_global: Dict[str, bool] = {"embed": False, "notice": False}
+        default_global: Dict[str, Any] = {
+            "embed": False,
+            "notice": False,
+            "emoji": {},
+        }
+        
         self.config.register_global(**default_global)
-
-    async def red_get_data_for_user(self, *, user_id: int):
-        """
-        Nothing to get.
-        """
-        return {}
-
-    async def red_delete_data_for_user(self, *, requester: RequestType, user_id: int):
+        
+    async def red_get_data_for_user(self, *, requester: RequestType, user_id: int) -> Dict[str, io.BytesIO]:
         """
         Nothing to delete.
         """
-        return {}
+        data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
+        return {"user_data.txt": io.BytesIO(data.encode())}
 
-    def format_help_for_context(self, ctx: commands.Context):
+    async def red_delete_data_for_user(self, **kwargs: Any) -> Dict[str, io.BytesIO]:
+        """
+        Delete a user's personal data.
+        No personal data is stored in this cog.
+        """
+        user_id: Any = kwargs.get("user_id")
+        data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
+        return {"user_data.txt": io.BytesIO(data.encode())}
+
+    def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
         n = "\n" if "\n\n" not in pre_processed else ""
         text = [
             f"{pre_processed}{n}",
-            f"Author: **{self.__author__}**",
+            f"Author: **{humanize_list(self.__author__)}**",
             f"Cog Version: **{self.__version__}**",
         ]
         return "\n".join(text)
 
-    async def _seinatools_error(self, ctx: commands.Context, error):
+    async def _seinatools_error(self, ctx: commands.Context, error) -> None:
         if error.__cause__:
             cause = error.__cause__
             log.exception(f"SeinaTools :: Errored :: \n{error}\n{cause}\n")
@@ -99,7 +112,7 @@ class SeinaTools(BaseCog):  # type: ignore
             cause = error
             log.exception(f"SeinaTools :: Errored :: \n{cause}\n")
 
-    async def initialize(self):
+    async def initialize(self) -> None:
         await self.bot.wait_until_red_ready()
         keys = await self.bot.get_shared_api_tokens("removebg")
         try:
@@ -387,59 +400,51 @@ class SeinaTools(BaseCog):  # type: ignore
             await ctx.send(embed=embed, view=view)
         else:
             await ctx.send(message, view=view)
-            
-    @commands.command(name="snowflake", aliases=["snowflakeinfo"])
+
+    perms = {
+        "embed_links": True
+    }
+    @commands.has_permissions(**perms)
+    @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
-    async def _snowflake(
-        self,
-        ctx: commands.Context,
-        *,
-        target: Union[
-            discord.User,
-            discord.Member,
-            discord.Role,
-            discord.Thread,
-            discord.TextChannel,
-            discord.VoiceChannel,
-            discord.StageChannel,
-            discord.Guild,
-            discord.Emoji,
-            discord.Invite,
-            discord.Template,
-            discord.CategoryChannel,
-            discord.DMChannel,
-            discord.GroupChannel,
-        ],
-    ) -> None:
+    @commands.group(name="spotify", invoke_without_command=True)
+    async def _spotify(self, ctx: commands.Context, user: Optional[discord.Member] = None) -> None:
         """
-        Get info about a snowflake ID.
+        View user's now playing spotify status from their discord activity.
         """
-        embed: discord.Embed = discord.Embed(
-            title="Snowflake Info",
-            color=await ctx.embed_color(),
-            timestamp=discord.utils.utcnow(),
-        )
-        embed.add_field(
-            name="Type:",
-            value=f"{target.__class__.__name__}",
-            inline=True,
-        )
-        embed.add_field(
-            name="Created At:",
-            value=f"{discord.utils.format_dt(target.created_at)}"
-            if target.created_at is not None
-            else "None",
-            inline=True,
-        )
-        embed.add_field(
-            name="ID:",
-            value=f"{getattr(target, 'id', 'NA')}",
-            inline=True,
-        )
-        embed.set_footer(
-            text=f"Requested by {ctx.author}",
-        )
-        await ctx.reply(
-            embed=embed, 
-            mention_author=discord.AllowedMentions(replied_user=False),
-        )
+        if ctx.invoked_subcommand is None:
+            if not user:
+                user: discord.Member = ctx.author
+
+            async with ctx.channel.typing():
+                spotify = discord.utils.find(
+                    lambda pres: isinstance(pres, discord.Spotify), user.activities
+                )
+
+                if spotify is None:
+                    embed: discord.Embed = discord.Embed(
+                        color=await ctx.embed_color(),
+                        description=f"**{user}** is not listening to Spotify right now.",
+                    )
+                    return await ctx.send(embed=embed)
+
+                image = await self.jeyyapi.spotify_from_object(spotify)
+                
+            settings = await self.config.all()
+            emoji = [
+                Emoji.from_data(settings.get(x)) for x in ["emoji"]
+            ]
+                
+            await ctx.send(
+                f"{emoji} **{user}** is listening to **{spotify.title}**",
+                file=discord.File(image, f"spotify.png"),
+            )
+            
+    @_spotify.command(name="emoji")
+    async def _spotify_embed(self, ctx: commands.Context, emoji: EmojiConverter) -> None:
+        """Set an emoji to be used with the spotify command."""
+        if not emoji:
+            await self.config.emoji.clear()
+            return await ctx.send(f"I have reset the spotify emoji!")
+        await self.config.emoji.set(emoji.to_dict())
+        await ctx.send(f"Set the spotify emoji to {emoji.as_emoji()}")
