@@ -22,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import re
 import logging
-from typing import TYPE_CHECKING, Any, Dict, Union, Final, Pattern
+import re
+from typing import TYPE_CHECKING, Any, Dict, Final, Pattern, Union
 
 from emoji.unicode_codes import UNICODE_EMOJI_ENGLISH  # type: ignore
-from redbot.core import commands # type: ignore
+from redbot.core import commands  # type: ignore
 
 log: logging.Logger = logging.getLogger("red.seinacogs.tools.utils")
 
@@ -37,6 +37,7 @@ NoneType = type(None)
 
 CRATES_IO_LOGO: Final[str] = "https://avatars.githubusercontent.com/u/76801495?s=280&v=4"
 URL_RE: Pattern[str] = re.compile(r"(https?|s?ftp)://(\S+)", re.I)
+
 
 class Emoji:
     def __init__(self, data: Dict[str, Any]) -> None:

@@ -24,17 +24,17 @@ SOFTWARE.
 
 from __future__ import annotations
 
-import re
 import io
 import json
 import logging
+import re
 from datetime import datetime
 from typing import Any, Dict, Final, List, Literal, Mapping, Optional, Union
 
 import aiohttp
 import discord
+import humanize  # type: ignore
 import jeyyapi  # type: ignore
-import humanize # type: ignore
 from playwright.async_api import async_playwright  # type: ignore
 from pygicord import Paginator  # type: ignore
 from redbot.core import Config, commands  # type: ignore
@@ -45,7 +45,7 @@ from redbot.core.utils.views import SetApiView  # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
-from .utils import Emoji, EmojiConverter, CRATES_IO_LOGO, URL_RE
+from .utils import CRATES_IO_LOGO, URL_RE, Emoji, EmojiConverter
 from .views import SpotifyView
 
 BaseCog = getattr(commands, "Cog", object)
@@ -146,13 +146,11 @@ class SeinaTools(BaseCog):  # type: ignore
 
     async def cog_unload(self):
         self.bot.loop.create_task(self.session.close())
-        
+
     @staticmethod
     async def send_embed(ctx: commands.Context, embed: discord.Embed, **kwargs: Any):
-        embed.set_author(
-            name="Crates.io Index", icon_url=CRATES_IO_LOGO, url="https://crates.io/"
-        )
-        embed.color = 0x2c4b2b
+        embed.set_author(name="Crates.io Index", icon_url=CRATES_IO_LOGO, url="https://crates.io/")
+        embed.color = 0x2C4B2B
         kwargs["embed"] = embed
         await ctx.send(**kwargs)
 
@@ -418,6 +416,7 @@ class SeinaTools(BaseCog):  # type: ignore
             await ctx.send(message, view=view)
 
     perms: Dict[str, bool] = {"embed_links": True}
+
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
@@ -479,7 +478,9 @@ class SeinaTools(BaseCog):  # type: ignore
         url = f"https://crates.io/api/v1/crates/{package_name}"
         async with self.session.get(url) as response:
             if '"default": "Not Found"' in await response.text():
-                embed: discord.Embed = discord.Embed(description="There were no result for '{package_name}'")
+                embed: discord.Embed = discord.Embed(
+                    description="There were no result for '{package_name}'"
+                )
                 return await self.send_embed(ctx, embed)
             else:
                 foj: Any = json.loads(await response.text())
@@ -488,7 +489,7 @@ class SeinaTools(BaseCog):  # type: ignore
         if len(foj["description"]) != 0:
             embed: discord.Embed = discord.Embed(
                 title=f'{foj["name"]} {foj["newest_version"]}',
-                description=foj["description"].replace("![", "[").replace("]", "")
+                description=foj["description"].replace("![", "[").replace("]", ""),
             )
         else:
             embed: discord.Embed = discord.Embed(
@@ -510,13 +511,17 @@ class SeinaTools(BaseCog):  # type: ignore
         if obj["keywords"]:
             embed.add_field(
                 name="Keywords",
-                value="\n".join(f"`{i['id']}` (`{i['crates_cnt']}` crates)" for i in obj["keywords"]),
+                value="\n".join(
+                    f"`{i['id']}` (`{i['crates_cnt']}` crates)" for i in obj["keywords"]
+                ),
                 inline=False,
             )
         if obj["categories"]:
             embed.add_field(
                 name="Categories",
-                value="\n".join(f"`{i['category']}` (`{i['crates_cnt']}` crates)" for i in obj["categories"]),
+                value="\n".join(
+                    f"`{i['category']}` (`{i['crates_cnt']}` crates)" for i in obj["categories"]
+                ),
                 inline=False,
             )
         embed.add_field(
@@ -524,5 +529,4 @@ class SeinaTools(BaseCog):  # type: ignore
             value=f"```prolog\nTotal Downloads: {foj['downloads']:,}\nRecent Downloads: {foj['recent_downloads']:,}```",
             inline=True,
         )
-        return await self.send_embed(ctx, embed)      
-    
+        return await self.send_embed(ctx, embed)
