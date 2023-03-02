@@ -504,10 +504,6 @@ class SeinaTools(BaseCog):  # type: ignore
                 inline=True,
             )
         created_at = datetime.strptime(foj["created_at"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
-        embed.add_field(
-            name="Added at",
-            value=f'{created_at.strftime("%a, %d %B %Y, %H:%M:%S")}  ({humanize.precisedelta(datetime.utcnow() - created_at)})',
-        )
         if obj["categories"]:
             embed.add_field(
                 name="Categories",
@@ -522,6 +518,11 @@ class SeinaTools(BaseCog):  # type: ignore
                 ),
                 inline=False,
             )
+        embed.add_field(
+            name="Added at",
+            value=f'{created_at.strftime("%a, %d %B %Y, %H:%M:%S")}  ({humanize.precisedelta(datetime.utcnow() - created_at)})',
+            inline=False,
+        )
         embed.add_field(
             name="Downloads",
             value=f"```prolog\nTotal Downloads  : {foj['downloads']:,}\nRecent Downloads : {foj['recent_downloads']:,}```",
