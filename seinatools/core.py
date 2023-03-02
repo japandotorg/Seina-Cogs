@@ -471,7 +471,7 @@ class SeinaTools(BaseCog):  # type: ignore
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
-    @commands.command(name="crates", aliases=["cargo", "rustpkg"])
+    @commands.command(name="crates", aliases=["cargo", "rustpkg", "crate"])
     async def _cargo_crates(self, ctx: commands.Context, package_name: str) -> None:
         """
         Get information about a package in Crates.io.
@@ -500,29 +500,29 @@ class SeinaTools(BaseCog):  # type: ignore
             embed.add_field(
                 name="Project URLs",
                 value=value,
-                inline=False,
+                inline=True,
             )
         created_at = datetime.strptime(foj["created_at"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
         embed.add_field(
             name="Added at",
             value=f'{created_at.strftime("%a, %d %B %Y, %H:%M:%S")}  ({humanize.precisedelta(datetime.utcnow() - created_at)})',
         )
+        if obj["categories"]:
+            embed.add_field(
+                name="Categories",
+                value="\n".join(f"`{i['category']}` (`{i['crates_cnt']}` crates)" for i in obj["categories"]),
+                inline=True,
+            )
         if obj["keywords"]:
             embed.add_field(
                 name="Keywords",
                 value="\n".join(f"`{i['id']}` (`{i['crates_cnt']}` crates)" for i in obj["keywords"]),
                 inline=False,
             )
-        if obj["categories"]:
-            embed.add_field(
-                name="Categories",
-                value="\n".join(f"`{i['category']}` (`{i['crates_cnt']}` crates)" for i in obj["categories"]),
-                inline=False,
-            )
         embed.add_field(
             name="Downloads",
-            value=f"```prolog\nTotal Downloads: {foj['downloads']:,}\nRecent Downloads: {foj['recent_downloads']:,}```",
-            inline=True,
+            value=f"```prolog\nTotal Downloads  : {foj['downloads']:,}\nRecent Downloads : {foj['recent_downloads']:,}```",
+            inline=False,
         )
         return await self.send_embed(ctx, embed)      
     
