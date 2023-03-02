@@ -33,7 +33,6 @@ from typing import Any, Dict, Final, List, Literal, Mapping, Optional, Union
 
 import aiohttp
 import discord
-import humanize  # type: ignore
 import jeyyapi  # type: ignore
 from playwright.async_api import async_playwright  # type: ignore
 from pygicord import Paginator  # type: ignore
@@ -497,11 +496,11 @@ class SeinaTools(BaseCog):  # type: ignore
             )
         links = (f'{foj["homepage"]}', f'{foj["repository"]}', f'{foj["documentation"]}')
         filtered_links = filter(lambda x: re.match(URL_RE, x[1]), enumerate(links))
-        if value := "\n".join(f"• [{k}]({v})" for k, v in filtered_links):
+        if value := "\n".join(f"• {k}" for k in filtered_links):
             embed.add_field(
                 name="Project URLs",
                 value=value,
-                inline=True,
+                inline=False,
             )
         created_at = datetime.strptime(foj["created_at"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
         if obj["categories"]:
@@ -518,11 +517,11 @@ class SeinaTools(BaseCog):  # type: ignore
                 value="\n".join(
                     f"`{i['id']}` (`{i['crates_cnt']}` crates)" for i in obj["keywords"]
                 ),
-                inline=False,
+                inline=True,
             )
         embed.add_field(
             name="Added at",
-            value=f'{created_at.strftime("%a, %d %B %Y, %H:%M:%S")}  ({humanize.precisedelta(datetime.utcnow() - created_at)})',
+            value=f'{created_at.strftime("%a, %d %B %Y, %H:%M:%S")}',
             inline=False,
         )
         embed.add_field(
