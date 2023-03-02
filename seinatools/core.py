@@ -24,13 +24,17 @@ SOFTWARE.
 
 from __future__ import annotations
 
+import re
 import io
+import json
 import logging
+from datetime import datetime
 from typing import Any, Dict, Final, List, Literal, Mapping, Optional, Union
 
 import aiohttp
 import discord
 import jeyyapi  # type: ignore
+import humanize # type: ignore
 from playwright.async_api import async_playwright  # type: ignore
 from pygicord import Paginator  # type: ignore
 from redbot.core import Config, commands  # type: ignore
@@ -41,7 +45,7 @@ from redbot.core.utils.views import SetApiView  # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
-from .utils import Emoji, EmojiConverter
+from .utils import Emoji, EmojiConverter, CRATES_IO_LOGO, URL_RE
 from .views import SpotifyView
 
 BaseCog = getattr(commands, "Cog", object)
@@ -142,6 +146,15 @@ class SeinaTools(BaseCog):  # type: ignore
 
     async def cog_unload(self):
         self.bot.loop.create_task(self.session.close())
+        
+    @staticmethod
+    async def send_embed(ctx: commands.Context, embed: discord.Embed, **kwargs: Any):
+        embed.set_author(
+            name="Crates.io Index", icon_url=CRATES_IO_LOGO, url="https://crates.io/"
+        )
+        embed.color = 0x2c4b2b
+        kwargs["embed"] = embed
+        await ctx.send(**kwargs)
 
     @commands.Cog.listener()
     async def on_red_api_tokens_update(
@@ -404,7 +417,7 @@ class SeinaTools(BaseCog):  # type: ignore
         else:
             await ctx.send(message, view=view)
 
-    perms = {"embed_links": True}
+    perms: Dict[str, bool] = {"embed_links": True}
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
@@ -454,3 +467,62 @@ class SeinaTools(BaseCog):  # type: ignore
             return await ctx.send(f"I have reset the spotify emoji!")
         await self.config.emoji.set(emoji.to_dict())
         await ctx.send(f"Set the spotify emoji to {emoji.as_emoji()}")
+
+    @commands.has_permissions(**perms)
+    @commands.bot_has_permissions(**perms)
+    @commands.max_concurrency(1, per=commands.BucketType.user)
+    @commands.command(name="crates", aliases=["cargo", "rustpkg"])
+    async def _cargo_crates(self, ctx: commands.Context, package_name: str) -> None:
+        """
+        Get information about a package in Crates.io.
+        """
+        url = f"https://crates.io/api/v1/crates/{package_name}"
+        async with self.session.get(url) as response:
+            if '"default": "Not Found"' in await response.text():
+                embed: discord.Embed = discord.Embed(description="There were no result for '{package_name}'")
+                return await self.send_embed(ctx, embed)
+            else:
+                foj: Any = json.loads(await response.text())
+        obj = foj
+        foj = foj["crate"]
+        if len(foj["description"]) != 0:
+            embed: discord.Embed = discord.Embed(
+                title=f'{foj["name"]} {foj["newest_version"]}',
+                description=foj["description"].replace("![", "[").replace("]", "")
+            )
+        else:
+            embed: discord.Embed = discord.Embed(
+                title=f'{foj["name"]} {foj["newest_version"]}',
+            )
+        links = (f'{foj["homepage"]}', f'{foj["repository"]}', f'{foj["documentation"]}')
+        filtered_links = filter(lambda x: re.match(URL_RE, x[1]), enumerate(links))
+        if value := "\n".join(f"• [{k}]({v})" for k, v in filtered_links):
+            embed.add_field(
+                name="Project URLs",
+                value=value,
+                inline=False,
+            )
+        created_at = datetime.strptime(foj["created_at"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
+        embed.add_field(
+            name="Added at",
+            value=f'{created_at.strftime("%a, %d %B %Y, %H:%M:%S")}  ({humanize.precisedelta(datetime.utcnow() - created_at)})',
+        )
+        if obj["keywords"]:
+            embed.add_field(
+                name="Keywords",
+                value="\n".join(f"`{i['id']}` (`{i['crates_cnt']}` crates)" for i in obj["keywords"]),
+                inline=False,
+            )
+        if obj["categories"]:
+            embed.add_field(
+                name="Categories",
+                value="\n".join(f"`{i['category']}` (`{i['crates_cnt']}` crates)" for i in obj["categories"]),
+                inline=False,
+            )
+        embed.add_field(
+            name="Downloads",
+            value=f"```prolog\nTotal Downloads: {foj['downloads']:,}\nRecent Downloads: {foj['recent_downloads']:,}```",
+            inline=True,
+        )
+        return await self.send_embed(ctx, embed)      
+    
