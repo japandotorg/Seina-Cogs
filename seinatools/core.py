@@ -495,7 +495,7 @@ class SeinaTools(BaseCog):  # type: ignore
             )
         embed.add_field(
             name="Project URLs",
-            value=f"**{foj['homepage']}**\n**{foj['repository']}**\n**{foj['documentation']}**",
+            value=f"• **{foj['homepage']}**\n• **{foj['repository']}**\n• **{foj['documentation']}**",
             inline=False,
         )
         created_at = datetime.strptime(foj["created_at"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
