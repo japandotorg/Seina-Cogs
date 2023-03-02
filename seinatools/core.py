@@ -27,7 +27,6 @@ from __future__ import annotations
 import io
 import json
 import logging
-import re
 from datetime import datetime
 from typing import Any, Dict, Final, List, Literal, Mapping, Optional, Union
 
@@ -44,7 +43,7 @@ from redbot.core.utils.views import SetApiView  # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
-from .utils import CRATES_IO_LOGO, URL_RE, Emoji, EmojiConverter
+from .utils import CRATES_IO_LOGO, Emoji, EmojiConverter
 from .views import SpotifyView
 
 BaseCog = getattr(commands, "Cog", object)
@@ -494,14 +493,10 @@ class SeinaTools(BaseCog):  # type: ignore
             embed: discord.Embed = discord.Embed(
                 title=f'{foj["name"]} {foj["newest_version"]}',
             )
-        links = (f'{foj["homepage"]}', f'{foj["repository"]}', f'{foj["documentation"]}')
-        filtered_links = filter(lambda x: re.match(URL_RE, x[1]), enumerate(links))
-        if value := "\n".join(f"• {k}" for k in filtered_links):
-            embed.add_field(
-                name="Project URLs",
-                value=value,
-                inline=False,
-            )
+        embed.add_field(
+            name="Project URLs",
+            value=f"**{foj['homepage']}**\n**{foj['repository']}**\n**{foj['documentation']}**",
+        )
         created_at = datetime.strptime(foj["created_at"][:-9], "%Y-%m-%dT%H:%M:%S.%f")
         if obj["categories"]:
             embed.add_field(

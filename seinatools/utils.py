@@ -23,8 +23,7 @@ SOFTWARE.
 """
 
 import logging
-import re
-from typing import TYPE_CHECKING, Any, Dict, Final, Pattern, Union
+from typing import TYPE_CHECKING, Any, Dict, Final, Union
 
 from emoji.unicode_codes import UNICODE_EMOJI_ENGLISH  # type: ignore
 from redbot.core import commands  # type: ignore
@@ -36,7 +35,6 @@ __all__: list[str] = []
 NoneType = type(None)
 
 CRATES_IO_LOGO: Final[str] = "https://avatars.githubusercontent.com/u/76801495?s=280&v=4"
-URL_RE: Pattern[str] = re.compile(r"(https?|s?ftp)://(\S+)", re.I)
 
 
 class Emoji:
