@@ -13,8 +13,9 @@
     "requirements": [
         "tabulate",
         "emoji==1.6.3",
+        "humanize==4.6.0",
         "pygicord==1.1.0",
-        "playwright==1.30.0"
+        "playwright==1.30.0",
         "git+https://github.com/JeyyGit/jeyyapi.git"
     ],
     "type": "COG",
