@@ -432,7 +432,7 @@ class SeinaTools(BaseCog):  # type: ignore
 
             async with ctx.channel.typing():
                 spotify = discord.utils.find(
-                    lambda pres: isinstance(pres, discord.Spotify), user.activities # type: ignore
+                    lambda pres: isinstance(pres, discord.Spotify), user.activities  # type: ignore
                 )
 
                 if spotify is None:
