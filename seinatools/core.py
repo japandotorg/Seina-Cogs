@@ -507,7 +507,9 @@ class SeinaTools(BaseCog):  # type: ignore
         if obj["categories"]:
             embed.add_field(
                 name="Categories",
-                value="\n".join(f"`{i['category']}` (`{i['crates_cnt']}` crates)" for i in obj["categories"]),
+                value="\n".join(
+                    f"`{i['category']}` (`{i['crates_cnt']}` crates)" for i in obj["categories"]
+                ),
                 inline=True,
             )
         if obj["keywords"]:
