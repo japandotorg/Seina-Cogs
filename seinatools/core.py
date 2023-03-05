@@ -571,7 +571,7 @@ class SeinaTools(BaseCog):  # type: ignore
         for number, maintainer in enumerate(resp["maintainers"], start=1):
             author = maintainer
             value += f"**{number}.** [{author.get('name')}]({author.get('url', 'https://github.com/')})\n"
-        embed.add_field(name="Maintainers", value=value, inline=False)
+        embed.add_field(name="Maintainers", value=value, inline=True)
         links = []
         if resp.get("homepage"):
             links.append(f'{resp["homepage"]}')
@@ -583,11 +583,13 @@ class SeinaTools(BaseCog):  # type: ignore
         embed.add_field(
             name="Links",
             value="\n".join(links),
+            inline=True,
         )
         if resp.get("license"):
             embed.add_field(
                 name="License",
                 value=resp["license"],
+                inline=True,
             )
         dependencies = list(resp["versions"][latest]["dependencies"])
         if dependencies:
@@ -595,18 +597,18 @@ class SeinaTools(BaseCog):  # type: ignore
                 embed.add_field(
                     name="Dependencies",
                     value=len(dependencies),
-                    inline=False,
+                    inline=True,
                 )
             elif len(dependencies) > 7:
                 embed.add_field(
                     name="Dependencies",
                     value=", ".join(dependencies),
-                    inline=False,
+                    inline=True,
                 )
             else:
                 embed.add_field(
                     name="Dependencies",
                     value="\n".join(dependencies),
-                    inline=False,
+                    inline=True,
                 )
         await ctx.send(embed=embed)
