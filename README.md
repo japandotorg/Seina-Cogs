@@ -8,7 +8,7 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 ## About Cogs
 | Name        | Status/Version   | Description (Click to see full status)                                                                                           | Authors                                     |
 |-------------|------------------|----------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
-| SeinaTools  | 0.1.0            | <details><summary>My tools for Red-DiscordBot</summary>Some cool utility tools for Red-DiscordBot</details>                      | inthedark.org                               |
+| SeinaTools  | 0.1.0            | <details><summary>My tools for Red-DiscordBot</summary>Some cool utility tools for Red-DiscordBot</details>                      | inthedark.org#0666                             |
 | Calculator  | 0.1.0            | <details><summary>Math stuff</summary>Math stuff</details>                                                                       | inthedark.org#0666                          |
 | Chemistry   | 0.1.0            | <details><summary>Chemistry</summary>Chemistry inside discord >.<</details>                                                      | inthedark.org#0666                          |
 | GlobalAdmin | 0.1.0            | <details><summary>Authentication</summary>Set up authentication for admins for other cogs via tsutils.</details>                 | inthedark.org#0666                          |
