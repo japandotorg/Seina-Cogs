@@ -552,7 +552,7 @@ class SeinaTools(BaseCog):  # type: ignore
                 resp: Dict[str, Any] = json.loads(await response.text())
         if len(resp["description"]) != 0:
             embed: discord.Embed = discord.Embed(
-                title=f"{resp['_id']} {sorted(resp['version'])[-1]}",
+                title=f"{resp['_id']} {sorted(resp['versions'])[-1]}",
                 description=resp["description"].replace("![", "[").replace("]", ""),
                 color=0xCC3534,
             )
