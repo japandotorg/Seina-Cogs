@@ -28,7 +28,16 @@ import io
 import json
 import logging
 from datetime import datetime
-from typing import Any, Dict, Final, List, Literal, Mapping, Optional, Union
+from typing import (
+    Any, 
+    Dict, 
+    Final, 
+    List, 
+    Literal, 
+    Mapping, 
+    Optional, 
+    Union
+)
 
 import aiohttp
 import discord
@@ -43,7 +52,7 @@ from redbot.core.utils.views import SetApiView  # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
-from .utils import CRATES_IO_LOGO, Emoji, EmojiConverter
+from .utils import CRATES_IO_LOGO, Emoji, EmojiConverter, NPM_LOGO
 from .views import SpotifyView
 
 BaseCog = getattr(commands, "Cog", object)
@@ -134,7 +143,7 @@ class SeinaTools(BaseCog):  # type: ignore
                         )
                         await self.config.notice.set(True)
                     except (discord.NotFound, discord.HTTPException):
-                        log.exception(f"Failed to send the notice message!")
+                        log.exception("Failed to send the notice message!")
 
         except Exception:
             log.exception("Error starting the cog.", exc_info=True)
@@ -481,7 +490,7 @@ class SeinaTools(BaseCog):  # type: ignore
                 )
                 return await self.send_embed(ctx, embed)
             else:
-                foj: Any = json.loads(await response.text())
+                foj: Dict[str, Any] = json.loads(await response.text())
         obj = foj
         foj = foj["crate"]
         if len(foj["description"]) != 0:
@@ -526,3 +535,87 @@ class SeinaTools(BaseCog):  # type: ignore
             inline=False,
         )
         return await self.send_embed(ctx, embed)
+    
+    @commands.has_permissions(**perms)
+    @commands.bot_has_permissions(**perms)
+    @commands.max_concurrency(1, per=commands.BucketType.user)
+    @commands.command(name="npm", aliases=["node", "npmpkg", "nodepkg"])
+    async def _node_module(self, ctx: commands.Context, module_name: str) -> None:
+        """
+        Get information about a node.js modulee.
+        """
+        url = f"https://registry.npmjs.org/{module_name}"
+        async with self.session.get(url) as response:
+            if "'error': 'Not Found'" in await response.text():
+                embed: discord.Embed = discord.Embed(
+                    description=f"There were no result for '{module_name}'.",
+                    color=await ctx.embed_color()
+                )
+                embed.set_author(
+                    name="NPM Index", 
+                    icon_url=NPM_LOGO, 
+                    url="https://www.npmjs.com",
+                )
+                return await ctx.send(embed=embed)
+            else:
+                resp: Dict[str, Any] = json.loads(await response.text())
+        if len(resp['description']) != 0:
+            embed: discord.Embed = discord.Embed(
+                title=f"{resp['_id']} {sorted(resp['version'])[-1]}",
+                description=resp["description"].replace("![", "[").replace("]", ""),
+                color=0xCC3534,
+            )
+        else:
+            embed: discord.Embed = discord.Embed(
+                title=f"{resp['_id']} {sorted(resp['version'])[-1]}",
+                color=0xCC3534,
+            )
+            embed.set_author(
+                name="NPM Index", 
+                icon_url=NPM_LOGO, 
+                url="https://www.npmjs.com",
+            )
+        latest = sorted(resp["versions"])[-1]
+        value = ""
+        for number, maintainer in enumerate(resp['maintainers'], start=1):
+            author = maintainer
+            value += f"**{number}.** [{author.get('name')}]({author.get('url', 'https://github.com/')})\n"
+        embed.add_field(name="Maintainers", value=value, inline=False)
+        links = []
+        if resp.get('homepage'):
+            links.append(f'{resp["homepage"]}')
+        if resp.get('bugs'):
+            links.append(f'{resp["bugs"]["url"]}')
+        github = resp["repository"]["url"][4:-4]
+        links.append(f'{github}')
+        links.append(f'{"https://npmjs.com/packages/" + resp["_id"]}')
+        embed.add_field(
+            name="Links",
+            value="\n".join(links),
+        )
+        if resp.get("license"):
+            embed.add_field(
+                name="License",
+                value=resp["license"],
+            )
+        dependencies = list(resp["versions"][latest]["dependencies"])
+        if dependencies:
+            if len(dependencies) > 15:
+                embed.add_field(
+                    name="Dependencies",
+                    value=len(dependencies),
+                    inline=False,
+                )
+            elif len(dependencies) > 7:
+                embed.add_field(
+                    name="Dependencies",
+                    value=", ".join(dependencies),
+                    inline=False,
+                )
+            else:
+                embed.add_field(
+                    name="Dependencies",
+                    value="\n".join(dependencies),
+                    inline=False,
+                )
+        await ctx.send(embed=embed)
