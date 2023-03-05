@@ -556,6 +556,11 @@ class SeinaTools(BaseCog):  # type: ignore
                 description=resp["description"].replace("![", "[").replace("]", ""),
                 color=0xCC3534,
             )
+            embed.set_author(
+                name="NPM Index",
+                icon_url=NPM_LOGO,
+                url="https://www.npmjs.com",
+            )
         else:
             embed: discord.Embed = discord.Embed(
                 title=f"{resp['_id']} {sorted(resp['versions'])[-1]}",
