@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import TYPE_CHECKING, Any, Dict, Final, Union, Type, List
+from typing import TYPE_CHECKING, Any, Dict, Final, List, Type, Union
 
 from emoji.unicode_codes import UNICODE_EMOJI_ENGLISH  # type: ignore
 from redbot.core import commands  # type: ignore

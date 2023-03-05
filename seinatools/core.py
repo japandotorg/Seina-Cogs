@@ -27,13 +27,13 @@ from __future__ import annotations
 import io
 import json
 import logging
-from attrdict import AttrDict # type: ignore
 from datetime import datetime
 from typing import Any, Dict, Final, List, Literal, Mapping, Optional, Union
 
 import aiohttp
 import discord
 import jeyyapi  # type: ignore
+from attrdict import AttrDict  # type: ignore
 from playwright.async_api import async_playwright  # type: ignore
 from pygicord import Paginator  # type: ignore
 from redbot.core import Config, commands  # type: ignore
@@ -44,7 +44,7 @@ from redbot.core.utils.views import SetApiView  # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
-from .utils import CRATES_IO_LOGO, NPM_LOGO, RUBY_GEMS_LOGO, GITHUB_LOGO, Emoji, EmojiConverter
+from .utils import CRATES_IO_LOGO, GITHUB_LOGO, NPM_LOGO, RUBY_GEMS_LOGO, Emoji, EmojiConverter
 from .views import SpotifyView
 
 BaseCog = getattr(commands, "Cog", object)
@@ -701,11 +701,13 @@ class SeinaTools(BaseCog):  # type: ignore
             inline=False,
         )
         await ctx.send(embed=embed)
-        
+
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
-    @commands.command(name="githubrepo", aliases=["gitrepo", "gitreposearch", "gitsearch", "githubsearch"])
+    @commands.command(
+        name="githubrepo", aliases=["gitrepo", "gitreposearch", "gitsearch", "githubsearch"]
+    )
     async def _github_repo(self, ctx: commands.Context, repository: str) -> None:
         """
         Get information about a github repository.
@@ -717,9 +719,7 @@ class SeinaTools(BaseCog):  # type: ignore
                     description="Couldn't find repository '{repository}'.",
                     color=await ctx.embed_color(),
                 ).set_author(
-                    name="Github Repository Index",
-                    icon_url=GITHUB_LOGO,
-                    url="https://github.com/"
+                    name="Github Repository Index", icon_url=GITHUB_LOGO, url="https://github.com/"
                 )
                 return await ctx.send(embed=embed)
             data = AttrDict(await response.json())
@@ -749,5 +749,3 @@ class SeinaTools(BaseCog):  # type: ignore
             "```"
         )
         await ctx.send(embed=embed)
-        
-        
