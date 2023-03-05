@@ -589,7 +589,7 @@ class SeinaTools(BaseCog):  # type: ignore
             embed.add_field(
                 name="License",
                 value=resp["license"],
-                inline=True,
+                inline=False,
             )
         dependencies = list(resp["versions"][latest]["dependencies"])
         if dependencies:
