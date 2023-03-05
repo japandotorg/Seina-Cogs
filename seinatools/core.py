@@ -668,7 +668,7 @@ class SeinaTools(BaseCog):  # type: ignore
         )
         embed.add_field(
             name="Links",
-            value=f"• {resp['homepage_url']}\n• {resp['source_code_uri']}\n• {resp['documentation_uri']}\n• {resp['project_uri']}",
+            value=f"• {resp['homepage_uri']}\n• {resp['source_code_uri']}\n• {resp['documentation_uri']}\n• {resp['project_uri']}",
             inline=False,
         )
         if not resp["dependencies"]["runtime"] is None:
