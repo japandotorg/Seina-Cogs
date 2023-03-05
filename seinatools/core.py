@@ -27,7 +27,6 @@ from __future__ import annotations
 import io
 import json
 import logging
-from attrdict import AttrDict # type: ignore
 from datetime import datetime
 from typing import Any, Dict, Final, List, Literal, Mapping, Optional, Union
 
@@ -44,7 +43,7 @@ from redbot.core.utils.views import SetApiView  # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
-from .utils import CRATES_IO_LOGO, NPM_LOGO, RUBY_GEMS_LOGO, GITHUB_LOGO, Emoji, EmojiConverter
+from .utils import CRATES_IO_LOGO, NPM_LOGO, RUBY_GEMS_LOGO, Emoji, EmojiConverter
 from .views import SpotifyView
 
 BaseCog = getattr(commands, "Cog", object)
@@ -701,53 +700,3 @@ class SeinaTools(BaseCog):  # type: ignore
             inline=False,
         )
         await ctx.send(embed=embed)
-        
-    @commands.has_permissions(**perms)
-    @commands.bot_has_permissions(**perms)
-    @commands.max_concurrency(1, per=commands.BucketType.user)
-    @commands.command(name="githubrepo", aliases=["gitrepo", "gitreposearch", "gitsearch", "githubsearch"])
-    async def _github_repo(self, ctx: commands.Context, repository: str) -> None:
-        """
-        Get information about a github repository.
-        """
-        url = f"https://api.github.com/repos/{repository}"
-        async with self.session.get(url) as response:
-            if response.status != 200:
-                embed: discord.Embed = discord.Embed(
-                    description="Couldn't find repository '{repository}'.",
-                    color=await ctx.embed_color(),
-                ).set_author(
-                    name="Github Repository Index",
-                    icon_url=GITHUB_LOGO,
-                    url="https://github.com/"
-                )
-                return await ctx.send(embed=embed)
-            data = AttrDict(await response.json())
-        embed: discord.Embed = discord.Embed(
-            title=data.full_name,
-            url=data.html_url,
-        ).set_thumbnail(url=data.owner.avatar_url)
-        embed.set_author(
-            name=data.owner.login,
-            icon_url=GITHUB_LOGO,
-            url=data.homepage,
-        )
-        if data.license and data.license.name:
-            embed.add_field(
-                name="License",
-                value=data.license.name,
-                inline=True,
-            )
-        embed.description = (
-            f"{data.description}\n"
-            "```prolog\n"
-            f"Language    : {data.language if data.language else None} \n"
-            f"Stargazers  : {data.stargazers_count} \n"
-            f"Watchers    : {data.watchers} \n"
-            f"Forks       : {data.forks_count} \n"
-            f"Open Issues : {data.open_issues} \n"
-            "```"
-        )
-        await ctx.send(embed=embed)
-        
-        

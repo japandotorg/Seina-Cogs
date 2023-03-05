@@ -36,7 +36,6 @@ __all__: List[str] = [
     "CRATES_IO_LOGO",
     "NPM_LOGO",
     "RUBY_GEMS_LOGO",
-    "GITHUB_LOGO",
 ]
 
 NoneType: Type[None] = type(None)
@@ -46,8 +45,6 @@ CRATES_IO_LOGO: Final[str] = "https://avatars.githubusercontent.com/u/76801495?s
 NPM_LOGO: Final[str] = "https://avatars.githubusercontent.com/u/6078720?s=200&v=4"
 
 RUBY_GEMS_LOGO: Final[str] = "https://avatars.githubusercontent.com/u/208761?s=200&v=4"
-
-GITHUB_LOGO: Final[str] = "https://avatars.githubusercontent.com/u/9919?s=200&v=4"
 
 
 class Emoji:
