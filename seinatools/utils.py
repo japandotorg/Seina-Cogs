@@ -23,16 +23,23 @@ SOFTWARE.
 """
 
 import logging
-from typing import TYPE_CHECKING, Any, Dict, Final, Union
+from typing import TYPE_CHECKING, Any, Dict, Final, Union, Type, List
 
 from emoji.unicode_codes import UNICODE_EMOJI_ENGLISH  # type: ignore
 from redbot.core import commands  # type: ignore
 
 log: logging.Logger = logging.getLogger("red.seinacogs.tools.utils")
 
-__all__: list[str] = []
+__all__: List[str] = [
+    "Emoji",
+    "EmojiConverter",
+    "CRATES_IO_LOGO",
+    "NPM_LOGO",
+    "RUBY_GEMS_LOGO",
+    "GITHUB_LOGO",
+]
 
-NoneType = type(None)
+NoneType: Type[None] = type(None)
 
 CRATES_IO_LOGO: Final[str] = "https://avatars.githubusercontent.com/u/76801495?s=280&v=4"
 
@@ -41,6 +48,8 @@ NPM_LOGO: Final[
 ] = "https://avatars.githubusercontent.com/u/6078720?s=200&v=4"
 
 RUBY_GEMS_LOGO: Final[str] = "https://avatars.githubusercontent.com/u/208761?s=200&v=4"
+
+GITHUB_LOGO: Final[str] = "https://avatars.githubusercontent.com/u/9919?s=200&v=4"
 
 
 class Emoji:
