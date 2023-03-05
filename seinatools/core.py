@@ -43,8 +43,8 @@ from redbot.core.utils.views import SetApiView  # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
-from .views import SpotifyView
 from .utils import CRATES_IO_LOGO, NPM_LOGO, RUBY_GEMS_LOGO, Emoji, EmojiConverter
+from .views import SpotifyView
 
 BaseCog = getattr(commands, "Cog", object)
 
@@ -612,7 +612,7 @@ class SeinaTools(BaseCog):  # type: ignore
                     inline=False,
                 )
         await ctx.send(embed=embed)
-        
+
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
@@ -644,12 +644,11 @@ class SeinaTools(BaseCog):  # type: ignore
             embed: discord.Embed = discord.Embed(
                 title=f"{resp['name']} {resp['version']}",
                 description=resp["description"].replace("![", "[").replace("]", ""),
-                color=0xDE3F24
+                color=0xDE3F24,
             )
         else:
             embed: discord.Embed = discord.Embed(
-                title=f"{resp['name']} {resp['version']}",
-                color=0xDE3F24
+                title=f"{resp['name']} {resp['version']}", color=0xDE3F24
             )
         embed.set_author(
             name="RubyGems Index",
@@ -682,7 +681,9 @@ class SeinaTools(BaseCog):  # type: ignore
             elif len(resp["dependencies"]["runtime"]) != 0:
                 embed.add_field(
                     name=f"Dependencies ({len(resp['dependencies']['runtime'])})",
-                    value="\n".join([i["name"] + i["requirements"] for i in resp["dependencies"]["runtime"]]),
+                    value="\n".join(
+                        [i["name"] + i["requirements"] for i in resp["dependencies"]["runtime"]]
+                    ),
                     inline=False,
                 )
         embed.add_field(
@@ -691,9 +692,8 @@ class SeinaTools(BaseCog):  # type: ignore
                 "```prolog\n"
                 f"Total Downloads          : {resp['downloads']}\n"
                 f"Latest Version Downloads : {resp['version_downloads']:,}\n",
-                "```"
+                "```",
             ),
             inline=False,
         )
         await ctx.send(embed=embed)
-        
