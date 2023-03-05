@@ -546,7 +546,7 @@ class SeinaTools(BaseCog):  # type: ignore
             if "'error': 'Not Found'" in await response.text():
                 embed: discord.Embed = discord.Embed(
                     description=f"There were no result for '{module_name}'.",
-                    color=await ctx.embed_color(),
+                    color=0xCC3534,
                 )
                 embed.set_author(
                     name="NPM Index",
@@ -632,7 +632,7 @@ class SeinaTools(BaseCog):  # type: ignore
             if "This rubygem could not be found." in await response.text():
                 embed: discord.Embed = discord.Embed(
                     description=f"There were no result for '{package_name}'.",
-                    color=await ctx.embed_color(),
+                    color=0xEDA895,
                 )
                 embed.set_author(
                     name="RubyGems Index",
@@ -652,7 +652,7 @@ class SeinaTools(BaseCog):  # type: ignore
             embed: discord.Embed = discord.Embed(
                 title=f"{resp['name']} {resp['version']}",
                 description=resp["description"].replace("![", "[").replace("]", ""),
-                color=0xDE3F24,
+                color=0xEDA895,
             )
         else:
             embed: discord.Embed = discord.Embed(
