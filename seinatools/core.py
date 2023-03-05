@@ -543,7 +543,7 @@ class SeinaTools(BaseCog):  # type: ignore
         """
         url = f"https://registry.npmjs.org/{module_name}"
         async with self.session.get(url) as response:
-            if "'error': 'Not Found'" in await response.text():
+            if "'error': 'Not found'" in await response.text():
                 embed: discord.Embed = discord.Embed(
                     description=f"There were no result for '{module_name}'.",
                     color=0xCC3534,
