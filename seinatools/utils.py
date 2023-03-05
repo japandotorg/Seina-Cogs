@@ -43,9 +43,7 @@ NoneType: Type[None] = type(None)
 
 CRATES_IO_LOGO: Final[str] = "https://avatars.githubusercontent.com/u/76801495?s=280&v=4"
 
-NPM_LOGO: Final[
-    str
-] = "https://avatars.githubusercontent.com/u/6078720?s=200&v=4"
+NPM_LOGO: Final[str] = "https://avatars.githubusercontent.com/u/6078720?s=200&v=4"
 
 RUBY_GEMS_LOGO: Final[str] = "https://avatars.githubusercontent.com/u/208761?s=200&v=4"
 
