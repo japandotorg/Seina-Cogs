@@ -28,16 +28,7 @@ import io
 import json
 import logging
 from datetime import datetime
-from typing import (
-    Any, 
-    Dict, 
-    Final, 
-    List, 
-    Literal, 
-    Mapping, 
-    Optional, 
-    Union
-)
+from typing import Any, Dict, Final, List, Literal, Mapping, Optional, Union
 
 import aiohttp
 import discord
@@ -52,7 +43,7 @@ from redbot.core.utils.views import SetApiView  # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
-from .utils import CRATES_IO_LOGO, Emoji, EmojiConverter, NPM_LOGO
+from .utils import CRATES_IO_LOGO, NPM_LOGO, Emoji, EmojiConverter
 from .views import SpotifyView
 
 BaseCog = getattr(commands, "Cog", object)
@@ -535,7 +526,7 @@ class SeinaTools(BaseCog):  # type: ignore
             inline=False,
         )
         return await self.send_embed(ctx, embed)
-    
+
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
@@ -549,17 +540,17 @@ class SeinaTools(BaseCog):  # type: ignore
             if "'error': 'Not Found'" in await response.text():
                 embed: discord.Embed = discord.Embed(
                     description=f"There were no result for '{module_name}'.",
-                    color=await ctx.embed_color()
+                    color=await ctx.embed_color(),
                 )
                 embed.set_author(
-                    name="NPM Index", 
-                    icon_url=NPM_LOGO, 
+                    name="NPM Index",
+                    icon_url=NPM_LOGO,
                     url="https://www.npmjs.com",
                 )
                 return await ctx.send(embed=embed)
             else:
                 resp: Dict[str, Any] = json.loads(await response.text())
-        if len(resp['description']) != 0:
+        if len(resp["description"]) != 0:
             embed: discord.Embed = discord.Embed(
                 title=f"{resp['_id']} {sorted(resp['version'])[-1]}",
                 description=resp["description"].replace("![", "[").replace("]", ""),
@@ -571,23 +562,23 @@ class SeinaTools(BaseCog):  # type: ignore
                 color=0xCC3534,
             )
             embed.set_author(
-                name="NPM Index", 
-                icon_url=NPM_LOGO, 
+                name="NPM Index",
+                icon_url=NPM_LOGO,
                 url="https://www.npmjs.com",
             )
         latest = sorted(resp["versions"])[-1]
         value = ""
-        for number, maintainer in enumerate(resp['maintainers'], start=1):
+        for number, maintainer in enumerate(resp["maintainers"], start=1):
             author = maintainer
             value += f"**{number}.** [{author.get('name')}]({author.get('url', 'https://github.com/')})\n"
         embed.add_field(name="Maintainers", value=value, inline=False)
         links = []
-        if resp.get('homepage'):
+        if resp.get("homepage"):
             links.append(f'{resp["homepage"]}')
-        if resp.get('bugs'):
+        if resp.get("bugs"):
             links.append(f'{resp["bugs"]["url"]}')
         github = resp["repository"]["url"][4:-4]
-        links.append(f'{github}')
+        links.append(f"{github}")
         links.append(f'{"https://npmjs.com/packages/" + resp["_id"]}')
         embed.add_field(
             name="Links",
