@@ -567,7 +567,7 @@ class SeinaTools(BaseCog):  # type: ignore
             )
         else:
             embed: discord.Embed = discord.Embed(
-                title=f"{resp['_id']} {sorted(resp['version'])[-1]}",
+                title=f"{resp['_id']} {sorted(resp['versions'])[-1]}",
                 color=0xCC3534,
             )
             embed.set_author(
