@@ -36,7 +36,9 @@ NoneType = type(None)
 
 CRATES_IO_LOGO: Final[str] = "https://avatars.githubusercontent.com/u/76801495?s=280&v=4"
 
-NPM_LOGO: Final[str] = "https://raw.githubusercontent.com/npm/logos/master/npm%20square/n-large.png"
+NPM_LOGO: Final[
+    str
+] = "https://raw.githubusercontent.com/npm/logos/master/npm%20square/n-large.png"
 
 
 class Emoji:
