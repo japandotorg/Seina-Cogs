@@ -461,7 +461,7 @@ class SeinaTools(BaseCog):  # type: ignore
         """Set an emoji to be used with the spotify command."""
         if not emoji:
             await self.config.emoji.clear()
-            return await ctx.send(f"I have reset the spotify emoji!")
+            return await ctx.send("I have reset the spotify emoji!")
         await self.config.emoji.set(emoji.to_dict())
         await ctx.send(f"Set the spotify emoji to {emoji.as_emoji()}")
 
@@ -477,7 +477,7 @@ class SeinaTools(BaseCog):  # type: ignore
         async with self.session.get(url) as response:
             if '"default": "Not Found"' in await response.text():
                 embed: discord.Embed = discord.Embed(
-                    description="There were no result for '{package_name}'"
+                    description=f"There were no result for '{package_name}'"
                 )
                 return await self.send_embed(ctx, embed)
             else:
@@ -571,7 +571,7 @@ class SeinaTools(BaseCog):  # type: ignore
         for number, maintainer in enumerate(resp["maintainers"], start=1):
             author = maintainer
             value += f"**{number}.** [{author.get('name')}]({author.get('url', 'https://github.com/')})\n"
-        embed.add_field(name="Maintainers", value=value, inline=True)
+        embed.add_field(name="Maintainers", value=value, inline=False)
         links = []
         if resp.get("homepage"):
             links.append(f'{resp["homepage"]}')
@@ -582,8 +582,8 @@ class SeinaTools(BaseCog):  # type: ignore
         links.append(f'{"https://npmjs.com/packages/" + resp["_id"]}')
         embed.add_field(
             name="Links",
-            value="\n".join(links),
-            inline=True,
+            value="\n".join([f"• {key}" for key in links]),
+            inline=False,
         )
         if resp.get("license"):
             embed.add_field(
@@ -597,18 +597,18 @@ class SeinaTools(BaseCog):  # type: ignore
                 embed.add_field(
                     name="Dependencies",
                     value=len(dependencies),
-                    inline=True,
+                    inline=False,
                 )
             elif len(dependencies) > 7:
                 embed.add_field(
                     name="Dependencies",
                     value=", ".join(dependencies),
-                    inline=True,
+                    inline=False,
                 )
             else:
                 embed.add_field(
                     name="Dependencies",
                     value="\n".join(dependencies),
-                    inline=True,
+                    inline=False,
                 )
         await ctx.send(embed=embed)
