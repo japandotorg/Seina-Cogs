@@ -43,8 +43,8 @@ from redbot.core.utils.views import SetApiView  # type: ignore
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
-from .utils import CRATES_IO_LOGO, NPM_LOGO, Emoji, EmojiConverter
 from .views import SpotifyView
+from .utils import CRATES_IO_LOGO, NPM_LOGO, RUBY_GEMS_LOGO, Emoji, EmojiConverter
 
 BaseCog = getattr(commands, "Cog", object)
 
@@ -556,21 +556,16 @@ class SeinaTools(BaseCog):  # type: ignore
                 description=resp["description"].replace("![", "[").replace("]", ""),
                 color=0xCC3534,
             )
-            embed.set_author(
-                name="NPM Index",
-                icon_url=NPM_LOGO,
-                url="https://www.npmjs.com",
-            )
         else:
             embed: discord.Embed = discord.Embed(
                 title=f"{resp['_id']} {sorted(resp['versions'])[-1]}",
                 color=0xCC3534,
             )
-            embed.set_author(
-                name="NPM Index",
-                icon_url=NPM_LOGO,
-                url="https://www.npmjs.com",
-            )
+        embed.set_author(
+            name="NPM Index",
+            icon_url=NPM_LOGO,
+            url="https://www.npmjs.com",
+        )
         latest = sorted(resp["versions"])[-1]
         value = ""
         for number, maintainer in enumerate(resp["maintainers"], start=1):
@@ -617,3 +612,88 @@ class SeinaTools(BaseCog):  # type: ignore
                     inline=False,
                 )
         await ctx.send(embed=embed)
+        
+    @commands.has_permissions(**perms)
+    @commands.bot_has_permissions(**perms)
+    @commands.max_concurrency(1, per=commands.BucketType.user)
+    @commands.command(name="ruby", aliases=["rubygem", "rubypkg", "rubygems"])
+    async def _ruby_gems(self, ctx: commands.Context, package_name: str):
+        """
+        Get information about a rubygem package.
+        """
+        url = f"https://rubygems.org/api/v1/versions/{package_name}.json"
+        async with self.session.get(url) as response:
+            if "This rubygem could not be found." in await response.text():
+                embed: discord.Embed = discord.Embed(
+                    description=f"There were no result for '{package_name}'.",
+                    color=await ctx.embed_color(),
+                )
+                embed.set_author(
+                    name="RubyGems Index",
+                    icon_url=RUBY_GEMS_LOGO,
+                    url="https://rubygems.org/",
+                )
+                return await ctx.send(embed=embed)
+            versions = json.loads(await response.text())
+            version = versions[0]
+        version_number = version["number"]
+        number_url = f"https://rubygems.org/api/v2/rubygems/{package_name}/versions/{version_number}.json"
+        async with self.bot.session.get(number_url) as response:
+            resp: Dict[str, Any] = json.loads(await response.text())
+        if len(resp["description"]) != 0:
+            embed: discord.Embed = discord.Embed(
+                title=f"{resp['name']} {resp['version']}",
+                description=resp["description"].replace("![", "[").replace("]", ""),
+                color=0xDE3F24
+            )
+        else:
+            embed: discord.Embed = discord.Embed(
+                title=f"{resp['name']} {resp['version']}",
+                color=0xDE3F24
+            )
+        embed.set_author(
+            name="RubyGems Index",
+            icon_url=RUBY_GEMS_LOGO,
+            url="https://rubygems.org/",
+        )
+        embed.add_field(
+            name="Summary",
+            value=resp["summary"],
+            inline=False,
+        )
+        created_at = datetime.strptime(resp["created_at"], "%Y-%m-%dT%H:%M:%S.%fZ")
+        embed.add_field(
+            name="Added at",
+            value=f'{created_at.strftime("%a, %d %B %Y, %H:%M:%S")}',
+            inline=False,
+        )
+        embed.add_field(
+            name="Links",
+            value=f"• {resp['homepage_url']}\n• {resp['source_code_uri']}\n• {resp['documentation_uri']}\n• {resp['project_uri']}",
+            inline=False,
+        )
+        if not resp["dependencies"]["runtime"] is None:
+            if len(resp["dependencies"]["runtime"]) > 15:
+                embed.add_field(
+                    name="Dependencies",
+                    value=len(resp["requires_dist"]),
+                    inline=False,
+                )
+            elif len(resp["dependencies"]["runtime"]) != 0:
+                embed.add_field(
+                    name=f"Dependencies ({len(resp['dependencies']['runtime'])})",
+                    value="\n".join([i["name"] + i["requirements"] for i in resp["dependencies"]["runtime"]]),
+                    inline=False,
+                )
+        embed.add_field(
+            name="Downloads",
+            value=(
+                "```prolog\n"
+                f"Total Downloads          : {resp['downloads']}\n"
+                f"Latest Version Downloads : {resp['version_downloads']:,}\n",
+                "```"
+            ),
+            inline=False,
+        )
+        await ctx.send(embed=embed)
+        

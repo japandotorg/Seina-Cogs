@@ -40,6 +40,8 @@ NPM_LOGO: Final[
     str
 ] = "https://raw.githubusercontent.com/npm/logos/master/npm%20square/n-large.png"
 
+RUBY_GEMS_LOGO: Final[str] = "https://avatars.githubusercontent.com/u/208761?s=200&v=4"
+
 
 class Emoji:
     def __init__(self, data: Dict[str, Any]) -> None:
