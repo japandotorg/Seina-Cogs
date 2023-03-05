@@ -33,6 +33,7 @@ from typing import Any, Dict, Final, List, Literal, Mapping, Optional, Union
 import aiohttp
 import discord
 import jeyyapi  # type: ignore
+from attrdict import AttrDict  # type: ignore
 from playwright.async_api import async_playwright  # type: ignore
 from pygicord import Paginator  # type: ignore
 from redbot.core import Config, commands  # type: ignore
