@@ -483,7 +483,13 @@ class SeinaTools(BaseCog):  # type: ignore
             else:
                 foj: Dict[str, Any] = json.loads(await response.text())
         obj = foj
-        foj = foj["crate"]
+        try:
+            foj = foj["crate"]
+        except KeyError:
+            embed: discord.Embed = discord.Embed(
+                description=f"There were no result for '{package_name}'"
+            )
+            return await self.send_embed(ctx, embed)
         if len(foj["description"]) != 0:
             embed: discord.Embed = discord.Embed(
                 title=f'{foj["name"]} {foj["newest_version"]}',
