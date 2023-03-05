@@ -533,7 +533,7 @@ class SeinaTools(BaseCog):  # type: ignore
     @commands.command(name="npm", aliases=["node", "npmpkg", "nodepkg"])
     async def _node_module(self, ctx: commands.Context, module_name: str) -> None:
         """
-        Get information about a node.js modulee.
+        Get information about a node.js module.
         """
         url = f"https://registry.npmjs.org/{module_name}"
         async with self.session.get(url) as response:
