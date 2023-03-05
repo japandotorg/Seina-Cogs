@@ -690,7 +690,7 @@ class SeinaTools(BaseCog):  # type: ignore
                 )
         embed.add_field(
             name="Downloads",
-            value=f"```prolog\nTotal Downloads          : {resp['downloads']}\nLatest Version Downloads : {resp['version_downloads']:,}\n```",
+            value=f"```prolog\nTotal Downloads          : {resp['downloads']:,}\nLatest Version Downloads : {resp['version_downloads']:,}\n```",
             inline=False,
         )
         await ctx.send(embed=embed)
