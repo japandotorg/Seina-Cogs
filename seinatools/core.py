@@ -638,7 +638,7 @@ class SeinaTools(BaseCog):  # type: ignore
             version = versions[0]
         version_number = version["number"]
         number_url = f"https://rubygems.org/api/v2/rubygems/{package_name}/versions/{version_number}.json"
-        async with self.bot.session.get(number_url) as response:
+        async with self.session.get(number_url) as response:
             resp: Dict[str, Any] = json.loads(await response.text())
         if len(resp["description"]) != 0:
             embed: discord.Embed = discord.Embed(
