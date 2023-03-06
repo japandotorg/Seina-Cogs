@@ -446,12 +446,12 @@ class SeinaTools(BaseCog):  # type: ignore
 
             view: discord.ui.View = SpotifyView(
                 label="Listen on Spotify",
-                emoji=emoji.as_emoji(),  # type: ignore
+                emoji=emoji.as_emoji() if emoji else None,  # type: ignore
                 url=f"{spotify.track_url}",  # type: ignore
             )
 
             await ctx.send(
-                f"{emoji.as_emoji()} **{user}** is listening to **{spotify.title}**!",  # type: ignore
+                f"{emoji.as_emoji() if emoji else ''} **{user}** is listening to **{spotify.title}**!",  # type: ignore
                 file=discord.File(image, "spotify.png"),
                 view=view,
             )
