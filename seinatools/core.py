@@ -509,7 +509,7 @@ class SeinaTools(BaseCog):  # type: ignore
             )
             embed.set_image(url=getattr(playing[0], "large_image_url", None))
             embed.set_thumbnail(url=getattr(playing[0], "small_image_url", None))
-        return await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
 
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
