@@ -482,30 +482,31 @@ class SeinaTools(BaseCog):  # type: ignore
                     description=f"**{user}** is not playing anything right now.",
                     color=await ctx.embed_color(),
                 )
-                await ctx.send(embed=failed)
-            embed: discord.Embed = discord.Embed(
-                color=await ctx.embed_color(),
-                timestamp=ctx.message.created_at,
-            ).set_author(
-                name=user, icon_url=user.avatar.url # type: ignore
-            )
-            embed.add_field(
-                name="Name",
-                value=playing[0].name,
-                inline=False,
-            )
-            embed.add_field(name="State", value=getattr(playing[0], "state", None), inline=False)
-            embed.add_field(
-                name="Details", value=getattr(playing[0], "details", None), inline=False
-            )
-            embed.add_field(
-                name="Small Image Text",
-                value=getattr(playing[0], "small_image_text", None),
-                inline=False,
-            )
-            embed.set_image(url=getattr(playing[0], "large_image_url", None))
-            embed.set_thumbnail(url=getattr(playing[0], "small_image_url", None))
-            await ctx.send(embed=embed)
+                return await ctx.send(embed=failed)
+            else:
+                embed: discord.Embed = discord.Embed(
+                    color=await ctx.embed_color(),
+                    timestamp=ctx.message.created_at,
+                ).set_author(
+                    name=user, icon_url=user.avatar.url # type: ignore
+                )
+                embed.add_field(
+                    name="Name",
+                    value=playing[0].name,
+                    inline=False,
+                )
+                embed.add_field(name="State", value=getattr(playing[0], "state", None), inline=False)
+                embed.add_field(
+                    name="Details", value=getattr(playing[0], "details", None), inline=False
+                )
+                embed.add_field(
+                    name="Small Image Text",
+                    value=getattr(playing[0], "small_image_text", None),
+                    inline=False,
+                )
+                embed.set_image(url=getattr(playing[0], "large_image_url", None))
+                embed.set_thumbnail(url=getattr(playing[0], "small_image_url", None))
+                await ctx.send(embed=embed)
 
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
