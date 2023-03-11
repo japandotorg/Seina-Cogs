@@ -464,6 +464,52 @@ class SeinaTools(BaseCog):  # type: ignore
             return await ctx.send("I have reset the spotify emoji!")
         await self.config.emoji.set(emoji.to_dict())
         await ctx.send(f"Set the spotify emoji to {emoji.as_emoji()}")
+        
+    @commands.has_permissions(**perms)
+    @commands.bot_has_permissions(**perms)
+    @commands.command(name="whatplaying", aliases=["whatgame"])
+    async def _what_playing(self, ctx: commands.Context, user: Optional[discord.Member] = None) -> None: # type: ignore
+        """
+        Closer lookup on what the specified user is playing.
+        """
+        if user is None:
+            user: discord.Member = ctx.author
+            
+        async with ctx.channel.typing():
+            playing = [p for p in user.activities if p.type == discord.ActivityType.playing]
+            if not playing:
+                failed: discord.Embed = discord.Embed(
+                    description=f"**{user}** is not playing anything right now.",
+                    color=await ctx.embed_color(),
+                )
+                await ctx.send(embed=failed)
+            embed: discord.Embed = discord.Embed(
+                color=await ctx.embed_color(),
+                timestamp=ctx.message.created_at,
+            ).set_author(name=user, icon_url=user.avatar.url) # type: ignore
+            embed.add_field(
+                name="Name",
+                value=playing[0].name,
+                inline=True,
+            )
+            embed.add_field(
+                name="State",
+                value=getattr(playing[0], "state", None),
+                inline=True
+            )
+            embed.add_field(
+                name="Details",
+                value=getattr(playing[0], "details", None),
+                inline=True
+            )
+            embed.add_field(
+                name="Small Image Text",
+                value=getattr(playing[0], "small_image_text", None),
+                inline=True,
+            )
+            embed.set_image(url=getattr(playing[0], "large_image_url", None))
+            embed.set_thumbnail(url=getattr(playing[0], "small_image_url", None))
+        return await ctx.send(embed=embed)
 
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
