@@ -487,21 +487,21 @@ class SeinaTools(BaseCog):  # type: ignore
                 color=await ctx.embed_color(),
                 timestamp=ctx.message.created_at,
             ).set_author(
-                name=user, icon_url=user.avatar.url
-            )  # type: ignore
+                name=user, icon_url=user.avatar.url # type: ignore
+            )
             embed.add_field(
                 name="Name",
                 value=playing[0].name,
-                inline=True,
+                inline=False,
             )
-            embed.add_field(name="State", value=getattr(playing[0], "state", None), inline=True)
+            embed.add_field(name="State", value=getattr(playing[0], "state", None), inline=False)
             embed.add_field(
-                name="Details", value=getattr(playing[0], "details", None), inline=True
+                name="Details", value=getattr(playing[0], "details", None), inline=False
             )
             embed.add_field(
                 name="Small Image Text",
                 value=getattr(playing[0], "small_image_text", None),
-                inline=True,
+                inline=False,
             )
             embed.set_image(url=getattr(playing[0], "large_image_url", None))
             embed.set_thumbnail(url=getattr(playing[0], "small_image_url", None))
