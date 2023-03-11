@@ -487,7 +487,7 @@ class SeinaTools(BaseCog):  # type: ignore
                 color=await ctx.embed_color(),
                 timestamp=ctx.message.created_at,
             ).set_author(
-                name=user, icon_url=user.avatar.url # type: ignore
+                name=user, icon_url=user.avatar.url  # type: ignore
             )
             embed.add_field(
                 name="Name",
