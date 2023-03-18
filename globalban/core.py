@@ -28,11 +28,11 @@ from io import BytesIO
 from typing import Any, Dict, Final, List, Literal, Optional, Type, TypeVar
 
 import discord
-from redbot.core import Config, checks, commands, modlog
+from redbot.core import Config, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box, humanize_list, inline, pagify
 
-from .utils import auth_check, get_user_confirmation
+from .utils import get_user_confirmation
 
 RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
@@ -56,10 +56,6 @@ class GlobalBan(commands.Cog):
         self.config: Config = Config.get_conf(self, identifier=66642069)
         self.config.register_global(banned={}, opted=[])
         self.config.register_guild(banlist=[])
-
-        gadmin: Any = bot.get_cog("GlobalAdmin")
-        if gadmin:
-            gadmin.register_perm("globalban")
 
     async def cog_load(self) -> None:
         await self.bot.wait_until_red_ready()
@@ -101,7 +97,7 @@ class GlobalBan(commands.Cog):
             return await ctx.send_help()
 
     @globalban.command()
-    @checks.admin_or_permissions(administrator=True)
+    @commands.admin_or_permissions(administrator=True)
     async def optin(self, ctx: commands.Context) -> None:
         """
         Opt your server in to the Global Ban system.
@@ -123,7 +119,7 @@ class GlobalBan(commands.Cog):
         await ctx.tick()
 
     @globalban.command()
-    @checks.admin_or_permissions(administrator=True)
+    @commands.admin_or_permissions(administrator=True)
     async def optout(self, ctx: commands.Context) -> None:
         """
         Opt your server out of the Global Ban system.
@@ -145,7 +141,7 @@ class GlobalBan(commands.Cog):
         await ctx.tick()
 
     @globalban.command()
-    @auth_check("globalban")
+    @commands.is_owner()
     async def ban(
         self, ctx: commands.Context, user_id: int, *, reason: Optional[str] = ""
     ) -> None:
@@ -159,7 +155,7 @@ class GlobalBan(commands.Cog):
         await ctx.tick()
 
     @globalban.command()
-    @auth_check("globalban")
+    @commands.is_owner()
     async def editreason(
         self, ctx: commands.Context, user_id: int, *, reason: Optional[str] = ""
     ) -> None:
@@ -176,8 +172,8 @@ class GlobalBan(commands.Cog):
         await ctx.tick()
 
     @globalban.command()
-    @auth_check("globalban")
-    @checks.bot_has_permissions(ban_members=True)
+    @commands.is_owner()
+    @commands.bot_has_permissions(ban_members=True)
     async def unban(self, ctx: commands.Context, user_id: int) -> None:
         """Globally Unban a user across all opted-in servers."""
         async with self.config.banned() as banned:
@@ -188,7 +184,7 @@ class GlobalBan(commands.Cog):
         await ctx.tick()
 
     @globalban.command(name="list")
-    @auth_check("globalban")
+    @commands.is_owner()
     async def _list(self, ctx: commands.Context) -> None:
         """Check who're on the global ban list."""
         o = "\n".join(k + "\t" + v for k, v in (await self.config.banned()).items())

@@ -27,25 +27,12 @@ from typing import Any, Literal, Optional, Union
 
 import discord
 from discord import User
-from redbot.core import commands
 from redbot.core.bot import Red
 
 SendableEmoji = Union[str, discord.Emoji]
 
 YES_EMOJI = "\N{WHITE HEAVY CHECK MARK}"
 NO_EMOJI = "\N{CROSS MARK}"
-
-
-def auth_check(perm: str, default: bool = False):
-    def check(ctx):
-        if ctx.author.id in ctx.bot.owner_ids:
-            return True
-        authcog = ctx.bot.get_cog("GlobalAdmin")
-        if not authcog:
-            return default
-        return authcog.settings.get_perm(ctx.author.id, perm, default=default)
-
-    return commands.check(check)
 
 
 async def get_user_preference(
