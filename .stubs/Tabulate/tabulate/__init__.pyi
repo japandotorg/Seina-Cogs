@@ -63,4 +63,3 @@ def tabulate(
 class JupyterHTMLStr(str):
     @property
     def str(self) -> Self: ...
-    
