@@ -67,7 +67,17 @@ class Request(RequestHooksMixin):
     auth: Any
     cookies: Any
     def __init__(
-        self, method=..., url=..., headers=..., files=..., data=..., params=..., auth=..., cookies=..., hooks=..., json=...
+        self,
+        method=...,
+        url=...,
+        headers=...,
+        files=...,
+        data=...,
+        params=...,
+        auth=...,
+        cookies=...,
+        hooks=...,
+        json=...,
     ) -> None: ...
     def prepare(self) -> PreparedRequest: ...
 
@@ -79,7 +89,17 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
     hooks: Any
     def __init__(self) -> None: ...
     def prepare(
-        self, method=..., url=..., headers=..., files=..., data=..., params=..., auth=..., cookies=..., hooks=..., json=...
+        self,
+        method=...,
+        url=...,
+        headers=...,
+        files=...,
+        data=...,
+        params=...,
+        auth=...,
+        cookies=...,
+        hooks=...,
+        json=...,
     ) -> None: ...
     def copy(self) -> PreparedRequest: ...
     def prepare_method(self, method) -> None: ...
@@ -120,9 +140,14 @@ class Response:
     def is_permanent_redirect(self) -> bool: ...
     @property
     def apparent_encoding(self) -> str: ...
-    def iter_content(self, chunk_size: int | None = ..., decode_unicode: bool = ...) -> Iterator[Any]: ...
+    def iter_content(
+        self, chunk_size: int | None = ..., decode_unicode: bool = ...
+    ) -> Iterator[Any]: ...
     def iter_lines(
-        self, chunk_size: int | None = ..., decode_unicode: bool = ..., delimiter: str | bytes | None = ...
+        self,
+        chunk_size: int | None = ...,
+        decode_unicode: bool = ...,
+        delimiter: str | bytes | None = ...,
     ) -> Iterator[Any]: ...
     @property
     def content(self) -> bytes: ...

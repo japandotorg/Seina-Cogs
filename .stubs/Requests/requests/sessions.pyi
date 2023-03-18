@@ -5,7 +5,17 @@ from typing_extensions import TypeAlias
 
 from urllib3._collections import RecentlyUsedContainer
 
-from . import adapters, auth as _auth, compat, cookies, exceptions, hooks, models, status_codes, utils
+from . import (
+    adapters,
+    auth as _auth,
+    compat,
+    cookies,
+    exceptions,
+    hooks,
+    models,
+    status_codes,
+    utils,
+)
 from .models import Response
 from .structures import CaseInsensitiveDict as CaseInsensitiveDict
 
@@ -40,13 +50,17 @@ def merge_setting(request_setting, session_setting, dict_class=...): ...
 def merge_hooks(request_hooks, session_hooks, dict_class=...): ...
 
 class SessionRedirectMixin:
-    def resolve_redirects(self, resp, req, stream=..., timeout=..., verify=..., cert=..., proxies=...): ...
+    def resolve_redirects(
+        self, resp, req, stream=..., timeout=..., verify=..., cert=..., proxies=...
+    ): ...
     def rebuild_auth(self, prepared_request, response): ...
     def rebuild_proxies(self, prepared_request, proxies): ...
     def should_strip_auth(self, old_url, new_url): ...
 
 _Data: TypeAlias = str | bytes | Mapping[str, Any] | Iterable[tuple[str, str | None]] | IO[Any]
-_Auth: TypeAlias = Union[tuple[str, str], _auth.AuthBase, Callable[[PreparedRequest], PreparedRequest]]
+_Auth: TypeAlias = Union[
+    tuple[str, str], _auth.AuthBase, Callable[[PreparedRequest], PreparedRequest]
+]
 _Cert: TypeAlias = Union[str, tuple[str, str]]
 _Files: TypeAlias = (
     Mapping[str, SupportsRead[str | bytes] | str | bytes]
@@ -58,7 +72,9 @@ _Hook: TypeAlias = Callable[[Response], Any]
 _HooksInput: TypeAlias = Mapping[str, Iterable[_Hook] | _Hook]
 
 _ParamsMappingKeyType: TypeAlias = str | bytes | int | float
-_ParamsMappingValueType: TypeAlias = str | bytes | int | float | Iterable[str | bytes | int | float] | None
+_ParamsMappingValueType: TypeAlias = (
+    str | bytes | int | float | Iterable[str | bytes | int | float] | None
+)
 _Params: TypeAlias = Union[
     SupportsItems[_ParamsMappingKeyType, _ParamsMappingValueType],
     tuple[_ParamsMappingKeyType, _ParamsMappingValueType],
@@ -66,7 +82,9 @@ _Params: TypeAlias = Union[
     str | bytes,
 ]
 _TextMapping: TypeAlias = MutableMapping[str, str]
-_HeadersMapping: TypeAlias = MutableMapping[str, str] | MutableMapping[str, bytes] | MutableMapping[str, str | bytes]
+_HeadersMapping: TypeAlias = (
+    MutableMapping[str, str] | MutableMapping[str, bytes] | MutableMapping[str, str | bytes]
+)
 _HeadersUpdateMapping: TypeAlias = (
     MutableMapping[str, str]
     | MutableMapping[str, bytes]
