@@ -420,7 +420,7 @@ class SeinaTools(BaseCog):  # type: ignore
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
     @commands.group(name="spotify", invoke_without_command=True)
-    async def _spotify(self, ctx: commands.Context, user: Optional[discord.Member] = None) -> None:    # type: ignore
+    async def _spotify(self, ctx: commands.Context, user: Optional[discord.Member] = None) -> None:  # type: ignore
         """
         View the specified (defaults to author) user's now playing spotify status from their discord activity.
         """
