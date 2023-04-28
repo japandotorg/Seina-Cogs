@@ -441,10 +441,13 @@ def makereadme() -> None:
                     if maybe_version := VER_REG.search(data):
                         _version = maybe_version.group(1)
         if info and not info.disabled and not info.hidden:
-            to_append = [info.name, _version]
             description = f"<details><summary>{info.short}</summary>{info.description}</details>"
-            to_append.append(description)
-            to_append.append(babel_list(info.author, style="standard", locale="en"))
+            to_append = [
+                info.name,
+                _version,
+                description,
+                babel_list(info.author, style="standard", locale="en"),
+            ]
             table_data.append(to_append)
 
     body = tabulate.tabulate(

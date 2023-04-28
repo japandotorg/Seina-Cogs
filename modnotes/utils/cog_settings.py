@@ -50,7 +50,7 @@ class CogSettings(object):
         else:
             current: Any = self.intify(read_json_file(self.file_path))
             updated: bool = False
-            for key in self.default_settings.keys():
+            for key in self.default_settings:
                 if key not in current.keys():
                     current[key] = self.default_settings[key]
                     updated: bool = True

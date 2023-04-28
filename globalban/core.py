@@ -71,7 +71,7 @@ class GlobalBan(commands.Cog):
         """
         Get a user's personal data.
         """
-        data = "No data is stored for user with ID {}.\n".format(user_id)
+        data = f"No data is stored for user with ID {user_id}.\n"
         return {"user_data.txt": BytesIO(data.encode())}
 
     async def red_delete_data_for_user(
@@ -82,7 +82,7 @@ class GlobalBan(commands.Cog):
 
         No personal data is stored in this cog.
         """
-        data = "No data is stored for user with ID {}.\n".format(user_id)
+        data = f"No data is stored for user with ID {user_id}.\n"
         return {"user_data.txt": BytesIO(data.encode())}
 
     @commands.group(aliases=["gb", "gban"], invoke_without_command=True)
@@ -238,9 +238,7 @@ class GlobalBan(commands.Cog):
                     )
 
                 except discord.Forbidden:
-                    log.warning(
-                        "Failed to ban user with ID {} in guild {}".format(uid, guild.name)
-                    )
+                    log.warning(f"Failed to ban user with ID {uid} in guild {guild.name}")
 
     async def remove_gbs_guild(self, gid: int) -> None:
         guild = self.bot.get_guild(int(gid))

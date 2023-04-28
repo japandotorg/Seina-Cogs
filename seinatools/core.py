@@ -87,7 +87,7 @@ class SeinaTools(BaseCog):  # type: ignore
         """
         Nothing to delete.
         """
-        data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
+        data: Final[str] = f"No data is stored for user with ID {user_id}.\n"
         return {"user_data.txt": io.BytesIO(data.encode())}
 
     async def red_delete_data_for_user(self, **kwargs: Any) -> Dict[str, io.BytesIO]:
@@ -96,7 +96,7 @@ class SeinaTools(BaseCog):  # type: ignore
         No personal data is stored in this cog.
         """
         user_id: Any = kwargs.get("user_id")
-        data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
+        data: Final[str] = f"No data is stored for user with ID {user_id}.\n"
         return {"user_data.txt": io.BytesIO(data.encode())}
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
@@ -122,19 +122,18 @@ class SeinaTools(BaseCog):  # type: ignore
         keys = await self.bot.get_shared_api_tokens("removebg")
         try:
             token = keys.get("api_key")
-            if not token:
-                if not await self.config.notice():
-                    try:
-                        await self.bot.send_to_owners(
-                            "Thanks for installing my utility cog."
-                            "This cog has a removebackground command which uses "
-                            "an api key from the <https://www.remove.bg/> website. "
-                            "You can easily get the api key from <https://www.remove.bg/api#remove-background>.\n"
-                            "This is how you can add the api key - `[p]set api removebg api_key,key`"
-                        )
-                        await self.config.notice.set(True)
-                    except (discord.NotFound, discord.HTTPException):
-                        log.exception("Failed to send the notice message!")
+            if not token and not await self.config.notice():
+                try:
+                    await self.bot.send_to_owners(
+                        "Thanks for installing my utility cog."
+                        "This cog has a removebackground command which uses "
+                        "an api key from the <https://www.remove.bg/> website. "
+                        "You can easily get the api key from <https://www.remove.bg/api#remove-background>.\n"
+                        "This is how you can add the api key - `[p]set api removebg api_key,key`"
+                    )
+                    await self.config.notice.set(True)
+                except (discord.NotFound, discord.HTTPException):
+                    log.exception("Failed to send the notice message!")
 
         except Exception:
             log.exception("Error starting the cog.", exc_info=True)
@@ -284,10 +283,13 @@ class SeinaTools(BaseCog):  # type: ignore
                         (
                             EightBitANSI.paint_red("Latency"),
                             EightBitANSI.paint_white(
-                                str(round(self.bot.latency * 1000, 2)) + "ms"
+                                f"{str(round(self.bot.latency * 1000, 2))}ms"
                             ),
                         ),
-                        (EightBitANSI.paint_red("Cogs"), EightBitANSI.paint_white(len(self.bot.cogs))),  # type: ignore
+                        (
+                            EightBitANSI.paint_red("Cogs"),
+                            EightBitANSI.paint_white(len(self.bot.cogs)),
+                        ),
                         (
                             EightBitANSI.paint_red("Commands"),
                             EightBitANSI.paint_white(len(tuple(self.bot.walk_commands()))),  # type: ignore
@@ -369,24 +371,23 @@ class SeinaTools(BaseCog):  # type: ignore
         """
         Remove background from image url.
         """
-        if ctx.invoked_subcommand is None:
-            keys = await self.bot.get_shared_api_tokens("removebg")
-            token = keys.get("api_key")
+        if ctx.invoked_subcommand is not None:
+            return
+        keys = await self.bot.get_shared_api_tokens("removebg")
+        if token := keys.get("api_key"):
+            async with self.session.get(url) as response:
+                data = io.BytesIO(await response.read())
 
-            if not token:
-                await ctx.send("You have not provided an api key yet.")
-            else:
-                async with self.session.get(url) as response:
-                    data = io.BytesIO(await response.read())
+            resp = await self.session.post(
+                "https://api.remove.bg/v1.0/removebg",
+                data={"size": "auto", "image_file": data},
+                headers={"X-Api-Key": f"{token}"},
+            )
 
-                resp = await self.session.post(
-                    "https://api.remove.bg/v1.0/removebg",
-                    data={"size": "auto", "image_file": data},
-                    headers={"X-Api-Key": f"{token}"},
-                )
-
-                img = io.BytesIO(await resp.read())
-                await ctx.send(file=discord.File(img, "nobg.png"))
+            img = io.BytesIO(await resp.read())
+            await ctx.send(file=discord.File(img, "nobg.png"))
+        else:
+            await ctx.send("You have not provided an api key yet.")
 
     @_remove_background.command(name="creds", aliases=["setapikey", "setapi"])
     async def _remove_background_creds(self, ctx: commands.Context):
@@ -419,42 +420,43 @@ class SeinaTools(BaseCog):  # type: ignore
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
     @commands.group(name="spotify", invoke_without_command=True)
-    async def _spotify(self, ctx: commands.Context, user: Optional[discord.Member] = None) -> None:  # type: ignore
+    async def _spotify(self, ctx: commands.Context, user: Optional[discord.Member] = None) -> None:    # type: ignore
         """
         View the specified (defaults to author) user's now playing spotify status from their discord activity.
         """
-        if ctx.invoked_subcommand is None:
-            if not user:
-                user: discord.Member = ctx.author
+        if ctx.invoked_subcommand is not None:
+            return
+        if not user:
+            user: discord.Member = ctx.author
 
-            async with ctx.channel.typing():
-                spotify = discord.utils.find(
-                    lambda pres: isinstance(pres, discord.Spotify), user.activities  # type: ignore
+        async with ctx.channel.typing():
+            spotify = discord.utils.find(
+                lambda pres: isinstance(pres, discord.Spotify), user.activities  # type: ignore
+            )
+
+            if spotify is None:
+                embed: discord.Embed = discord.Embed(
+                    color=await ctx.embed_color(),
+                    description=f"**{user}** is not listening to Spotify right now.",
                 )
+                return await ctx.send(embed=embed)
 
-                if spotify is None:
-                    embed: discord.Embed = discord.Embed(
-                        color=await ctx.embed_color(),
-                        description=f"**{user}** is not listening to Spotify right now.",
-                    )
-                    return await ctx.send(embed=embed)
+            image: io.BytesIO = await self.spotify.spotify_from_object(spotify)
 
-                image: io.BytesIO = await self.spotify.spotify_from_object(spotify)
+        settings: Any = await self.config.all()
+        emoji: Optional[Emoji] = Emoji.from_data(settings.get("emoji"))
 
-            settings: Any = await self.config.all()
-            emoji: Optional[Emoji] = Emoji.from_data(settings.get("emoji"))
+        view: discord.ui.View = SpotifyView(
+            label="Listen on Spotify",
+            emoji=emoji.as_emoji() if emoji else None,  # type: ignore
+            url=f"{spotify.track_url}",  # type: ignore
+        )
 
-            view: discord.ui.View = SpotifyView(
-                label="Listen on Spotify",
-                emoji=emoji.as_emoji() if emoji else None,  # type: ignore
-                url=f"{spotify.track_url}",  # type: ignore
-            )
-
-            await ctx.send(
-                f"{emoji.as_emoji() if emoji else ''} **{user}** is listening to **{spotify.title}**!",  # type: ignore
-                file=discord.File(image, "spotify.png"),
-                view=view,
-            )
+        await ctx.send(
+            f"{emoji.as_emoji() if emoji else ''} **{user}** is listening to **{spotify.title}**!",  # type: ignore
+            file=discord.File(image, "spotify.png"),
+            view=view,
+        )
 
     @_spotify.command(name="emoji")
     async def _spotify_embed(self, ctx: commands.Context, emoji: EmojiConverter) -> None:

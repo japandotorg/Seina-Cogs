@@ -59,9 +59,7 @@ class Emoji:
         log.debug(data)
         if not data:
             return None
-        if isinstance(data, str):
-            return cls({"name": data})
-        return cls(data)
+        return cls({"name": data}) if isinstance(data, str) else cls(data)
 
     def to_dict(self) -> Dict[str, Any]:
         return {"name": self.name, "id": self.id}
