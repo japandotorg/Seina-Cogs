@@ -26,12 +26,12 @@ from __future__ import annotations
 
 import io
 import logging
-from typing import Final, List, Literal, Dict, Any, Optional
+from typing import Any, Dict, Final, List, Literal, Optional
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import humanize_list 
+from redbot.core.bot import Red
+from redbot.core.utils.chat_formatting import humanize_list
 
 log: logging.Logger = logging.getLogger("red.seina.firstmesssage")
 
@@ -42,14 +42,14 @@ class FirstMessage(commands.Cog):
     """
     Provides a link to the first message in the provided channel.
     """
-    
+
     __author__: Final[List[str]] = ["inthedark.org#0666"]
     __version__: Final[str] = "0.1.0"
-    
+
     def __init__(self, bot: Red) -> None:
         super().__init__()
         self.bot: Red = bot
-        
+
     async def red_get_data_for_user(
         self, *, requester: RequestType, user_id: int
     ) -> Dict[str, io.BytesIO]:
@@ -58,7 +58,7 @@ class FirstMessage(commands.Cog):
         """
         data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
         return {"User_data.txt": io.BytesIO(data.encode())}
-    
+
     async def red_delete_data_for_user(self, **kwargs: Any) -> Dict[str, io.BytesIO]:
         """
         Delete a user's personal data.
@@ -67,7 +67,7 @@ class FirstMessage(commands.Cog):
         user_id: int | None = kwargs.get("user_id")
         data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
         return {"user_data.txt": io.BytesIO(data.encode())}
-    
+
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
         n = "\n" if "\n\n" not in pre_processed else ""
@@ -77,13 +77,13 @@ class FirstMessage(commands.Cog):
             f"Cog Version: **{self.__version__}**",
         ]
         return "\n".join(text)
-    
+
     @commands.command()
     @commands.has_permissions(read_message_history=True)
     @commands.bot_has_permissions(read_message_history=True)
     async def firstmessage(
-        self, 
-        ctx: commands.Context, 
+        self,
+        ctx: commands.Context,
         channel: Optional[
             discord.TextChannel
             | discord.Thread
@@ -91,7 +91,7 @@ class FirstMessage(commands.Cog):
             | discord.GroupChannel
             | discord.User
             | discord.Member
-        ] = commands.CurrentChannel
+        ] = commands.CurrentChannel,
     ):
         """
         Provide a link to the first message in current or provided channel.
@@ -109,6 +109,11 @@ class FirstMessage(commands.Cog):
             timestamp=ctx.message.created_at,
             description=f"[First message in {chan}]({messages[0].jump_url})"
         )
-        embed.set_author(name=messages[0].author.display_name, icon_url=messages[0].author.avatar.url if messages[0].author.avatar else messages[0].author.display_avatar.url)
-        
+        embed.set_author(
+            name=messages[0].author.display_name,
+            icon_url=messages[0].author.avatar.url
+            if messages[0].author.avatar
+            else messages[0].author.display_avatar.url,
+        )
+
         await ctx.send(embed=embed)
