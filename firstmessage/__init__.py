@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from redbot.core.bot import Red
+
 from .core import FirstMessage
 
-from redbot.core.bot import Red
 
 async def setup(bot: Red) -> None:
     cog = FirstMessage(bot)
     await bot.add_cog(cog)
-    
