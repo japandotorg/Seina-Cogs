@@ -102,7 +102,7 @@ class FirstMessage(commands.Cog):
             log.exception(f"Unable to read message history for {channel.id}")
             return await ctx.maybe_send_embed("Unable to read message history for that channel.")
         
-        chan = f"<@{channel.id}>" if isinstance(channel, discord.DMChannel) else f"<#{channel.id}>"
+        chan = f"<@{channel.id}>" if isinstance(channel, discord.DMChannel | discord.User | discord.Member) else f"<#{channel.id}>"
             
         embed: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
