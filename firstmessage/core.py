@@ -121,7 +121,7 @@ class FirstMessage(commands.Cog):
             if messages[0].author.avatar
             else messages[0].author.display_avatar.url,
         )
-          
+
         view = URLView(label="Jump to message", jump_url=messages[0].jump_url)
-        
+
         await ctx.send(embed=embed, view=view)
