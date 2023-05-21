@@ -1,0 +1,16 @@
+{
+    "author": ["inthedark.org#0666"],
+    "install_msg": "Thanks for installing the firstmessage cog.",
+    "name": "FirstMessage",
+    "disabled": false,
+    "short": "A simple cog for jump to first message of a channel.",
+    "description": "A simple cog for jump to first message of a channel.",
+    "tags": [
+        "utility",
+        "tools"
+    ],
+    "required_cogs": {},
+    "requirements": [],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not store End User Data."
+}

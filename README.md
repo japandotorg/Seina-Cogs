@@ -17,6 +17,7 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 | EpicGames   | 0.1.0            | <details><summary>A simple epic games cog.</summary>Get free games info from epic games store.</details>                         | inthedark.org#0666                          |
 | MapleStory  | 0.1.0            | <details><summary>A simple maple story cog.</summary>Get user info from the maple story API.</details>                           | inthedark.org#0666                          |
 | ModNotes    | 0.1.0            | <details><summary>Global Mod Notes</summary>Global Mod Notes for sussy users.</details>                                          | inthedark.org#0666                          |
+| FirstMessage| 0.1.0            | <details><summary>First Message</summary>A simple cog for jump to first message of a channel.</details>                          | inthedark.org#0666                          |
 | RainbowRole | 0.1.0            | <details><summary>A simple cog for setting up a rainbow role.</summary>Creates a rainbow role in your server which loops into the 7 rainbow roles every 90 seconds.</details> | inthedark.org#0666 |
 
 
