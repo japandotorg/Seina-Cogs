@@ -109,7 +109,7 @@ class FirstMessage(commands.Cog):
 
             embed: discord.Embed = discord.Embed(
                 color=await ctx.embed_color(),
-                timestamp=ctx.message.created_at,
+                timestamp=messages[0].created_at,
                 description=f"[First message in {chan}]({messages[0].jump_url})",
             )
             embed.set_author(
