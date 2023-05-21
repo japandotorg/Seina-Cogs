@@ -101,11 +101,13 @@ class FirstMessage(commands.Cog):
         except (discord.Forbidden, discord.HTTPException):
             log.exception(f"Unable to read message history for {channel.id}")
             return await ctx.maybe_send_embed("Unable to read message history for that channel.")
+        
+        chan = f"<@{channel.id}>" if isinstance(channel, discord.DMChannel) else f"<#{channel.id}>"
             
         embed: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
             timestamp=ctx.message.created_at,
-            description=f"[First message in <#{channel.id}>]({messages[0].jump_url})"
+            description=f"[First message in {chan}]({messages[0].jump_url})"
         )
         embed.set_author(name=messages[0].author.display_name, icon_url=messages[0].author.avatar.url if messages[0].author.avatar else messages[0].author.display_avatar.url)
         
