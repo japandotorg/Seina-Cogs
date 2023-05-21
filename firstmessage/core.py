@@ -100,28 +100,29 @@ class FirstMessage(commands.Cog):
         """
         try:
             messages = [message async for message in channel.history(limit=1, oldest_first=True)]
-        except (discord.Forbidden, discord.HTTPException):
+
+            chan = (
+                f"<@{channel.id}>"
+                if isinstance(channel, discord.DMChannel | discord.User | discord.Member)
+                else f"<#{channel.id}>"
+            )
+
+            embed: discord.Embed = discord.Embed(
+                color=await ctx.embed_color(),
+                timestamp=ctx.message.created_at,
+                description=f"[First message in {chan}]({messages[0].jump_url})",
+            )
+            embed.set_author(
+                name=messages[0].author.display_name,
+                icon_url=messages[0].author.avatar.url
+                if messages[0].author.avatar
+                else messages[0].author.display_avatar.url,
+            )
+
+        except (discord.Forbidden, discord.HTTPException, IndexError):
             log.exception(f"Unable to read message history for {channel.id}")
             return await ctx.maybe_send_embed("Unable to read message history for that channel.")
 
-        chan = (
-            f"<@{channel.id}>"
-            if isinstance(channel, discord.DMChannel | discord.User | discord.Member)
-            else f"<#{channel.id}>"
-        )
-
-        embed: discord.Embed = discord.Embed(
-            color=await ctx.embed_color(),
-            timestamp=ctx.message.created_at,
-            description=f"[First message in {chan}]({messages[0].jump_url})",
-        )
-        embed.set_author(
-            name=messages[0].author.display_name,
-            icon_url=messages[0].author.avatar.url
-            if messages[0].author.avatar
-            else messages[0].author.display_avatar.url,
-        )
-          
         view = URLView(label="Jump to message", jump_url=messages[0].jump_url)
-        
+
         await ctx.send(embed=embed, view=view)
