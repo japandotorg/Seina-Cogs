@@ -33,6 +33,8 @@ from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
 
+from .views import URLView
+
 log: logging.Logger = logging.getLogger("red.seina.firstmesssage")
 
 RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
@@ -119,5 +121,7 @@ class FirstMessage(commands.Cog):
             if messages[0].author.avatar
             else messages[0].author.display_avatar.url,
         )
-
-        await ctx.send(embed=embed)
+          
+        view = URLView(label="Jump to message", jump_url=messages[0].jump_url)
+        
+        await ctx.send(embed=embed, view=view)
