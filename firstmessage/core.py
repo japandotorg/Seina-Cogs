@@ -119,7 +119,7 @@ class FirstMessage(commands.Cog):
                 else messages[0].author.display_avatar.url,
             )
 
-        except (discord.Forbidden, discord.HTTPException, IndexError):
+        except (discord.Forbidden, discord.HTTPException, IndexError, AttributeError):
             log.exception(f"Unable to read message history for {channel.id}")
             return await ctx.maybe_send_embed("Unable to read message history for that channel.")
 
