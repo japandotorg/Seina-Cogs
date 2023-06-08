@@ -25,10 +25,10 @@ SOFTWARE.
 
 from __future__ import annotations
 
-import io
 import asyncio
+import io
 import logging
-from typing import Final, List, Literal, Dict, Any, Optional
+from typing import Any, Dict, Final, List, Literal, Optional
 
 import discord
 from redbot.core.bot import Red
@@ -36,6 +36,7 @@ from redbot.core import commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.chat_formatting import humanize_list
+from redbot.core.utils.predicates import MessagePredicate
 
 log: logging.Logger = logging.getLogger("red.seina.massunban")
 
@@ -49,14 +50,14 @@ class MassUnban(commands.Cog):
     """
     Unban all users, or users with a specific ban reason.
     """
-    
+
     __author__: Final[List[str]] = ["aikaterna", "inthedark.org#0666"]
     __version__: Final[str] = "0.1.0"
 
     def __init__(self, bot: Red) -> None:
         super().__init__()
         self.bot: Red = bot
-        
+
     async def red_get_data_for_user(
         self, *, requester: RequestType, user_id: int
     ) -> Dict[str, io.BytesIO]:
@@ -65,7 +66,7 @@ class MassUnban(commands.Cog):
         """
         data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
         return {"User_data.txt": io.BytesIO(data.encode())}
-    
+
     async def red_delete_data_for_user(self, **kwargs: Any) -> Dict[str, io.BytesIO]:
         """
         Delete a user's personal data.
@@ -74,7 +75,7 @@ class MassUnban(commands.Cog):
         user_id: Optional[int] = kwargs.get("user_id")
         data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
         return {"user_data.txt": io.BytesIO(data.encode())}
-    
+
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
         n = "\n" if "\n\n" not in pre_processed else ""
@@ -91,16 +92,16 @@ class MassUnban(commands.Cog):
     async def massunban(self, ctx: commands.Context, *, ban_reason: Optional[str] = None):
         """
         Mass unban everyone, or specific people.
-        
+
         **Arguments**
         - [`ban_reason`] is what the bot looks for in the original ban reason to qualify a user for an unban. It is case-insensitive.
-        
+
         When [botname] is used to ban a user, the ban reason looks like:
         `action requested by aikaterna (id 154497072148643840). reason: bad person`
         Using `[p]massunban bad person` will unban this user as "bad person" is contained in the original ban reason.
         Using `[p]massunban aikaterna` will unban every user banned by aikaterna, if [botname] was used to ban them in the first place.
         For users banned using the right-click ban option in Discord, the ban reason is only what the mod puts when it asks for a reason, so using the mod name to unban won't work.
-        
+
         Every unban will show up in your modlog if mod logging is on for unbans. Check `[p]modlogset cases` to verify if mod log creation on unbans is on.
         This can mean that your bot will be ratelimited on sending messages if you unban lots of users as it will create a modlog entry for each unban.
         """
