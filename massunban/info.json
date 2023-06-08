@@ -1,0 +1,12 @@
+{
+    "author": ["aikaterna", "inthedark.org#0666"],
+    "install_msg": "Thanks for installing. Please read the help for the `massunban` command to get started, once you have loaded the cog.",
+    "name": "MassUnban",
+    "disabled": false,
+    "short": "Mass unban users.",
+    "description": "Mass unban users by the ban reason used.",
+    "tags": ["unban"],
+    "required_cogs": {},
+    "requirements": [],
+    "type": "COG"
+}
