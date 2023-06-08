@@ -27,10 +27,11 @@ from redbot.core.bot import Red
 
 from .core import MassUnban
 
-__red_end_user_data_statement__ = "This cog does not persistently store data or metadata about users."
+__red_end_user_data_statement__ = (
+    "This cog does not persistently store data or metadata about users."
+)
 
 
 async def setup(bot: Red) -> None:
     cog = MassUnban(bot)
     await bot.add_cog(cog)
-    
