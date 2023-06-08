@@ -33,6 +33,7 @@ from typing import Final, List, Literal, Dict, Any, Optional
 import discord
 from redbot.core.bot import Red
 from redbot.core import commands
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.chat_formatting import humanize_list
 
@@ -40,7 +41,10 @@ log: logging.Logger = logging.getLogger("red.seina.massunban")
 
 RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
+_ = Translator("MassUnban", __file__)
 
+
+@cog_i18n(_)
 class MassUnban(commands.Cog):
     """
     Unban all users, or users with a specific ban reason.
@@ -67,7 +71,7 @@ class MassUnban(commands.Cog):
         Delete a user's personal data.
         No personal data is stored in this cog.
         """
-        user_id: int | None = kwargs.get("user_id")
+        user_id: Optional[int] = kwargs.get("user_id")
         data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
         return {"user_data.txt": io.BytesIO(data.encode())}
     
@@ -103,7 +107,7 @@ class MassUnban(commands.Cog):
         try:
             banlist: List[discord.BanEntry] = [entry async for entry in ctx.guild.bans()]
         except discord.errors.Forbidden:
-            msg = "I need the `Ban Members` permission to fetch the ban list for the guild."
+            msg = _("I need the `Ban Members` permission to fetch the ban list for the guild.")
             await ctx.send(msg)
             return
         except (discord.HTTPException, TypeError):
@@ -112,12 +116,12 @@ class MassUnban(commands.Cog):
 
         bancount: int = len(banlist)
         if bancount == 0:
-            await ctx.send("No users are banned from this server.")
+            await ctx.send(_("No users are banned from this server."))
             return
 
         unban_count: int = 0
         if not ban_reason:
-            warning_string = (
+            warning_string = _(
                 "Are you sure you want to unban every banned person on this server?\n"
                 f"**Please read** `{ctx.prefix}help massunban` **as this action can cause a LOT of modlog messages!**\n"
                 "Type `Yes` to confirm, or `No` to cancel."
@@ -129,21 +133,21 @@ class MassUnban(commands.Cog):
                 if pred.result is True:
                     async with ctx.typing():
                         for ban_entry in banlist:
-                            await ctx.guild.unban(ban_entry.user, reason=f"Mass Unban requested by {str(ctx.author)} ({ctx.author.id})")
+                            await ctx.guild.unban(ban_entry.user, reason=_("Mass Unban requested by {name} ({id})").format(name=str(ctx.author.display_name), id=ctx.author.id))
                             await asyncio.sleep(0.5)
                             unban_count += 1
                 else:
-                    return await ctx.send("Alright, I'm not unbanning everyone.")
+                    return await ctx.send(_("Alright, I'm not unbanning everyone."))
             except asyncio.TimeoutError:
-                return await ctx.send("Response timed out. Please run this command again if you wish to try again.")
+                return await ctx.send(_("Response timed out. Please run this command again if you wish to try again."))
         else:
             async with ctx.typing():
                 for ban_entry in banlist:
                     if not ban_entry.reason:
                         continue
                     if ban_reason.lower() in ban_entry.reason.lower():
-                        await ctx.guild.unban(ban_entry.user, reason=f"Mass Unban requested by {str(ctx.author)} ({ctx.author.id})")
+                        await ctx.guild.unban(ban_entry.user, reason=_("Mass Unban requested by {name} ({id})").format(name=str(ctx.author.display_name), id=ctx.author.id))
                         await asyncio.sleep(0.5)
                         unban_count += 1
 
-        await ctx.send(f"Done. Unbanned {unban_count} users.")
+        await ctx.send(_("Done. Unbanned {unban_count} users.").format(unban_count=unban_count))
