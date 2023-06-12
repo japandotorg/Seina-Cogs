@@ -70,7 +70,7 @@ class Calculator(commands.Cog):
         return "\n".join(text)
 
     @commands.command(name="calculate", aliases=["calc", "c"])
-    async def calc(self, ctx: commands.Context, num_base: str, *, expr: str = "") -> None:
+    async def calc(self, ctx: commands.Context, num_base: str, *, expr: str = ""):
         """
         Does math.
 
