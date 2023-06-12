@@ -27,9 +27,7 @@ from redbot.core.bot import Red
 
 from .core import StatusRole
 
-__red_end_user_data_statement__ = (
-    "This cog stores provided server settings (i.e. custom status to watch for, the respective roles to assign, and an optional log channel)."
-)
+__red_end_user_data_statement__ = "This cog stores provided server settings (i.e. custom status to watch for, the respective roles to assign, and an optional log channel)."
 
 
 async def setup(bot: Red) -> None:
