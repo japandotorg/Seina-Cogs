@@ -471,9 +471,9 @@ class StatusRole(commands.Cog):
 
         return await ctx.send("Force update completed!")
 
-    @_status_role.group()
     @commands.guild_only()
     @commands.admin_or_permissions(administrator=True)
+    @_status_role.group(name="blacklist", aliases=["blocklist"])
     async def _blacklist(self, ctx: commands.Context):
         """
         Manage statusrole blacklist.
@@ -545,3 +545,4 @@ class StatusRole(commands.Cog):
                 **Toggle:** {statusrole["toggle"]}
                 """,
             )
+        await ctx.send(embed=embed)
