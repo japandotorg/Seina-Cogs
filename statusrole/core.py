@@ -101,7 +101,9 @@ class StatusRole(commands.Cog):
         self.blacklist[guild] = await self.config.guild(guild).blacklist()
 
     @commands.Cog.listener("on_presence_update")
-    async def _presence_update_listener(self, before: discord.Member, after: discord.Member) -> None:
+    async def _presence_update_listener(
+        self, before: discord.Member, after: discord.Member
+    ) -> None:
         if (
             before.bot
             or after.id in self.blacklist[after.guild]  # Member is a bot
