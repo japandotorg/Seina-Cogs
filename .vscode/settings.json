@@ -1,5 +1,0 @@
-{
-    "python.formatting.provider": "black",
-    "python.analysis.logLevel": "Information",
-    "python.pythonPath": "C:\\Python310\\python.exe"
-}
