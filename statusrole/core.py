@@ -510,6 +510,9 @@ class StatusRole(commands.Cog):
 
     @_blacklist.command(name="list", aliases=["view"])
     async def _blacklist_list(self, ctx: commands.Context):
+        """
+        Check the blacklisted users list.
+        """
         for user_id in await self.config.guild(ctx.guild).blacklist():
             user = ctx.guild.get_member(user_id)
             embed: discord.Embed = discord.Embed(
