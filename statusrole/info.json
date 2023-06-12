@@ -1,0 +1,19 @@
+{
+    "author": [
+        "Obi-Wan3",
+        "inthedark.org#0666"
+    ],
+    "description": "Assign roles to users for the duration in which they have certain custom statuses.",
+    "disabled" : false,
+    "end_user_data_statement" : "This cog stores provided server settings (i.e. custom status to watch for, the respective roles to assign, and an optional log channel).",
+    "hidden": false,
+    "install_msg": "Thank you for installing! Use `[p]help statusrole` for more info.",
+    "min_bot_version" : "3.5.0",
+    "min_python_version" : [3, 10, 1],
+    "permissions" : ["manage_roles"],
+    "required_cogs" : {},
+    "requirements" : [],
+    "short": "Roles for Certain Custom Statuses",
+    "tags" : ["utility", "custom status", "roles"],
+    "type": "COG"
+}
