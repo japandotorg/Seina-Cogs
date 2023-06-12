@@ -31,10 +31,9 @@ import logging
 from typing import Any, Dict, Final, List, Literal, Optional
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.chat_formatting import humanize_list
 from redbot.core.utils.predicates import MessagePredicate
 
@@ -134,20 +133,34 @@ class MassUnban(commands.Cog):
                 if pred.result is True:
                     async with ctx.typing():
                         for ban_entry in banlist:
-                            await ctx.guild.unban(ban_entry.user, reason=_("Mass Unban requested by {name} ({id})").format(name=str(ctx.author.display_name), id=ctx.author.id))
+                            await ctx.guild.unban(
+                                ban_entry.user,
+                                reason=_("Mass Unban requested by {name} ({id})").format(
+                                    name=str(ctx.author.display_name), id=ctx.author.id
+                                ),
+                            )
                             await asyncio.sleep(0.5)
                             unban_count += 1
                 else:
                     return await ctx.send(_("Alright, I'm not unbanning everyone."))
             except asyncio.TimeoutError:
-                return await ctx.send(_("Response timed out. Please run this command again if you wish to try again."))
+                return await ctx.send(
+                    _(
+                        "Response timed out. Please run this command again if you wish to try again."
+                    )
+                )
         else:
             async with ctx.typing():
                 for ban_entry in banlist:
                     if not ban_entry.reason:
                         continue
                     if ban_reason.lower() in ban_entry.reason.lower():
-                        await ctx.guild.unban(ban_entry.user, reason=_("Mass Unban requested by {name} ({id})").format(name=str(ctx.author.display_name), id=ctx.author.id))
+                        await ctx.guild.unban(
+                            ban_entry.user,
+                            reason=_("Mass Unban requested by {name} ({id})").format(
+                                name=str(ctx.author.display_name), id=ctx.author.id
+                            ),
+                        )
                         await asyncio.sleep(0.5)
                         unban_count += 1
 
