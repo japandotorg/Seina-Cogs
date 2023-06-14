@@ -451,7 +451,7 @@ class SeinaTools(BaseCog):  # type: ignore
             )
 
             await ctx.send(
-                f"{emoji.as_emoji() if emoji else ''} **{user}** is listening to **{spotify.title}**!",  # type: ignore
+                f"{emoji.as_emoji() if emoji else ''} **{user.display_name}** is listening to **{spotify.title}**!",  # type: ignore
                 file=discord.File(image, "spotify.png"),
                 view=view,
             )
