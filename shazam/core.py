@@ -95,7 +95,7 @@ class Shazam(commands.Cog):
         Find a song name from video or audio using Shazam.
         """
         await ctx.typing()
-        
+
         if url_or_attachment:
             result = await self.shazam.recognize_from_url(url_or_attachment)
 
