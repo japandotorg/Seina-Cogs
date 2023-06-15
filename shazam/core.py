@@ -35,7 +35,6 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import humanize_list
 
-from .exceptions import CommandWarning
 from .model import ShazamClient
 
 log: logging.Logger = logging.getLogger("red.seina.massunban")
@@ -95,6 +94,8 @@ class Shazam(commands.Cog):
         """
         Find a song name from video or audio using Shazam.
         """
+        await ctx.typing()
+        
         if url_or_attachment:
             result = await self.shazam.recognize_from_url(url_or_attachment)
 
@@ -109,7 +110,7 @@ class Shazam(commands.Cog):
         ):
             reply_message = await ctx.channel.fetch_message(ctx.message.reference.message_id)
             if not reply_message.attachments:
-                raise CommandWarning(_("Referenced message has no attachments"))
+                return await ctx.send(_("Referenced message has no attachments"))
             attachment = await reply_message.attachments[0].to_file()
             result = await self.shazam.recognize_file(attachment.fp.read())
 
@@ -117,7 +118,7 @@ class Shazam(commands.Cog):
             return await ctx.send_help()
 
         if result is None:
-            raise CommandWarning(_("I was unable to recognize any music from this."))
+            return await ctx.send(_("I was unable to recognize any music from this."))
 
         metadata = "\n".join([f'`{data["title"]}:` {data["text"]}' for data in result.metadata])
 
