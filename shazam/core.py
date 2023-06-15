@@ -25,18 +25,18 @@ SOFTWARE.
 from __future__ import annotations
 
 import io
-import aiohttp
 import logging
 from typing import Any, Dict, Final, List, Literal, Optional
 
+import aiohttp
 import discord
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import humanize_list
 
-from .model import Shazam
 from .exceptions import CommandWarning
+from .model import Shazam
 
 log: logging.Logger = logging.getLogger("red.seina.massunban")
 
@@ -50,16 +50,16 @@ class Shazam(commands.Cog):
     """
     Search songs on Shazam.
     """
-    
+
     __author__: Final[List[str]] = ["inthedark.org#0666"]
     __version__: Final[str] = "0.1.0"
-    
+
     def __init__(self, bot: Red) -> None:
         super().__init__()
         self.bot: Red = bot
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
         self.shazam: Shazam = Shazam(bot, self)
-        
+
     async def red_get_data_for_user(
         self, *, requester: RequestType, user_id: int
     ) -> Dict[str, io.BytesIO]:
@@ -87,7 +87,7 @@ class Shazam(commands.Cog):
             f"Cog Version: **{self.__version__}**",
         ]
         return "\n".join(text)
-    
+
     @commands.command(name="shazam")
     @commands.has_permissions(embed_links=True, attach_files=True)
     @commands.bot_has_permissions(embed_links=True, attach_files=True)
@@ -97,11 +97,11 @@ class Shazam(commands.Cog):
         """
         if url_or_attachment:
             result = await self.shazam.recognize_from_url(url_or_attachment)
-        
+
         elif ctx.message.attachments:
             attachment = await ctx.message.attachments[0].to_file()
             result = await self.shazam.recognize_file(attachment.fp.read())
-        
+
         elif (
             ctx.message.reference
             and ctx.message.reference.message_id
@@ -112,23 +112,21 @@ class Shazam(commands.Cog):
                 raise CommandWarning(_("Referenced message has no attachments"))
             attachment = await reply_message.attachments[0].to_file()
             result = await self.shazam.recognize_file(attachment.fp.read())
-        
+
         else:
             return await ctx.send_help()
-        
+
         if result is None:
             raise CommandWarning(_("I was unable to recognize any music from this."))
-        
+
         metadata = "\n".join([f'`{data["title"]}:` {data["text"]}' for data in result.metadata])
-        
+
         embed: discord.Embed = discord.Embed(
             description=f"**{result.song}** by **{result.artist}**\n>>> {metadata}",
             color=await ctx.embed_color(),
         )
         embed.set_author(
-            name=_("Shazam"),
-            url=result.url,
-            icon_url="https://i.imgur.com/USbgv50h.jpg"
+            name=_("Shazam"), url=result.url, icon_url="https://i.imgur.com/USbgv50h.jpg"
         )
         embed.set_thumbnail(url=result.cover_art)
         await ctx.send(embed=embed)
