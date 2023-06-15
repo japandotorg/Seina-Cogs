@@ -3,9 +3,8 @@ from __future__ import annotations
 import io
 from dataclasses import dataclass
 
-from redbot.core.bot import Red
 from redbot.core import commands
-
+from redbot.core.bot import Red
 from shazamio import Shazam as Client
 
 
