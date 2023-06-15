@@ -17,7 +17,7 @@ class ShazamTrack:
     url: str
 
 
-class Shazam:
+class ShazamClient:
     def __init__(self, bot: Red, cog: commands.Cog) -> None:
         self.bot: Red = bot
         self.cog: commands.Cog = cog

@@ -36,7 +36,7 @@ from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import humanize_list
 
 from .exceptions import CommandWarning
-from .model import Shazam
+from .model import ShazamClient
 
 log: logging.Logger = logging.getLogger("red.seina.massunban")
 
@@ -58,7 +58,7 @@ class Shazam(commands.Cog):
         super().__init__()
         self.bot: Red = bot
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
-        self.shazam: Shazam = Shazam(bot, self)
+        self.shazam: ShazamClient = ShazamClient(bot=bot, cog=self)
 
     async def red_get_data_for_user(
         self, *, requester: RequestType, user_id: int
