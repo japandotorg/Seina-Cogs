@@ -110,7 +110,10 @@ class Shazam(commands.Cog):
         ):
             reply_message = await ctx.channel.fetch_message(ctx.message.reference.message_id)
             if not reply_message.attachments:
-                return await ctx.send(_("Referenced message has no attachments"))
+                return await ctx.reply(
+                    _("Referenced message has no attachments"),
+                    allowed_mentions=discord.AllowedMentions(replied_user=False)
+                )
             attachment = await reply_message.attachments[0].to_file()
             result = await self.shazam.recognize_file(attachment.fp.read())
 
@@ -118,7 +121,10 @@ class Shazam(commands.Cog):
             return await ctx.send_help()
 
         if result is None:
-            return await ctx.send(_("I was unable to recognize any music from this."))
+            return await ctx.reply(
+                _("I was unable to recognize any music from this."),
+                allowed_mentions=discord.AllowedMentions(replied_user=False)
+            )
 
         metadata = "\n".join([f'`{data["title"]}:` {data["text"]}' for data in result.metadata])
 
@@ -130,4 +136,8 @@ class Shazam(commands.Cog):
             name=_("Shazam"), url=result.url, icon_url="https://i.imgur.com/USbgv50h.jpg"
         )
         embed.set_thumbnail(url=result.cover_art)
-        await ctx.send(embed=embed)
+        
+        await ctx.reply(
+            embed=embed,
+            allowed_mentions=discord.AllowedMentions(replied_user=False)
+        )
