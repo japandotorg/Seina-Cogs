@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import io
-import pydub.exceptions
 from dataclasses import dataclass
 
+import pydub.exceptions
 from redbot.core import commands
 from redbot.core.bot import Red
 from shazamio import Shazam as Client
