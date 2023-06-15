@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import pydub.exceptions
 from dataclasses import dataclass
 
 from redbot.core import commands
@@ -27,7 +28,7 @@ class ShazamClient:
         try:
             data = await self.shazam.recognize_song(file)
             track = data["track"]
-        except (IndexError, KeyError):
+        except (IndexError, KeyError, pydub.exceptions.CouldntDecodeError):
             return None
         return ShazamTrack(
             track["title"],
