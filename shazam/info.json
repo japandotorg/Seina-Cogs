@@ -1,0 +1,12 @@
+{
+    "author": ["inthedark.org#0666"],
+    "install_msg": "Thanks for installing. Please read the help for the `shazam` command to get started, once you have loaded the cog.",
+    "name": "Shazam",
+    "disabled": false,
+    "short": "Search songs using Shazam.",
+    "description": "Search songs using Shazam.",
+    "tags": ["songs", "audio", "shazam"],
+    "required_cogs": {},
+    "requirements": [],
+    "type": "COG"
+}
