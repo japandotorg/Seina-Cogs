@@ -7,6 +7,6 @@
     "description": "Search songs using Shazam.",
     "tags": ["songs", "audio", "shazam"],
     "required_cogs": {},
-    "requirements": [],
+    "requirements": ["shazamio"],
     "type": "COG"
 }
