@@ -18,6 +18,7 @@ class ShazamTrack:
     url: str
 
 
+# https://github.com/joinemm/miso-bot/blob/master/modules/shazam.py
 class ShazamClient:
     def __init__(self, bot: Red, cog: commands.Cog) -> None:
         self.bot: Red = bot
