@@ -108,11 +108,11 @@ class RainbowRole(BaseCog):  # type: ignore
         The task that is responsible for the color change every x seconds.
         """
         for guild in self.bot.guilds:
-            toggle: bool = self.config.guild(guild).toggle()
+            toggle: bool = await self.config.guild(guild).toggle()
             if not toggle:
                 return
 
-            rainbow_role = self.config.guild(guild).rainbow_role()
+            rainbow_role = await self.config.guild(guild).rainbow_role()
             if rainbow_role:
                 try:
                     await rainbow_role.edit(
@@ -155,7 +155,7 @@ class RainbowRole(BaseCog):  # type: ignore
             await ctx.send("The `true_or_false` option is a required argument.")
 
         await self.config.guild(ctx.guild).toggle(true_or_false)
-        return await ctx.tick()
+        await ctx.tick()
 
     @_rainbow_set.command()
     @commands.guildowner_or_permissions(administrator=True)
