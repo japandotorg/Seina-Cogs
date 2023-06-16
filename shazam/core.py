@@ -58,9 +58,9 @@ class Shazam(commands.Cog):
         self.bot: Red = bot
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
         self.shazam: ShazamClient = ShazamClient(bot=bot, cog=self)
-        
+
     async def cog_unload(self) -> None:
-        if hasattr(self, 'session'):
+        if hasattr(self, "session"):
             self.bot.loop.create_task(self.session.close())
 
     async def red_get_data_for_user(
