@@ -61,7 +61,7 @@ class Shazam(commands.Cog):
         
     async def cog_unload(self) -> None:
         if hasattr(self, 'session'):
-            await self.session.close()
+            self.bot.loop.create_task(self.session.close())
 
     async def red_get_data_for_user(
         self, *, requester: RequestType, user_id: int
