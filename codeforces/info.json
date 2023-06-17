@@ -1,0 +1,12 @@
+{
+    "author": ["inthedark.org#0666"],
+    "install_msg": "Thanks for installing. Please read the help for the `codeforces` command to get started, once you have loaded the cog.",
+    "name": "CodeForces",
+    "disabled": false,
+    "short": "Search users on CodeForces.",
+    "description": "Search users on CodeForces.",
+    "tags": ["codeforces"],
+    "required_cogs": {},
+    "requirements": [],
+    "type": "COG"
+}
