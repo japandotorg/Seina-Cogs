@@ -23,28 +23,26 @@ SOFTWARE.
 """
 
 import io
-import aiohttp
 from datetime import datetime
-from typing import Dict, Any, Final, List, Literal, Optional
+from typing import Any, Dict, Final, List, Literal, Optional
 
+import aiohttp
 import discord
-from redbot.core.bot import Red
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
-
 
 RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
 
 class CodeForces(commands.Cog):
-    
     __author__: Final[List[str]] = ["inthedark.org#0666"]
     __version__: Final[str] = "0.1.0"
-    
+
     def __init__(self, bot: Red) -> None:
         super().__init__()
         self.bot: Red = bot
-        
+
     async def red_get_data_for_user(
         self, *, requester: RequestType, user_id: int
     ) -> Dict[str, io.BytesIO]:
