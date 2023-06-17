@@ -37,6 +37,9 @@ RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
 
 class CodeForces(commands.Cog):
+    """
+    Search users on Codeforces.
+    """
     
     __author__: Final[List[str]] = ["inthedark.org#0666"]
     __version__: Final[str] = "0.1.0"
@@ -84,6 +87,9 @@ class CodeForces(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="codeforces", aliases=["cfuser"])
     async def _codeforces(self, ctx: commands.Context, username: str):
+        """
+        Search user on https://codeforces.com/
+        """
         handle = await self.get_user(username)
         if handle["status"] == "FAILED":
             error_embed: discord.Embed = discord.Embed(
