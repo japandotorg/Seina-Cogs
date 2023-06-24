@@ -438,7 +438,7 @@ class SeinaTools(BaseCog):  # type: ignore
 
             if not token:
                 await ctx.send("You have not provided an api key yet.")
-                
+
             if not user:
                 user: discord.Member = ctx.author
 
