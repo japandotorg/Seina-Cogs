@@ -472,7 +472,7 @@ class SeinaTools(BaseCog):  # type: ignore
             )
 
     @_spotify.command(name="emoji")
-    async def _spotify_embed(self, ctx: commands.Context, emoji: EmojiConverter) -> None:
+    async def _spotify_embed(self, ctx: commands.Context, emoji: EmojiConverter):
         """Set an emoji to be used with the spotify command."""
         if not emoji:
             await self.config.emoji.clear()
@@ -508,7 +508,7 @@ class SeinaTools(BaseCog):  # type: ignore
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
     @commands.command(name="whatplaying", aliases=["whatgame"])
-    async def _what_playing(self, ctx: commands.Context, user: Optional[discord.Member] = None) -> None:  # type: ignore
+    async def _what_playing(self, ctx: commands.Context, user: Optional[discord.Member] = None):  # type: ignore
         """
         Closer lookup on what the specified user is playing.
         """
@@ -622,7 +622,7 @@ class SeinaTools(BaseCog):  # type: ignore
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
     @commands.command(name="npm", aliases=["node", "npmpkg", "nodepkg"])
-    async def _node_module(self, ctx: commands.Context, module_name: str) -> None:
+    async def _node_module(self, ctx: commands.Context, module_name: str):
         """
         Get information about a node.js module.
         """
