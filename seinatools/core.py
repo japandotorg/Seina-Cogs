@@ -143,7 +143,7 @@ class SeinaTools(BaseCog):  # type: ignore
 
     async def cog_before_invoke(self, ctx: commands.Context) -> None:
         pass
-    
+
     async def cog_load(self):
         keys = await self.bot.get_shared_api_tokens("jeyyapi")
         token = keys.get("api_key")
@@ -479,7 +479,7 @@ class SeinaTools(BaseCog):  # type: ignore
             return await ctx.send("I have reset the spotify emoji!")
         await self.config.emoji.set(emoji.to_dict())
         await ctx.send(f"Set the spotify emoji to {emoji.as_emoji()}")
-        
+
     @commands.is_owner()
     @_spotify.command(name="creds", aliases=["setpaikey", "setapi"])
     async def _spotify_creds(self, ctx: commands.Context):
