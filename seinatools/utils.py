@@ -25,7 +25,7 @@ SOFTWARE.
 import logging
 from typing import TYPE_CHECKING, Any, Dict, Final, List, Type, Union
 
-from emoji.unicode_codes import UNICODE_EMOJI_ENGLISH  # type: ignore
+from emoji import EMOJI_DATA  # type: ignore
 from redbot.core import commands  # type: ignore
 
 log: logging.Logger = logging.getLogger("red.seinacogs.tools.utils")
@@ -82,6 +82,6 @@ else:
             if arg.lower() == "none":
                 return None
             arg = arg.strip()
-            data = arg if arg in UNICODE_EMOJI_ENGLISH.keys() else await super().convert(ctx, arg)
+            data = arg if arg in EMOJI_DATA.keys() else await super().convert(ctx, arg)
             data = getattr(data, "to_dict", lambda: data)()
             return Emoji.from_data(data)
