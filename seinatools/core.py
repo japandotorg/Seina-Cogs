@@ -71,8 +71,6 @@ class SeinaTools(BaseCog):  # type: ignore
 
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
 
-        self.spotify: jeyyapi.JeyyAPIClient = jeyyapi.JeyyAPIClient(session=self.session)
-
         default_global: Dict[str, Any] = {
             "embed": False,
             "notice": False,
@@ -127,10 +125,14 @@ class SeinaTools(BaseCog):  # type: ignore
                     try:
                         await self.bot.send_to_owners(
                             "Thanks for installing my utility cog."
-                            "This cog has a removebackground command which uses "
+                            "- This cog has a removebackground command which uses "
                             "an api key from the <https://www.remove.bg/> website. "
                             "You can easily get the api key from <https://www.remove.bg/api#remove-background>.\n"
                             "This is how you can add the api key - `[p]set api removebg api_key,key`"
+                            "- This cog also has a spotify command which uses "
+                            "an api key from the <https://api.jeyy.xyz> website. "
+                            "You can easily get the api key from <https://api.jeyy.xyz/dashboard>.\n"
+                            "This is how you can add the api key - `[p]set api jeyyapi api_key,key`"
                         )
                         await self.config.notice.set(True)
                     except (discord.NotFound, discord.HTTPException):
@@ -141,6 +143,12 @@ class SeinaTools(BaseCog):  # type: ignore
 
     async def cog_before_invoke(self, ctx: commands.Context) -> None:
         pass
+    
+    async def cog_load(self):
+        keys = await self.bot.get_shared_api_tokens("jeyyapi")
+        token = keys.get("api_key")
+        self.spotify: jeyyapi.JeyyAPIClient = jeyyapi.JeyyAPIClient(token, session=self.session)
+        
 
     async def cog_unload(self):
         self.bot.loop.create_task(self.session.close())
@@ -419,7 +427,7 @@ class SeinaTools(BaseCog):  # type: ignore
     @commands.bot_has_permissions(**perms)
     @commands.max_concurrency(1, per=commands.BucketType.user)
     @commands.group(name="spotify", invoke_without_command=True)
-    async def _spotify(self, ctx: commands.Context, user: Optional[discord.Member] = None) -> None:  # type: ignore
+    async def _spotify(self, ctx: commands.Context, user: Optional[discord.Member] = None):  # type: ignore
         """
         View the specified (defaults to author) user's now playing spotify status from their discord activity.
         """
@@ -464,6 +472,31 @@ class SeinaTools(BaseCog):  # type: ignore
             return await ctx.send("I have reset the spotify emoji!")
         await self.config.emoji.set(emoji.to_dict())
         await ctx.send(f"Set the spotify emoji to {emoji.as_emoji()}")
+        
+    @commands.is_owner()
+    @_spotify.command(name="creds", aliases=["setpaikey", "setapi"])
+    async def _spotify_creds(self, ctx: commands.Context):
+        """
+        Instructions to set the jeyyapi API token.
+        """
+        message = (
+            "1. Go to the jeyyapi website and login with your account.\n"
+            "(https://api.jeyy.xyz/dashboard)\n"
+            "2. Go to the <https://api.jeyy.xyz/dashboard/> page.\n"
+            '4. Click "Create an app"\n'
+            "5. Fill out the label with an application name and ID of your choice.\n"
+            "6. Copy your api key into:\n"
+            "`{prefix}set api jeyyapi api_key,key`"
+        ).format(prefix=ctx.prefix)
+        keys = {"api_key": ""}
+        view = SetApiView("jeyyapi", keys)
+        if await ctx.embed_requested():
+            embed: discord.Embed = discord.Embed(
+                description=message, color=await ctx.embed_color()
+            )
+            await ctx.send(embed=embed, view=view)
+        else:
+            await ctx.send(message, view=view)
 
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
