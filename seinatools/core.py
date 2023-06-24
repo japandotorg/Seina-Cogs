@@ -148,7 +148,6 @@ class SeinaTools(BaseCog):  # type: ignore
         keys = await self.bot.get_shared_api_tokens("jeyyapi")
         token = keys.get("api_key")
         self.spotify: jeyyapi.JeyyAPIClient = jeyyapi.JeyyAPIClient(token, session=self.session)
-        
 
     async def cog_unload(self):
         self.bot.loop.create_task(self.session.close())
@@ -165,6 +164,8 @@ class SeinaTools(BaseCog):  # type: ignore
         self, service_name: str, api_tokens: Mapping[str, str]
     ) -> None:
         if service_name == "removebg":
+            await self.cog_load()
+        if service_name == "jeyyapi":
             await self.cog_load()
 
     @commands.is_owner()
@@ -432,6 +433,12 @@ class SeinaTools(BaseCog):  # type: ignore
         View the specified (defaults to author) user's now playing spotify status from their discord activity.
         """
         if ctx.invoked_subcommand is None:
+            keys = await self.bot.get_shared_api_tokens("jeyyapi")
+            token = keys.get("api_key")
+
+            if not token:
+                await ctx.send("You have not provided an api key yet.")
+                
             if not user:
                 user: discord.Member = ctx.author
 
