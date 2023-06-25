@@ -270,7 +270,7 @@ class SeinaTools(BaseCog):  # type: ignore
                 tabulate(
                     (
                         (
-                            EightBitANSI.paint_red("Guild"),
+                            EightBitANSI.paint_red("Guilds"),
                             EightBitANSI.paint_white(humanize_number(len(self.bot.guilds))),  # type: ignore
                         ),
                         (
