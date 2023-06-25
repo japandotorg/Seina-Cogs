@@ -42,9 +42,9 @@ from redbot.core.utils.views import SetApiView
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
+from .api import APIClient
 from .utils import CRATES_IO_LOGO, NPM_LOGO, RUBY_GEMS_LOGO, Emoji, EmojiConverter
 from .views import SpotifyView
-from .api import APIClient
 
 BaseCog = getattr(commands, "Cog", object)
 

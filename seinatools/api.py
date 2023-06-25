@@ -1,12 +1,12 @@
-import yarl
-import aiohttp
 import datetime
 from io import BytesIO
 from types import TracebackType
-from typing_extensions import Self
-from typing import Optional, Type, Union, List
+from typing import List, Optional, Type, Union
 
+import aiohttp
 import discord
+import yarl
+from typing_extensions import Self
 
 
 class APIError(Exception):
@@ -14,7 +14,6 @@ class APIError(Exception):
     Base class for all exceptions.
     """
 
-    pass
 
 
 class APIClient:
