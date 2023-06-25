@@ -57,7 +57,7 @@ class Shazam(commands.Cog):
         super().__init__()
         self.bot: Red = bot
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
-        self.shazam: ShazamClient = ShazamClient(bot=bot, cog=self)
+        self.shazam: ShazamClient = ShazamClient(cog=self)
 
     async def cog_unload(self) -> None:
         if hasattr(self, "session"):

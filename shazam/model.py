@@ -5,7 +5,6 @@ from dataclasses import dataclass
 
 import pydub.exceptions
 from redbot.core import commands
-from redbot.core.bot import Red
 from shazamio import Shazam as Client
 
 
@@ -20,8 +19,7 @@ class ShazamTrack:
 
 # https://github.com/joinemm/miso-bot/blob/master/modules/shazam.py
 class ShazamClient:
-    def __init__(self, bot: Red, cog: commands.Cog) -> None:
-        self.bot: Red = bot
+    def __init__(self, cog: commands.Cog) -> None:
         self.cog: commands.Cog = cog
         self.shazam: Client = Client()
 
