@@ -15,7 +15,6 @@ class APIError(Exception):
     """
 
 
-
 class APIClient:
     def __init__(self, api_key: str, *, session: Optional[aiohttp.ClientSession] = None) -> None:
         self.base_url: yarl.URL = yarl.URL("https://api.jeyy.xyz/v2/")
