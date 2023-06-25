@@ -37,7 +37,7 @@ from pygicord import Paginator
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, humanize_list
+from redbot.core.utils.chat_formatting import box, humanize_list, humanize_number
 from redbot.core.utils.views import SetApiView
 from tabulate import tabulate
 
@@ -271,19 +271,19 @@ class SeinaTools(BaseCog):  # type: ignore
                     (
                         (
                             EightBitANSI.paint_red("Guild"),
-                            EightBitANSI.paint_white(len(self.bot.guilds)),  # type: ignore
+                            EightBitANSI.paint_white(humanize_number(len(self.bot.guilds))),  # type: ignore
                         ),
                         (
                             EightBitANSI.paint_red("Channels"),
-                            EightBitANSI.paint_white(len(tuple(self.bot.get_all_channels()))),  # type: ignore
+                            EightBitANSI.paint_white(humanize_number(len(tuple(self.bot.get_all_channels())))),  # type: ignore
                         ),
                         (
                             EightBitANSI.paint_red("Users"),
-                            EightBitANSI.paint_white(sum(len(i.members) for i in self.bot.guilds)),  # type: ignore
+                            EightBitANSI.paint_white(humanize_number(sum(len(i.members) for i in self.bot.guilds))),  # type: ignore
                         ),
                         (
                             EightBitANSI.paint_red("DMs"),
-                            EightBitANSI.paint_white(len(self.bot.private_channels)),  # type: ignore
+                            EightBitANSI.paint_white(humanize_number(len(self.bot.private_channels))),  # type: ignore
                         ),
                         (
                             EightBitANSI.paint_red("Latency"),
@@ -291,10 +291,10 @@ class SeinaTools(BaseCog):  # type: ignore
                                 str(round(self.bot.latency * 1000, 2)) + "ms"
                             ),
                         ),
-                        (EightBitANSI.paint_red("Cogs"), EightBitANSI.paint_white(len(self.bot.cogs))),  # type: ignore
+                        (EightBitANSI.paint_red("Cogs"), EightBitANSI.paint_white(humanize_number(len(self.bot.cogs)))),  # type: ignore
                         (
                             EightBitANSI.paint_red("Commands"),
-                            EightBitANSI.paint_white(len(tuple(self.bot.walk_commands()))),  # type: ignore
+                            EightBitANSI.paint_white(humanize_number(len(tuple(self.bot.walk_commands())))),  # type: ignore
                         ),
                     ),
                     tablefmt="fancy_grid",
