@@ -32,19 +32,19 @@ from typing import Any, Dict, Final, List, Literal, Mapping, Optional, Union
 
 import aiohttp
 import discord
-import jeyyapi  # type: ignore
-from playwright.async_api import async_playwright  # type: ignore
-from pygicord import Paginator  # type: ignore
-from redbot.core import Config, commands  # type: ignore
-from redbot.core.bot import Red  # type: ignore
-from redbot.core.i18n import Translator, cog_i18n  # type: ignore
-from redbot.core.utils.chat_formatting import box, humanize_list  # type: ignore
-from redbot.core.utils.views import SetApiView  # type: ignore
+from playwright.async_api import async_playwright
+from pygicord import Paginator
+from redbot.core import Config, commands
+from redbot.core.bot import Red
+from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.chat_formatting import box, humanize_list
+from redbot.core.utils.views import SetApiView
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
 from .utils import CRATES_IO_LOGO, NPM_LOGO, RUBY_GEMS_LOGO, Emoji, EmojiConverter
 from .views import SpotifyView
+from .api import APIClient
 
 BaseCog = getattr(commands, "Cog", object)
 
@@ -62,7 +62,7 @@ class SeinaTools(BaseCog):  # type: ignore
     """
 
     __author__: Final[List[str]] = ["inthedark.org#0666"]
-    __version__: Final[str] = "0.1.2"
+    __version__: Final[str] = "0.1.3"
 
     def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
@@ -143,11 +143,6 @@ class SeinaTools(BaseCog):  # type: ignore
 
     async def cog_before_invoke(self, ctx: commands.Context) -> None:
         pass
-
-    async def cog_load(self):
-        keys = await self.bot.get_shared_api_tokens("jeyyapi")
-        token = keys.get("api_key")
-        self.spotify: jeyyapi.JeyyAPIClient = jeyyapi.JeyyAPIClient(token, session=self.session)
 
     async def cog_unload(self):
         self.bot.loop.create_task(self.session.close())
@@ -441,6 +436,8 @@ class SeinaTools(BaseCog):  # type: ignore
 
             if not user:
                 user: discord.Member = ctx.author
+
+            self.spotify: APIClient = APIClient(token, session=self.session)
 
             async with ctx.channel.typing():
                 spotify = discord.utils.find(

@@ -12,10 +12,9 @@
     "required_cogs": {},
     "requirements": [
         "tabulate",
-        "emoji==1.6.3",
+        "emoji",
         "pygicord==1.1.0",
         "playwright==1.30.0",
-        "git+https://github.com/JeyyGit/jeyyapi.git"
     ],
     "type": "COG",
     "end_user_data_statement": "This cog does not store End User Data."
