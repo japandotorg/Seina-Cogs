@@ -133,6 +133,9 @@ class SeinaTools(BaseCog):  # type: ignore
                             "an api key from the <https://api.jeyy.xyz> website. "
                             "You can easily get the api key from <https://api.jeyy.xyz/dashboard>.\n"
                             "This is how you can add the api key - `[p]set api jeyyapi api_key,key`"
+                            "- Don't forget to do install the playwright extensions in your venv if you want to "
+                            "use the `[p]screenshot` command.\n"
+                            "Linux/macOS: `python -m playwright install` (in your venv)."
                         )
                         await self.config.notice.set(True)
                     except (discord.NotFound, discord.HTTPException):
