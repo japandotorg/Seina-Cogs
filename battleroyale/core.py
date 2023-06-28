@@ -250,7 +250,7 @@ class BattleRoyale(commands.Cog):
         await ctx.send(f"Wait time set to {time} seconds.")
 
     @commands.is_owner()
-    @commands.bot.has_permissions(embed_links=True)
+    @commands.bot_has_permissions(embed_links=True)
     @setbattleroyale.command(name="settings", aliases=["view"])
     async def _settings(self, ctx: commands.Context):
         """View current settings."""
