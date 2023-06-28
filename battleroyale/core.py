@@ -308,8 +308,8 @@ class BattleRoyale(commands.Cog):
         self.games[message] = game
         await game.start(ctx, players=player, original_message=message)
 
-    #@battleroyale.command()
-    #async def profile(self, ctx: commands.Context, *, user: discord.Member = None):
+    # @battleroyale.command()
+    # async def profile(self, ctx: commands.Context, *, user: discord.Member = None):
     #    """Show your profile.
 
     #    **Parameters:**
