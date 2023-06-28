@@ -262,7 +262,7 @@ class BattleRoyale(commands.Cog):
         now = datetime.datetime.now(tz=datetime.timezone.utc)
         endtime = now + datetime.timedelta(seconds=WAIT_TIME)
         embed.description = f"- Starting <t:{int(endtime.timestamp())}:R>.\n- Click the `Join Game` button to join the game."
-        embed.set_image(url=SWORDS)
+        embed.set_thumbnail(url=SWORDS)
         join_view._message = await ctx.send(embed=embed, view=join_view)
         await asyncio.sleep(WAIT_TIME)
         await join_view.on_timeout()
@@ -303,7 +303,7 @@ class BattleRoyale(commands.Cog):
             color=await ctx.embed_color(),
             description="Automated Battle Royale session starting...",
         )
-        embed.set_image(url=SWORDS)
+        embed.set_thumbnail(url=SWORDS)
         message = await ctx.send(embed=embed)
         self.games[message] = game
         await game.start(ctx, players=player, original_message=message)
