@@ -233,7 +233,7 @@ class BattleRoyale(commands.Cog):
     @commands.admin_or_permissions(manage_guild=True)
     @setbattleroyale.command(name="prize")
     async def _prize(self, ctx: commands.Context, amount: commands.Range[int, 10, 2**30]):
-        """Changes the wait time before a race starts."""
+        """Changes the prize amount."""
         currency = await bank.get_currency_name(ctx.guild)
         await self.config.guild(ctx.guild).prize.set(amount)
         await ctx.send(f"Prize set to {amount} {currency}.")
