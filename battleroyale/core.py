@@ -53,7 +53,7 @@ class BattleRoyale(commands.Cog):
     """Play Battle Royale with your friends!"""
     
     __version__ = "0.1.0"
-    __author__ = humanize_list(["inthedark.org" "MAX" "AAA3A" "sravan"])
+    __author__ = humanize_list(["inthedark.org", "MAX", "AAA3A", "sravan"])
 
     def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
