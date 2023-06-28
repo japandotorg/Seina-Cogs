@@ -208,7 +208,7 @@ class BattleRoyale(commands.Cog):
         except Exception:
             raise commands.UserFeedbackCheckFailure("I was unable to get the file from Discord.")
         if preferred_filename:
-            filename = f"{preferred_filename}{ext}"
+            filename = f"{preferred_filename}.{ext}"
         filepath = os.path.join(self.backgrounds_path, filename)
         with open(filepath, "wb") as f:
             f.write(bytes_file)
