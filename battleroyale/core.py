@@ -82,7 +82,7 @@ class BattleRoyale(commands.Cog):
         text = [
             f"{pre_processed}{n}",
             f"Cog Version: **{self.__version__}**",
-            f"Author: {self.__author__}",
+            f"Author: **{self.__author__}**",
         ]
         return "\n".join(text)
 
@@ -308,16 +308,16 @@ class BattleRoyale(commands.Cog):
         self.games[message] = game
         await game.start(ctx, players=player, original_message=message)
 
-    @battleroyale.command()
-    async def profile(self, ctx: commands.Context, *, user: discord.Member = None):
-        """Show your profile.
+    #@battleroyale.command()
+    #async def profile(self, ctx: commands.Context, *, user: discord.Member = None):
+    #    """Show your profile.
 
-        **Parameters:**
-        - `user`: The user to show the profile of.
-        """
-        user = user or ctx.author
-        data = await self.config.user(user).all()
-        await ctx.send(data)
+    #    **Parameters:**
+    #    - `user`: The user to show the profile of.
+    #    """
+    #    user = user or ctx.author
+    #    data = await self.config.user(user).all()
+    #    await ctx.send(data)
 
     @battleroyale.command(name="leaderboard", aliases=["lb"])
     async def _leaderboard(
