@@ -38,9 +38,7 @@ from .constants import PROMPTS, WINNER_PROMPTS
 EDIT_ORIGINAL_MESSAGE = False
 
 
-__all__ = (
-    "Game",
-)
+__all__ = ("Game",)
 
 
 class Game:

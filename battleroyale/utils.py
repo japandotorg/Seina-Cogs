@@ -30,9 +30,7 @@ from redbot.core import commands
 log: logging.Logger = logging.getLogger("red.seina.battleroyale.utils")
 
 
-__all__ = (
-    "_get_attachments",
-)
+__all__ = ("_get_attachments",)
 
 
 def _get_attachments(ctx: commands.Context) -> typing.List:

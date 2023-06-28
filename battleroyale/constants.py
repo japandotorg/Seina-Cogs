@@ -24,12 +24,7 @@ SOFTWARE.
 
 from typing import Final, List
 
-
-__all__ = (
-    "SWORDS",
-    "PROMPTS",
-    "WINNER_PROMPTS"
-)
+__all__ = ("SWORDS", "PROMPTS", "WINNER_PROMPTS")
 
 
 SWORDS: Final[str] = "https://cdn.discordapp.com/emojis/1123588896136106074.webp"

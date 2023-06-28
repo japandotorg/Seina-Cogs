@@ -41,17 +41,17 @@ from redbot.core.data_manager import bundled_data_path
 from redbot.core.utils.chat_formatting import box, humanize_list, pagify
 from redbot.core.utils.views import SimpleMenu
 
+from .constants import SWORDS
 from .game import Game
 from .utils import _get_attachments
 from .views import JoinGameView
-from .constants import SWORDS
 
 log: logging.Logger = logging.getLogger("red.seina.battleroyale")
 
 
 class BattleRoyale(commands.Cog):
     """Play Battle Royale with your friends!"""
-    
+
     __version__ = "0.1.0"
     __author__ = humanize_list(["inthedark.org" "MAX" "AAA3A" "sravan"])
 
@@ -75,7 +75,6 @@ class BattleRoyale(commands.Cog):
         self.config.register_guild(**self.battle_royale_default_guild)
 
         self.cache: typing.Dict[str, Image.Image] = {}
-
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
@@ -126,9 +125,7 @@ class BattleRoyale(commands.Cog):
                 (int(img.height / 2) + 200),
             ),
         )
-        swords_bytes = await self._get_content_from_url(
-            SWORDS
-        )
+        swords_bytes = await self._get_content_from_url(SWORDS)
         swords = Image.open(BytesIO(swords_bytes))
         swords = swords.convert("RGBA")
         for i in range(swords.width):
