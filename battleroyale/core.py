@@ -296,7 +296,8 @@ class BattleRoyale(commands.Cog):
         """
         users: typing.List[discord.Member] = random.sample(list(ctx.guild.members), players - 1)
         player: typing.List[discord.Member] = list(filter(lambda u: not u.bot, users))
-        player.append(ctx.author)
+        if ctx.author not in player:
+            player.append(ctx.author)
         game = Game(cog=self, delay=delay, skip=skip)
         embed: discord.Embed = discord.Embed(
             title="Battle Royale",
