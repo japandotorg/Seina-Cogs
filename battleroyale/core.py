@@ -71,8 +71,12 @@ class BattleRoyale(commands.Cog):
         self.battle_royale_default_guild: typing.Dict[str, int] = {
             "prize": 100,
         }
+        self.battle_royale_default_global: typing.Dict[str, int] ={
+            "wait": 120,
+        }
         self.config.register_user(**self.battle_royale_default_user)
         self.config.register_guild(**self.battle_royale_default_guild)
+        self.config.register_global(**self.battle_royale_default_global)
 
         self.cache: typing.Dict[str, Image.Image] = {}
 
@@ -237,6 +241,13 @@ class BattleRoyale(commands.Cog):
         currency = await bank.get_currency_name(ctx.guild)
         await self.config.guild(ctx.guild).prize.set(amount)
         await ctx.send(f"Prize set to {amount} {currency}.")
+        
+    @commands.is_owner()
+    @commands.command(name="wait")
+    async def _wait(self, ctx: commands.Context, time: commands.Range[int, 10, 200]):
+        """Changes the wait time before battle starts."""
+        await self.config.wait.set(time)
+        await ctx.send(f"Wait time set to {time} seconds.")
 
     @commands.guild_only()
     @commands.group(aliases=["br"], invoke_without_command=True)
@@ -252,7 +263,7 @@ class BattleRoyale(commands.Cog):
         - `delay`: min 10, max 20.
         - `skip`: will skip to results.
         """
-        WAIT_TIME = 120
+        WAIT_TIME = await self.config.wait()
 
         embed: discord.Embed = discord.Embed(
             title="Battle Royale",
