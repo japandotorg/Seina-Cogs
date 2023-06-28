@@ -160,7 +160,7 @@ class Game:
         amount = await self.cog.config.guild(ctx.guild).prize()
         try:
             await bank.deposit_credits(winner, amount)
-            payout_message = f"{winner} recieved {int(amount)} {currency}."
+            payout_message = f"- {str(winner)} recieved {int(amount)} {currency}."
         except BalanceTooHigh as e:
             await bank.set_balance(winner, e.max_balance)
             payout_message = f"{winner} has max balance!"
