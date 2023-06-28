@@ -71,7 +71,7 @@ class BattleRoyale(commands.Cog):
         self.battle_royale_default_guild: typing.Dict[str, int] = {
             "prize": 100,
         }
-        self.battle_royale_default_global: typing.Dict[str, int] ={
+        self.battle_royale_default_global: typing.Dict[str, int] = {
             "wait": 120,
         }
         self.config.register_user(**self.battle_royale_default_user)
@@ -241,7 +241,7 @@ class BattleRoyale(commands.Cog):
         currency = await bank.get_currency_name(ctx.guild)
         await self.config.guild(ctx.guild).prize.set(amount)
         await ctx.send(f"Prize set to {amount} {currency}.")
-        
+
     @commands.is_owner()
     @setbattleroyale.command(name="wait")
     async def _wait(self, ctx: commands.Context, time: commands.Range[int, 10, 200]):
