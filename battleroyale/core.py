@@ -251,12 +251,13 @@ class BattleRoyale(commands.Cog):
 
     @commands.is_owner()
     @commands.bot_has_permissions(embed_links=True)
-    @setbattleroyale.command(name="settings", aliases=["view"])
+    @setbattleroyale.command(name="settings", aliases=["view", "ss", "showsettings"])
     async def _settings(self, ctx: commands.Context):
         """View current settings."""
-        data = await self.config.guild(ctx.guild).all()
-        prize = data["prize"]
-        wait = data["wait"]
+        guild_data = await self.config.guild(ctx.guild).all()
+        global_data = await self.config.all()
+        prize = guild_data["prize"]
+        wait = global_data["wait"]
         embed = discord.Embed(
             title="Battle Royale Settings",
             color=await ctx.embed_color(),
