@@ -1,0 +1,23 @@
+{
+    "author": ["inthedark.org", "MAX", "AAA3A", "sravan"],
+    "install_msg": "Thanks for installing the Battle Royale cog.",
+    "name": "BattleRoyale",
+    "disabled": false,
+    "short": "Play a match of battle royale.",
+    "description": "Play battle royale with your friends or join the automated match.",
+    "tags": [
+        "battle",
+        "battleroyale",
+        "game",
+        "games",
+        "economy",
+        "currency"
+    ],
+    "required_cogs": {},
+    "requirements": [
+        "pillow",
+        "prettytable"
+    ],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not store End User Data."
+}
