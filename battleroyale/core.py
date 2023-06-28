@@ -249,6 +249,21 @@ class BattleRoyale(commands.Cog):
         await self.config.wait.set(time)
         await ctx.send(f"Wait time set to {time} seconds.")
 
+    @commands.is_owner()
+    @commands.bot.has_permissions(embed_links=True)
+    @setbattleroyale.command(name="settings", aliases=["view"])
+    async def _settings(self, ctx: commands.Context):
+        """View current settings."""
+        data = await self.config.guild(ctx.guild).all()
+        prize = data["prize"]
+        wait = data["wait"]
+        embed = discord.Embed(
+            title="Battle Royale Settings",
+            color=await ctx.embed_color(),
+            description=f"**Prize:** {prize}\n**Wait:** {wait} seconds",
+        )
+        await ctx.send(embed=embed)
+
     @commands.guild_only()
     @commands.group(aliases=["br"], invoke_without_command=True)
     @commands.cooldown(1, 10, commands.BucketType.guild)
