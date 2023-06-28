@@ -243,7 +243,7 @@ class BattleRoyale(commands.Cog):
         await ctx.send(f"Prize set to {amount} {currency}.")
         
     @commands.is_owner()
-    @commands.command(name="wait")
+    @setbattleroyale.command(name="wait")
     async def _wait(self, ctx: commands.Context, time: commands.Range[int, 10, 200]):
         """Changes the wait time before battle starts."""
         await self.config.wait.set(time)
