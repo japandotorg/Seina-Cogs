@@ -196,7 +196,7 @@ class BattleRoyale(commands.Cog):
         valid_extensions = ["png", "jpg", "jpeg"]
         if all(ext == filename.split(".")[-1].lower() for ext in valid_extensions):
             raise commands.UserFeedbackCheckFailure(
-                f"This is not a valid format, must be one of the following extensions: {humanize_list(valid)}."
+                f"This is not a valid format, must be one of the following extensions: {humanize_list(valid_extensions)}."
             )
         ext = filename.split(".")[-1].lower()
         try:
