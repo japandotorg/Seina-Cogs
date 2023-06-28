@@ -230,7 +230,7 @@ class BattleRoyale(commands.Cog):
             await ctx.send(f"Could not delete file: {str(exc)}.")
         await ctx.send(f"Backgorund has {f} been removed.")
 
-    @commands.admin_or_permissions(manage_guild=True)
+    @bank.is_owner_if_bank_global()
     @setbattleroyale.command(name="prize")
     async def _prize(self, ctx: commands.Context, amount: commands.Range[int, 10, 2**30]):
         """Changes the prize amount."""
