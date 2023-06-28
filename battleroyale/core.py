@@ -232,7 +232,7 @@ class BattleRoyale(commands.Cog):
             os.remove(file)
         except OSError as exc:
             await ctx.send(f"Could not delete file: {str(exc)}.")
-        await ctx.send(f"Backgorund has {f} been removed.")
+        await ctx.send(f"Backgorund `{f}` been removed.")
 
     @bank.is_owner_if_bank_global()
     @setbattleroyale.command(name="prize")
