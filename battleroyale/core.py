@@ -29,15 +29,7 @@ import os
 import random
 from io import BytesIO
 from pathlib import Path
-from typing import (
-    Dict,
-    Any,
-    Union,
-    List,
-    Literal,
-    Optional,
-    Final,
-)
+from typing import Any, Dict, Final, List, Literal, Optional, Union
 
 import aiohttp
 import discord
@@ -70,11 +62,11 @@ class BattleRoyale(commands.Cog):
 
         self.backgrounds_path: Path = bundled_data_path(self) / "backgrounds"
         self.config: Config = Config.get_conf(self, identifier=14, force_registration=True)
-        
+
         self.log: logging.LoggerAdapter[logging.Logger] = logging.LoggerAdapter(
             log, {"version": self.__version__}
         )
-        
+
         default_user: Dict[str, int] = {
             "games": 0,
             "wins": 0,
@@ -87,7 +79,7 @@ class BattleRoyale(commands.Cog):
         default_global: Dict[str, int] = {
             "wait": 120,
         }
-        
+
         self.config.register_user(**default_user)
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
