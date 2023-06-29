@@ -27,9 +27,17 @@ import datetime
 import logging
 import os
 import random
-import typing
 from io import BytesIO
 from pathlib import Path
+from typing import (
+    Dict,
+    Any,
+    Union,
+    List,
+    Literal,
+    Optional,
+    Final,
+)
 
 import aiohttp
 import discord
@@ -52,33 +60,39 @@ log: logging.Logger = logging.getLogger("red.seina.battleroyale")
 class BattleRoyale(commands.Cog):
     """Play Battle Royale with your friends!"""
 
-    __version__ = "0.1.0"
-    __author__ = humanize_list(["inthedark.org", "MAX", "AAA3A", "sravan"])
+    __version__: Final[str] = "0.1.0"
+    __author__: Final[str] = humanize_list(["inthedark.org", "MAX", "AAA3A", "sravan"])
 
     def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
 
-        self.games: typing.Dict[discord.Message, Game] = {}
+        self.games: Dict[discord.Message, Game] = {}
 
         self.backgrounds_path: Path = bundled_data_path(self) / "backgrounds"
         self.config: Config = Config.get_conf(self, identifier=14, force_registration=True)
-        self.battle_royale_default_user: typing.Dict[str, int] = {
+        
+        self.log: logging.LoggerAdapter[logging.Logger] = logging.LoggerAdapter(
+            log, {"version": self.__version__}
+        )
+        
+        default_user: Dict[str, int] = {
             "games": 0,
             "wins": 0,
             "kills": 0,
             "deaths": 0,
         }
-        self.battle_royale_default_guild: typing.Dict[str, int] = {
+        default_guild: Dict[str, int] = {
             "prize": 100,
         }
-        self.battle_royale_default_global: typing.Dict[str, int] = {
+        default_global: Dict[str, int] = {
             "wait": 120,
         }
-        self.config.register_user(**self.battle_royale_default_user)
-        self.config.register_guild(**self.battle_royale_default_guild)
-        self.config.register_global(**self.battle_royale_default_global)
+        
+        self.config.register_user(**default_user)
+        self.config.register_guild(**default_guild)
+        self.config.register_global(**default_global)
 
-        self.cache: typing.Dict[str, Image.Image] = {}
+        self.cache: Dict[str, Image.Image] = {}
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
@@ -90,14 +104,14 @@ class BattleRoyale(commands.Cog):
         ]
         return "\n".join(text)
 
-    async def red_delete_data_for_user(self, **kwargs: typing.Any):
+    async def red_delete_data_for_user(self, **kwargs: Any):
         """Nothing to delete."""
         return
 
     async def add_stats_to_leaderboard(
         self,
-        _type: typing.Literal["games", "wins", "kills", "deaths"],
-        users: typing.List[discord.Member],
+        _type: Literal["games", "wins", "kills", "deaths"],
+        users: List[discord.Member],
     ) -> None:
         for user in users:
             count = await self.config.user(user).get_raw(_type)
@@ -105,7 +119,7 @@ class BattleRoyale(commands.Cog):
 
     async def generate_image(
         self, user_1: discord.Member, user_2: discord.Member, to_file: bool = True
-    ) -> typing.Union[discord.File, Image.Image]:
+    ) -> Union[discord.File, Image.Image]:
         backgrounds = os.listdir(self.backgrounds_path)
         background = random.choice(backgrounds)
         with open(self.backgrounds_path / background, mode="rb") as f:
@@ -155,7 +169,7 @@ class BattleRoyale(commands.Cog):
         buffer.seek(0)
         return discord.File(buffer, filename="image.png")
 
-    async def _get_content_from_url(self, url: str) -> typing.Union[bytes, Image.Image]:
+    async def _get_content_from_url(self, url: str) -> bytes:
         if url in self.cache:
             return self.cache[url]
         async with aiohttp.ClientSession() as session:
@@ -181,7 +195,7 @@ class BattleRoyale(commands.Cog):
     @commands.is_owner()
     @setbattleroyale.command(name="addbackground", aliases=["ab"])
     async def _add_background(
-        self, ctx: commands.Context, preferred_filename: typing.Optional[str] = None
+        self, ctx: commands.Context, preferred_filename: Optional[str] = None
     ):
         """
         Add a custom background to the cog from discord. If several backgrounds are saved, the cog will select one at random.
@@ -294,7 +308,7 @@ class BattleRoyale(commands.Cog):
         await asyncio.sleep(WAIT_TIME)
         await join_view.on_timeout()
 
-        players: typing.List[discord.Member] = list(join_view.players)
+        players: List[discord.Member] = list(join_view.players)
         if len(players) < 3:
             embed.description = (
                 f"Not enough players to start. (need at least 3, {len(players)} found)."
@@ -303,7 +317,10 @@ class BattleRoyale(commands.Cog):
 
         game = Game(cog=self, delay=delay, skip=skip)
         self.games[join_view._message] = game
-        await game.start(ctx, players=players, original_message=join_view._message)
+        try:
+            await game.start(ctx, players=players, original_message=join_view._message)
+        except Exception as e:
+            self.log.exception("Something went wrong while starting the game.", exc_info=True)
 
     @battleroyale.command()
     async def auto(
@@ -321,8 +338,8 @@ class BattleRoyale(commands.Cog):
         - `delay`: min 10, max 20.
         - `skip`: will skip to results.
         """
-        users: typing.List[discord.Member] = random.sample(list(ctx.guild.members), players - 1)
-        player: typing.List[discord.Member] = list(filter(lambda u: not u.bot, users))
+        users: List[discord.Member] = random.sample(list(ctx.guild.members), players - 1)
+        player: List[discord.Member] = list(filter(lambda u: not u.bot, users))
         if ctx.author not in player:
             player.append(ctx.author)
         game = Game(cog=self, delay=delay, skip=skip)
@@ -334,7 +351,10 @@ class BattleRoyale(commands.Cog):
         embed.set_thumbnail(url=SWORDS)
         message = await ctx.send(embed=embed)
         self.games[message] = game
-        await game.start(ctx, players=player, original_message=message)
+        try:
+            await game.start(ctx, players=player, original_message=message)
+        except Exception as e:
+            self.log.exception("Something went wrong while starting the game.", exc_info=True)
 
     # @battleroyale.command()
     # async def profile(self, ctx: commands.Context, *, user: discord.Member = None):
@@ -349,7 +369,7 @@ class BattleRoyale(commands.Cog):
 
     @battleroyale.command(name="leaderboard", aliases=["lb"])
     async def _leaderboard(
-        self, ctx: commands.Context, sort_by: typing.Literal["wins", "games", "kills"] = "wins"
+        self, ctx: commands.Context, sort_by: Literal["wins", "games", "kills"] = "wins"
     ):
         """Show the leaderboard.
 
@@ -377,7 +397,7 @@ class BattleRoyale(commands.Cog):
                 ]
             )
         description = box(table.get_string(), lang="sml")
-        pages: typing.List[discord.Embed] = []
+        pages: List[discord.Embed] = []
         for page in pagify(description, page_length=4000):
             embed = discord.Embed(title="BattleRoyale Leaderboard", color=await ctx.embed_color())
             embed.description = page

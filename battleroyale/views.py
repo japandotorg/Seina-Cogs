@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import typing
+from typing import List
 
 import discord
 from redbot.core import commands
@@ -35,7 +35,7 @@ class JoinGameView(discord.ui.View):
         self.cog: commands.Cog = cog
         self.ctx: commands.Context = ctx
 
-        self.players: typing.List[discord.Member] = []
+        self.players: List[discord.Member] = []
 
         super().__init__(timeout=timeout)
         self._message: discord.Message = None

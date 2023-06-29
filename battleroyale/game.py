@@ -25,8 +25,8 @@ SOFTWARE.
 import asyncio
 import random
 import time
-import typing
 from collections import Counter
+from typing import List, Optional
 
 import discord
 from redbot.core import bank, commands
@@ -49,20 +49,20 @@ class Game:
         self.delay: int = delay
         self.skip: bool = skip
 
-        self.players: typing.List[discord.Member] = []
-        self.messages: typing.List[discord.Message] = []
+        self.players: List[discord.Member] = []
+        self.messages: List[discord.Message] = []
         self.original_message: discord.Message = None
 
     async def start(
         self,
         ctx: commands.Context,
-        players: typing.List[discord.Member],
-        original_message: typing.Optional[discord.Message] = None,
+        players: List[discord.Member],
+        original_message: Optional[discord.Message] = None,
     ) -> discord.Member:
         self.ctx: commands.Context = ctx
-        self.players: typing.List[discord.Member] = players
-        self.remaining_players: typing.List[discord.Member] = self.players.copy()
-        self.messages: typing.List[discord.Message] = []
+        self.players: List[discord.Member] = players
+        self.remaining_players: List[discord.Member] = self.players.copy()
+        self.messages: List[discord.Message] = []
         if original_message is not None:
             self.messages.append(original_message)
             self.original_message: discord.Message = original_message
@@ -88,7 +88,7 @@ class Game:
             self.original_message: discord.Message = await self.ctx.send(embed=embed)
         await self.cog.add_stats_to_leaderboard("games", users=self.players)
 
-        places: typing.List[discord.Member] = []
+        places: List[discord.Member] = []
         kills: Counter = Counter()
         prompts = ""
         i = 0
