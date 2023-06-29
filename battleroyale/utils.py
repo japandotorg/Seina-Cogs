@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import logging
-import typing
+from typing import List
 
 from redbot.core import commands
 
@@ -33,7 +33,7 @@ log: logging.Logger = logging.getLogger("red.seina.battleroyale.utils")
 __all__ = ("_get_attachments",)
 
 
-def _get_attachments(ctx: commands.Context) -> typing.List:
+def _get_attachments(ctx: commands.Context) -> List:
     content = []
     if ctx.message.attachments:
         attachments = list(ctx.message.attachments)
