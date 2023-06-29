@@ -84,12 +84,8 @@ PROMPTS: List[str] = [
     "{killer} killed {killed} with a hockey stick 🏒!",
     "{killer} killed {killed} with a pool cue 🎱!",
     "{killer} killed {killed} with a cricket bat 🏏!",
-    "{killer} killed {killed} with a frying pan 🍳!",
     "{killer} killed {killed} with a shovel 🪓!",
     "{killer} killed {killed} with a pickaxe ⛏️!",
-    "{killer} killed {killed} with a sickle 🔪!",
-    "{killer} killed {killed} with a machete 🔪!",
-    "{killer} killed {killed} with a crowbar 🔨!",
 ]
 
 
