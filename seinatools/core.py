@@ -118,13 +118,15 @@ class SeinaTools(BaseCog):  # type: ignore
     async def initialize(self) -> None:
         await self.bot.wait_until_red_ready()
         keys = await self.bot.get_shared_api_tokens("removebg")
+        other_key = await self.bot.get_shared_api_tokens("jeyyapi")
         try:
             token = keys.get("api_key")
-            if not token:
+            other_token = other_key.get("api_key")
+            if (not token or not other_token):
                 if not await self.config.notice():
                     try:
                         await self.bot.send_to_owners(
-                            "Thanks for installing my utility cog."
+                            "Thanks for installing my utility cog. \n"
                             "- This cog has a removebackground command which uses "
                             "an api key from the <https://www.remove.bg/> website. "
                             "You can easily get the api key from <https://www.remove.bg/api#remove-background>.\n"
@@ -151,7 +153,7 @@ class SeinaTools(BaseCog):  # type: ignore
         self.bot.loop.create_task(self.session.close())
 
     @staticmethod
-    async def send_embed(ctx: commands.Context, embed: discord.Embed, **kwargs: Any):
+    async def send_crate_embed(ctx: commands.Context, embed: discord.Embed, **kwargs: Any):
         embed.set_author(name="Crates.io Index", icon_url=CRATES_IO_LOGO, url="https://crates.io/")
         embed.color = 0x2C4B2B
         kwargs["embed"] = embed
@@ -616,7 +618,7 @@ class SeinaTools(BaseCog):  # type: ignore
             value=f"```prolog\nTotal Downloads  : {foj['downloads']:,}\nRecent Downloads : {foj['recent_downloads']:,}```",
             inline=False,
         )
-        return await self.send_embed(ctx, embed)
+        return await self.send_crate_embed(ctx, embed)
 
     @commands.has_permissions(**perms)
     @commands.bot_has_permissions(**perms)
