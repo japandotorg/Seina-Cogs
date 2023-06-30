@@ -22,13 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import aiohttp
 import random
-from typing import Optional, List, Dict
+from typing import Dict, List, Optional
 
-from redbot.core.bot import Red
+import aiohttp
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import pagify, humanize_list
+from redbot.core.bot import Red
+from redbot.core.utils.chat_formatting import humanize_list, pagify
 
 from .utils import raise_for_status
 
@@ -36,9 +36,7 @@ from .utils import raise_for_status
 class AnimalAPI:
     def __init__(self, session: aiohttp.ClientSession):
         self.session: aiohttp.ClientSession = session
-        self.endpoints: Dict[
-            str, Dict[str, List[Dict[str, str]]]
-        ] = {
+        self.endpoints: Dict[str, Dict[str, List[Dict[str, str]]]] = {
             "images": {
                 "bear": [{"url": "https://and-here-is-my-code.glitch.me/img/bear", "key": "Link"}],
                 "bird": [{"url": "https://some-random-api.ml/img/birb", "key": "link"}],
@@ -212,19 +210,18 @@ class CatAPI:
                         details += f"**{x}:** {y}\n"
                     else:
                         details += f"**{x}:** {y}\n"
-            details = origin + details # type: ignore
+            details = origin + details  # type: ignore
             details += f"**Traits:** {', '.join(traits)}\n" if traits else ""
-            details += weight # type: ignore
+            details += weight  # type: ignore
             if urls:
                 details += f"**URLs:** {' • '.join([f'[{x}]({y})' for x, y in urls.items()])}"
             return response["url"], response["breeds"][0]["name"], details
-        
+
     async def breeds(self):
         keys = await self.bot.get_shared_api_tokens("thecatapi")
         token = keys.get("api_key")
         async with self.session.get(
-            url=self.base + "breeds",
-            headers={"x-api-key": token}
+            url=self.base + "breeds", headers={"x-api-key": token}
         ) as response:
             if response.status != 200:
                 return raise_for_status(response)
@@ -243,7 +240,7 @@ class DogAPI:
         self.bot: Red = self.ctx.bot
         self.session: aiohttp.ClientSession = session
         self.base: str = "https://api.thedogapi.com/v1/"
-        
+
     async def image(self, breed: Optional[str] = None):
         url = self.base + "images/search?has_breeds=1"
         keys = await self.bot.get_shared_api_tokens("thedogapi")
@@ -251,8 +248,7 @@ class DogAPI:
         if breed:
             breeds = {}
             async with self.session.get(
-                url=self.base + "breeds",
-                headers={"x-api-key": token}
+                url=self.base + "breeds", headers={"x-api-key": token}
             ) as response:
                 if response.status != 200:
                     return raise_for_status(response)
@@ -262,17 +258,14 @@ class DogAPI:
             if breed.lower() not in breeds:
                 return None, None, None
             url += f"&breed_id={breeds[breed.lower()]}"
-        async with self.session.get(
-            url=url,
-            headers={"x-api-key": token}
-        ) as response:
+        async with self.session.get(url=url, headers={"x-api-key": token}) as response:
             if response.status != 200:
                 return raise_for_status(response)
             response = (await response.json())[0]
             details = ""
             for x, y in response["breeds"][0].items():
                 if x not in ["id", "name"]:
-                    x = x.capitalize().replace('_', ' ')
+                    x = x.capitalize().replace("_", " ")
                     if x == "Height":
                         height = f"**{x}:** {y['imperial']}in ({y['metric']}cm)\n"
                         continue
@@ -280,15 +273,14 @@ class DogAPI:
                         weight = f"**{x}:** {y['imperial']}lb ({y['metric']}kg)\n"
                         continue
                     details += f"**{x}:** {y}\n"
-            details += height + weight # type: ignore
+            details += height + weight  # type: ignore
             return response["url"], response["breeds"][0]["name"], details
-    
+
     async def breeds(self):
         keys = await self.bot.get_shared_api_tokens("thedogapi")
         token = keys.get("api_key")
         async with self.session.get(
-            url=self.base + "breeds",
-            headers={"x-api-key": token}
+            url=self.base + "breeds", headers={"x-api-key": token}
         ) as response:
             if response.status != 200:
                 return raise_for_status(response)

@@ -122,7 +122,7 @@ class SeinaTools(BaseCog):  # type: ignore
         try:
             token = keys.get("api_key")
             other_token = other_key.get("api_key")
-            if (not token or not other_token):
+            if not token or not other_token:
                 if not await self.config.notice():
                     try:
                         await self.bot.send_to_owners(

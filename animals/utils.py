@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 from typing import Optional
+
 from aiohttp import ClientResponse, ClientResponseError
 
 
