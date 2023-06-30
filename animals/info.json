@@ -1,0 +1,17 @@
+{
+    "author": ["inthedark.org"],
+    "install_msg": "Thanks for installing the animals cog.",
+    "name": "Animals",
+    "disabled": false,
+    "short": "Random animals.",
+    "description": "Random animal pics and facts.",
+    "tags": [
+        "animals",
+        "image",
+        "api"
+    ],
+    "required_cogs": {},
+    "requirements": [],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not store End User Data."
+}
