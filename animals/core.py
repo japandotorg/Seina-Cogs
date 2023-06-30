@@ -232,7 +232,7 @@ class Animals(commands.Cog):
             embeds.append(embed)
         await menu(ctx, pages=embeds, controls=DEFAULT_CONTROLS, timeout=60.0)
         
-    @_cat.command(name="creds", aliases=["setapikey", "setapi"])
+    @_dog.command(name="creds", aliases=["setapikey", "setapi"])
     async def _dog_creds(self, ctx: commands.Context):
         """
         Instructions to set `thedogapi` API token.
