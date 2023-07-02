@@ -79,7 +79,7 @@ class BattleRoyale(commands.Cog):
         }
         default_global: Dict[str, Union[int, str]] = {
             "wait": 120,
-            "emoji": "⚔️",
+            "battle_emoji": "⚔️",
         }
 
         self.config.register_user(**default_user)
@@ -257,9 +257,9 @@ class BattleRoyale(commands.Cog):
         Set an emoji to be used with Battle Royale.
         """
         if not emoji:
-            await self.config.emoji.set("⚔️")
+            await self.config.battle_emoji.set("⚔️")
             return await ctx.send("I have reset the battle royale emoji!")
-        await self.config.emoji.set(emoji.as_emoji())
+        await self.config.battle_emoji.set(emoji.as_emoji())
         await ctx.send(f"Set the battle royale emoji to {emoji.as_emoji()}")
 
     @commands.is_owner()
@@ -278,7 +278,7 @@ class BattleRoyale(commands.Cog):
         global_data = await self.config.all()
         prize = guild_data["prize"]
         wait = global_data["wait"]
-        emoji = global_data["emoji"]
+        emoji = global_data["battle_emoji"]
         embed = discord.Embed(
             title="Battle Royale Settings",
             color=await ctx.embed_color(),
@@ -301,7 +301,7 @@ class BattleRoyale(commands.Cog):
         - `skip`: will skip to results.
         """
         WAIT_TIME = await self.config.wait()
-        emoji = await self.config.emoji()
+        emoji = await self.config.battle_emoji()
 
         embed: discord.Embed = discord.Embed(
             title="Battle Royale",
