@@ -50,7 +50,6 @@ class AnimalAPI:
                 "elephant": [
                     {"url": "https://and-here-is-my-code.glitch.me/img/elephant", "key": "Link"}
                 ],
-                "fox": [{"url": "https://some-random-api.ml/img/fox", "key": "link"}],
                 "giraffe": [
                     {"url": "https://and-here-is-my-code.glitch.me/img/giraffe", "key": "Link"}
                 ],
@@ -63,7 +62,6 @@ class AnimalAPI:
                 "killerwhale": [
                     {"url": "https://and-here-is-my-code.glitch.me/img/killerwhale", "key": "Link"}
                 ],
-                "koala": [{"url": "https://some-random-api.ml/img/koala", "key": "link"}],
                 "lion": [{"url": "https://and-here-is-my-code.glitch.me/img/lion", "key": "Link"}],
                 "panda": [
                     {"url": "https://and-here-is-my-code.glitch.me/img/panda", "key": "Link"},
@@ -93,7 +91,6 @@ class AnimalAPI:
                 "giraffe": [
                     {"url": "https://and-here-is-my-code.glitch.me/facts/giraffe", "key": "Link"}
                 ],
-                "koala": [{"url": "https://some-random-api.ml/facts/koala", "key": "fact"}],
                 "lion": [
                     {"url": "https://and-here-is-my-code.glitch.me/facts/lion", "key": "Link"}
                 ],

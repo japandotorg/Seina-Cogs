@@ -330,24 +330,6 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
-    @commands.command(name="fox")
-    async def _fox(self, ctx: commands.Context):
-        """
-        Random foxes!
-        """
-        await ctx.typing()
-        description = await AnimalAPI(self.session).fact("fox")
-        image = await AnimalAPI(self.session).image("fox")
-        embed: discord.Embed = discord.Embed(
-            color=await ctx.embed_color(),
-            description=description,
-        )
-        embed.set_image(url=image)
-        await ctx.reply(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-        )
-
     @commands.command(name="giraffe")
     async def _giraffe(self, ctx: commands.Context):
         """
@@ -400,24 +382,6 @@ class Animals(commands.Cog):
         await ctx.typing()
         image = await AnimalAPI(self.session).image("killerwhale")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.reply(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-        )
-
-    @commands.command(name="koala")
-    async def _koala(self, ctx: commands.Context):
-        """
-        Random koalas!
-        """
-        await ctx.typing()
-        description = await AnimalAPI(self.session).fact("koala")
-        image = await AnimalAPI(self.session).image("koala")
-        embed: discord.Embed = discord.Embed(
-            color=await ctx.embed_color(),
-            description=description,
-        )
-        embed.set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
