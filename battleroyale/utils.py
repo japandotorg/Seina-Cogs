@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import List
+from typing import List, Dict, Any, Union
 
 from redbot.core import commands
 
@@ -42,3 +42,30 @@ def _get_attachments(ctx: commands.Context) -> List:
         attachments = list(ctx.message.reference.resolved.attachments)
         content.extend(attachments)
     return content
+
+
+class Emoji:
+    def __init__(self, data: Dict[str, Any]) -> None:
+        self.name = data["name"]
+        self.id = data.get("id", None)
+        self.animated = data.get("animated", None)
+        self.custom = self.id is not None
+
+    @classmethod
+    def from_data(cls, data: Union[str, Dict[str, Any]]):
+        log.debug(data)
+        if not data:
+            return None
+        if isinstance(data, str):
+            return cls({"name": data})
+        return cls(data)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {"name": self.name, "id": self.id}
+
+    def as_emoji(self) -> str:
+        if not self.custom:
+            return self.name
+        animated = "a" if self.animated else ""
+        return f"<{animated}:{self.name}:{self.id}>"
+

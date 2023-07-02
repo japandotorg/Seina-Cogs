@@ -22,23 +22,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import List
+from typing import Any, List, Optional
+from functools import partial
 
 import discord
-from redbot.core import commands
 
 __all__ = ("JoinGameView",)
 
 
+class JoinGameButton(discord.ui.Button):
+    def __init__(
+        self,
+        emoji: Optional[str],
+        callback: Any,
+        custom_id: str = "JOIN_GAME:BUTTON"
+    ):
+        super().__init__(
+            emoji=emoji,
+            custom_id=custom_id,
+        )
+        self.callback = partial(callback, self)
+
+
 class JoinGameView(discord.ui.View):
-    def __init__(self, cog: commands.Cog, ctx: commands.Context, timeout: float = 120) -> None:
-        self.cog: commands.Cog = cog
-        self.ctx: commands.Context = ctx
-
-        self.players: List[discord.Member] = []
-
+    def __init__(self, emoji: Optional[str], timeout: float = 120) -> None:
         super().__init__(timeout=timeout)
+        self.players: List[discord.Member] = []
         self._message: discord.Message = None
+
+        self.add_item(JoinGameButton(emoji, self._callback))
 
     async def on_timeout(self) -> None:
         for item in self.children:
@@ -49,20 +61,20 @@ class JoinGameView(discord.ui.View):
         except discord.HTTPException:
             pass
 
-    @discord.ui.button(label="Join Game", emoji="⚔", style=discord.ButtonStyle.danger)
-    async def _callback(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
-        if len(self.players) > 200:
+    @staticmethod
+    async def _callback(self: JoinGameButton, interaction: discord.Interaction) -> None:
+        if len(self.view.players) > 200:
             return await interaction.response.send_message(
                 "The maximum number of 200 players has been reached.",
                 ephemeral=True,
             )
-        elif interaction.user in self.players:
+        elif interaction.user in self.view.players:
             return await interaction.response.send_message(
                 "You have already joined this game!",
                 ephemeral=True,
             )
         else:
-            self.players.append(interaction.user)
+            self.view.players.append(interaction.user)
             await interaction.response.send_message(
                 "You have joined this game!",
                 ephemeral=True,

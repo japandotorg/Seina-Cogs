@@ -43,8 +43,9 @@ from redbot.core.utils.views import SimpleMenu
 
 from .constants import SWORDS
 from .game import Game
-from .utils import _get_attachments
+from .utils import _get_attachments, Emoji
 from .views import JoinGameView
+from .converters import EmojiConverter
 
 log: logging.Logger = logging.getLogger("red.seina.battleroyale")
 
@@ -76,8 +77,9 @@ class BattleRoyale(commands.Cog):
         default_guild: Dict[str, int] = {
             "prize": 100,
         }
-        default_global: Dict[str, int] = {
+        default_global: Dict[str, Union[int, Dict]] = {
             "wait": 120,
+            "emoji": {},
         }
 
         self.config.register_user(**default_user)
@@ -249,6 +251,18 @@ class BattleRoyale(commands.Cog):
         await ctx.send(f"Prize set to {amount} {currency}.")
 
     @commands.is_owner()
+    @setbattleroyale.command(name="emoji")
+    async def _emoji(self, ctx: commands.Context, emoji: EmojiConverter):
+        """
+        Set an emoji to be used with Battle Royale.
+        """
+        if not emoji:
+            await self.config.emoji.clear()
+            return await ctx.send("I have reset the battle royale emoji!")
+        await self.config.emoji.set(emoji.to_dict())
+        await ctx.send(f"Set the battle royale emoji to {emoji.as_emoji()}")
+
+    @commands.is_owner()
     @setbattleroyale.command(name="wait")
     async def _wait(self, ctx: commands.Context, time: commands.Range[int, 10, 200]):
         """Changes the wait time before battle starts."""
@@ -264,10 +278,11 @@ class BattleRoyale(commands.Cog):
         global_data = await self.config.all()
         prize = guild_data["prize"]
         wait = global_data["wait"]
+        emoji: Optional[Emoji] = Emoji.from_data(global_data.get("emoji"))
         embed = discord.Embed(
             title="Battle Royale Settings",
             color=await ctx.embed_color(),
-            description=f"**Prize:** {prize}\n**Wait:** {wait} seconds",
+            description=f"**Prize:** {prize}\n**Wait:** {wait} seconds\n**Emoji:** {emoji}",
         )
         await ctx.send(embed=embed)
 
@@ -286,12 +301,16 @@ class BattleRoyale(commands.Cog):
         - `skip`: will skip to results.
         """
         WAIT_TIME = await self.config.wait()
+        settings = await self.config.all()
+        emoji: Optional[Emoji] = Emoji.from_data(settings.get("emoji"))
 
         embed: discord.Embed = discord.Embed(
             title="Battle Royale",
             color=await ctx.embed_color(),
         )
-        join_view: JoinGameView = JoinGameView(self, ctx, timeout=WAIT_TIME)
+        join_view: JoinGameView = JoinGameView(
+            emoji.as_emoji() if emoji else None, timeout=WAIT_TIME
+        )
         now = datetime.datetime.now(tz=datetime.timezone.utc)
         endtime = now + datetime.timedelta(seconds=WAIT_TIME)
         embed.description = f"- Starting <t:{int(endtime.timestamp())}:R>.\n- Click the `Join Game` button to join the game."
