@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Any, List, Optional
 from functools import partial
+from typing import Any, List, Optional
 
 import discord
 
@@ -31,12 +31,7 @@ __all__ = ("JoinGameView",)
 
 
 class JoinGameButton(discord.ui.Button):
-    def __init__(
-        self,
-        emoji: Optional[str],
-        callback: Any,
-        custom_id: str = "JOIN_GAME:BUTTON"
-    ):
+    def __init__(self, emoji: Optional[str], callback: Any, custom_id: str = "JOIN_GAME:BUTTON"):
         super().__init__(
             emoji=emoji,
             custom_id=custom_id,

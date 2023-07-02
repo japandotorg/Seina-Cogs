@@ -42,10 +42,10 @@ from redbot.core.utils.chat_formatting import box, humanize_list, pagify
 from redbot.core.utils.views import SimpleMenu
 
 from .constants import SWORDS
-from .game import Game
-from .utils import _get_attachments, Emoji
-from .views import JoinGameView
 from .converters import EmojiConverter
+from .game import Game
+from .utils import Emoji, _get_attachments
+from .views import JoinGameView
 
 log: logging.Logger = logging.getLogger("red.seina.battleroyale")
 
