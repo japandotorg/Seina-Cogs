@@ -33,11 +33,11 @@ from typing import Any, Dict, Final, List, Literal, Mapping, Optional, Union
 import aiohttp
 import discord
 from playwright.async_api import async_playwright
-from pygicord import Paginator
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, humanize_list, humanize_number
+from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 from redbot.core.utils.views import SetApiView
 from tabulate import tabulate
 
@@ -62,7 +62,7 @@ class SeinaTools(BaseCog):  # type: ignore
     """
 
     __author__: Final[List[str]] = ["inthedark.org#0666"]
-    __version__: Final[str] = "0.1.3"
+    __version__: Final[str] = "0.1.4"
 
     def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
@@ -256,11 +256,9 @@ class SeinaTools(BaseCog):  # type: ignore
             embed_list_member.append(em)
 
         if channel_member.lower() in ("channels",):
-            paginator = Paginator(pages=embed_list)
-            await paginator.start(ctx=ctx)
+            await menu(ctx, embed_list, DEFAULT_CONTROLS, timeout=60)
         elif channel_member.lower() in ("members",):
-            paginator = Paginator(pages=embed_list_member)
-            await paginator.start(ctx=ctx)
+            await menu(ctx, embed_list_member, DEFAULT_CONTROLS, timeout=60)
         else:
             return
 

@@ -8,7 +8,7 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 ## About Cogs
 | Name        | Status/Version   | Description (Click to see full status)                                                                                           | Authors                                     |
 |-------------|------------------|----------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
-| SeinaTools  | 0.1.3            | <details><summary>My tools for Red-DiscordBot</summary>Some cool utility tools for Red-DiscordBot</details>                      | inthedark.org                               |
+| SeinaTools  | 0.1.4            | <details><summary>My tools for Red-DiscordBot</summary>Some cool utility tools for Red-DiscordBot</details>                      | inthedark.org                               |
 | BattleRoyale| 0.1.1            | <details><summary>Play battle royale</summary>Play battle royale with your friends or join automated matches.                    | inthedark.org                               |
 | Calculator  | 0.1.1            | <details><summary>Math stuff</summary>Math stuff</details>                                                                       | inthedark.org                               |
 | Chemistry   | 0.1.1            | <details><summary>Chemistry</summary>Chemistry inside discord >.<</details>                                                      | inthedark.org                               |

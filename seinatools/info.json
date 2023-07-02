@@ -13,7 +13,6 @@
     "requirements": [
         "tabulate",
         "emoji",
-        "pygicord==1.1.0",
         "playwright==1.30.0"
     ],
     "type": "COG",
