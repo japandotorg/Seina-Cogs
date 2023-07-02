@@ -33,6 +33,7 @@ __all__ = ("JoinGameView",)
 class JoinGameButton(discord.ui.Button):
     def __init__(self, emoji: Optional[str], callback: Any, custom_id: str = "JOIN_GAME:BUTTON"):
         super().__init__(
+            label="Join Game",
             emoji=emoji,
             custom_id=custom_id,
         )
