@@ -119,7 +119,10 @@ class AnimalAPI:
         async with self.session.get(url=endpoint["url"]) as response:
             if response.status != 200:
                 return raise_for_status(response)
-            return (await response.json())[endpoint["key"]]
+            try:
+                return (await response.json())[endpoint["key"]]
+            except aiohttp.ContentTypeError:
+                return "Failed to generate Fact."
 
 
 class CatAPI:
