@@ -311,9 +311,7 @@ class Animals(commands.Cog):
         """
         await ctx.typing()
         image = await AnimalAPI(self.session).image("duck")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=image
-        )
+        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -326,9 +324,7 @@ class Animals(commands.Cog):
         """
         await ctx.typing()
         image = await AnimalAPI(self.session).image("elephant")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=image
-        )
+        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -377,9 +373,7 @@ class Animals(commands.Cog):
         """
         await ctx.typing()
         image = await AnimalAPI(self.session).image("hippo")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=image
-        )
+        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -392,9 +386,7 @@ class Animals(commands.Cog):
         """
         await ctx.typing()
         image = await AnimalAPI(self.session).image("horse")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=image
-        )
+        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -407,9 +399,7 @@ class Animals(commands.Cog):
         """
         await ctx.typing()
         image = await AnimalAPI(self.session).image("killerwhale")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=image
-        )
+        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -476,9 +466,7 @@ class Animals(commands.Cog):
         """
         await ctx.typing()
         image = await AnimalAPI(self.session).image("pig")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=image
-        )
+        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -491,9 +479,7 @@ class Animals(commands.Cog):
         """
         await ctx.typing()
         image = await AnimalAPI(self.session).image("redpanda")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=image
-        )
+        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -542,9 +528,7 @@ class Animals(commands.Cog):
         """
         await ctx.typing()
         image = await AnimalAPI(self.session).image("spider")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=image
-        )
+        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -557,9 +541,7 @@ class Animals(commands.Cog):
         """
         await ctx.typing()
         image = await AnimalAPI(self.session).image("turtle")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=image
-        )
+        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
