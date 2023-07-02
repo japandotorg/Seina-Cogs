@@ -307,9 +307,7 @@ class BattleRoyale(commands.Cog):
             title="Battle Royale",
             color=await ctx.embed_color(),
         )
-        join_view: JoinGameView = JoinGameView(
-            emoji, timeout=WAIT_TIME
-        )
+        join_view: JoinGameView = JoinGameView(emoji, timeout=WAIT_TIME)
         now = datetime.datetime.now(tz=datetime.timezone.utc)
         endtime = now + datetime.timedelta(seconds=WAIT_TIME)
         embed.description = f"- Starting <t:{int(endtime.timestamp())}:R>.\n- Click the `Join Game` button to join the game."
