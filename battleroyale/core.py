@@ -23,11 +23,11 @@ SOFTWARE.
 """
 
 import asyncio
-from contextlib import suppress
 import datetime
 import logging
 import os
 import random
+from contextlib import suppress
 from io import BytesIO
 from pathlib import Path
 from types import ModuleType
@@ -54,7 +54,7 @@ log: logging.Logger = logging.getLogger("red.seina.battleroyale")
 
 def game_tool(ctx: commands.Context) -> ModuleType:
     from battleroyale import game
-    
+
     return game
 
 
@@ -95,7 +95,7 @@ class BattleRoyale(commands.Cog):
         self.config.register_global(**default_global)
 
         self.cache: Dict[str, Image.Image] = {}
-        
+
         for k, v in {"br": (lambda x: self), "brgame": game_tool}.items():
             with suppress(RuntimeError):
                 self.bot.add_dev_env_value(k, v)
