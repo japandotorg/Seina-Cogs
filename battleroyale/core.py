@@ -77,9 +77,9 @@ class BattleRoyale(commands.Cog):
         default_guild: Dict[str, int] = {
             "prize": 100,
         }
-        default_global: Dict[str, Union[int, Dict]] = {
+        default_global: Dict[str, Union[int, str]] = {
             "wait": 120,
-            "emoji": {},
+            "emoji": "⚔️",
         }
 
         self.config.register_user(**default_user)
@@ -257,9 +257,9 @@ class BattleRoyale(commands.Cog):
         Set an emoji to be used with Battle Royale.
         """
         if not emoji:
-            await self.config.emoji.clear()
+            await self.config.emoji.set("⚔️")
             return await ctx.send("I have reset the battle royale emoji!")
-        await self.config.emoji.set(emoji.to_dict())
+        await self.config.emoji.set(emoji.as_emoji())
         await ctx.send(f"Set the battle royale emoji to {emoji.as_emoji()}")
 
     @commands.is_owner()
@@ -278,7 +278,7 @@ class BattleRoyale(commands.Cog):
         global_data = await self.config.all()
         prize = guild_data["prize"]
         wait = global_data["wait"]
-        emoji: Optional[Emoji] = Emoji.from_data(global_data.get("emoji"))
+        emoji = global_data["emoji"]
         embed = discord.Embed(
             title="Battle Royale Settings",
             color=await ctx.embed_color(),
@@ -301,15 +301,14 @@ class BattleRoyale(commands.Cog):
         - `skip`: will skip to results.
         """
         WAIT_TIME = await self.config.wait()
-        settings = await self.config.all()
-        emoji: Optional[Emoji] = Emoji.from_data(settings.get("emoji"))
+        emoji = await self.config.emoji()
 
         embed: discord.Embed = discord.Embed(
             title="Battle Royale",
             color=await ctx.embed_color(),
         )
         join_view: JoinGameView = JoinGameView(
-            emoji.as_emoji() if emoji else None, timeout=WAIT_TIME
+            emoji, timeout=WAIT_TIME
         )
         now = datetime.datetime.now(tz=datetime.timezone.utc)
         endtime = now + datetime.timedelta(seconds=WAIT_TIME)
