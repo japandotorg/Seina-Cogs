@@ -5,7 +5,6 @@ from redbot.core import commands
 
 from .utils import Emoji
 
-
 if TYPE_CHECKING:
     EmojiConverter = Optional[Emoji]
 else:

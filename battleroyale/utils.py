@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import List, Dict, Any, Union
+from typing import Any, Dict, List, Union
 
 from redbot.core import commands
 
@@ -68,4 +68,3 @@ class Emoji:
             return self.name
         animated = "a" if self.animated else ""
         return f"<{animated}:{self.name}:{self.id}>"
-
