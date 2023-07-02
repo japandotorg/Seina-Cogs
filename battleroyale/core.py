@@ -52,7 +52,7 @@ from .views import JoinGameView
 log: logging.Logger = logging.getLogger("red.seina.battleroyale")
 
 
-def game_tool() -> ModuleType:
+def game_tool(ctx: commands.Context) -> ModuleType:
     from battleroyale import game
     
     return game
