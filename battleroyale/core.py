@@ -23,12 +23,14 @@ SOFTWARE.
 """
 
 import asyncio
+from contextlib import suppress
 import datetime
 import logging
 import os
 import random
 from io import BytesIO
 from pathlib import Path
+from types import ModuleType
 from typing import Any, Dict, Final, List, Literal, Optional, Union
 
 import aiohttp
@@ -44,10 +46,16 @@ from redbot.core.utils.views import SimpleMenu
 from .constants import SWORDS
 from .converters import EmojiConverter
 from .game import Game
-from .utils import Emoji, _get_attachments
+from .utils import _get_attachments
 from .views import JoinGameView
 
 log: logging.Logger = logging.getLogger("red.seina.battleroyale")
+
+
+def game_tool() -> ModuleType:
+    from battleroyale import game
+    
+    return game
 
 
 class BattleRoyale(commands.Cog):
@@ -87,6 +95,10 @@ class BattleRoyale(commands.Cog):
         self.config.register_global(**default_global)
 
         self.cache: Dict[str, Image.Image] = {}
+        
+        for k, v in {"br": (lambda x: self), "brgame": game_tool}.items():
+            with suppress(RuntimeError):
+                self.bot.add_dev_env_value(k, v)
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
