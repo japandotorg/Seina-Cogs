@@ -259,11 +259,13 @@ class Animals(commands.Cog):
         Random bears!
         """
         await ctx.typing()
+        description = await AnimalAPI(self.session).fact("bear")
+        image = await AnimalAPI(self.session).image("bear")
         embed: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
-            description=await AnimalAPI(self.session).fact("bear"),
+            description=description,
         )
-        embed.set_image(url=await AnimalAPI(self.session).image("bear"))
+        embed.set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -275,11 +277,13 @@ class Animals(commands.Cog):
         Random birds!
         """
         await ctx.typing()
+        description = await AnimalAPI(self.session).fact("bird")
+        image = await AnimalAPI(self.session).image("bird")
         embed: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
-            description=await AnimalAPI(self.session).fact("bird"),
+            description=description,
         )
-        embed.set_image(url=await AnimalAPI(self.session).image("bird"))
+        embed.set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -291,9 +295,10 @@ class Animals(commands.Cog):
         Random dolphins!
         """
         await ctx.typing()
+        image = await AnimalAPI(self.session).image("dolphin")
         embed: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
-        ).set_image(url=await AnimalAPI(self.session).image("dolphin"))
+        ).set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -305,8 +310,9 @@ class Animals(commands.Cog):
         Random ducks!
         """
         await ctx.typing()
+        image = await AnimalAPI(self.session).image("duck")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=await AnimalAPI(self.session).image("duck")
+            url=image
         )
         await ctx.reply(
             embed=embed,
@@ -319,8 +325,9 @@ class Animals(commands.Cog):
         Random elephants!
         """
         await ctx.typing()
+        image = await AnimalAPI(self.session).image("elephant")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=await AnimalAPI(self.session).image("elephant")
+            url=image
         )
         await ctx.reply(
             embed=embed,
@@ -333,11 +340,13 @@ class Animals(commands.Cog):
         Random foxes!
         """
         await ctx.typing()
+        description = await AnimalAPI(self.session).fact("fox")
+        image = await AnimalAPI(self.session).image("fox")
         embed: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
-            description=await AnimalAPI(self.session).fact("fox"),
+            description=description,
         )
-        embed.set_image(url=await AnimalAPI(self.session).image("fox"))
+        embed.set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -349,11 +358,13 @@ class Animals(commands.Cog):
         Random giraffes!
         """
         await ctx.typing()
+        description = await AnimalAPI(self.session).fact("giraffe")
+        image = await AnimalAPI(self.session).image("giraffe")
         embed: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
-            description=await AnimalAPI(self.session).fact("giraffe"),
+            description=description,
         )
-        embed.set_image(url=await AnimalAPI(self.session).image("giraffe"))
+        embed.set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -365,8 +376,9 @@ class Animals(commands.Cog):
         Random hippos!
         """
         await ctx.typing()
+        image = await AnimalAPI(self.session).image("hippo")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=await AnimalAPI(self.session).image("hippo")
+            url=image
         )
         await ctx.reply(
             embed=embed,
@@ -379,8 +391,9 @@ class Animals(commands.Cog):
         Random horses!
         """
         await ctx.typing()
+        image = await AnimalAPI(self.session).image("horse")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=await AnimalAPI(self.session).image("horse")
+            url=image
         )
         await ctx.reply(
             embed=embed,
@@ -393,8 +406,9 @@ class Animals(commands.Cog):
         Random killer whales!
         """
         await ctx.typing()
+        image = await AnimalAPI(self.session).image("killerwhale")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=await AnimalAPI(self.session).image("killerwhale")
+            url=image
         )
         await ctx.reply(
             embed=embed,
@@ -407,11 +421,13 @@ class Animals(commands.Cog):
         Random koalas!
         """
         await ctx.typing()
+        description = await AnimalAPI(self.session).fact("koala")
+        image = await AnimalAPI(self.session).image("koala")
         embed: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
-            description=await AnimalAPI(self.session).fact("koala"),
+            description=description,
         )
-        embed.set_image(url=await AnimalAPI(self.session).image("koala"))
+        embed.set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -423,11 +439,13 @@ class Animals(commands.Cog):
         Random lions!
         """
         await ctx.typing()
+        description = await AnimalAPI(self.session).fact("lion")
+        image = await AnimalAPI(self.session).image("lion")
         embed: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
-            description=await AnimalAPI(self.session).fact("lion"),
+            description=description,
         )
-        embed.set_image(url=await AnimalAPI(self.session).image("lion"))
+        embed.set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -439,11 +457,13 @@ class Animals(commands.Cog):
         Random pandas!
         """
         await ctx.typing()
+        description = await AnimalAPI(self.session).fact("panda")
+        image = await AnimalAPI(self.session).image("panda")
         embed: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
-            description=await AnimalAPI(self.session).fact("panda"),
+            description=description,
         )
-        embed.set_image(url=await AnimalAPI(self.session).image("panda"))
+        embed.set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -455,8 +475,9 @@ class Animals(commands.Cog):
         Random pigs!
         """
         await ctx.typing()
+        image = await AnimalAPI(self.session).image("pig")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=await AnimalAPI(self.session).image("pig")
+            url=image
         )
         await ctx.reply(
             embed=embed,
@@ -469,8 +490,9 @@ class Animals(commands.Cog):
         Random red pandas!
         """
         await ctx.typing()
+        image = await AnimalAPI(self.session).image("redpanda")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=await AnimalAPI(self.session).image("redpanda")
+            url=image
         )
         await ctx.reply(
             embed=embed,
@@ -483,11 +505,13 @@ class Animals(commands.Cog):
         Random sharks!
         """
         await ctx.typing()
+        description = await AnimalAPI(self.session).image("shark")
+        image = await AnimalAPI(self.session).image("shark")
         embed: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
-            description=await AnimalAPI(self.session).fact("shark"),
+            description=description,
         )
-        embed.set_image(url=await AnimalAPI(self.session).image("shark"))
+        embed.set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -499,11 +523,13 @@ class Animals(commands.Cog):
         Random snakes!
         """
         await ctx.typing()
+        description = await AnimalAPI(self.session).fact("snake")
+        image = await AnimalAPI(self.session).image("snake")
         embed: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
-            description=await AnimalAPI(self.session).fact("snake"),
+            description=description,
         )
-        embed.set_image(url=await AnimalAPI(self.session).image("snake"))
+        embed.set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -515,8 +541,9 @@ class Animals(commands.Cog):
         Random spiders!
         """
         await ctx.typing()
+        image = await AnimalAPI(self.session).image("spider")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=await AnimalAPI(self.session).image("spider")
+            url=image
         )
         await ctx.reply(
             embed=embed,
@@ -529,8 +556,9 @@ class Animals(commands.Cog):
         Random turtles!
         """
         await ctx.typing()
+        image = await AnimalAPI(self.session).image("turtle")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(
-            url=await AnimalAPI(self.session).image("turtle")
+            url=image
         )
         await ctx.reply(
             embed=embed,
