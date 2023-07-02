@@ -61,7 +61,7 @@ def game_tool(ctx: commands.Context) -> ModuleType:
 class BattleRoyale(commands.Cog):
     """Play Battle Royale with your friends!"""
 
-    __version__: Final[str] = "0.1.0"
+    __version__: Final[str] = "0.1.1"
     __author__: Final[str] = humanize_list(["inthedark.org", "MAX", "AAA3A", "sravan"])
 
     def __init__(self, bot: Red) -> None:
