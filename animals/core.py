@@ -231,7 +231,7 @@ class Animals(commands.Cog):
             embed.description = page
             embeds.append(embed)
         await menu(ctx, pages=embeds, controls=DEFAULT_CONTROLS, timeout=60.0)
-        
+
     @_dog.command(name="creds", aliases=["setapikey", "setapi"])
     async def _dog_creds(self, ctx: commands.Context):
         """
