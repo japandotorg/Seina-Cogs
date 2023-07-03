@@ -1,7 +1,7 @@
 {
     "author": [
         "Obi-Wan3",
-        "inthedark.org#0666"
+        "inthedark.org"
     ],
     "description": "Assign roles to users for the duration in which they have certain custom statuses.",
     "disabled" : false,

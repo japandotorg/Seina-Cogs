@@ -43,7 +43,7 @@ class StatusCodes(commands.Cog):
     Find the meaning behind various status codes.
     """
 
-    __author__: Final[List[str]] = ["inthedark.org#0666"]
+    __author__: Final[List[str]] = ["inthedark.org"]
     __version__: Final[str] = "0.1.0"
 
     def __init__(self, bot: Red, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> None:

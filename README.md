@@ -18,9 +18,9 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 | MsgUtils    | 0.1.1            | <details><summary>Dump stuff.</summary>Useful message utilities.</details>                                                       | inthedark.org                               |
 | FirstMessage| 0.1.0            | <details><summary>First Message</summary>A simple cog for jump to first message of a channel.</details>                          | inthedark.org                               |
 | Animals     | 0.1.0            | <details><summary>Random animals!</summary>Random animal images & facts</details>                                                | inthedark.org                               |
-| RainbowRole | 0.1.1            | <details><summary>A simple cog for setting up a rainbow role.</summary>Creates a rainbow role in your server which loops into the 7 rainbow roles every 90 seconds.</details> | inthedark.org#0666 |
-| MassUnban   | 0.1.0            | <details><summary>Mass unban users.</summary>Mass unban users by the ban reason used.</details>                                  | inthedark.org#0666                          |
-| AntiLinks   | 0.1.0            | <details><summary>No links allowed.</summary>Removes all links in specified channels, with the ability to whitelist roles.</details> | inthedark.org#0666                          |
+| RainbowRole | 0.1.1            | <details><summary>A simple cog for setting up a rainbow role.</summary>Creates a rainbow role in your server which loops into the 7 rainbow roles every 90 seconds.</details> | inthedark.org |
+| MassUnban   | 0.1.0            | <details><summary>Mass unban users.</summary>Mass unban users by the ban reason used.</details>                                  | inthedark.org                          |
+| AntiLinks   | 0.1.0            | <details><summary>No links allowed.</summary>Removes all links in specified channels, with the ability to whitelist roles.</details> | inthedark.org                          |
 | StatusRole  | 0.1.0            | <details><summary>Assign roles on custom status.</summary>Assign roles to users for the duration in which they have certain custom statuses <details> | inthedark.org                          |
 
 

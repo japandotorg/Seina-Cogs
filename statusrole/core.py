@@ -43,7 +43,7 @@ class StatusRole(commands.Cog):
     Assign roles to users for the duration in which they have certain custom statuses.
     """
 
-    __author__: Final[List[str]] = ["Obi-Wan3", "inthedark.org#0666"]
+    __author__: Final[List[str]] = ["Obi-Wan3", "inthedark.org"]
     __version__: Final[str] = "0.1.0"
 
     def __init__(self, bot: Red) -> None:

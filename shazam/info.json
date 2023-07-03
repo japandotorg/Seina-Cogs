@@ -1,5 +1,5 @@
 {
-    "author": ["inthedark.org#0666"],
+    "author": ["inthedark.org"],
     "install_msg": "Thanks for installing. Please read the help for the `shazam` command to get started, once you have loaded the cog.",
     "name": "Shazam",
     "disabled": false,

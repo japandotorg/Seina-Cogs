@@ -67,7 +67,7 @@ ROOT: Path = Path(__file__).parent.resolve().parents[0]
 
 VER_REG: Pattern[str] = re.compile(r"\_\_version\_\_ = \"(\d+\.\d+\.\d+)", flags=re.I)
 
-DEFAULT_AUTHOR: List[str] = ["inthedark.org#0666"]
+DEFAULT_AUTHOR: List[str] = ["inthedark.org"]
 
 HEADER: Final[str] = (
     "# Seina-Cogs V3\n"
