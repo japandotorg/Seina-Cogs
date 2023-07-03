@@ -50,7 +50,7 @@ class MassUnban(commands.Cog):
     Unban all users, or users with a specific ban reason.
     """
 
-    __author__: Final[List[str]] = ["aikaterna", "inthedark.org#0666"]
+    __author__: Final[List[str]] = ["inthedark.org", "aikaterna"]
     __version__: Final[str] = "0.1.0"
 
     def __init__(self, bot: Red) -> None:

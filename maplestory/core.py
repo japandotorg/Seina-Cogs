@@ -37,7 +37,7 @@ class MapleStory(commands.Cog):
     Retrives information from the MapleStory API.
     """
 
-    __author__: Final[List[str]] = ["inthedark.org#0666"]
+    __author__: Final[List[str]] = ["inthedark.org"]
     __version__: Final[str] = "0.1.0"
 
     async def red_delete_data_for_user(self, **kwargs: Any) -> Dict[str, BytesIO]:
