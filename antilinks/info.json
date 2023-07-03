@@ -1,0 +1,10 @@
+{
+    "author": ["inthedark.org", "aikaterna"],
+    "description": "Removes all links in specified channels, with the ability to whitelist roles.",
+    "install_msg": "Thanks for installing. Use `[p]antilinks` to get started.",
+    "permissions" : ["manage_messages"],
+    "short": "No links allowed.",
+    "tags": ["links", "automod"],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not persistently store data or metadata about users."
+}
