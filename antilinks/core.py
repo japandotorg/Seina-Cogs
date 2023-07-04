@@ -217,7 +217,7 @@ class AntiLinks(commands.Cog):
             user_msg += f"- {user_obj.display_name}\n"
         await ctx.send(box(user_msg, lang="md"))
 
-    @_anti.command(name="watch")
+    @_anti.group(name="watch")
     async def _watch(self, ctx: commands.Context) -> None:
         """
         Add/remove/list channels to watch.
