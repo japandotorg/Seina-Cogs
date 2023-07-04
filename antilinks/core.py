@@ -108,7 +108,9 @@ class AntiLinks(commands.Cog):
         channel: Optional[discord.TextChannel] = None,
     ) -> None:
         """
-        Set the message transfer channel. Leave the channel blank to turn it off.
+        Set the message transfer channel. 
+        
+        Leave the channel blank to turn it off.
         """
         if not channel:
             await self.config.guild(ctx.guild).report_channel.clear()
