@@ -94,7 +94,8 @@ class AntiLinks(commands.Cog):
     @commands.mod_or_permissions(administrator=True)
     @commands.bot_has_permissions(manage_messages=True)
     @commands.group(
-        name="antilinks", aliases=["nolinks", "nolink", "antilink", "alset"],
+        name="antilinks",
+        aliases=["nolinks", "nolink", "antilink", "alset"],
     )
     async def _anti(self, ctx: commands.Context) -> None:
         """
