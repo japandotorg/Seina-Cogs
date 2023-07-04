@@ -189,7 +189,7 @@ class AntiLinks(commands.Cog):
         await self.config.guild(ctx.guild).user.set(user_list)
         await ctx.send(f"{user.display_name} appended to the user whitelist.")
 
-    @_whitelist_user.command(name="Remove", aliases=["-", "delete"])
+    @_whitelist_user.command(name="remove", aliases=["-", "delete"])
     async def _user_remove(self, ctx: commands.Context, user: discord.Member) -> None:
         """
         Remove a user from the whitelist
