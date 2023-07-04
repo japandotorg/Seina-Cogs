@@ -172,7 +172,7 @@ class AntiLinks(commands.Cog):
             role_msg += f"- {role_obj.name}\n"
         await ctx.send(box(role_msg, lang="md"))
 
-    @_whitelist.command(name="user")
+    @_whitelist.group(name="user")
     async def _whitelist_user(self, ctx: commands.Context) -> None:
         """
         Whitelist users.
