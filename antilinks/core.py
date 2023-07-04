@@ -93,7 +93,9 @@ class AntiLinks(commands.Cog):
     @commands.guild_only()
     @commands.mod_or_permissions(administrator=True)
     @commands.bot_has_permissions(manage_messages=True)
-    @commands.group(name="antilinks", aliases=["nolinks"])
+    @commands.group(
+        name="antilinks", aliases=["nolinks", "nolink", "antilink", "alset"],
+    )
     async def _anti(self, ctx: commands.Context) -> None:
         """
         Configuration options.
@@ -319,7 +321,7 @@ class AntiLinks(commands.Cog):
                         msg += "**Message sent by**: {} ({})\n".format(
                             message.author.name, message.author.id
                         )
-                        msg += "**Message content**:\n{}".format(message.content)
+                        msg += "**Message content**:\n- {}".format(message.content)
                         if message_channel:
                             ctx = await self.bot.get_context(message)
                             embed: discord.Embed = discord.Embed(
