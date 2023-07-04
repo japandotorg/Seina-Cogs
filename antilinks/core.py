@@ -25,13 +25,13 @@ SOFTWARE.
 
 import io
 import re
-from typing import Dict, List, Union, Optional, Match, Final, Any, Literal
+from typing import Any, Dict, Final, List, Literal, Match, Optional, Union
 
 import discord
-from redbot.core.bot import Red
-from redbot.core import commands, Config
-from redbot.core.utils.chat_formatting import box, humanize_list
 from red_commons.logging import RedTraceLogger, getLogger
+from redbot.core import Config, commands
+from redbot.core.bot import Red
+from redbot.core.utils.chat_formatting import box, humanize_list
 
 log: RedTraceLogger = getLogger("red.seinacogs.antilinks")
 
@@ -98,7 +98,6 @@ class AntiLinks(commands.Cog):
         """
         Configuration options.
         """
-        pass
 
     @_anti.command(name="channel", aliases=["chan"])
     async def _channel(
@@ -121,14 +120,12 @@ class AntiLinks(commands.Cog):
         """
         Whitelist options.
         """
-        pass
 
     @_whitelist.group(name="role")
     async def _whitelist_role(self, ctx: commands.Context) -> None:
         """
         Whitelist roles.
         """
-        pass
 
     @_whitelist_role.command(name="add", aliases=["+", "create"])
     async def _role_add(self, ctx: commands.Context, *, role_name: discord.Role) -> None:
@@ -177,7 +174,6 @@ class AntiLinks(commands.Cog):
         """
         Whitelist users.
         """
-        pass
 
     @_whitelist_user.command(name="add", aliases=["+", "create"])
     async def _user_add(self, ctx: commands.Context, *, user: discord.Member) -> None:
@@ -228,7 +224,6 @@ class AntiLinks(commands.Cog):
 
         - If added, links will be removed in these channels.
         """
-        pass
 
     @_watch.command(name="add", aliases=["+", "create"])
     async def _watch_add(self, ctx: commands.Context, channel: discord.TextChannel) -> None:
@@ -336,7 +331,6 @@ class AntiLinks(commands.Cog):
             except Exception as e:
                 if message_channel:
                     await message_channel.send(box(str(e), lang="py"))
-                pass
 
     @staticmethod
     def _match_url(url: str) -> Optional[Match[str]]:
