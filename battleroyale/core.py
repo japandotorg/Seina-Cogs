@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 import asyncio
+import contextlib
 import datetime
 import logging
 import os
@@ -333,7 +334,8 @@ class BattleRoyale(commands.Cog):
             embed.description = (
                 f"Not enough players to start. (need at least 3, {len(players)} found)."
             )
-            return await join_view._message.edit(embed=embed, view=None)
+            with contextlib.suppress(discord.NotFound, discord.HTTPException):
+                return await join_view._message.edit(embed=embed, view=None)
 
         game = Game(cog=self, delay=delay, skip=skip)
         self.games[join_view._message] = game
