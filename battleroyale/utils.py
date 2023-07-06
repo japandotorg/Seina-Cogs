@@ -22,15 +22,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import functools
 import logging
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Union, Callable
+from typing_extensions import ParamSpec
 
 from redbot.core import commands
 
+P = ParamSpec("P")
+
 log: logging.Logger = logging.getLogger("red.seina.battleroyale.utils")
 
+__all__ = (
+    "exceptions",
+    "_get_attachments",
+)
 
-__all__ = ("_get_attachments",)
+
+def exceptions(func: Callable[P, Any]) -> Callable[P, Any]:
+    
+    @functools.wraps(func)
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
+        try:
+            return func(*args, **kwargs)
+        except Exception:
+            log.exception("Exception in function %s", func.__name__)
+            raise
+        
+    return wrapper
 
 
 def _get_attachments(ctx: commands.Context) -> List:

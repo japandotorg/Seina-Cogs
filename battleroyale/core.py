@@ -47,7 +47,7 @@ from redbot.core.utils.views import SimpleMenu
 from .constants import SWORDS
 from .converters import EmojiConverter
 from .game import Game
-from .utils import _get_attachments
+from .utils import _get_attachments, exceptions
 from .views import JoinGameView
 
 log: logging.Logger = logging.getLogger("red.seina.battleroyale")
@@ -124,6 +124,7 @@ class BattleRoyale(commands.Cog):
             count = await self.config.user(user).get_raw(_type)
             await self.config.user(user).set_raw(_type, value=count + 1)
 
+    @exceptions
     async def generate_image(
         self, user_1: discord.Member, user_2: discord.Member, to_file: bool = True
     ) -> Union[discord.File, Image.Image]:

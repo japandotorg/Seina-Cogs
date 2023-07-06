@@ -34,6 +34,7 @@ from redbot.core.errors import BalanceTooHigh
 from redbot.core.utils.chat_formatting import humanize_list, pagify
 
 from .constants import PROMPTS, WINNER_PROMPTS
+from .utils import exceptions
 
 EDIT_ORIGINAL_MESSAGE = False
 
@@ -53,6 +54,7 @@ class Game:
         self.messages: List[discord.Message] = []
         self.original_message: discord.Message = None
 
+    @exceptions
     async def start(
         self,
         ctx: commands.Context,
