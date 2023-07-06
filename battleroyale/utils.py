@@ -24,10 +24,10 @@ SOFTWARE.
 
 import functools
 import logging
-from typing import Any, Dict, List, Union, Callable
-from typing_extensions import ParamSpec
+from typing import Any, Callable, Dict, List, Union
 
 from redbot.core import commands
+from typing_extensions import ParamSpec
 
 P = ParamSpec("P")
 
@@ -40,7 +40,6 @@ __all__ = (
 
 
 def exceptions(func: Callable[P, Any]) -> Callable[P, Any]:
-    
     @functools.wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
         try:
@@ -48,7 +47,7 @@ def exceptions(func: Callable[P, Any]) -> Callable[P, Any]:
         except Exception:
             log.exception("Exception in function %s", func.__name__)
             raise
-        
+
     return wrapper
 
 

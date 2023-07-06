@@ -25,7 +25,7 @@ SOFTWARE.
 
 import io
 import re
-from typing import Any, Dict, Final, List, Literal, Match, Optional, Union, Pattern
+from typing import Any, Dict, Final, List, Literal, Match, Optional, Pattern, Union
 
 import discord
 from red_commons.logging import RedTraceLogger, getLogger
