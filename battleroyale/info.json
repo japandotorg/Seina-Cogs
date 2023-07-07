@@ -16,7 +16,8 @@
     "required_cogs": {},
     "requirements": [
         "pillow",
-        "prettytable"
+        "prettytable",
+        "typing_extensions"
     ],
     "type": "COG",
     "end_user_data_statement": "This cog does not store End User Data."
