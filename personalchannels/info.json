@@ -1,0 +1,24 @@
+{
+    "author": ["inthedark.org"],
+    "install_msg": "Thanks for installing the Personal Channels cog.",
+    "name": "PersonalChannels",
+    "disabled": false,
+    "short": "Personal channels for members",
+    "description": "Personal channels for members.",
+    "tags": [
+        "mychannel",
+        "mychan",
+        "personal channels",
+        "personal",
+        "channels",
+        "channel",
+        "personal",
+        "utility"
+    ],
+    "required_cogs": {},
+    "requirements": [
+        "tabulate"
+    ],
+    "type": "COG",
+    "end_user_data_statement": "This cog stores users data in form of << member : role >> Discord IDs pairings.\nThis cog supports data removal requests."
+}

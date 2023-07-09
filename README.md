@@ -10,6 +10,7 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 |-------------|------------------|----------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
 | SeinaTools  | 0.1.4            | <details><summary>My tools for Red-DiscordBot</summary>Some cool utility tools for Red-DiscordBot</details>                      | inthedark.org                               |
 | BattleRoyale| 0.1.1            | <details><summary>Play battle royale</summary>Play battle royale with your friends or join automated matches.                    | inthedark.org                               |
+| PersonalChannels| 0.1.0            | <details><summary>Personal channel for members</summary>Personal channel for members.                                            | inthedark.org                               |
 | Calculator  | 0.1.1            | <details><summary>Math stuff</summary>Math stuff</details>                                                                       | inthedark.org                               |
 | Chemistry   | 0.1.1            | <details><summary>Chemistry</summary>Chemistry inside discord >.<</details>                                                      | inthedark.org                               |
 | StatusCodes | 0.1.0            | <details><summary>Find the meaning behind various status codes.</summary>Find the meaning behind various status codes.</details> | inthedark.org                               |
