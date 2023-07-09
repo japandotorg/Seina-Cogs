@@ -292,7 +292,7 @@ class PersonalChannels(commands.Cog):
         perms: commands.Range[int, 1, 30] = None,
     ):
         """
-        Give users permissions on how many users they want to add in their channel.
+        Give users permissions on how many users they can to add in their channel.
 
         Run this command without the `perms` argument to clear the permission config.
         """
