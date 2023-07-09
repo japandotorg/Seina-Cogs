@@ -24,8 +24,8 @@ SOFTWARE.
 
 # The idea of this whole cog is taken from https://github.com/fixator10/Fixator10-Cogs/tree/V3/personalroles
 
-import io
 import asyncio
+import io
 from textwrap import shorten
 from typing import Dict, Final, List, Literal, Optional, Union
 
@@ -34,7 +34,7 @@ from discord.ext.commands._types import Check
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import box, pagify, humanize_list
+from redbot.core.utils.chat_formatting import box, humanize_list, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.predicates import MessagePredicate
@@ -93,7 +93,7 @@ class PersonalChannels(commands.Cog):
         }
         self.config.register_member(**default_member)
         self.config.register_guild(**default_guild)
-        
+
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
         n = "\n" if "\n\n" not in pre_processed else ""
@@ -103,14 +103,14 @@ class PersonalChannels(commands.Cog):
             f"Cog Version: **{self.__version__}**",
         ]
         return "\n".join(text)
-    
+
     async def red_get_data_for_user(
         self, *, requester: RequestType, user_id: int
     ) -> Optional[Union[Dict, Dict[str, io.BytesIO]]]:
         data = await self.config.all_members()
         async for guild_id, members in AsyncIter(data.items()):
             for user_id in members:
-                if (config := await self.config.member_from_ids(guild_id, user_id).all()):
+                if config := await self.config.member_from_ids(guild_id, user_id).all():
                     return config
                 else:
                     data = "No data is stored for user with ID {}.\n".format(user_id)
