@@ -403,17 +403,27 @@ class BattleRoyale(commands.Cog):
             await game.start(ctx, players=player, original_message=message)
         except Exception as e:
             self.log.exception("Something went wrong while starting the game.", exc_info=True)
-
-    # @battleroyale.command()
-    # async def profile(self, ctx: commands.Context, *, user: discord.Member = None):
-    #    """Show your profile.
-
-    #    **Parameters:**
-    #    - `user`: The user to show the profile of.
-    #    """
-    #    user = user or ctx.author
-    #    data = await self.config.user(user).all()
-    #    await ctx.send(data)
+    
+    @battleroyale.command(name="profile", aliases=["stats"])
+    async def profile(self, ctx: commands.Context, *, user: Optional[discord.Member] = None):
+        """
+        Show your battle royale profile.
+        """
+        user = user or ctx.author
+        data = await self.config.user(user).all()
+        embed: discord.Embed = discord.Embed(
+            title=f"{user.display_name}'s Profile",
+            description=(
+                "```prolog\n"
+                f"Games : {data['games']} \n"
+                f"Wins  : {data['wins']} \n"
+                f"Kills : {data['kills']} \n"
+                f"Deaths: {data['deaths']} \n"
+                "```"
+            ),
+            color=await ctx.embed_color(),
+        )
+        await ctx.send(embed=embed)
 
     @battleroyale.command(name="leaderboard", aliases=["lb"])
     async def _leaderboard(
