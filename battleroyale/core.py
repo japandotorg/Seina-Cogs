@@ -414,12 +414,15 @@ class BattleRoyale(commands.Cog):
         embed: discord.Embed = discord.Embed(
             title=f"{user.display_name}'s Profile",
             description=(
-                "```prolog\n"
-                f"Games : {data['games']} \n"
-                f"Wins  : {data['wins']} \n"
-                f"Kills : {data['kills']} \n"
-                f"Deaths: {data['deaths']} \n"
-                "```"
+                box(
+                    (
+                        f"Games  : {data['games']} \n"
+                        f"Wins   : {data['wins']} \n"
+                        f"Kills  : {data['kills']} \n"
+                        f"Deaths : {data['deaths']} \n"
+                    ),
+                    lang="prolog",
+                )
             ),
             color=await ctx.embed_color(),
         )
