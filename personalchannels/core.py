@@ -301,6 +301,7 @@ class PersonalChannels(commands.Cog):
         Run this command without the `perms` argument to clear the permission config.
         """
         if perms is None:
+            await self.config.member(user).permission.clear()
             await ctx.send(f"Cleared the permission config for {user.display_name}")
             return
         await self.config.member(user).permission.set(int(perms))
