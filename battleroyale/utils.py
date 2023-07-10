@@ -38,6 +38,7 @@ log: logging.Logger = logging.getLogger("red.seina.battleroyale.utils")
 __all__ = (
     "exceptions",
     "_get_attachments",
+    "_cooldown",
 )
 
 

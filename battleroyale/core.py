@@ -342,6 +342,7 @@ class BattleRoyale(commands.Cog):
             embed.description = (
                 f"Not enough players to start. (need at least 3, {len(players)} found)."
             )
+            self.battleroyale.reset_cooldown(ctx)
             with contextlib.suppress(discord.NotFound, discord.HTTPException):
                 return await join_view._message.edit(embed=embed, view=None)
 
@@ -408,6 +409,7 @@ class BattleRoyale(commands.Cog):
         """
         data = await self.config.all_users()
         if not data:
+            self.battleroyale.reset_cooldown(ctx)
             return await ctx.send("No one has played yet.")
         leaderboard = sorted(data.items(), key=lambda x: x[1][sort_by], reverse=True)
         leaderboard = leaderboard[:10]
