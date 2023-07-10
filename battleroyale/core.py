@@ -403,7 +403,7 @@ class BattleRoyale(commands.Cog):
             await game.start(ctx, players=player, original_message=message)
         except Exception as e:
             self.log.exception("Something went wrong while starting the game.", exc_info=True)
-    
+
     @battleroyale.command(name="profile", aliases=["stats"])
     async def profile(self, ctx: commands.Context, *, user: Optional[discord.Member] = None):
         """
