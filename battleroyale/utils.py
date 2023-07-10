@@ -28,9 +28,8 @@ from typing import Any, Callable, Dict, List, Optional, Union
 
 import discord
 from redbot.core import commands
-from typing_extensions import ParamSpec
-
 from redbot.core.bot import Red
+from typing_extensions import ParamSpec
 
 P = ParamSpec("P")
 
@@ -96,4 +95,3 @@ def _cooldown(ctx: commands.Context) -> Optional[commands.Cooldown]:
         return None
     cooldown = ctx.cog.config.cooldown()
     return commands.Cooldown(1, int(cooldown))
-        
