@@ -288,10 +288,12 @@ class BattleRoyale(commands.Cog):
         """Changes the wait time before battle starts."""
         await self.config.wait.set(time)
         await ctx.send(f"Wait time set to {time} seconds.")
-        
+
     @commands.is_owner()
     @setbattleroyale.command(name="cooldown")
-    async def _battleset_cooldown(self, ctx: commands.Context, per: commands.Range[int, 60, 2**50]):
+    async def _battleset_cooldown(
+        self, ctx: commands.Context, per: commands.Range[int, 60, 2**50]
+    ):
         """
         Set the coooldown amount.
         """
