@@ -27,7 +27,6 @@ import logging
 from typing import Any, Callable, Dict, List, Optional, Union
 
 from redbot.core import commands
-from redbot.core.bot import Red
 from typing_extensions import ParamSpec
 
 P = ParamSpec("P")
