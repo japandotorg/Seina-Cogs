@@ -144,6 +144,7 @@ class PersonalChannels(commands.Cog):
 
     @_my_channel.command()
     @commands.admin_or_permissions(manage_guild=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
     async def assign(
         self, ctx: commands.Context, user: discord.Member, *, channel: discord.TextChannel
     ):
@@ -157,6 +158,7 @@ class PersonalChannels(commands.Cog):
 
     @_my_channel.command()
     @commands.admin_or_permissions(manage_guild=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
     async def unassign(
         self, ctx: commands.Context, *, user: Union[discord.Member, discord.User, int]
     ):
