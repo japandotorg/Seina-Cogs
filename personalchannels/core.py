@@ -221,7 +221,7 @@ class PersonalChannels(commands.Cog):
 
     @_my_channel.command(name="create")
     @commands.admin_or_permissions(manage_guild=True)
-    @commands.bot_has_permissions(manage_channels=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
     @commands.cooldown(1, 30, commands.BucketType.guild)
     async def _create(
         self,
