@@ -26,7 +26,6 @@ import functools
 import logging
 from typing import Any, Callable, Dict, List, Optional, Union
 
-import discord
 from redbot.core import commands
 from redbot.core.bot import Red
 from typing_extensions import ParamSpec
