@@ -354,6 +354,7 @@ class BattleRoyale(commands.Cog):
             self.log.exception("Something went wrong while starting the game.", exc_info=True)
 
     @battleroyale.command()
+    @commands.dynamic_cooldown(_cooldown, commands.BucketType.guild)
     async def auto(
         self,
         ctx: commands.Context,
@@ -409,7 +410,6 @@ class BattleRoyale(commands.Cog):
         """
         data = await self.config.all_users()
         if not data:
-            self.battleroyale.reset_cooldown(ctx)
             return await ctx.send("No one has played yet.")
         leaderboard = sorted(data.items(), key=lambda x: x[1][sort_by], reverse=True)
         leaderboard = leaderboard[:10]
