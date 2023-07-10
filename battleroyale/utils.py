@@ -93,5 +93,4 @@ class Emoji:
 def _cooldown(ctx: commands.Context) -> Optional[commands.Cooldown]:
     if ctx.author.id in ctx.bot.owner_ids:
         return None
-    cooldown = await ctx.cog.config.cooldown()
-    return commands.Cooldown(1, int(cooldown))
+    return commands.Cooldown(1, ctx.cog._cooldown)
