@@ -124,7 +124,7 @@ class BattleRoyale(commands.Cog):
         for user in users:
             count = await self.config.user(user).get_raw(_type)
             await self.config.user(user).set_raw(_type, value=count + 1)
-    
+
     @staticmethod
     def _cooldown(ctx: commands.Context) -> Optional[commands.Cooldown]:
         if ctx.author.id in ctx.bot.owner_ids:
