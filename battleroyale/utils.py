@@ -24,10 +24,13 @@ SOFTWARE.
 
 import functools
 import logging
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
+import discord
 from redbot.core import commands
 from typing_extensions import ParamSpec
+
+from redbot.core.bot import Red
 
 P = ParamSpec("P")
 
@@ -86,3 +89,11 @@ class Emoji:
             return self.name
         animated = "a" if self.animated else ""
         return f"<{animated}:{self.name}:{self.id}>"
+
+
+def _cooldown(ctx: commands.Context) -> Optional[commands.Cooldown]:
+    if ctx.author.id in ctx.bot.owner_ids:
+        return None
+    cooldown = ctx.cog.config.cooldown()
+    return commands.Cooldown(1, int(cooldown))
+        

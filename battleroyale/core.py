@@ -47,7 +47,7 @@ from redbot.core.utils.views import SimpleMenu
 from .constants import SWORDS
 from .converters import EmojiConverter
 from .game import Game
-from .utils import _get_attachments, exceptions
+from .utils import _get_attachments, exceptions, _cooldown
 from .views import JoinGameView
 
 log: logging.Logger = logging.getLogger("red.seina.battleroyale")
@@ -62,7 +62,7 @@ def game_tool(ctx: commands.Context) -> ModuleType:
 class BattleRoyale(commands.Cog):
     """Play Battle Royale with your friends!"""
 
-    __version__: Final[str] = "0.1.1"
+    __version__: Final[str] = "0.1.2"
     __author__: Final[str] = humanize_list(["inthedark.org", "MAX", "AAA3A", "sravan"])
 
     def __init__(self, bot: Red) -> None:
@@ -86,9 +86,10 @@ class BattleRoyale(commands.Cog):
         default_guild: Dict[str, int] = {
             "prize": 100,
         }
-        default_global: Dict[str, Union[int, str]] = {
+        default_global: Dict[str, Union[int, str, Dict[str, int]]] = {
             "wait": 120,
             "battle_emoji": "⚔️",
+            "cooldown": 60,
         }
 
         self.config.register_user(**default_user)
@@ -293,17 +294,23 @@ class BattleRoyale(commands.Cog):
         prize = guild_data["prize"]
         wait = global_data["wait"]
         emoji = global_data["battle_emoji"]
+        cooldown = global_data["cooldown"]
         embed = discord.Embed(
             title="Battle Royale Settings",
             color=await ctx.embed_color(),
-            description=f"**Prize:** {prize}\n**Wait:** {wait} seconds\n**Emoji:** {emoji}",
+            description=(
+                f"**Prize:** {prize}"
+                f"\n**Wait:** {wait} seconds"
+                f"\n**Emoji:** {emoji}"
+                f"\n**Cooldown:** {cooldown}"
+            ),
         )
         await ctx.send(embed=embed)
 
     @commands.guild_only()
-    @commands.group(aliases=["br"], invoke_without_command=True)
-    @commands.cooldown(1, 10, commands.BucketType.guild)
     @commands.max_concurrency(1, commands.BucketType.channel)
+    @commands.group(aliases=["br"], invoke_without_command=True)
+    @commands.dynamic_cooldown(_cooldown, commands.BucketType.guild)
     async def battleroyale(
         self, ctx: commands.Context, delay: commands.Range[int, 10, 20] = 10, skip: bool = False
     ):
