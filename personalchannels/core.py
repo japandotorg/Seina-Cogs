@@ -597,7 +597,7 @@ class PersonalChannels(commands.Cog):
             await menu(ctx, pages, DEFAULT_CONTROLS)
         else:
             await ctx.send("There is no blacklisted channel name.")
-            
+
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member):
         for member_id, data in (await self.config.all_members(guild=member.guild)).items():
