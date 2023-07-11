@@ -346,7 +346,7 @@ class PersonalChannels(commands.Cog):
         """
         Add or remove friends from your channel.
 
-        `<add_or_remove>` should be either `add` to add channels or `remove` to remove friends.
+        `<add_or_remove>` should be either `add` to add or `remove` to remove friends.
         """
         if user is None:
             await ctx.send("`User` is a required argument.")
@@ -359,7 +359,7 @@ class PersonalChannels(commands.Cog):
         friends: List[int] = await self.config.member(ctx.author).friends()
         perms: int = await self.config.member(ctx.author).permission()
 
-        if add_or_remove.lower() == "add" and friends is None:
+        if add_or_remove.lower() == "add" and perms is None:
             await ctx.send("You're not allowed to add friends in your personal channel.")
             return
 
