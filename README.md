@@ -13,7 +13,6 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 | PersonalChannels| 0.1.0            | <details><summary>Personal channel for members</summary>Personal channel for members.                                            | inthedark.org                               |
 | Calculator  | 0.1.1            | <details><summary>Math stuff</summary>Math stuff</details>                                                                       | inthedark.org                               |
 | Chemistry   | 0.1.1            | <details><summary>Chemistry</summary>Chemistry inside discord >.<</details>                                                      | inthedark.org                               |
-| StatusCodes | 0.1.0            | <details><summary>Find the meaning behind various status codes.</summary>Find the meaning behind various status codes.</details> | inthedark.org                               |
 | EpicGames   | 0.1.0            | <details><summary>A simple epic games cog.</summary>Get free games info from epic games store.</details>                         | inthedark.org                               |
 | MapleStory  | 0.1.0            | <details><summary>A simple maple story cog.</summary>Get user info from the maple story API.</details>                           | inthedark.org                               |
 | MsgUtils    | 0.1.1            | <details><summary>Dump stuff.</summary>Useful message utilities.</details>                                                       | inthedark.org                               |
