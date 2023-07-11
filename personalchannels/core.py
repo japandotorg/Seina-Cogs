@@ -171,11 +171,7 @@ class PersonalChannels(commands.Cog):
             await self.config.member(user).channel.clear()
         elif isinstance(user, int):
             await self.config.member_from_ids(ctx.guild.id, user).channel.clear()
-            if _user := self.bot.get_user(user):
-                user = _user
-            else:
-                user = discord.Object(user)  # type: ignore
-                user.name = "[Unknown or Deleted User]"  # type: ignore
+            user = await self.bot.get_or_fetch_user(user)
         await ctx.send(f"Unassigned {user.name} ({user.id}) from their personal channel.")
 
     @_my_channel.command(name="list")
@@ -355,6 +351,10 @@ class PersonalChannels(commands.Cog):
         if user is None:
             await ctx.send("`User` is a required argument.")
             return
+        
+        if add_or_remove.lower() not in ["add", "remove"]:
+            await ctx.send("Not a recognized option. (`add` or `remove`).")
+            return
 
         friends: List[int] = await self.config.member(ctx.author).friends()
         perms: int = await self.config.member(ctx.author).permission()
@@ -378,7 +378,7 @@ class PersonalChannels(commands.Cog):
                 if user.id in friends:
                     await ctx.send(f"{user.display_name} is already in your friend list.")
                     return
-                if not user.id in friends:
+                elif not user.id in friends:
                     try:
                         await self.bot.http.edit_channel_permissions(
                             channel_id=channel.id,
@@ -392,7 +392,7 @@ class PersonalChannels(commands.Cog):
                         )
                     except discord.HTTPException as e:
                         raise commands.UserFeedbackCheckFailure(
-                            "Unable to create channel.\n{}".format(box(str(e), lang="py"))
+                            "Unable to add user to the channel..\n{}".format(box(str(e), lang="py"))
                         )
                     else:
                         friends.append(user.id)
@@ -412,7 +412,7 @@ class PersonalChannels(commands.Cog):
                         )
                     except discord.HTTPException as e:
                         raise commands.UserFeedbackCheckFailure(
-                            "Unable to create channel.\n{}".format(box(str(e), lang="py"))
+                            "Unable to remove user from the channel.\n{}".format(box(str(e), lang="py"))
                         )
                     else:
                         friends.remove(user.id)
