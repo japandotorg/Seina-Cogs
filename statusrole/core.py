@@ -105,8 +105,8 @@ class StatusRole(commands.Cog):
         self, before: discord.Member, after: discord.Member
     ) -> None:
         if (
-            before.bot
-            or after.id in self.blacklist[after.guild]  # Member is a bot
+            before.bot # Member is a bot
+            or after.id in self.blacklist[after.guild] # Member is blacklisted
             or await self.bot.cog_disabled_in_guild(self, before.guild)
             or not after.guild.me.guild_permissions.manage_roles  # Cog disabled in guild
             or before.activity == after.activity  # Cannot manage roles  # Activity did not change
