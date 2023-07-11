@@ -168,9 +168,9 @@ class PersonalChannels(commands.Cog):
         Unassign personal text channel from someone.
         """
         if isinstance(user, discord.Member):
-            await self.config.member(user).channel.clear()
+            await self.config.member(user).clear()
         elif isinstance(user, int):
-            await self.config.member_from_ids(ctx.guild.id, user).channel.clear()
+            await self.config.member_from_ids(ctx.guild.id, user).clear()
             user = await self.bot.get_or_fetch_user(user)
         await ctx.send(f"Unassigned {user.name} ({user.id}) from their personal channel.")
 
