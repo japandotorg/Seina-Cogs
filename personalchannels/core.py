@@ -352,7 +352,7 @@ class PersonalChannels(commands.Cog):
         if user is None:
             await ctx.send("`User` is a required argument.")
             return
-        
+
         if add_or_remove.lower() not in ["add", "remove"]:
             await ctx.send("Not a recognized option. (`add` or `remove`).")
             return
@@ -393,7 +393,9 @@ class PersonalChannels(commands.Cog):
                         )
                     except discord.HTTPException as e:
                         raise commands.UserFeedbackCheckFailure(
-                            "Unable to add user to the channel..\n{}".format(box(str(e), lang="py"))
+                            "Unable to add user to the channel..\n{}".format(
+                                box(str(e), lang="py")
+                            )
                         )
                     else:
                         friends.append(user.id)
@@ -413,7 +415,9 @@ class PersonalChannels(commands.Cog):
                         )
                     except discord.HTTPException as e:
                         raise commands.UserFeedbackCheckFailure(
-                            "Unable to remove user from the channel.\n{}".format(box(str(e), lang="py"))
+                            "Unable to remove user from the channel.\n{}".format(
+                                box(str(e), lang="py")
+                            )
                         )
                     else:
                         friends.remove(user.id)
