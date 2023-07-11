@@ -148,14 +148,15 @@ class PersonalChannels(commands.Cog):
     @commands.admin_or_permissions(manage_guild=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def assign(
-        self, ctx: commands.Context, user: discord.Member, *, channel: discord.TextChannel
+        self, ctx: commands.Context, user: discord.Member, *, channel: discord.TextChannel, perms: commands.Range[int, 1, 30] = None
     ):
         """
         Assign a personal text channel to someone.
         """
+        await self.config.member(user).permission.set(perms)
         await self.config.member(user).channel.set(channel.id)
         await ctx.send(
-            f"Assigned {user.name} ({user.id}) to channel {channel.name} ({channel.id})."
+            f"Assigned {user.name} ({user.id}) to channel {channel.name} ({channel.id}) with user limit perms {perms}."
         )
 
     @_my_channel.command()
