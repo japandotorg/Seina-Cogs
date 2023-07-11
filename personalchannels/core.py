@@ -148,7 +148,12 @@ class PersonalChannels(commands.Cog):
     @commands.admin_or_permissions(manage_guild=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def assign(
-        self, ctx: commands.Context, user: discord.Member, *, channel: discord.TextChannel, perms: commands.Range[int, 1, 30] = None
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        *,
+        channel: discord.TextChannel,
+        perms: commands.Range[int, 1, 30] = None,
     ):
         """
         Assign a personal text channel to someone.
