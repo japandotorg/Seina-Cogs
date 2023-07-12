@@ -47,7 +47,7 @@ class Animals(commands.Cog):
     """
 
     __author__: Final[str] = humanize_list(["inthedark.org"])
-    __version__: Final[str] = "0.1.0"
+    __version__: Final[str] = "0.1.1"
 
     def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
@@ -442,8 +442,11 @@ class Animals(commands.Cog):
         Random red pandas!
         """
         await ctx.typing()
+        description = await AnimalAPI(self.session).fact("redpanda")
         image = await AnimalAPI(self.session).image("redpanda")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
+        embed: discord.Embed = discord.Embed(
+            description=description, color=await ctx.embed_color()
+        ).set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
@@ -506,6 +509,78 @@ class Animals(commands.Cog):
         await ctx.typing()
         image = await AnimalAPI(self.session).image("turtle")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
+        await ctx.reply(
+            embed=embed,
+            allowed_mentions=discord.AllowedMentions(replied_user=False),
+        )
+
+    @commands.command(name="fox")
+    async def _fox(self, ctx: commands.Context):
+        """
+        Random foxes!
+        """
+        await ctx.typing()
+        description = await AnimalAPI(self.session).fact("fox")
+        image = await AnimalAPI(self.session).image("fox")
+        embed: discord.Embed = discord.Embed(
+            color=await ctx.embed_color(),
+            description=description,
+        )
+        embed.set_image(url=image)
+        await ctx.reply(
+            embed=embed,
+            allowed_mentions=discord.AllowedMentions(replied_user=False),
+        )
+
+    @commands.command(name="koala")
+    async def _koala(self, ctx: commands.Context):
+        """
+        Random koalas!
+        """
+        await ctx.typing()
+        description = await AnimalAPI(self.session).fact("koala")
+        image = await AnimalAPI(self.session).image("koala")
+        embed: discord.Embed = discord.Embed(
+            color=await ctx.embed_color(),
+            description=description,
+        )
+        embed.set_image(url=image)
+        await ctx.reply(
+            embed=embed,
+            allowed_mentions=discord.AllowedMentions(replied_user=False),
+        )
+
+    @commands.command(name="kangaroo")
+    async def _kangaroo(self, ctx: commands.Context):
+        """
+        Random kangaroos!
+        """
+        await ctx.typing()
+        description = await AnimalAPI(self.session).fact("kangaroo")
+        image = await AnimalAPI(self.session).image("kangaroo")
+        embed: discord.Embed = discord.Embed(
+            color=await ctx.embed_color(),
+            description=description,
+        )
+        embed.set_image(url=image)
+        await ctx.reply(
+            embed=embed,
+            allowed_mentions=discord.AllowedMentions(replied_user=False),
+        )
+
+    @commands.command(name="raccoon")
+    async def _raccoon(self, ctx: commands.Context):
+        """
+        Random raccoons!
+        """
+        await ctx.typing()
+        description = await AnimalAPI(self.session).fact("raccoon")
+        image = await AnimalAPI(self.session).image("raccoon")
+        embed: discord.Embed = discord.Embed(
+            color=await ctx.embed_color(),
+            description=description,
+        )
+        embed.set_image(url=image)
         await ctx.reply(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
