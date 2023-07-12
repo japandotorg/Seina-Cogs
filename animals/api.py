@@ -39,7 +39,7 @@ class AnimalAPI:
         self.endpoints: Dict[str, Dict[str, List[Dict[str, str]]]] = {
             "images": {
                 "bear": [{"url": "https://and-here-is-my-code.glitch.me/img/bear", "key": "Link"}],
-                "bird": [{"url": "https://some-random-api.ml/img/birb", "key": "link"}],
+                "bird": [{"url": "https://some-random-api.com/animal/bird", "key": "image"}],
                 "dolphin": [
                     {"url": "https://and-here-is-my-code.glitch.me/img/dolphin", "key": "Link"}
                 ],
@@ -65,10 +65,10 @@ class AnimalAPI:
                 "lion": [{"url": "https://and-here-is-my-code.glitch.me/img/lion", "key": "Link"}],
                 "panda": [
                     {"url": "https://and-here-is-my-code.glitch.me/img/panda", "key": "Link"},
-                    {"url": "https://some-random-api.ml/img/panda", "key": "link"},
+                    {"url": "https://some-random-api.com/animal/panda", "key": "image"},
                 ],
                 "pig": [{"url": "https://and-here-is-my-code.glitch.me/img/pig", "key": "Link"}],
-                "redpanda": [{"url": "https://some-random-api.ml/img/red_panda", "key": "link"}],
+                "redpanda": [{"url": "https://some-random-api.com/animal/red_panda", "key": "image"}],
                 "shark": [
                     {"url": "https://and-here-is-my-code.glitch.me/img/shark", "key": "Link"}
                 ],
@@ -86,7 +86,7 @@ class AnimalAPI:
                 "bear": [
                     {"url": "https://and-here-is-my-code.glitch.me/facts/bear", "key": "Link"}
                 ],
-                "bird": [{"url": "https://some-random-api.ml/facts/bird", "key": "fact"}],
+                "bird": [{"url": "https://some-random-api.com/animal/bird", "key": "fact"}],
                 "fox": [{"url": "https://some-random-api.ml/facts/fox", "key": "fact"}],
                 "giraffe": [
                     {"url": "https://and-here-is-my-code.glitch.me/facts/giraffe", "key": "Link"}
@@ -94,7 +94,7 @@ class AnimalAPI:
                 "lion": [
                     {"url": "https://and-here-is-my-code.glitch.me/facts/lion", "key": "Link"}
                 ],
-                "panda": [{"url": "https://some-random-api.ml/facts/panda", "key": "fact"}],
+                "panda": [{"url": "https://some-random-api.com/animal/panda", "key": "fact"}],
                 "shark": [
                     {"url": "https://and-here-is-my-code.glitch.me/facts/shark", "key": "Link"}
                 ],
