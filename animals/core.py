@@ -585,7 +585,7 @@ class Animals(commands.Cog):
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
-    
+
     @commands.command(name="whale")
     async def _whale(self, ctx: commands.Context):
         """
@@ -598,7 +598,7 @@ class Animals(commands.Cog):
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
-    
+
     @commands.command(name="lizard")
     async def _lizard(self, ctx: commands.Context):
         """
