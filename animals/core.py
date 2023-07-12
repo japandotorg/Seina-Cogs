@@ -455,7 +455,7 @@ class Animals(commands.Cog):
         Random sharks!
         """
         await ctx.typing()
-        description = await AnimalAPI(self.session).image("shark")
+        description = await AnimalAPI(self.session).fact("shark")
         image = await AnimalAPI(self.session).image("shark")
         embed: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
