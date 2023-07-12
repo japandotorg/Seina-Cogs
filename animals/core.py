@@ -586,19 +586,6 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
-    @commands.command(name="whale")
-    async def _whale(self, ctx: commands.Context):
-        """
-        Random whales!
-        """
-        await ctx.typing()
-        image = await AnimalAPI(self.session).image("whale")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.reply(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-        )
-
     @commands.command(name="lizard")
     async def _lizard(self, ctx: commands.Context):
         """
