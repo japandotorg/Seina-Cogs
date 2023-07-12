@@ -83,18 +83,12 @@ class AnimalAPI:
                 "turtle": [
                     {"url": "https://and-here-is-my-code.glitch.me/img/turtle", "key": "Link"}
                 ],
-                "fox": [
-                    {"url": "https://some-random-api.com/animal/fox", "key": "image"}
-                ],
-                "koala": [
-                    {"url": "https://some-random-api.com/animal/koala", "key": "image"}
-                ],
+                "fox": [{"url": "https://some-random-api.com/animal/fox", "key": "image"}],
+                "koala": [{"url": "https://some-random-api.com/animal/koala", "key": "image"}],
                 "kangaroo": [
                     {"url": "https://some-random-api.com/animal/kangaroo", "key": "image"}
                 ],
-                "raccoon": [
-                    {"url": "https://some-random-api.com/animal/raccoon", "key": "image"}
-                ]
+                "raccoon": [{"url": "https://some-random-api.com/animal/raccoon", "key": "image"}],
             },
             "facts": {
                 "bear": [
@@ -116,18 +110,12 @@ class AnimalAPI:
                 "snake": [
                     {"url": "https://and-here-is-my-code.glitch.me/facts/snake", "key": "Link"}
                 ],
-                "fox": [
-                    {"url": "https://some-random-api.com/animal/fox", "key": "fact"}
-                ],
-                "koala": [
-                    {"url": "https://some-random-api.com/animal/koala", "key": "fact"}
-                ],
+                "fox": [{"url": "https://some-random-api.com/animal/fox", "key": "fact"}],
+                "koala": [{"url": "https://some-random-api.com/animal/koala", "key": "fact"}],
                 "kangaroo": [
                     {"url": "https://some-random-api.com/animal/kangaroo", "key": "fact"}
                 ],
-                "raccoon": [
-                    {"url": "https://some-random-api.com/animal/raccoon", "key": "fact"}
-                ]
+                "raccoon": [{"url": "https://some-random-api.com/animal/raccoon", "key": "fact"}],
             },
         }
 
