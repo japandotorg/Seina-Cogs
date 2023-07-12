@@ -68,7 +68,9 @@ class AnimalAPI:
                     {"url": "https://some-random-api.com/animal/panda", "key": "image"},
                 ],
                 "pig": [{"url": "https://and-here-is-my-code.glitch.me/img/pig", "key": "Link"}],
-                "redpanda": [{"url": "https://some-random-api.com/animal/red_panda", "key": "image"}],
+                "redpanda": [
+                    {"url": "https://some-random-api.com/animal/red_panda", "key": "image"}
+                ],
                 "shark": [
                     {"url": "https://and-here-is-my-code.glitch.me/img/shark", "key": "Link"}
                 ],
