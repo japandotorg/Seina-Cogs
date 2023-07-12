@@ -89,7 +89,7 @@ class AnimalAPI:
                     {"url": "https://some-random-api.com/animal/kangaroo", "key": "image"}
                 ],
                 "raccoon": [{"url": "https://some-random-api.com/animal/raccoon", "key": "image"}],
-                "lizard": [{"url": "https://nekos.life/api/v2/img/lizard", "key": "url"}]
+                "lizard": [{"url": "https://nekos.life/api/v2/img/lizard", "key": "url"}],
             },
             "facts": {
                 "bear": [
