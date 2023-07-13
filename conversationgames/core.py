@@ -175,8 +175,7 @@ class ConversationGames(commands.Cog):
         """
         Would you rather?
         """
-        await ctx.typing()
-        async with TruthOrDareAPIClient() as client:
+        async with TruthOrDareAPIClient() as client, ctx.typing():
             rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("wyr", rating)
             embed: discord.Embed = discord.Embed(
@@ -193,8 +192,7 @@ class ConversationGames(commands.Cog):
         """
         Never have I ever.
         """
-        await ctx.typing()
-        async with TruthOrDareAPIClient() as client:
+        async with TruthOrDareAPIClient() as client, ctx.typing():
             rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("nhie", rating)
             embed: discord.Embed = discord.Embed(
@@ -211,8 +209,7 @@ class ConversationGames(commands.Cog):
         """
         Paranoia questions.
         """
-        await ctx.typing()
-        async with TruthOrDareAPIClient() as client:
+        async with TruthOrDareAPIClient() as client, ctx.typing():
             rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("paranoia", rating)
             embed: discord.Embed = discord.Embed(
@@ -229,12 +226,11 @@ class ConversationGames(commands.Cog):
         """
         Truth questions, optionally ask truth questions to members!
         """
-        await ctx.typing()
         if member is None:
             title = None
         else:
             title = f"{ctx.author.name} asked {member.name}"
-        async with TruthOrDareAPIClient() as client:
+        async with TruthOrDareAPIClient() as client, ctx.typing():
             rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("truth", rating)
             embed: discord.Embed = discord.Embed(
@@ -251,12 +247,11 @@ class ConversationGames(commands.Cog):
         """
         Dare questions, optionally ask dare questions to members!
         """
-        await ctx.typing()
         if member is None:
             title = None
         else:
             title = f"{ctx.author.name} asked {member.name}"
-        async with TruthOrDareAPIClient() as client:
+        async with TruthOrDareAPIClient() as client, ctx.typing():
             rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("dare", rating)
             embed: discord.Embed = discord.Embed(
