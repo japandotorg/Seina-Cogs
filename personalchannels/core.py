@@ -27,7 +27,6 @@ SOFTWARE.
 import asyncio
 import io
 from textwrap import shorten
-from tabulate import tabulate
 from typing import Dict, Final, List, Literal, Optional, Union
 
 import discord
@@ -40,6 +39,7 @@ from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.views import SimpleMenu
+from tabulate import tabulate
 
 RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
@@ -359,24 +359,24 @@ class PersonalChannels(commands.Cog):
             if user is None:
                 await ctx.send("`User` is a required argument.")
                 return
-    
+
             friends: List[int] = await self.config.member(ctx.author).friends()
             perms: int = await self.config.member(ctx.author).permission()
-    
+
             if add_or_remove.lower() == "add" and perms is None:
                 await ctx.send("You're not allowed to add friends in your personal channel.")
                 return
-    
+
             if add_or_remove.lower() == "add" and len(friends) >= perms:
                 await ctx.send(
                     "You are at maximum capacity, you cannot add any more friends to your channel."
                 )
                 self._friends.reset_cooldown(ctx)
                 return
-    
+
             channel_id = await self.config.member(ctx.author).channel()
             channel = ctx.guild.get_channel(channel_id)
-    
+
             async with self.config.member(ctx.author).friends() as friends:
                 if add_or_remove.lower() == "add":
                     if user.id in friends:
@@ -402,7 +402,7 @@ class PersonalChannels(commands.Cog):
                             )
                         else:
                             friends.append(user.id)
-    
+
                 elif add_or_remove.lower() == "remove":
                     if not user.id in friends:
                         await ctx.send(f"{user.display_name} is not in your friend list.")
@@ -424,12 +424,12 @@ class PersonalChannels(commands.Cog):
                             )
                         else:
                             friends.remove(user.id)
-    
+
             await ctx.send(
                 f"Successfully {'added' if add_or_remove.lower() == 'add' else 'removed'} "
                 f"{user.display_name} {'to' if add_or_remove.lower() == 'add' else 'from'} your friend list."
             )
-    
+
     @_friends.command(name="list")
     async def _friends_list(self, ctx: commands.Context):
         """
@@ -437,17 +437,15 @@ class PersonalChannels(commands.Cog):
         """
         member_config = self.config.member(ctx.author)
         friends_list = await member_config.friends()
-        
+
         if not friends_list:
-            await ctx.send(
-                "You do not have any friends added."
-            )
+            await ctx.send("You do not have any friends added.")
             return
-        
+
         friends = [ctx.guild.get_member(member_id) for member_id in friends_list]
         friends = [member for member in friends if member is not None]
         friends = sorted(friends, key=lambda x: x.name)
-        
+
         pages = []
         for index in range(0, len(friends), 10):
             entries = friends[index : index + 10]
@@ -458,7 +456,7 @@ class PersonalChannels(commands.Cog):
                 color=await ctx.embed_color(),
             )
             pages.append(embed)
-        
+
         await SimpleMenu(pages).start(ctx)
 
     @has_assigned_channel()
