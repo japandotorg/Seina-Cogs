@@ -32,6 +32,7 @@ from red_commons.logging import RedTraceLogger, getLogger
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box, humanize_list
+from redbot.core.utils.views import SimpleMenu
 
 log: RedTraceLogger = getLogger("red.seinacogs.antilinks")
 
@@ -48,7 +49,7 @@ class AntiLinks(commands.Cog):
     """
 
     __author__: Final[List[str]] = ["inthedark.org", "aikaterna"]
-    __version__: Final[str] = "0.1.0"
+    __version__: Final[str] = "0.1.1"
 
     def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
@@ -126,161 +127,186 @@ class AntiLinks(commands.Cog):
         Whitelist options.
         """
 
-    @_whitelist.group(name="role")
-    async def _whitelist_role(self, ctx: commands.Context) -> None:
+    @_whitelist.group(name="role", invoke_without_command=True)
+    async def _whitelist_role(
+        self,
+        ctx: commands.Context,
+        add_or_remove: Literal["add", "remove"],
+        roles: commands.Greedy[discord.Role] = None,
+    ) -> None:
         """
-        Whitelist roles.
+        Add or remove roles from the whitelist.
         """
-
-    @_whitelist_role.command(name="add", aliases=["+", "create"])
-    async def _role_add(self, ctx: commands.Context, *, role_name: discord.Role) -> None:
-        """
-        Add a role to the whitelist.
-        """
-        role_list = await self.config.guild(ctx.guild).role()
-        if role_name.id not in role_list:
-            role_list.append(role_name.id)
-        else:
-            await ctx.send("Role already whitelisted.")
-            return
-        await self.config.guild(ctx.guild).role.set(role_list)
-        await ctx.send(f"{role_name.name} appended to the role whitelist.")
-
-    @_whitelist_role.command(name="remove", aliases=["-", "delete"])
-    async def _role_remove(self, ctx: commands.Context, *, role_name: discord.Role) -> None:
-        """
-        Remove a role from the whitelist.
-        """
-        role_list = await self.config.guild(ctx.guild).role()
-        if role_name.id in role_list:
-            role_list.remove(role_name.id)
-        else:
-            await ctx.send("Role not whitelisted.")
-            return
-        await self.config.guild(ctx.guild).role.set(role_list)
-        await ctx.send(f"{role_name.name} removed from the role whitelist.")
+        if ctx.invoked_subcommand is None:
+            if roles is None:
+                await ctx.send("`Roles` is a required argument.")
+                return
+            
+            async with self.config.guild(ctx.guild).role() as role_list:
+                for role in roles:
+                    if add_or_remove.lower() == "add":
+                        if not role.id in role_list:
+                            role_list.append(role.id)
+                    elif add_or_remove.lower() == "remove":
+                        if role.id in role_list:
+                            role_list.remove(role.id)
+            
+            ids = len(list(roles))
+            await ctx.send(
+                f"Successfully {'added' if add_or_remove.lower() == 'add' else 'removed'} {ids} {'role' if ids == 1 else 'roles'}."
+            )
 
     @_whitelist_role.command(name="list", aliases=["view"])
     async def _role_list(self, ctx: commands.Context) -> None:
         """
         List whitelisted roles.
         """
-        role_list = await self.config.guild(ctx.guild).role()
-        role_msg = "Whitelisted Roles:\n"
-        if not role_list:
-            role_msg += "No roles."
-        for role in role_list:
-            role_obj = discord.utils.get(ctx.guild.roles, id=role)
-            role_msg += f"- {role_obj.name}\n"
-        await ctx.send(box(role_msg, lang="md"))
-
-    @_whitelist.group(name="user")
-    async def _whitelist_user(self, ctx: commands.Context) -> None:
-        """
-        Whitelist users.
-        """
-
-    @_whitelist_user.command(name="add", aliases=["+", "create"])
-    async def _user_add(self, ctx: commands.Context, *, user: discord.Member) -> None:
-        """
-        Add a user to the whitelist.
-        """
-        user_list = await self.config.guild(ctx.guild).user()
-        if user.id not in user_list:
-            user_list.append(user.id)
-        else:
-            await ctx.send("User already whitelisted.")
+        guild_config = self.config.guild(ctx.guild)
+        whitelisted_roles = await guild_config.role()
+        
+        if not whitelisted_roles:
+            await ctx.send(
+                "There are no whitelisted roles in this server."
+            )
             return
-        await self.config.guild(ctx.guild).user.set(user_list)
-        await ctx.send(f"{user.display_name} appended to the user whitelist.")
+        
+        whitelisted = [ctx.guild.get_role(role_id) for role_id in whitelisted_roles]
+        whitelisted = [role for role in whitelisted if role is not None]
+        whitelisted = sorted(whitelisted, key=lambda x: x.name)
+        
+        pages = []
+        for index in range(0, len(whitelisted), 10):
+            entries = whitelisted[index : index + 10]
+            page_content = "\n".join(f"- {role.mention} ({role.id})" for role in entries)
+            embed: discord.Embed = discord.Embed(
+                title="Whitelisted Roles",
+                description=page_content,
+                color=await ctx.embed_color()
+            )
+            pages.append(embed)
+            
+        await SimpleMenu(pages).start(ctx)
 
-    @_whitelist_user.command(name="remove", aliases=["-", "delete"])
-    async def _user_remove(self, ctx: commands.Context, user: discord.Member) -> None:
+    @_whitelist.group(name="user", invoke_without_command=True)
+    async def _whitelist_user(
+        self,
+        ctx: commands.Context,
+        add_or_remove: Literal["add", "remove"],
+        members: commands.Greedy[discord.Member] = None,
+    ) -> None:
         """
-        Remove a user from the whitelist
+        Add or remove users from the whitelist.
         """
-        user_list = await self.config.guild(ctx.guild).user()
-        if user.id in user_list:
-            user_list.remove(user.id)
-        else:
-            await ctx.send("User not whitelisted.")
-            return
-        await self.config.guild(ctx.guild).user.set(user_list)
-        await ctx.send(f"{user.display_name} removed from the user whitelist.")
+        if ctx.invoked_subcommand is None:
+            if members is None:
+                await ctx.send("`Members` is a required argument.")
+                return
+            
+            async with self.config.guild(ctx.guild).user() as user_list:
+                for member in members:
+                    if add_or_remove.lower() == "add":
+                        if not member.id in user_list:
+                            user_list.append(member.id)
+                    elif add_or_remove.lower() == "remove":
+                        if member.id in user_list:
+                            user_list.remove(member.id)
+                        
+            ids = len(list(members))
+            await ctx.send(
+                f"Successfully {'added' if add_or_remove.lower() == 'add' else 'removed'} {ids} {'member' if ids == 1 else 'members'}."
+            )
 
     @_whitelist_user.command(name="list")
     async def _user_list(self, ctx: commands.Context) -> None:
         """
         List whitelisted users.
         """
-        user_list = await self.config.guild(ctx.guild).user()
-        user_msg = "Whitelisted Users:\n"
-        if not user_list:
-            user_msg += "No users."
-        for user in user_list:
-            user_obj = discord.utils.get(ctx.guild.members, id=user)
-            user_msg += f"- {user_obj.display_name}\n"
-        await ctx.send(box(user_msg, lang="md"))
+        guild_config = self.config.guild(ctx.guild)
+        whitelisted_users = await guild_config.user()
+        
+        if not whitelisted_users:
+            await ctx.send("There are no whitelisted users in this server.")
+            
+        whitelisted = [await self.bot.get_or_fetch_user(user_id) for user_id in whitelisted_users]
+        whitelisted = [user for user in whitelisted if user is not None]
+        whitelisted = sorted(whitelisted, key=lambda x: x.name)
+        
+        pages = []
+        for index in range(0, len(whitelisted), 10):
+            entries = whitelisted[index : index + 10]
+            page_content = "\n".join(f"- {user.mention} ({user.id})" for user in entries)
+            embed: discord.Embed = discord.Embed(
+                title="Whitelisted Users",
+                description=page_content,
+                color=await ctx.embed_color()
+            )
+            pages.append(embed)
+            
+        await SimpleMenu(pages).start(ctx)
 
-    @_anti.group(name="watch")
-    async def _watch(self, ctx: commands.Context) -> None:
+    @_anti.group(name="watch", invoke_without_command=True)
+    async def _watch(
+        self,
+        ctx: commands.Context,
+        add_or_remove: Literal["add", "remove"],
+        channels: commands.Greedy[discord.TextChannel] = None,
+    ) -> None:
         """
         Add/remove/list channels to watch.
 
         - If added, links will be removed in these channels.
         """
-
-    @_watch.command(name="add", aliases=["+", "create"])
-    async def _watch_add(self, ctx: commands.Context, channel: discord.TextChannel) -> None:
-        """
-        Add a channel to watch.
-        """
-        channel_list = await self.config.guild(ctx.guild).watching()
-        if channel.id not in channel_list:
-            channel_list.append(channel.id)
-        else:
-            await ctx.send("Already watching the channel.")
-            return
-        await self.config.guild(ctx.guild).watching.set(channel_list)
-        await ctx.send(f"{channel.mention} will have links removed.")
-
-    @_watch.command(name="remove", aliases=["-", "delete"])
-    async def _watch_remove(self, ctx: commands.Context, channel: discord.TextChannel) -> None:
-        """
-        Remove a channel from watch.
-        """
-        channel_list = await self.config.guild(ctx.guild).watching()
-        if channel.id in channel_list:
-            channel_list.remove(channel.id)
-        else:
-            await ctx.send("Channel is not being watched.")
-            return
-        await self.config.guild(ctx.guild).watching.set(channel_list)
-        await ctx.send(f"{channel.mention} will not have links removed.")
+        if ctx.invoked_subcommand is None:
+            if channels is None:
+                await ctx.send("`Channels` is a required argument.")
+                return
+            
+            async with self.config.guild(ctx.guild).watching() as watching:
+                for channel in channels:
+                    if add_or_remove.lower() == "add":
+                        if not channel.id in watching:
+                            watching.append(channel.id)
+                    elif add_or_remove.lower() == "remove":
+                        if channel.id in watching:
+                            watching.remove(channel.id)
+                            
+            ids = len(list(channels))
+            await ctx.send(
+                f"Successfully {'added' if add_or_remove.lower() == 'add' else 'removed'} "
+                f"{ids} {'channel' if ids == 1 else 'channels'} {'to' if add_or_remove.lower() == 'add' else 'from'} "
+                "the channel watch list."
+            )
+        
+        
 
     @_watch.command(name="list")
     async def _watch_list(self, ctx: commands.Context) -> None:
         """
         List the channels being watched.
         """
-        channel_list = await self.config.guild(ctx.guild).watching()
-        msg = "Links will be removed in:\n"
-        if not channel_list:
-            msg += "No channels."
-        else:
-            remove_list = []
-            for channel in channel_list:
-                channel_obj = self.bot.get_channel(channel)
-                if not channel_obj:
-                    remove_list.append(channel)
-                else:
-                    msg += f"- {channel_obj.mention}\n"
-            if remove_list:
-                new_list = [x for x in channel_list if x not in remove_list]
-                await self.config.guild(ctx.guild).watching.set(new_list)
-                if len(remove_list) == len(channel_list):
-                    msg += "No channels."
-        await ctx.send(box(msg, lang="md"))
+        guild_config = self.config.guild(ctx.guild)
+        watch_list = await guild_config.watching()
+        
+        if not watch_list:
+            await ctx.send("No channels being watched at this moment.")
+            return
+        
+        channel_list = [ctx.guild.get_channel(channel_id) for channel_id in watch_list]
+        channel_list = [channel for channel in channel_list if channel is not None]
+        channel_list = sorted(channel_list, key=lambda x: x.name)
+        
+        pages = []
+        for index in range(0, len(channel_list), 10):
+            entries = channel_list[index : index + 10]
+            page_content = "\n".join(f"{channel.mention} ({channel.id})" for channel in entries)
+            embed: discord.Embed = discord.Embed(
+                title="AntiLinks Watch List",
+                description=page_content,
+                color=await ctx.embed_color()
+            )
+            pages.append(embed)
+            
+        await SimpleMenu(pages).start(ctx)
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
