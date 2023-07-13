@@ -31,6 +31,7 @@ from types import TracebackType
 from typing import Any, Dict, Final, List, Literal, Optional, Tuple, Type, Union, final
 
 import aiohttp
+from aiohttp import connector
 import discord
 import yarl
 from aiohttp_client_cache import SQLiteBackend
@@ -102,7 +103,7 @@ class HTTPClient:
         self,
         exc_type: Optional[Type[BaseException]],
         exc_val: Optional[BaseException],
-        exc_tb: Optional[Type[TracebackType]],
+        exc_tb: Optional[TracebackType],
     ):
         await self.close()
 
