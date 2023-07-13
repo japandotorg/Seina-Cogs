@@ -103,8 +103,8 @@ class ConversationGames(commands.Cog):
                 description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-            _view = CGView(result, await ctx.embed_color())
-        _out = await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
+        _view = CGView(result, ctx)
+        _out = await ctx.reply(embed=embed, view=_view, allowed_mentions=discord.AllowedMentions(replied_user=False))
         _view._message = _out
 
     @commands.guild_only()
@@ -122,8 +122,8 @@ class ConversationGames(commands.Cog):
                 description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-            _view = CGView(result, await ctx.embed_color())
-        _out = await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
+        _view = CGView(result, ctx)
+        _out = await ctx.reply(embed=embed, view=_view, allowed_mentions=discord.AllowedMentions(replied_user=False))
         _view._message = _out
 
     @commands.guild_only()
@@ -141,8 +141,8 @@ class ConversationGames(commands.Cog):
                 description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-            _view = CGView(result, await ctx.embed_color())
-        _out = await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
+        _view = CGView(result, ctx)
+        _out = await ctx.reply(embed=embed, view=_view, allowed_mentions=discord.AllowedMentions(replied_user=False))
         _view._message = _out
 
     @commands.guild_only()
@@ -164,8 +164,8 @@ class ConversationGames(commands.Cog):
                 title=title, description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-            _view = CGView(result, await ctx.embed_color())
-        _out = await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
+        _view = CGView(result, ctx)
+        _out = await ctx.reply(embed=embed, view=_view, allowed_mentions=discord.AllowedMentions(replied_user=False))
         _view._message = _out
 
     @commands.guild_only()
@@ -187,8 +187,8 @@ class ConversationGames(commands.Cog):
                 title=title, description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-            _view = CGView(result, await ctx.embed_color())
-        _out = await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
+        _view = CGView(result, ctx)
+        _out = await ctx.reply(embed=embed, view=_view, allowed_mentions=discord.AllowedMentions(replied_user=False))
         _view._message = _out
 
     @commands.guild_only()
