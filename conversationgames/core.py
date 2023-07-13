@@ -25,21 +25,20 @@ SOFTWARE.
 # The idea of this cog is taken from https://github.com/Jintaku/Jintaku-Cogs-V3/tree/master/conversationgames
 
 import io
-import yarl
 import logging
 from datetime import timedelta
 from types import TracebackType
-from typing_extensions import Self
-from typing import Any, Final, Dict, List, Literal, Optional, Tuple, Type, Union, final
+from typing import Any, Dict, Final, List, Literal, Optional, Tuple, Type, Union, final
 
 import aiohttp
+import discord
+import yarl
 from aiohttp_client_cache import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
-
-import discord
-from redbot.core.bot import Red
 from redbot.core import Config, commands
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
+from typing_extensions import Self
 
 SESSION_TIMEOUT: int = 15
 
@@ -122,7 +121,7 @@ class TruthOrDareAPIClient(HTTPClient):
 
 class ConversationGames(commands.Cog):
     """Conversation games"""
-    
+
     __author__: Final[List[str]] = ["inthedark.org"]
     __version__: Final[str] = "0.1.0"
 
@@ -135,7 +134,7 @@ class ConversationGames(commands.Cog):
             "rating": "pg",
         }
         self.config.register_guild(**default_guild)
-    
+
     async def red_get_data_for_user(
         self, *, requester: RequestType, user_id: int
     ) -> Dict[str, io.BytesIO]:
@@ -144,7 +143,7 @@ class ConversationGames(commands.Cog):
         """
         data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
         return {"user_data.txt": io.BytesIO(data.encode())}
-    
+
     async def red_delete_data_for_user(self, **kwargs: Any) -> Dict[str, io.BytesIO]:
         """
         Delete a user's personal data.
@@ -153,7 +152,7 @@ class ConversationGames(commands.Cog):
         user_id: Any = kwargs.get("user_id")
         data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
         return {"user_data.txt": io.BytesIO(data.encode())}
-    
+
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
         n = "\n" if "\n\n" not in pre_processed else ""
@@ -178,7 +177,7 @@ class ConversationGames(commands.Cog):
         """
         await ctx.typing()
         async with TruthOrDareAPIClient() as client:
-            rating = await self._get_rating(ctx.guild) # type: ignore
+            rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("wyr", rating)
             embed: discord.Embed = discord.Embed(
                 description=result["question"], color=await ctx.embed_color()
@@ -196,7 +195,7 @@ class ConversationGames(commands.Cog):
         """
         await ctx.typing()
         async with TruthOrDareAPIClient() as client:
-            rating = await self._get_rating(ctx.guild) # type: ignore
+            rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("nhie", rating)
             embed: discord.Embed = discord.Embed(
                 description=result["question"], color=await ctx.embed_color()
@@ -214,7 +213,7 @@ class ConversationGames(commands.Cog):
         """
         await ctx.typing()
         async with TruthOrDareAPIClient() as client:
-            rating = await self._get_rating(ctx.guild) # type: ignore
+            rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("paranoia", rating)
             embed: discord.Embed = discord.Embed(
                 description=result["question"], color=await ctx.embed_color()
@@ -236,7 +235,7 @@ class ConversationGames(commands.Cog):
         else:
             title = f"{ctx.author.name} asked {member.name}"
         async with TruthOrDareAPIClient() as client:
-            rating = await self._get_rating(ctx.guild) # type: ignore
+            rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("truth", rating)
             embed: discord.Embed = discord.Embed(
                 title=title, description=result["question"], color=await ctx.embed_color()
@@ -258,7 +257,7 @@ class ConversationGames(commands.Cog):
         else:
             title = f"{ctx.author.name} asked {member.name}"
         async with TruthOrDareAPIClient() as client:
-            rating = await self._get_rating(ctx.guild) # type: ignore
+            rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("dare", rating)
             embed: discord.Embed = discord.Embed(
                 title=title, description=result["question"], color=await ctx.embed_color()
@@ -267,7 +266,7 @@ class ConversationGames(commands.Cog):
         await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
 
     @commands.guild_only()
-    @commands.group(name="cgset") # type: ignore
+    @commands.group(name="cgset")  # type: ignore
     @commands.admin_or_permissions(manage_guild=True)
     async def _cgset(self, ctx: commands.Context):
         """
@@ -279,7 +278,7 @@ class ConversationGames(commands.Cog):
         """
         Set rating for the games.
         """
-        await self.config.guild(ctx.guild).rating.set(rating.lower()) # type: ignore
+        await self.config.guild(ctx.guild).rating.set(rating.lower())  # type: ignore
         await ctx.reply(
             f"Rating set to **{rating.upper()}**.",
             allowed_mentions=discord.AllowedMentions(replied_user=False),
