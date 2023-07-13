@@ -55,7 +55,7 @@ class CGView(discord.ui.View):
         self,
         result: Dict[str, Union[str, Dict[str, str]]],
         ctx: commands.Context,
-        timeout: float = 120.0
+        timeout: float = 120.0,
     ) -> None:
         super().__init__(timeout=timeout)
         self._result: Dict[str, Union[str, Dict[str, str]]] = result
@@ -72,7 +72,7 @@ class CGView(discord.ui.View):
             await self._message.edit(view=self)  # type: ignore
         except discord.HTTPException:
             pass
-        
+
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if self._ctx.author.id != interaction.user.id:
             await interaction.response.send_message(
@@ -80,7 +80,7 @@ class CGView(discord.ui.View):
             )
             return False
         return True
-        
+
     @staticmethod
     async def _callback(self: Select, interaction: discord.Interaction) -> None:  # type: ignore
         await interaction.response.defer()
@@ -95,8 +95,8 @@ class CGView(discord.ui.View):
             await interaction.edit_original_response(embed=embed)
         elif self.values[0] == "Bengali":
             embed: discord.Embed = discord.Embed(
-                description=self.view._result["translations"]["bn"], # type: ignore
-                color=await self.view._ctx.embed_color() # type: ignore
+                description=self.view._result["translations"]["bn"],  # type: ignore
+                color=await self.view._ctx.embed_color(),  # type: ignore
             )
             embed.set_footer(
                 text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
@@ -104,8 +104,8 @@ class CGView(discord.ui.View):
             await interaction.edit_original_response(embed=embed)
         elif self.values[0] == "German":
             embed: discord.Embed = discord.Embed(
-                description=self.view._result["translations"]["de"], # type: ignore
-                color=await self.view._ctx.embed_color() # type: ignore
+                description=self.view._result["translations"]["de"],  # type: ignore
+                color=await self.view._ctx.embed_color(),  # type: ignore
             )
             embed.set_footer(
                 text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
@@ -113,8 +113,8 @@ class CGView(discord.ui.View):
             await interaction.edit_original_response(embed=embed)
         elif self.values[0] == "Spanish":
             embed: discord.Embed = discord.Embed(
-                description=self.view._result["translations"]["es"], # type: ignore
-                color=await self.view._ctx.embed_color() # type: ignore
+                description=self.view._result["translations"]["es"],  # type: ignore
+                color=await self.view._ctx.embed_color(),  # type: ignore
             )
             embed.set_footer(
                 text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
@@ -122,8 +122,8 @@ class CGView(discord.ui.View):
             await interaction.edit_original_response(embed=embed)
         elif self.values[0] == "French":
             embed: discord.Embed = discord.Embed(
-                description=self.view._result["translations"]["fr"], # type: ignore
-                color=await self.view._ctx.embed_color() # type: ignore
+                description=self.view._result["translations"]["fr"],  # type: ignore
+                color=await self.view._ctx.embed_color(),  # type: ignore
             )
             embed.set_footer(
                 text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
@@ -131,8 +131,8 @@ class CGView(discord.ui.View):
             await interaction.edit_original_response(embed=embed)
         elif self.values[0] == "Hindi":
             embed: discord.Embed = discord.Embed(
-                description=self.view._result["translations"]["hi"], # type: ignore
-                color=await self.view._ctx.embed_color() # type: ignore
+                description=self.view._result["translations"]["hi"],  # type: ignore
+                color=await self.view._ctx.embed_color(),  # type: ignore
             )
             embed.set_footer(
                 text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
@@ -140,8 +140,8 @@ class CGView(discord.ui.View):
             await interaction.edit_original_response(embed=embed)
         elif self.values[0] == "Filipino":
             embed: discord.Embed = discord.Embed(
-                description=self.view._result["translations"]["tl"], # type: ignore
-                color=await self.view._ctx.embed_color() # type: ignore
+                description=self.view._result["translations"]["tl"],  # type: ignore
+                color=await self.view._ctx.embed_color(),  # type: ignore
             )
             embed.set_footer(
                 text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
