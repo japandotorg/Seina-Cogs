@@ -86,8 +86,8 @@ class CGView(discord.ui.View):
         await interaction.response.defer()
         if self.values[0] == "English":
             embed: discord.Embed = discord.Embed(
-                description=self.view._result["question"], # type: ignore
-                color=await self.view._ctx.embed_color() # type: ignore
+                description=self.view._result["question"],  # type: ignore
+                color=await self.view._ctx.embed_color(),  # type: ignore
             )
             embed.set_footer(
                 text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
