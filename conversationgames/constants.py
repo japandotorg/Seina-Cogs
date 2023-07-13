@@ -1,7 +1,7 @@
-import yarl
 from datetime import timedelta
-from typing import Dict, Union, Final, Literal
+from typing import Dict, Final, Literal, Union
 
+import yarl
 
 SESSION_TIMEOUT: int = 15
 

@@ -39,7 +39,6 @@ from .http import TruthOrDareAPIClient
 log: logging.Logger = logging.getLogger("red.seina.conversationgames")
 
 
-
 class ConversationGames(commands.Cog):
     """Conversation games"""
 
