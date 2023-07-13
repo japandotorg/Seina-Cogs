@@ -1,0 +1,26 @@
+{
+    "author": ["inthedark.org"],
+    "install_msg": "Thanks for installing the Conversation Games cog.",
+    "name": "ConversationGames",
+    "disabled": false,
+    "short": "Conversation games for members",
+    "description": "Conversation games for members.",
+    "tags": [
+        "interaction",
+        "truth",
+        "dare",
+        "would",
+        "you",
+        "rather",
+        "never",
+        "have",
+        "paranoia"
+    ],
+    "required_cogs": {},
+    "requirements": [
+        "aiohttp-client-cache",
+        "typing-extensions"
+    ],
+    "type": "COG",
+    "end_user_data_statement": "This cog stores users data in form of << member : role >> Discord IDs pairings.\nThis cog supports data removal requests."
+}
