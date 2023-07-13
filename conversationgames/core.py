@@ -31,7 +31,6 @@ from types import TracebackType
 from typing import Any, Dict, Final, List, Literal, Optional, Tuple, Type, Union, final
 
 import aiohttp
-from aiohttp import connector
 import discord
 import yarl
 from aiohttp_client_cache import SQLiteBackend
