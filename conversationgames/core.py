@@ -44,7 +44,7 @@ class ConversationGames(commands.Cog):
     """Conversation games"""
 
     __author__: Final[List[str]] = ["inthedark.org"]
-    __version__: Final[str] = "0.1.0"
+    __version__: Final[str] = "0.2.0"
 
     def __init__(self, bot: Red) -> None:
         super().__init__()
