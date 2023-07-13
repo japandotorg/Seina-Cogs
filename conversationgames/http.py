@@ -67,7 +67,7 @@ class HTTPClient:
             await self._session.close()
 
     async def __aenter__(self) -> Self:
-        if self._session.closed:  # type: ignore
+        if self._session and self._session.closed:  # type: ignore
             log.error("Session is closed, unable to request the endpoint.")
             raise commands.UserFeedbackCheckFailure(
                 "Something went wrong with the session, unable to request the endpoint."
