@@ -1,8 +1,7 @@
 import logging
 from datetime import timedelta
 from types import TracebackType
-from typing import Optional, Dict, Any, Tuple, final, Type
-from typing_extensions import Self
+from typing import Any, Dict, Optional, Tuple, Type, final
 
 import aiohttp
 from aiohttp_client_cache import SQLiteBackend
@@ -24,10 +23,7 @@ log: logging.Logger = logging.getLogger("red.seina.conversationgames.http")
 
 
 class HTTPClient:
-    __slots__: Tuple = (
-        "_base_url",
-        "_session"
-    )
+    __slots__: Tuple = ("_base_url", "_session")
 
     def __init__(
         self,
