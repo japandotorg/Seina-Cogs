@@ -66,7 +66,7 @@ class HTTPClient:
         self._base_url: Optional[StrOrUrl] = base_url
         self._session: Optional[CachedSession] = session
 
-    async def __request(self, method: Methods, route: str, **kwargs: Any) -> Dict[str, str]:
+    async def __request(self, method: Methods, route: str, **kwargs: Any) -> Dict[str, Any]:
         url = self._base_url + route  # type: ignore
 
         if not self._session:
@@ -88,7 +88,7 @@ class HTTPClient:
                 )
             return await response.json()
 
-    async def request(self, method: Methods, route: str, **kwargs: Any) -> Dict[str, str]:
+    async def request(self, method: Methods, route: str, **kwargs: Any) -> Dict[str, Any]:
         return await self.__request(method, route, **kwargs)
 
     async def close(self):
