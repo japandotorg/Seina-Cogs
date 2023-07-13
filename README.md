@@ -11,17 +11,14 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 | SeinaTools  | 0.1.4            | <details><summary>My tools for Red-DiscordBot</summary>Some cool utility tools for Red-DiscordBot</details>                      | inthedark.org                               |
 | BattleRoyale| 0.1.2            | <details><summary>Play battle royale</summary>Play battle royale with your friends or join automated matches.                    | inthedark.org                               |
 | PersonalChannels| 0.1.0            | <details><summary>Personal channel for members</summary>Personal channel for members.                                            | inthedark.org                               |
-| Calculator  | 0.1.1            | <details><summary>Math stuff</summary>Math stuff</details>                                                                       | inthedark.org                               |
 | Chemistry   | 0.1.1            | <details><summary>Chemistry</summary>Chemistry inside discord >.<</details>                                                      | inthedark.org                               |
-| EpicGames   | 0.1.0            | <details><summary>A simple epic games cog.</summary>Get free games info from epic games store.</details>                         | inthedark.org                               |
-| MapleStory  | 0.1.0            | <details><summary>A simple maple story cog.</summary>Get user info from the maple story API.</details>                           | inthedark.org                               |
-| MsgUtils    | 0.1.1            | <details><summary>Dump stuff.</summary>Useful message utilities.</details>                                                       | inthedark.org                               |
 | FirstMessage| 0.1.0            | <details><summary>First Message</summary>A simple cog for jump to first message of a channel.</details>                          | inthedark.org                               |
 | Animals     | 0.1.0            | <details><summary>Random animals!</summary>Random animal images & facts</details>                                                | inthedark.org                               |
 | RainbowRole | 0.1.1            | <details><summary>A simple cog for setting up a rainbow role.</summary>Creates a rainbow role in your server which loops into the 7 rainbow roles every 90 seconds.</details> | inthedark.org |
 | MassUnban   | 0.1.0            | <details><summary>Mass unban users.</summary>Mass unban users by the ban reason used.</details>                                  | inthedark.org                          |
 | AntiLinks   | 0.1.1            | <details><summary>No links allowed.</summary>Removes all links in specified channels, with the ability to whitelist roles.</details> | inthedark.org                          |
 | StatusRole  | 0.1.0            | <details><summary>Assign roles on custom status.</summary>Assign roles to users for the duration in which they have certain custom statuses <details> | inthedark.org                          |
+| ConversationGames | 0.2.0            | <details><summary>Conversation games for members</summary>Conversation games for members</details>                                | inthedark.org                       |
 
 
 Any questions you can find [Melon](https://discord.com/oauth2/authorize?client_id=808706062013825036&scope=bot&permissions=1099511627767%20applications.commands) and myself over on [the support server](https://discord.gg/mXfYuMy92r)
