@@ -9,6 +9,9 @@ class BaseLanguageOptions:
     def __init__(self) -> None:
         self._options: List[discord.SelectOption] = [
             discord.SelectOption(
+                label="English", description="Get English translation of this question."
+            ),
+            discord.SelectOption(
                 label="Bengali", description="Get Bengali translation of this question."
             ),
             discord.SelectOption(
@@ -81,7 +84,16 @@ class CGView(discord.ui.View):
     @staticmethod
     async def _callback(self: Select, interaction: discord.Interaction) -> None:  # type: ignore
         await interaction.response.defer()
-        if self.values[0] == "Bengali":
+        if self.values[0] == "English":
+            embed: discord.Embed = discord.Embed(
+                description=self.view._result["question"], # type: ignore
+                color=await self.view._ctx.embed_color() # type: ignore
+            )
+            embed.set_footer(
+                text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
+            )
+            await interaction.edit_original_response(embed=embed)
+        elif self.values[0] == "Bengali":
             embed: discord.Embed = discord.Embed(
                 description=self.view._result["translations"]["bn"], # type: ignore
                 color=await self.view._ctx.embed_color() # type: ignore
