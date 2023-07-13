@@ -103,7 +103,7 @@ class ConversationGames(commands.Cog):
                 description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-        _view = CGView(result, ctx)
+        _view = CGView(ctx, result)
         _out = await ctx.reply(
             embed=embed, view=_view, allowed_mentions=discord.AllowedMentions(replied_user=False)
         )
@@ -124,7 +124,7 @@ class ConversationGames(commands.Cog):
                 description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-        _view = CGView(result, ctx)
+        _view = CGView(ctx, result)
         _out = await ctx.reply(
             embed=embed, view=_view, allowed_mentions=discord.AllowedMentions(replied_user=False)
         )
@@ -145,7 +145,7 @@ class ConversationGames(commands.Cog):
                 description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-        _view = CGView(result, ctx)
+        _view = CGView(ctx, result)
         _out = await ctx.reply(
             embed=embed, view=_view, allowed_mentions=discord.AllowedMentions(replied_user=False)
         )
@@ -170,7 +170,7 @@ class ConversationGames(commands.Cog):
                 title=title, description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-        _view = CGView(result, ctx)
+        _view = CGView(ctx, result)
         _out = await ctx.reply(
             embed=embed, view=_view, allowed_mentions=discord.AllowedMentions(replied_user=False)
         )
@@ -195,7 +195,7 @@ class ConversationGames(commands.Cog):
                 title=title, description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-        _view = CGView(result, ctx)
+        _view = CGView(ctx, result)
         _out = await ctx.reply(
             embed=embed, view=_view, allowed_mentions=discord.AllowedMentions(replied_user=False)
         )

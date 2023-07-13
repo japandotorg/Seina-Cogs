@@ -53,8 +53,8 @@ class Select(discord.ui.Select):
 class CGView(discord.ui.View):
     def __init__(
         self,
-        result: Dict[str, Union[str, Dict[str, str]]],
         ctx: commands.Context,
+        result: Dict[str, Union[str, Dict[str, str]]],
         timeout: float = 120.0,
     ) -> None:
         super().__init__(timeout=timeout)
