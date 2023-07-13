@@ -35,6 +35,7 @@ from redbot.core.utils.chat_formatting import humanize_list
 
 from .constants import Ratings, RequestType
 from .http import TruthOrDareAPIClient
+from .views import CGView
 
 log: logging.Logger = logging.getLogger("red.seina.conversationgames")
 
@@ -102,7 +103,9 @@ class ConversationGames(commands.Cog):
                 description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-        await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
+            _view = CGView(result, await ctx.embed_color())
+        _out = await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
+        _view._message = _out
 
     @commands.guild_only()
     @commands.command(name="neverhaveiever", aliases=["nhie"])
@@ -119,7 +122,9 @@ class ConversationGames(commands.Cog):
                 description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-        await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
+            _view = CGView(result, await ctx.embed_color())
+        _out = await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
+        _view._message = _out
 
     @commands.guild_only()
     @commands.command(name="paranoia")
@@ -136,7 +141,9 @@ class ConversationGames(commands.Cog):
                 description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-        await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
+            _view = CGView(result, await ctx.embed_color())
+        _out = await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
+        _view._message = _out
 
     @commands.guild_only()
     @commands.command(name="truth")
@@ -157,7 +164,9 @@ class ConversationGames(commands.Cog):
                 title=title, description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-        await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
+            _view = CGView(result, await ctx.embed_color())
+        _out = await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
+        _view._message = _out
 
     @commands.guild_only()
     @commands.command(name="dare")
@@ -178,7 +187,9 @@ class ConversationGames(commands.Cog):
                 title=title, description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-        await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
+            _view = CGView(result, await ctx.embed_color())
+        _out = await ctx.reply(embed=embed, allowed_mentions=discord.AllowedMentions(replied_user=False))
+        _view._message = _out
 
     @commands.guild_only()
     @commands.group(name="cgset")  # type: ignore

@@ -1,7 +1,7 @@
 import logging
 from datetime import timedelta
 from types import TracebackType
-from typing import Any, Dict, Optional, Tuple, Type, final
+from typing import Any, Dict, Optional, Tuple, Type, final, Union
 
 import aiohttp
 from aiohttp_client_cache import SQLiteBackend
@@ -55,7 +55,9 @@ class HTTPClient:
                 )
             return await response.json()
 
-    async def request(self, method: Methods, route: str, **kwargs: Any) -> Dict[str, Any]:
+    async def request(
+        self, method: Methods, route: str, **kwargs: Any
+    ) -> Dict[str, Union[str, Dict[str, str]]]:
         return await self.__request(method, route, **kwargs)
 
     async def close(self):
@@ -87,6 +89,6 @@ class TruthOrDareAPIClient(HTTPClient):
 
     async def _request(
         self, endpoint: Endpoints, rating: Optional[Ratings] = None
-    ) -> Dict[str, str]:
+    ) -> Dict[str, Union[str, Dict[str, str]]]:
         params = {"rating": rating} if rating else None
         return await self.request("GET", f"/{endpoint}", params=params)
