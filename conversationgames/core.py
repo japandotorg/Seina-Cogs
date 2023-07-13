@@ -74,7 +74,7 @@ class HTTPClient:
             cache = SQLiteBackend(
                 cache_name="~/.cache/conversationgames.db",
                 expire_after=timedelta(seconds=3),
-                allowed_methods=["GET"],
+                allowed_methods=["GET", "HEAD"],
                 urls_expire_after=URL_EXPIRE_AFTER,
                 use_temp=True,
             )
