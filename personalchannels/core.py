@@ -27,6 +27,7 @@ SOFTWARE.
 import asyncio
 import io
 from textwrap import shorten
+from tabulate import tabulate
 from typing import Dict, Final, List, Literal, Optional, Union
 
 import discord
@@ -38,7 +39,7 @@ from redbot.core.utils.chat_formatting import box, humanize_list, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.predicates import MessagePredicate
-from tabulate import tabulate
+from redbot.core.utils.views import SimpleMenu
 
 RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
@@ -340,9 +341,9 @@ class PersonalChannels(commands.Cog):
             )
 
     @has_assigned_channel()
-    @_my_channel.command("friends")
     @commands.bot_has_permissions(manage_channels=True)
     @commands.cooldown(1, 30, commands.BucketType.member)
+    @_my_channel.group("friends", invoke_without_command=True)
     async def _friends(
         self,
         ctx: commands.Context,
@@ -354,83 +355,111 @@ class PersonalChannels(commands.Cog):
 
         `<add_or_remove>` should be either `add` to add or `remove` to remove friends.
         """
-        if user is None:
-            await ctx.send("`User` is a required argument.")
-            return
-
-        if add_or_remove.lower() not in ["add", "remove"]:
-            await ctx.send("Not a recognized option. (`add` or `remove`).")
-            return
-
-        friends: List[int] = await self.config.member(ctx.author).friends()
-        perms: int = await self.config.member(ctx.author).permission()
-
-        if add_or_remove.lower() == "add" and perms is None:
-            await ctx.send("You're not allowed to add friends in your personal channel.")
-            return
-
-        if add_or_remove.lower() == "add" and len(friends) >= perms:
+        if ctx.invoked_subcommand is None:
+            if user is None:
+                await ctx.send("`User` is a required argument.")
+                return
+    
+            friends: List[int] = await self.config.member(ctx.author).friends()
+            perms: int = await self.config.member(ctx.author).permission()
+    
+            if add_or_remove.lower() == "add" and perms is None:
+                await ctx.send("You're not allowed to add friends in your personal channel.")
+                return
+    
+            if add_or_remove.lower() == "add" and len(friends) >= perms:
+                await ctx.send(
+                    "You are at maximum capacity, you cannot add any more friends to your channel."
+                )
+                self._friends.reset_cooldown(ctx)
+                return
+    
+            channel_id = await self.config.member(ctx.author).channel()
+            channel = ctx.guild.get_channel(channel_id)
+    
+            async with self.config.member(ctx.author).friends() as friends:
+                if add_or_remove.lower() == "add":
+                    if user.id in friends:
+                        await ctx.send(f"{user.display_name} is already in your friend list.")
+                        return
+                    elif not user.id in friends:
+                        try:
+                            await self.bot.http.edit_channel_permissions(
+                                channel_id=channel.id,
+                                target=user.id,
+                                allow="139586749504",
+                                deny="0",
+                                type=1,
+                                reason=get_audit_reason(
+                                    ctx.author, "Added user to their personal channel."
+                                ),
+                            )
+                        except discord.HTTPException as e:
+                            raise commands.UserFeedbackCheckFailure(
+                                "Unable to add user to the channel..\n{}".format(
+                                    box(str(e), lang="py")
+                                )
+                            )
+                        else:
+                            friends.append(user.id)
+    
+                elif add_or_remove.lower() == "remove":
+                    if not user.id in friends:
+                        await ctx.send(f"{user.display_name} is not in your friend list.")
+                        return
+                    elif user.id in friends:
+                        try:
+                            await channel.set_permissions(
+                                user,
+                                overwrite=None,
+                                reason=get_audit_reason(
+                                    ctx.author, "Removed user from their personal channel."
+                                ),
+                            )
+                        except discord.HTTPException as e:
+                            raise commands.UserFeedbackCheckFailure(
+                                "Unable to remove user from the channel.\n{}".format(
+                                    box(str(e), lang="py")
+                                )
+                            )
+                        else:
+                            friends.remove(user.id)
+    
             await ctx.send(
-                "You are at maximum capacity, you cannot add any more friends to your channel."
+                f"Successfully {'added' if add_or_remove.lower() == 'add' else 'removed'} "
+                f"{user.display_name} {'to' if add_or_remove.lower() == 'add' else 'from'} your friend list."
             )
-            self._friends.reset_cooldown(ctx)
+    
+    @_friends.command(name="list")
+    async def _friends_list(self, ctx: commands.Context):
+        """
+        List your added friends.
+        """
+        member_config = self.config.member(ctx.author)
+        friends_list = await member_config.friends()
+        
+        if not friends_list:
+            await ctx.send(
+                "You do not have any friends added."
+            )
             return
-
-        channel_id = await self.config.member(ctx.author).channel()
-        channel = ctx.guild.get_channel(channel_id)
-
-        async with self.config.member(ctx.author).friends() as friends:
-            if add_or_remove.lower() == "add":
-                if user.id in friends:
-                    await ctx.send(f"{user.display_name} is already in your friend list.")
-                    return
-                elif not user.id in friends:
-                    try:
-                        await self.bot.http.edit_channel_permissions(
-                            channel_id=channel.id,
-                            target=user.id,
-                            allow="139586749504",
-                            deny="0",
-                            type=1,
-                            reason=get_audit_reason(
-                                ctx.author, "Added user to their personal channel."
-                            ),
-                        )
-                    except discord.HTTPException as e:
-                        raise commands.UserFeedbackCheckFailure(
-                            "Unable to add user to the channel..\n{}".format(
-                                box(str(e), lang="py")
-                            )
-                        )
-                    else:
-                        friends.append(user.id)
-
-            elif add_or_remove.lower() == "remove":
-                if not user.id in friends:
-                    await ctx.send(f"{user.display_name} is not in your friend list.")
-                    return
-                elif user.id in friends:
-                    try:
-                        await channel.set_permissions(
-                            user,
-                            overwrite=None,
-                            reason=get_audit_reason(
-                                ctx.author, "Removed user from their personal channel."
-                            ),
-                        )
-                    except discord.HTTPException as e:
-                        raise commands.UserFeedbackCheckFailure(
-                            "Unable to remove user from the channel.\n{}".format(
-                                box(str(e), lang="py")
-                            )
-                        )
-                    else:
-                        friends.remove(user.id)
-
-        await ctx.send(
-            f"Successfully {'added' if add_or_remove.lower() == 'add' else 'removed'} "
-            f"{user.display_name} {'to' if add_or_remove.lower() == 'add' else 'from'} your friend list."
-        )
+        
+        friends = [ctx.guild.get_member(member_id) for member_id in friends_list]
+        friends = [member for member in friends if member is not None]
+        friends = sorted(friends, key=lambda x: x.name)
+        
+        pages = []
+        for index in range(0, len(friends), 10):
+            entries = friends[index : index + 10]
+            page_content = "\n".join(f"- {member.mention} ({member.id})" for member in entries)
+            embed: discord.Embed = discord.Embed(
+                title=f"{ctx.author.name}'s Friend List",
+                description=page_content,
+                color=await ctx.embed_color(),
+            )
+            pages.append(embed)
+        
+        await SimpleMenu(pages).start(ctx)
 
     @has_assigned_channel()
     @_my_channel.command(name="name")
@@ -555,7 +584,7 @@ class PersonalChannels(commands.Cog):
     @commands.admin_or_permissions(manage_guild=True)
     async def _blacklist(self, ctx: commands.Context):
         """
-        manage blacklisted names.
+        Manage blacklisted names.
         """
 
     @_blacklist.command(name="add")
@@ -594,7 +623,7 @@ class PersonalChannels(commands.Cog):
         blacklist = await self.config.guild(ctx.guild).blacklist()
         pages = [box(page) for page in pagify("\n".join(blacklist))]
         if pages:
-            await menu(ctx, pages, DEFAULT_CONTROLS)
+            await SimpleMenu(pages).start(ctx)
         else:
             await ctx.send("There is no blacklisted channel name.")
 
