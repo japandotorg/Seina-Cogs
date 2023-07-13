@@ -136,7 +136,7 @@ class ConversationGames(commands.Cog):
         self.bot: Red = bot
 
         self.config: Config = Config.get_conf(self, identifier=69420, force_registration=True)
-        default_guild = {
+        default_guild: Dict[str, Ratings] = {
             "rating": "pg",
         }
         self.config.register_guild(**default_guild)
