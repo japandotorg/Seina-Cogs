@@ -12,22 +12,28 @@ class BaseLanguageOptions:
                 label="English", description="Get English translation of this question."
             ),
             discord.SelectOption(
-                label="Bengali", description="Get Bengali translation of this question."
+                label="Bengali",
+                description="Get Bengali translation of this question.",
+                value="bn",
             ),
             discord.SelectOption(
-                label="German", description="Get German translation of this question."
+                label="German", description="Get German translation of this question.", value="de"
             ),
             discord.SelectOption(
-                label="Spanish", description="Get Spanish translation of this question."
+                label="Spanish",
+                description="Get Spanish translation of this question.",
+                value="es",
             ),
             discord.SelectOption(
-                label="French", description="Get French translation of this question."
+                label="French", description="Get French translation of this question.", value="fr"
             ),
             discord.SelectOption(
-                label="Hindi", description="Get Hindi translation of this question."
+                label="Hindi", description="Get Hindi translation of this question.", value="hi"
             ),
             discord.SelectOption(
-                label="Filipino", description="Get Filipino translation of this question."
+                label="Filipino",
+                description="Get Filipino translation of this question.",
+                value="tl",
             ),
         ]
 
@@ -84,68 +90,11 @@ class CGView(discord.ui.View):
     @staticmethod
     async def _callback(self: Select, interaction: discord.Interaction) -> None:  # type: ignore
         await interaction.response.defer()
-        if self.values[0] == "English":
-            embed: discord.Embed = discord.Embed(
-                description=self.view._result["question"],  # type: ignore
-                color=await self.view._ctx.embed_color(),  # type: ignore
-            )
-            embed.set_footer(
-                text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
-            )
-            await interaction.edit_original_response(embed=embed)
-        elif self.values[0] == "Bengali":
-            embed: discord.Embed = discord.Embed(
-                description=self.view._result["translations"]["bn"],  # type: ignore
-                color=await self.view._ctx.embed_color(),  # type: ignore
-            )
-            embed.set_footer(
-                text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
-            )
-            await interaction.edit_original_response(embed=embed)
-        elif self.values[0] == "German":
-            embed: discord.Embed = discord.Embed(
-                description=self.view._result["translations"]["de"],  # type: ignore
-                color=await self.view._ctx.embed_color(),  # type: ignore
-            )
-            embed.set_footer(
-                text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
-            )
-            await interaction.edit_original_response(embed=embed)
-        elif self.values[0] == "Spanish":
-            embed: discord.Embed = discord.Embed(
-                description=self.view._result["translations"]["es"],  # type: ignore
-                color=await self.view._ctx.embed_color(),  # type: ignore
-            )
-            embed.set_footer(
-                text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
-            )
-            await interaction.edit_original_response(embed=embed)
-        elif self.values[0] == "French":
-            embed: discord.Embed = discord.Embed(
-                description=self.view._result["translations"]["fr"],  # type: ignore
-                color=await self.view._ctx.embed_color(),  # type: ignore
-            )
-            embed.set_footer(
-                text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
-            )
-            await interaction.edit_original_response(embed=embed)
-        elif self.values[0] == "Hindi":
-            embed: discord.Embed = discord.Embed(
-                description=self.view._result["translations"]["hi"],  # type: ignore
-                color=await self.view._ctx.embed_color(),  # type: ignore
-            )
-            embed.set_footer(
-                text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
-            )
-            await interaction.edit_original_response(embed=embed)
-        elif self.values[0] == "Filipino":
-            embed: discord.Embed = discord.Embed(
-                description=self.view._result["translations"]["tl"],  # type: ignore
-                color=await self.view._ctx.embed_color(),  # type: ignore
-            )
-            embed.set_footer(
-                text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
-            )
-            await interaction.edit_original_response(embed=embed)
-        else:
-            await interaction.followup.send("Unrecognized option!", ephemeral=True)
+        embed: discord.Embed = discord.Embed(
+            description=self.view._result["question"] if self.values[0] == "English" else self.view._result["translations"][self.values[0]],  # type: ignore
+            color=await self.view._ctx.embed_color(),  # type: ignore
+        )
+        embed.set_footer(
+            text=f"Rating: {self.view._result['rating']} | ID: {self.view._result['id']}"  # type: ignore
+        )
+        await interaction.edit_original_response(embed=embed)
