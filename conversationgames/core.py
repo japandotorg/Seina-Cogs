@@ -56,7 +56,11 @@ log: logging.Logger = logging.getLogger("red.seina.conversationgames")
 
 
 class HTTPClient:
-    __slots__: Tuple = ("_base_url" "__request",)
+    __slots__: Tuple = (
+        "_base_url",
+        "_session",
+        "__request",
+    )
 
     def __init__(
         self,
