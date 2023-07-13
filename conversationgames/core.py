@@ -31,9 +31,9 @@ from types import TracebackType
 from typing import Any, Dict, Final, List, Literal, Optional, Tuple, Type, Union, final
 
 import aiohttp
-from aiohttp import connector
 import discord
 import yarl
+from aiohttp import connector
 from aiohttp_client_cache import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
 from redbot.core import Config, commands
