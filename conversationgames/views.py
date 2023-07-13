@@ -1,5 +1,5 @@
 import functools
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, Callable
 
 import discord
 from redbot.core import commands
@@ -44,7 +44,7 @@ class BaseLanguageOptions:
 class Select(discord.ui.Select):
     def __init__(
         self,
-        callback: Any,
+        callback: Callable[["Select", discord.Interaction], None],
     ) -> None:
         options = BaseLanguageOptions()._get_options()
         super().__init__(
@@ -53,7 +53,7 @@ class Select(discord.ui.Select):
             max_values=1,
             min_values=1,
         )
-        self.callback = functools.partial(callback, self)
+        self.callback = functools.partial(callback, self) # type: ignore
 
 
 class CGView(discord.ui.View):
@@ -68,7 +68,7 @@ class CGView(discord.ui.View):
         self._ctx: commands.Context = ctx
         self._message: Optional[discord.Message] = None
 
-        self.add_item(Select(self._callback))
+        self.add_item(Select(self._callback)) # type: ignore
 
     async def on_timeout(self) -> None:
         for item in self.children:
