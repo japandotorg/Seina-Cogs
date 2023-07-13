@@ -1,22 +1,22 @@
 import logging
 from datetime import timedelta
 from types import TracebackType
-from typing import Optional, Tuple, Dict, Any, final, Type
-from typing_extensions import Self
+from typing import Any, Dict, Optional, Tuple, Type, final
 
 import aiohttp
 from aiohttp_client_cache import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
 from redbot.core import commands
+from typing_extensions import Self
 
 from .constants import (
-    StrOrUrl,
+    BASE_URL,
+    SESSION_TIMEOUT,
     URL_EXPIRE_AFTER,
     Endpoints,
     Methods,
-    BASE_URL,
-    SESSION_TIMEOUT,
     Ratings,
+    StrOrUrl,
 )
 
 log: logging.Logger = logging.getLogger("red.seina.conversationgames.http")
