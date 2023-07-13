@@ -1,7 +1,7 @@
 import logging
 from datetime import timedelta
 from types import TracebackType
-from typing import Any, Dict, Optional, Tuple, Type, final, Union
+from typing import Any, Dict, Optional, Tuple, Type, Union, final
 
 import aiohttp
 from aiohttp_client_cache import SQLiteBackend
