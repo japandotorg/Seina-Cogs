@@ -97,7 +97,6 @@ class ConversationGames(commands.Cog):
         """
         Would you rather?
         """
-        await ctx.defer()
         async with TruthOrDareAPIClient() as client, ctx.typing():
             rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("wyr", rating)
@@ -120,7 +119,6 @@ class ConversationGames(commands.Cog):
         """
         Never have I ever.
         """
-        await ctx.defer()
         async with TruthOrDareAPIClient() as client, ctx.typing():
             rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("nhie", rating)
@@ -143,7 +141,6 @@ class ConversationGames(commands.Cog):
         """
         Paranoia questions.
         """
-        await ctx.defer()
         async with TruthOrDareAPIClient() as client, ctx.typing():
             rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("paranoia", rating)
@@ -166,7 +163,6 @@ class ConversationGames(commands.Cog):
         """
         Truth questions, optionally ask truth questions to members!
         """
-        await ctx.defer()
         if member is None:
             title = None
         else:
@@ -193,7 +189,6 @@ class ConversationGames(commands.Cog):
         """
         Dare questions, optionally ask dare questions to members!
         """
-        await ctx.defer()
         if member is None:
             title = None
         else:
