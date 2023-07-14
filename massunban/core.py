@@ -105,7 +105,9 @@ class MassUnban(commands.Cog):
         This can mean that your bot will be ratelimited on sending messages if you unban lots of users as it will create a modlog entry for each unban.
         """
         try:
-            banlist: List[discord.BanEntry] = [entry async for entry in ctx.guild.bans(limit=2 ** 15)]
+            banlist: List[discord.BanEntry] = [
+                entry async for entry in ctx.guild.bans(limit=2**15)
+            ]
         except discord.errors.Forbidden:
             msg = _("I need the `Ban Members` permission to fetch the ban list for the guild.")
             await ctx.send(msg)
