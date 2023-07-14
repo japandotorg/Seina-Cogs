@@ -106,7 +106,7 @@ PROMPTS: List[str] = [
     "{killer} tore through {killed} with savage ferocity, leaving a trail of devastation in their wake.",
     "{killer} descended upon {killed} with ferocious intent, their wrath leaving a trail of devastation in its wake.",
     "{killer} was caught in a deadly dance with {killer}, their fate sealed with each leathal movement.",
-    "{killed} encountered {killer} in a battle of wills, their struggle culminating in a cataclysmic clash of life and death."
+    "{killed} encountered {killer} in a battle of wills, their struggle culminating in a cataclysmic clash of life and death.",
 ]
 
 
