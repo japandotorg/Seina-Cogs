@@ -29,7 +29,7 @@ import logging
 from typing import Any, Dict, Final, List, Optional
 
 import discord
-from redbot.core import Config, commands, app_commands
+from redbot.core import Config, app_commands, commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
 
