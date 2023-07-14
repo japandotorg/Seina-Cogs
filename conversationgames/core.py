@@ -208,12 +208,6 @@ class ConversationGames(commands.Cog):
         )
         _view._message = _out
 
-    @_dare.autocomplete("member")
-    async def _dare_autocomplete(
-        self, interaction: discord.Interaction, current: str
-    ) -> List[app_commands.Choice[str]]:
-        return await self._autocomplete(interaction, current)
-
     @commands.guild_only()
     @commands.group(name="cgset")  # type: ignore
     @commands.admin_or_permissions(manage_guild=True)
