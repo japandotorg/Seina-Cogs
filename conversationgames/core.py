@@ -88,6 +88,21 @@ class ConversationGames(commands.Cog):
         rating = await self.config.guild(guild).rating()
         return rating
 
+    async def _autocomplete(
+        self, interaction: discord.Interaction, current: str
+    ) -> List[app_commands.Choice]:
+        if not current:
+            return [
+                app_commands.Choice(name=member.display_name, value=str(member.id))
+                for member in interaction.guild.members[:25]  # type: ignore
+            ]
+        return [
+            app_commands.Choice(name=member.display_name, value=str(member.id))
+            for member in interaction.guild.members  # type: ignore
+            if member.display_name.lower().startswith(current.lower())
+            or member.name.lower().startswith(current.lower())
+        ][:25]
+
     @commands.guild_only()
     @commands.cooldown(1, 3, commands.BucketType.guild)
     @commands.bot_has_guild_permissions(embed_links=True)
@@ -159,6 +174,7 @@ class ConversationGames(commands.Cog):
     @commands.cooldown(1, 3, commands.BucketType.guild)
     @commands.bot_has_guild_permissions(embed_links=True)
     @app_commands.default_permissions(use_application_commands=True)
+    @app_commands.describe(member="The member you want to ask question.")
     async def _truth(self, ctx: commands.Context, *, member: Optional[discord.Member] = None):
         """
         Truth questions, optionally ask truth questions to members!
@@ -180,11 +196,18 @@ class ConversationGames(commands.Cog):
         )
         _view._message = _out
 
+    @_truth.autocomplete("member")
+    async def _truth_autocomplete(
+        self, interaction: discord.Interaction, current: str
+    ) -> List[app_commands.Choice[str]]:
+        return await self._autocomplete(interaction, current)
+
     @commands.guild_only()
     @commands.hybrid_command(name="dare")
     @commands.cooldown(1, 3, commands.BucketType.guild)
     @commands.bot_has_guild_permissions(embed_links=True)
     @app_commands.default_permissions(use_application_commands=True)
+    @app_commands.describe(member="The member you want to ask question.")
     async def _dare(self, ctx: commands.Context, *, member: Optional[discord.Member] = None):
         """
         Dare questions, optionally ask dare questions to members!
@@ -205,6 +228,12 @@ class ConversationGames(commands.Cog):
             embed=embed, view=_view, allowed_mentions=discord.AllowedMentions(replied_user=False)
         )
         _view._message = _out
+
+    @_dare.autocomplete("member")
+    async def _dare_autocomplete(
+        self, interaction: discord.Interaction, current: str
+    ) -> List[app_commands.Choice[str]]:
+        return await self._autocomplete(interaction, current)
 
     @commands.guild_only()
     @commands.group(name="cgset")  # type: ignore
