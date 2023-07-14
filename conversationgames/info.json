@@ -18,7 +18,7 @@
     ],
     "required_cogs": {},
     "requirements": [
-        "aiohttp-client-cache",
+        "aiohttp-client-cache[sqlite]",
         "typing-extensions"
     ],
     "type": "COG",
