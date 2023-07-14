@@ -64,8 +64,8 @@ class CGView(discord.ui.View):
         timeout: float = 120.0,
     ) -> None:
         super().__init__(timeout=timeout)
-        self._result: Dict[str, Union[str, Dict[str, str]]] = result
         self._ctx: commands.Context = ctx
+        self._result: Dict[str, Union[str, Dict[str, str]]] = result
         self._message: Optional[discord.Message] = None
 
         self.add_item(Select(self._callback))  # type: ignore

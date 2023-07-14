@@ -29,7 +29,7 @@ class HTTPClient:
         self,
         base_url: Optional[StrOrUrl] = BASE_URL,
         session: Optional[CachedSession] = None,
-    ):
+    ) -> None:
         self._base_url: Optional[StrOrUrl] = base_url
         self._session: Optional[CachedSession] = session
 
@@ -60,7 +60,7 @@ class HTTPClient:
     ) -> Dict[str, Union[str, Dict[str, str]]]:
         return await self.__request(method, route, **kwargs)
 
-    async def close(self):
+    async def close(self) -> None:
         if self._session:
             await self._session.close()
 
@@ -78,7 +78,7 @@ class HTTPClient:
         exc_type: Optional[Type[BaseException]],
         exc_val: Optional[BaseException],
         exc_tb: Optional[TracebackType],
-    ):
+    ) -> None:
         await self.close()
 
 

@@ -29,7 +29,7 @@ import logging
 from typing import Any, Dict, Final, List, Optional
 
 import discord
-from redbot.core import Config, commands
+from redbot.core import Config, commands, app_commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
 
@@ -44,7 +44,7 @@ class ConversationGames(commands.Cog):
     """Conversation games"""
 
     __author__: Final[List[str]] = ["inthedark.org"]
-    __version__: Final[str] = "0.2.0"
+    __version__: Final[str] = "0.2.1"
 
     def __init__(self, bot: Red) -> None:
         super().__init__()
@@ -89,13 +89,15 @@ class ConversationGames(commands.Cog):
         return rating
 
     @commands.guild_only()
-    @commands.command(name="wouldyourather", aliases=["wyr"])
-    @commands.bot_has_guild_permissions(embed_links=True)
     @commands.cooldown(1, 3, commands.BucketType.guild)
+    @commands.bot_has_guild_permissions(embed_links=True)
+    @app_commands.default_permissions(use_application_commands=True)
+    @commands.hybrid_command(name="wouldyourather", aliases=["wyr"])
     async def _wyr(self, ctx: commands.Context):
         """
         Would you rather?
         """
+        await ctx.defer()
         async with TruthOrDareAPIClient() as client, ctx.typing():
             rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("wyr", rating)
@@ -110,13 +112,15 @@ class ConversationGames(commands.Cog):
         _view._message = _out
 
     @commands.guild_only()
-    @commands.command(name="neverhaveiever", aliases=["nhie"])
-    @commands.bot_has_guild_permissions(embed_links=True)
     @commands.cooldown(1, 3, commands.BucketType.guild)
+    @commands.bot_has_guild_permissions(embed_links=True)
+    @app_commands.default_permissions(use_application_commands=True)
+    @commands.hybrid_command(name="neverhaveiever", aliases=["nhie"])
     async def _nhie(self, ctx: commands.Context):
         """
         Never have I ever.
         """
+        await ctx.defer()
         async with TruthOrDareAPIClient() as client, ctx.typing():
             rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("nhie", rating)
@@ -131,13 +135,15 @@ class ConversationGames(commands.Cog):
         _view._message = _out
 
     @commands.guild_only()
-    @commands.command(name="paranoia")
-    @commands.bot_has_guild_permissions(embed_links=True)
+    @commands.hybrid_command(name="paranoia")
     @commands.cooldown(1, 3, commands.BucketType.guild)
+    @commands.bot_has_guild_permissions(embed_links=True)
+    @app_commands.default_permissions(use_application_commands=True)
     async def _paranoia(self, ctx: commands.Context):
         """
         Paranoia questions.
         """
+        await ctx.defer()
         async with TruthOrDareAPIClient() as client, ctx.typing():
             rating = await self._get_rating(ctx.guild)  # type: ignore
             result = await client._request("paranoia", rating)
@@ -152,13 +158,15 @@ class ConversationGames(commands.Cog):
         _view._message = _out
 
     @commands.guild_only()
-    @commands.command(name="truth")
-    @commands.bot_has_guild_permissions(embed_links=True)
+    @commands.hybrid_command(name="truth")
     @commands.cooldown(1, 3, commands.BucketType.guild)
+    @commands.bot_has_guild_permissions(embed_links=True)
+    @app_commands.default_permissions(use_application_commands=True)
     async def _truth(self, ctx: commands.Context, *, member: Optional[discord.Member] = None):
         """
         Truth questions, optionally ask truth questions to members!
         """
+        await ctx.defer()
         if member is None:
             title = None
         else:
@@ -177,13 +185,15 @@ class ConversationGames(commands.Cog):
         _view._message = _out
 
     @commands.guild_only()
-    @commands.command(name="dare")
-    @commands.bot_has_guild_permissions(embed_links=True)
+    @commands.hybrid_command(name="dare")
     @commands.cooldown(1, 3, commands.BucketType.guild)
+    @commands.bot_has_guild_permissions(embed_links=True)
+    @app_commands.default_permissions(use_application_commands=True)
     async def _dare(self, ctx: commands.Context, *, member: Optional[discord.Member] = None):
         """
         Dare questions, optionally ask dare questions to members!
         """
+        await ctx.defer()
         if member is None:
             title = None
         else:
