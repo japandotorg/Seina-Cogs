@@ -35,8 +35,8 @@ from redbot.core.utils.chat_formatting import humanize_list
 
 from .constants import Ratings, RequestType
 from .http import TruthOrDareAPIClient
-from .views import CGView
 from .utils import _maybe_reply
+from .views import CGView
 
 log: logging.Logger = logging.getLogger("red.seina.conversationgames")
 
