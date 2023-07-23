@@ -35,7 +35,6 @@ from redbot.core.utils.chat_formatting import humanize_list
 
 from .constants import Ratings, RequestType
 from .http import TruthOrDareAPIClient
-from .utils import _maybe_reply
 from .views import CGView
 
 log: logging.Logger = logging.getLogger("red.seina.conversationgames")
@@ -45,7 +44,7 @@ class ConversationGames(commands.Cog):
     """Conversation games"""
 
     __author__: Final[List[str]] = ["inthedark.org"]
-    __version__: Final[str] = "0.2.3"
+    __version__: Final[str] = "0.2.4"
 
     def __init__(self, bot: Red) -> None:
         super().__init__()
@@ -106,11 +105,11 @@ class ConversationGames(commands.Cog):
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
         _view = CGView(ctx, result)
-        _out = await _maybe_reply(
-            ctx,
+        _out = await ctx.send(
             embed=embed,
             view=_view,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
         _view._message = _out
 
@@ -131,11 +130,11 @@ class ConversationGames(commands.Cog):
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
         _view = CGView(ctx, result)
-        _out = await _maybe_reply(
-            ctx,
+        _out = await ctx.send(
             embed=embed,
             view=_view,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
         _view._message = _out
 
@@ -156,11 +155,11 @@ class ConversationGames(commands.Cog):
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
         _view = CGView(ctx, result)
-        _out = await _maybe_reply(
-            ctx,
+        _out = await ctx.send(
             embed=embed,
             view=_view,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
         _view._message = _out
 
@@ -186,11 +185,11 @@ class ConversationGames(commands.Cog):
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
         _view = CGView(ctx, result)
-        _out = await _maybe_reply(
-            ctx,
+        _out = await ctx.send(
             embed=embed,
             view=_view,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
         _view._message = _out
 
@@ -216,11 +215,11 @@ class ConversationGames(commands.Cog):
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
         _view = CGView(ctx, result)
-        _out = await _maybe_reply(
-            ctx,
+        _out = await ctx.send(
             embed=embed,
             view=_view,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
         _view._message = _out
 
@@ -238,8 +237,8 @@ class ConversationGames(commands.Cog):
         Set rating for the games.
         """
         await self.config.guild(ctx.guild).rating.set(rating.lower())  # type: ignore
-        await _maybe_reply(
-            ctx,
+        await ctx.send(
             f"Rating set to **{rating.upper()}**.",
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
