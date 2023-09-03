@@ -47,8 +47,13 @@ from redbot.core.utils.views import SimpleMenu
 from .constants import SWORDS
 from .converters import EmojiConverter
 from .game import Game
-from .utils import _cooldown, _get_attachments, exceptions
 from .views import JoinGameView
+from .utils import (
+    _cooldown,
+    _get_attachments,
+    exceptions,
+    guild_roughly_chunked,
+)
 
 log: logging.Logger = logging.getLogger("red.seina.battleroyale")
 
@@ -362,7 +367,7 @@ class BattleRoyale(commands.Cog):
             with contextlib.suppress(discord.NotFound, discord.HTTPException):
                 return await join_view._message.edit(embed=embed, view=None)
 
-        game = Game(cog=self, delay=delay, skip=skip)
+        game: Game = Game(cog=self, delay=delay, skip=skip)
         self.games[join_view._message] = game
         try:
             await game.start(ctx, players=players, original_message=join_view._message)
@@ -370,7 +375,6 @@ class BattleRoyale(commands.Cog):
             self.log.exception("Something went wrong while starting the game.", exc_info=True)
 
     @battleroyale.command()
-    @commands.dynamic_cooldown(_cooldown, commands.BucketType.guild)
     async def auto(
         self,
         ctx: commands.Context,
@@ -381,6 +385,8 @@ class BattleRoyale(commands.Cog):
         """
         Battle Royale with random players from your server.
 
+        Command author is automatically added to the player queue.
+
         **Parameters**
         - `players`: how many players you want to join.
         - `delay`: min 10, max 20.
@@ -390,7 +396,7 @@ class BattleRoyale(commands.Cog):
         player: List[discord.Member] = list(filter(lambda u: not u.bot, users))
         if ctx.author not in player:
             player.append(ctx.author)
-        game = Game(cog=self, delay=delay, skip=skip)
+        game: Game = Game(cog=self, delay=delay, skip=skip)
         embed: discord.Embed = discord.Embed(
             title="Battle Royale",
             color=await ctx.embed_color(),
@@ -401,6 +407,54 @@ class BattleRoyale(commands.Cog):
         self.games[message] = game
         try:
             await game.start(ctx, players=player, original_message=message)
+        except Exception as e:
+            self.log.exception("Something went wrong while starting the game.", exc_info=True)
+
+    @battleroyale.command()
+    async def role(
+        self,
+        ctx: commands.Context,
+        role: discord.Role,
+        delay: commands.Range[int, 10, 20] = 10,
+        skip: bool = False,
+    ):
+        """
+        Battle Royale with members from a specific role in your server.
+
+        Command author is automatically added to the player queue even if they don't have the role.
+
+        **Parameters**
+        - `role`: which role to add to the player queue.
+        - `delay`: min 10, max 20.
+        - `skip`: will skip to results.
+        """
+        if guild_roughly_chunked(ctx.guild) is False and self.bot.intents.members:
+            await ctx.guild.chunk()
+        if not role.members:
+            await ctx.send(
+                embed=discord.Embed(
+                    description=f"**{role.name}** has no members.",
+                    color=await ctx.embed_color(),
+                )
+            )
+            return
+        users: List[discord.Member] = []
+        for member in role.members:
+            users.append(member)
+        players: List[discord.Member] = list(filter(lambda u: not u.bot, users))
+        if ctx.author not in players:
+            players.append(ctx.author)
+        game: Game = Game(cog=self, delay=delay, skip=skip)
+        embed: discord.Embed = discord.Embed(
+            title="Battle Royale",
+            color=await ctx.embed_color(),
+            description=f"Automated {role.mention} Battle Royale session starting...",
+        )
+        embed.set_thumbnail(url=SWORDS)
+        message = await ctx.send(embed=embed)
+        self.games[message] = game
+        try:
+            await game.start(ctx, players=players, original_message=message)
         except Exception as e:
             self.log.exception("Something went wrong while starting the game.", exc_info=True)
 

@@ -25,9 +25,10 @@ SOFTWARE.
 import functools
 import logging
 from typing import Any, Callable, Dict, List, Optional, Union
-
-from redbot.core import commands
 from typing_extensions import ParamSpec
+
+import discord
+from redbot.core import commands
 
 P = ParamSpec("P")
 
@@ -93,3 +94,7 @@ def _cooldown(ctx: commands.Context) -> Optional[commands.Cooldown]:
     if ctx.author.id in ctx.bot.owner_ids:
         return None
     return commands.Cooldown(1, ctx.cog._cooldown)
+
+
+def guild_roughly_chunked(guild: discord.Guild) -> bool:
+    return len(guild.members) / guild.member_count > 0.9
