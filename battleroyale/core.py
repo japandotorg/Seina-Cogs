@@ -435,7 +435,7 @@ class BattleRoyale(commands.Cog):
                 embed=discord.Embed(
                     description=f"**{role.name}** has no members.",
                     color=await ctx.embed_color(),
-                )
+                ).set_thumbnail(url=SWORDS)
             )
             return
         users: List[discord.Member] = []
@@ -444,6 +444,14 @@ class BattleRoyale(commands.Cog):
         players: List[discord.Member] = list(filter(lambda u: not u.bot, users))
         if ctx.author not in players:
             players.append(ctx.author)
+        if len(players) < 3:
+            await ctx.send(
+                embed=discord.Embed(
+                    description=f"Not enough players in the role to start. (need at least 3, {len(players)} found).",
+                    color=await ctx.embed_color(),
+                ).set_thumbnail(url=SWORDS)
+            )
+            return
         game: Game = Game(cog=self, delay=delay, skip=skip)
         embed: discord.Embed = discord.Embed(
             title="Battle Royale",
