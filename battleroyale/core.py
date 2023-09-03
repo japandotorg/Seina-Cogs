@@ -47,13 +47,8 @@ from redbot.core.utils.views import SimpleMenu
 from .constants import SWORDS
 from .converters import EmojiConverter
 from .game import Game
+from .utils import _cooldown, _get_attachments, exceptions, guild_roughly_chunked
 from .views import JoinGameView
-from .utils import (
-    _cooldown,
-    _get_attachments,
-    exceptions,
-    guild_roughly_chunked,
-)
 
 log: logging.Logger = logging.getLogger("red.seina.battleroyale")
 
