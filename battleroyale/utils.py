@@ -25,10 +25,10 @@ SOFTWARE.
 import functools
 import logging
 from typing import Any, Callable, Dict, List, Optional, Union
-from typing_extensions import ParamSpec
 
 import discord
 from redbot.core import commands
+from typing_extensions import ParamSpec
 
 P = ParamSpec("P")
 
