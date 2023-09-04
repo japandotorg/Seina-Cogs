@@ -242,6 +242,7 @@ class BattleRoyale(commands.Cog):
             f.write(bytes_file)
         await ctx.send(f"Your custom background has been saved as `{filename}`.")
 
+    @commands.is_owner()
     @setbattleroyale.command(name="removebackground", aliases=["rb"])
     async def _remove_background(self, ctx: commands.Context, filename: str):
         """
