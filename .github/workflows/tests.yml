@@ -8,7 +8,7 @@ jobs:
     name: Style Reformatting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v1
         with:
           python_version: "3.8"
@@ -32,7 +32,7 @@ jobs:
     name: Lint Python
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ env.ref }}
       - uses: actions/setup-python@v2
