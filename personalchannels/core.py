@@ -551,6 +551,8 @@ class PersonalChannels(commands.Cog):
     async def _pin(self, ctx: commands.Context, message: Optional[discord.Message] = None):
         """
         Pin a message in the personal channel.
+
+        You can also reply to the message with invoking the command.
         """
         channel = await self.config.member(ctx.author).channel()
         channel = ctx.guild.get_channel(channel)
@@ -578,6 +580,8 @@ class PersonalChannels(commands.Cog):
     async def _unpin(self, ctx: commands.Context, message: Optional[discord.Message] = None):
         """
         Unpin a message from the personal channel.
+
+        You can also reply to the message with invoking the command.
         """
         channel = await self.config.member(ctx.author).channel()
         channel = ctx.guild.get_channel(channel)
