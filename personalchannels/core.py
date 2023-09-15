@@ -557,7 +557,7 @@ class PersonalChannels(commands.Cog):
         await self.check_text_channels(ctx, channel)
         message = ref.resolved if (ref := ctx.message.reference) else message  # type: ignore
         if message is None:
-            await ctx.send("`Message` is a required argument.")
+            await ctx.send_help()
             return
         if message.channel is not channel:
             await ctx.send(f"This is not your personal channel. (Your channel: {channel.mention})")
@@ -584,7 +584,7 @@ class PersonalChannels(commands.Cog):
         await self.check_text_channels(ctx, channel)
         message = ref.resolved if (ref := ctx.message.reference) else message  # type: ignore
         if message is None:
-            await ctx.send("`Message` is a required argument.")
+            await ctx.send_help()
             return
         if message.channel is not channel:
             await ctx.send(f"This is not your personal channel. (Your channel: {channel.mention})")
