@@ -506,7 +506,7 @@ class PersonalChannels(commands.Cog):
             return
         try:
             await channel.edit(
-                topic=topic, reason=get_audit_reason(ctx.author, "Personal Channel")
+                topic=topic, reason=get_audit_reason(ctx.author, "Personal Channel")  # type: ignore
             )
         except discord.HTTPException as e:
             raise commands.UserFeedbackCheckFailure(
@@ -533,7 +533,7 @@ class PersonalChannels(commands.Cog):
         try:
             await channel.edit(
                 nsfw=nsfw,
-                reason=get_audit_reason(ctx.channel, "Edited nsfw toggle of personal channel."),
+                reason=get_audit_reason(ctx.author, "Edited nsfw toggle of personal channel."),
             )
         except discord.HTTPException as e:
             raise commands.UserFeedbackCheckFailure(
@@ -543,6 +543,54 @@ class PersonalChannels(commands.Cog):
             await ctx.send(
                 f"Changed nsfw toggle of {ctx.author.display_name}'s personal channel to {nsfw}"
             )
+
+    @has_assigned_channel()
+    @_my_channel.command(name="pin")
+    @commands.bot_has_permissions(manage_channels=True)
+    @commands.cooldown(1, 30, commands.BucketType.member)
+    async def _pin(self, ctx: commands.Context, message: Optional[discord.Message] = None):
+        """
+        Pin a message in the personal channel.
+        """
+        channel = await self.config.member(ctx.author).channel()
+        channel = ctx.guild.get_channel(channel)
+        await self.check_text_channels(ctx, channel)
+        message = ref.resolved if (ref := ctx.message.reference) else message  # type: ignore
+        if message.channel is not channel:
+            await ctx.send(f"This is not your personal channel. (Your channel: {channel.mention})")
+            return
+        try:
+            await message.pin(reason=get_audit_reason(ctx.author, "Personal Channel"))
+        except discord.HTTPException as e:
+            raise commands.UserFeedbackCheckFailure(
+                "Unable to pin messages in this channel.\n{}".format(box(str(e), lang="py"))
+            )
+        else:
+            await ctx.send("Successfully pinned message in your personal channel.")
+
+    @has_assigned_channel()
+    @_my_channel.command(name="unpin")
+    @commands.bot_has_permissions(manage_channels=True)
+    @commands.cooldown(1, 30, commands.BucketType.member)
+    async def _unpin(self, ctx: commands.Context, message: Optional[discord.Message] = None):
+        """
+        Unpin a message from the personal channel.
+        """
+        channel = await self.config.member(ctx.author).channel()
+        channel = ctx.guild.get_channel(channel)
+        await self.check_text_channels(ctx, channel)
+        message = ref.resolved if (ref := ctx.message.reference) else message  # type: ignore
+        if message.channel is not channel:
+            await ctx.send(f"This is not your personal channel. (Your channel: {channel.mention})")
+            return
+        try:
+            await message.unpin(reason=get_audit_reason(ctx.author, "Personal Channel"))
+        except discord.HTTPException as e:
+            raise commands.UserFeedbackCheckFailure(
+                "Unable to unpin messages in this channel.\n{}".format(box(str(e), lang="py"))
+            )
+        else:
+            await ctx.send("Successfully unpinned message in your personal channel.")
 
     @has_assigned_channel()
     @_my_channel.command(name="delete")
