@@ -27,8 +27,7 @@ SOFTWARE.
 import asyncio
 import io
 from textwrap import shorten
-from tabulate import tabulate
-from typing import Dict, Final, List, Literal, Optional, Union, Any
+from typing import Any, Dict, Final, List, Literal, Optional, Union
 
 import discord
 from discord.ext.commands._types import Check
@@ -40,6 +39,7 @@ from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.views import SimpleMenu
+from tabulate import tabulate
 
 RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
