@@ -684,5 +684,5 @@ class PersonalChannels(commands.Cog):
     async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel):
         all_data: Dict[int, Any] = await self.config.all_members(guild=channel.guild)
         for member_id, data in all_data.items():
-            if channel.id in data["channel"]:  # type: ignore
+            if channel.id in data["channel"]:
                 await self.config.member_from_ids(channel.guild.id, member_id).clear()
