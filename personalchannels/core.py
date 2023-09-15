@@ -27,7 +27,8 @@ SOFTWARE.
 import asyncio
 import io
 from textwrap import shorten
-from typing import Dict, Final, List, Literal, Optional, Union
+from tabulate import tabulate
+from typing import Dict, Final, List, Literal, Optional, Union, Any
 
 import discord
 from discord.ext.commands._types import Check
@@ -39,7 +40,6 @@ from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.views import SimpleMenu
-from tabulate import tabulate
 
 RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
@@ -608,7 +608,7 @@ class PersonalChannels(commands.Cog):
         )
         try:
             pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
-            await ctx.bot.wait_for("message", check=pred, timeout=20)
+            await self.bot.wait_for("message", check=pred, timeout=20)
         except asyncio.TimeoutError:
             await ctx.send("Exiting operation.")
             return
@@ -679,3 +679,10 @@ class PersonalChannels(commands.Cog):
             if member.id in data["friends"]:
                 data["friends"].remove(member.id)
                 await self.config.member_from_ids(member.guild.id, member_id).set(data)
+
+    @commands.Cog.listener()
+    async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel):
+        all_data: Dict[int, Any] = await self.config.all_members(guild=channel.guild)
+        for member_id, data in all_data.items():
+            if channel.id in data["channel"]:  # type: ignore
+                await self.config.member_from_ids(channel.guild.id, member_id).clear()
