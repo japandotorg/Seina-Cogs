@@ -107,9 +107,16 @@ class Animals(commands.Cog):
         """
         if not ctx.invoked_subcommand:
             await ctx.typing()
-            image, name, details = await CatAPI(ctx, self.session).image(breed)  # type: ignore
+            try:
+                image, name, details = await CatAPI(ctx, self.session).image(breed)  # type: ignore
+            except TypeError:
+                await ctx.send(
+                    f"The bot owner has not setup the random cats api key yet!",
+                    reference=ctx.message.to_reference(fail_if_not_exists=False),
+                )
+                return
             if not image:
-                return await ctx.reply(
+                await ctx.send(
                     embeds=[
                         discord.Embed(
                             description=(
@@ -120,7 +127,9 @@ class Animals(commands.Cog):
                         )
                     ],
                     allowed_mentions=discord.AllowedMentions(replied_user=False),
+                    reference=ctx.message.to_reference(fail_if_not_exists=False),
                 )
+                return
             embed: discord.Embed = discord.Embed(
                 color=await ctx.embed_color(),
                 description=details,
@@ -138,7 +147,14 @@ class Animals(commands.Cog):
         """
         List of cat breeds.
         """
-        pages, breed_count = await CatAPI(ctx, self.session).breeds()  # type: ignore
+        try:
+            pages, breed_count = await CatAPI(ctx, self.session).breeds()  # type: ignore
+        except TypeError:
+            await ctx.send(
+                f"The bot owner has not setup the random cats api key yet!",
+                reference=ctx.message.to_reference(fail_if_not_exists=False),
+            )
+            return
         embeds = []
         for page in pages:
             embed = discord.Embed(title=f"There are {breed_count} cat breeds!")
@@ -180,9 +196,16 @@ class Animals(commands.Cog):
         """
         if not ctx.invoked_subcommand:
             await ctx.typing()
-            image, name, details = await DogAPI(ctx, self.session).image(breed)  # type: ignore
+            try:
+                image, name, details = await DogAPI(ctx, self.session).image(breed)  # type: ignore
+            except TypeError:
+                await ctx.send(
+                    f"The bot owner has not setup the random dogs api key yet!",
+                    reference=ctx.message.to_reference(fail_if_not_exists=False),
+                )
+                return
             if not image:
-                return await ctx.reply(
+                await ctx.reply(
                     embeds=[
                         discord.Embed(
                             description=(
@@ -194,6 +217,7 @@ class Animals(commands.Cog):
                     ],
                     allowed_mentions=discord.AllowedMentions(replied_user=False),
                 )
+                return
             embed: discord.Embed = discord.Embed(
                 color=await ctx.embed_color(),
                 description=details,
@@ -212,7 +236,14 @@ class Animals(commands.Cog):
         """
         List of dog breeds.
         """
-        pages, breed_count = await DogAPI(ctx, self.session).breeds()  # type: ignore
+        try:
+            pages, breed_count = await DogAPI(ctx, self.session).breeds()  # type: ignore
+        except TypeError:
+            await ctx.send(
+                f"The bot owner has not setup the random dogs api key yet!",
+                reference=ctx.message.to_reference(fail_if_not_exists=False),
+            )
+            return
         embeds = []
         for page in pages:
             embed = discord.Embed(title=f"There are {breed_count} dog breeds!")
