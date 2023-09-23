@@ -25,7 +25,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import logging
-from typing import Final, List, Literal, Optional
+from typing import Final, List, Literal, Optional, Union
 
 import discord
 from redbot.core import commands
@@ -68,12 +68,14 @@ class FirstMessage(commands.Cog):
         self,
         ctx: commands.Context,
         channel: Optional[
-            discord.TextChannel
-            | discord.Thread
-            | discord.DMChannel
-            | discord.GroupChannel
-            | discord.User
-            | discord.Member
+            Union[
+                discord.TextChannel,
+                discord.Thread,
+                discord.DMChannel,
+                discord.GroupChannel,
+                discord.User,
+                discord.Member,
+            ],
         ] = commands.CurrentChannel,
     ):
         """
@@ -84,7 +86,7 @@ class FirstMessage(commands.Cog):
 
             chan = (
                 f"<@{channel.id}>"
-                if isinstance(channel, discord.DMChannel | discord.User | discord.Member)
+                if isinstance(channel, (discord.DMChannel, discord.User, discord.Member))
                 else f"<#{channel.id}>"
             )
 
