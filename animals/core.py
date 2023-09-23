@@ -96,6 +96,7 @@ class Animals(commands.Cog):
     async def cog_unload(self) -> None:
         await self.session.close()
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.group(name="cat", invoke_without_command=True)
     async def _cat(self, ctx: commands.Context, *, breed: Optional[str] = None):
         """
@@ -131,6 +132,7 @@ class Animals(commands.Cog):
                 allowed_mentions=discord.AllowedMentions(replied_user=False),
             )
 
+    @commands.bot_has_permissions(embed_links=True)
     @_cat.command(name="breeds")
     async def _cat_breeds(self, ctx: commands.Context):
         """
@@ -144,6 +146,8 @@ class Animals(commands.Cog):
             embeds.append(embed)
         await menu(ctx, pages=embeds, controls=DEFAULT_CONTROLS, timeout=60.0)
 
+    @commands.is_owner()
+    @commands.bot_has_permissions(embed_links=True)
     @_cat.command(name="creds", aliases=["setapikey", "setapi"])
     async def _cat_creds(self, ctx: commands.Context):
         """
@@ -165,6 +169,7 @@ class Animals(commands.Cog):
         else:
             await ctx.send(message, view=view)
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.group(name="dog", invoke_without_command=True)
     async def _dog(self, ctx: commands.Context, *, breed: Optional[str] = None):
         """
@@ -200,6 +205,7 @@ class Animals(commands.Cog):
                 allowed_mentions=discord.AllowedMentions(replied_user=False),
             )
 
+    @commands.bot_has_permissions(embed_links=True)
     @_dog.command(name="breeds")
     async def _dog_breeds(self, ctx: commands.Context):
         """
@@ -213,6 +219,8 @@ class Animals(commands.Cog):
             embeds.append(embed)
         await menu(ctx, pages=embeds, controls=DEFAULT_CONTROLS, timeout=60.0)
 
+    @commands.is_owner()
+    @commands.bot_has_permissions(embed_links=True)
     @_dog.command(name="creds", aliases=["setapikey", "setapi"])
     async def _dog_creds(self, ctx: commands.Context):
         """
@@ -234,6 +242,7 @@ class Animals(commands.Cog):
         else:
             await ctx.send(message, view=view)
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="bear")
     async def bear(self, ctx: commands.Context):
         """
@@ -252,6 +261,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="bird")
     async def bird(self, ctx: commands.Context):
         """
@@ -270,6 +280,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="dolphin")
     async def _dolphin(self, ctx: commands.Context):
         """
@@ -285,6 +296,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="duck")
     async def _duck(self, ctx: commands.Context):
         """
@@ -298,6 +310,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="elephant")
     async def _elephant(self, ctx: commands.Context):
         """
@@ -311,6 +324,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="giraffe")
     async def _giraffe(self, ctx: commands.Context):
         """
@@ -329,6 +343,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="hippo")
     async def _hippo(self, ctx: commands.Context):
         """
@@ -342,6 +357,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="horse")
     async def _horse(self, ctx: commands.Context):
         """
@@ -355,6 +371,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="killerwhale")
     async def _killerwhale(self, ctx: commands.Context):
         """
@@ -368,6 +385,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="lion")
     async def _lion(self, ctx: commands.Context):
         """
@@ -386,6 +404,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="panda")
     async def _panda(self, ctx: commands.Context):
         """
@@ -404,6 +423,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="pig")
     async def _pig(self, ctx: commands.Context):
         """
@@ -417,6 +437,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="redpanda")
     async def _redpanda(self, ctx: commands.Context):
         """
@@ -433,6 +454,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="shark")
     async def _shark(self, ctx: commands.Context):
         """
@@ -451,6 +473,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="snake")
     async def _snake(self, ctx: commands.Context):
         """
@@ -469,6 +492,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="spider")
     async def _spider(self, ctx: commands.Context):
         """
@@ -482,6 +506,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="turtle")
     async def _turtle(self, ctx: commands.Context):
         """
@@ -495,6 +520,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="fox")
     async def _fox(self, ctx: commands.Context):
         """
@@ -513,6 +539,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="koala")
     async def _koala(self, ctx: commands.Context):
         """
@@ -531,6 +558,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="kangaroo")
     async def _kangaroo(self, ctx: commands.Context):
         """
@@ -549,6 +577,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="raccoon")
     async def _raccoon(self, ctx: commands.Context):
         """
@@ -567,6 +596,7 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="lizard")
     async def _lizard(self, ctx: commands.Context):
         """
