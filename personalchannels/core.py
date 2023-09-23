@@ -116,8 +116,7 @@ class PersonalChannels(commands.Cog):
                 if config := await self.config.member_from_ids(guild_id, user_id).all():
                     return config
                 else:
-                    data = "No data is stored for user with ID {}.\n".format(user_id)
-                    return {"user_data.txt": io.BytesIO(data.encode())}
+                    return
 
     async def red_delete_data_for_user(self, *, requester: RequestType, user_id: int) -> None:
         data = await self.config.all_members()

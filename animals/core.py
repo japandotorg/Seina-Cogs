@@ -22,9 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import io
 import logging
-from typing import Any, Dict, Final, Literal, Optional
+from typing import Dict, Final, Literal, Optional
 
 import aiohttp
 import discord
@@ -59,24 +58,6 @@ class Animals(commands.Cog):
         }
 
         self.config.register_global(**default_global)
-
-    async def red_get_data_for_user(
-        self, *, requester: RequestType, user_id: int
-    ) -> Dict[str, io.BytesIO]:
-        """
-        Nothing to delete.
-        """
-        data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
-        return {"user_data.txt": io.BytesIO(data.encode())}
-
-    async def red_delete_data_for_user(self, **kwargs: Any) -> Dict[str, io.BytesIO]:
-        """
-        Delete a user's personal data.
-        No personal data is stored in this cog.
-        """
-        user_id: Any = kwargs.get("user_id")
-        data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
-        return {"user_data.txt": io.BytesIO(data.encode())}
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)

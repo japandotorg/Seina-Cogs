@@ -1,6 +1,5 @@
 import re
-from io import BytesIO
-from typing import Any, Dict, Final, List, Pattern
+from typing import Final, List, Pattern
 
 import discord
 import molmass  # type: ignore
@@ -18,15 +17,6 @@ class Chemistry(commands.Cog):
 
     def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
-
-    async def red_delete_data_for_user(self, **kwargs: Any) -> Dict[str, BytesIO]:
-        """
-        Delete a user's personal data.
-        No personal data is stored in this cog.
-        """
-        user_id: Any = kwargs.get("user_id")
-        data: Final[str] = "No data is stored for user with ID {}.\n".format(user_id)
-        return {"user_data.txt": BytesIO(data.encode())}
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
