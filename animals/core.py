@@ -200,9 +200,10 @@ class Animals(commands.Cog):
             )
             embed.set_image(url=image)
             embed.set_author(name=name)
-            await ctx.reply(
+            await ctx.send(
                 embed=embed,
                 allowed_mentions=discord.AllowedMentions(replied_user=False),
+                reference=ctx.message.to_reference(fail_if_not_exists=False),
             )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -256,9 +257,10 @@ class Animals(commands.Cog):
             description=description,
         )
         embed.set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -275,9 +277,10 @@ class Animals(commands.Cog):
             description=description,
         )
         embed.set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -291,9 +294,10 @@ class Animals(commands.Cog):
         embed: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
         ).set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -305,9 +309,10 @@ class Animals(commands.Cog):
         await ctx.typing()
         image = await AnimalAPI(self.session).image("duck")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -319,9 +324,10 @@ class Animals(commands.Cog):
         await ctx.typing()
         image = await AnimalAPI(self.session).image("elephant")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -338,9 +344,10 @@ class Animals(commands.Cog):
             description=description,
         )
         embed.set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -352,9 +359,10 @@ class Animals(commands.Cog):
         await ctx.typing()
         image = await AnimalAPI(self.session).image("hippo")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -366,9 +374,10 @@ class Animals(commands.Cog):
         await ctx.typing()
         image = await AnimalAPI(self.session).image("horse")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -380,9 +389,10 @@ class Animals(commands.Cog):
         await ctx.typing()
         image = await AnimalAPI(self.session).image("killerwhale")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -399,9 +409,10 @@ class Animals(commands.Cog):
             description=description,
         )
         embed.set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -418,9 +429,10 @@ class Animals(commands.Cog):
             description=description,
         )
         embed.set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -432,9 +444,10 @@ class Animals(commands.Cog):
         await ctx.typing()
         image = await AnimalAPI(self.session).image("pig")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -449,9 +462,10 @@ class Animals(commands.Cog):
         embed: discord.Embed = discord.Embed(
             description=description, color=await ctx.embed_color()
         ).set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -468,9 +482,10 @@ class Animals(commands.Cog):
             description=description,
         )
         embed.set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -487,9 +502,10 @@ class Animals(commands.Cog):
             description=description,
         )
         embed.set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -501,9 +517,10 @@ class Animals(commands.Cog):
         await ctx.typing()
         image = await AnimalAPI(self.session).image("spider")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -515,9 +532,10 @@ class Animals(commands.Cog):
         await ctx.typing()
         image = await AnimalAPI(self.session).image("turtle")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -534,9 +552,10 @@ class Animals(commands.Cog):
             description=description,
         )
         embed.set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -553,9 +572,10 @@ class Animals(commands.Cog):
             description=description,
         )
         embed.set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -572,9 +592,10 @@ class Animals(commands.Cog):
             description=description,
         )
         embed.set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -591,9 +612,10 @@ class Animals(commands.Cog):
             description=description,
         )
         embed.set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
 
     @commands.bot_has_permissions(embed_links=True)
@@ -605,7 +627,8 @@ class Animals(commands.Cog):
         await ctx.typing()
         image = await AnimalAPI(self.session).image("lizard")
         embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.reply(
+        await ctx.send(
             embed=embed,
             allowed_mentions=discord.AllowedMentions(replied_user=False),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
