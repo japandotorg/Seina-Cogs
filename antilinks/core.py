@@ -137,6 +137,7 @@ class AntiLinks(commands.Cog):
                 f"Successfully {'added' if add_or_remove.lower() == 'add' else 'removed'} {ids} {'role' if ids == 1 else 'roles'}."
             )
 
+    @commands.bot_has_permissions(embed_links=True)
     @_whitelist_role.command(name="list", aliases=["view"])
     async def _role_list(self, ctx: commands.Context) -> None:
         """
@@ -193,6 +194,7 @@ class AntiLinks(commands.Cog):
                 f"Successfully {'added' if add_or_remove.lower() == 'add' else 'removed'} {ids} {'member' if ids == 1 else 'members'}."
             )
 
+    @commands.bot_has_permissions(embed_links=True)
     @_whitelist_user.command(name="list")
     async def _user_list(self, ctx: commands.Context) -> None:
         """
@@ -252,6 +254,7 @@ class AntiLinks(commands.Cog):
                 "the channel watch list."
             )
 
+    @commands.bot_has_permissions(embed_links=True)
     @_watch.command(name="list")
     async def _watch_list(self, ctx: commands.Context) -> None:
         """
@@ -326,11 +329,7 @@ class AntiLinks(commands.Cog):
                         msg += "**Message content**:\n- {}".format(message.content)
                         if message_channel:
                             ctx = await self.bot.get_context(message)
-                            embed: discord.Embed = discord.Embed(
-                                description=msg,
-                                color=await ctx.embed_color(),
-                            )
-                            await message_channel.send(embed=embed)
+                            await ctx.maybe_send_embed(msg)
                         await message.delete()
             except Exception as e:
                 if message_channel:
