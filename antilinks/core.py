@@ -226,7 +226,7 @@ class AntiLinks(commands.Cog):
         self,
         ctx: commands.Context,
         add_or_remove: Literal["add", "remove"],
-        channels: commands.Greedy[discord.TextChannel] = None,
+        channels: commands.Greedy[Union[discord.TextChannel, discord.VoiceChannel]] = None,
     ) -> None:
         """
         Add/remove/list channels to watch.
