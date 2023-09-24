@@ -67,15 +67,13 @@ class FirstMessage(commands.Cog):
     async def firstmessage(
         self,
         ctx: commands.Context,
-        channel: Optional[
-            Union[
-                discord.TextChannel,
-                discord.Thread,
-                discord.DMChannel,
-                discord.GroupChannel,
-                discord.User,
-                discord.Member,
-            ],
+        channel: Union[
+            discord.TextChannel,
+            discord.Thread,
+            discord.DMChannel,
+            discord.GroupChannel,
+            discord.User,
+            discord.Member,
         ] = commands.CurrentChannel,
     ):
         """
