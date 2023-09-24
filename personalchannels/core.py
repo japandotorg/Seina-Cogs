@@ -208,16 +208,10 @@ class PersonalChannels(commands.Cog):
 
     @_my_channel.command(name="category")
     @commands.admin_or_permissions(manage_guild=True)
-    async def _category(
-        self, ctx: commands.Context, category: Optional[discord.CategoryChannel] = None
-    ):
+    async def _category(self, ctx: commands.Context, category: discord.CategoryChannel):
         """
         Configure the category every personal text channel should be under.
         """
-        if category is None:
-            await self.config.guild(ctx.guild).category.clear()
-            await ctx.send(f"I have cleared the personal text channel category.")
-            return
         await self.config.guild(ctx.guild).category.set(category.id)
         await ctx.send(
             f"I have set {category.name} ({category.id}) as the personal text channel category."
