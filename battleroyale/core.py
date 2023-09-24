@@ -398,10 +398,7 @@ class BattleRoyale(commands.Cog):
 
         game: Game = Game(cog=self, delay=delay, skip=skip)
         self.games[join_view._message] = game
-        try:
-            await game.start(ctx, players=players, original_message=join_view._message)
-        except Exception as e:
-            self.log.exception("Something went wrong while starting the game.", exc_info=True)
+        await game.start(ctx, players=players, original_message=join_view._message)
 
     @battleroyale.command()
     async def auto(
@@ -465,9 +462,7 @@ class BattleRoyale(commands.Cog):
                 ).set_thumbnail(url=SWORDS)
             )
             return
-        users: List[discord.Member] = []
-        for member in role.members:
-            users.append(member)
+        users: List[discord.Member] = list(role.members)
         players: List[discord.Member] = list(filter(lambda u: not u.bot, users))
         if ctx.author not in players:
             players.append(ctx.author)
@@ -488,10 +483,7 @@ class BattleRoyale(commands.Cog):
         embed.set_thumbnail(url=SWORDS)
         message = await ctx.send(embed=embed)
         self.games[message] = game
-        try:
-            await game.start(ctx, players=players, original_message=message)
-        except Exception as e:
-            self.log.exception("Something went wrong while starting the game.", exc_info=True)
+        await game.start(ctx, players=players, original_message=message)
 
     @battleroyale.command(name="profile", aliases=["stats"])
     async def profile(self, ctx: commands.Context, *, user: Optional[discord.Member] = None):
