@@ -28,6 +28,7 @@ import logging
 from typing import Dict, Final, List, Optional
 
 import discord
+from discord.ext.commands._types import Check
 from redbot.core import Config, app_commands, commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
@@ -37,6 +38,18 @@ from .http import TruthOrDareAPIClient
 from .views import CGView
 
 log: logging.Logger = logging.getLogger("red.seina.conversationgames")
+
+
+def is_restricted() -> Check[commands.Context]:
+    async def _predicate(ctx: commands.Context) -> bool:
+        rating = await ctx.cog.config.guild(ctx.guild).rating()  # type: ignore
+        if rating.lower() in ["pg", "pg13"]:
+            return True
+        elif ctx.channel.is_nsfw():  # type: ignore
+            return True
+        return False
+
+    return commands.check(_predicate)
 
 
 class ConversationGames(commands.Cog):
@@ -69,6 +82,7 @@ class ConversationGames(commands.Cog):
         rating = await self.config.guild(guild).rating()
         return rating
 
+    @is_restricted()
     @commands.guild_only()
     @commands.cooldown(1, 3, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True)
@@ -94,6 +108,7 @@ class ConversationGames(commands.Cog):
         )
         _view._message = _out
 
+    @is_restricted()
     @commands.guild_only()
     @commands.cooldown(1, 3, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True)
@@ -119,6 +134,7 @@ class ConversationGames(commands.Cog):
         )
         _view._message = _out
 
+    @is_restricted()
     @commands.guild_only()
     @commands.cooldown(1, 3, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True)
@@ -144,6 +160,7 @@ class ConversationGames(commands.Cog):
         )
         _view._message = _out
 
+    @is_restricted()
     @commands.guild_only()
     @commands.cooldown(1, 3, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True)
@@ -174,6 +191,7 @@ class ConversationGames(commands.Cog):
         )
         _view._message = _out
 
+    @is_restricted()
     @commands.guild_only()
     @commands.cooldown(1, 3, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True)
