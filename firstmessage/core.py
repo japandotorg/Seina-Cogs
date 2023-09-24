@@ -63,7 +63,7 @@ class FirstMessage(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(read_message_history=True)
-    @commands.bot_has_permissions(read_message_history=True)
+    @commands.bot_has_permissions(read_message_history=True, embed_links=True)
     async def firstmessage(
         self,
         ctx: commands.Context,
