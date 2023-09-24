@@ -32,7 +32,7 @@ from redbot.core import Config, app_commands, commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
 
-from .constants import Ratings, RequestType
+from .constants import Ratings
 from .http import TruthOrDareAPIClient
 from .views import CGView
 
@@ -71,7 +71,7 @@ class ConversationGames(commands.Cog):
 
     @commands.guild_only()
     @commands.cooldown(1, 3, commands.BucketType.guild)
-    @commands.bot_has_guild_permissions(embed_links=True)
+    @commands.bot_has_permissions(embed_links=True)
     @app_commands.default_permissions(use_application_commands=True)
     @commands.hybrid_command(name="wouldyourather", aliases=["wyr"])
     async def _wyr(self, ctx: commands.Context):
@@ -96,7 +96,7 @@ class ConversationGames(commands.Cog):
 
     @commands.guild_only()
     @commands.cooldown(1, 3, commands.BucketType.guild)
-    @commands.bot_has_guild_permissions(embed_links=True)
+    @commands.bot_has_permissions(embed_links=True)
     @app_commands.default_permissions(use_application_commands=True)
     @commands.hybrid_command(name="neverhaveiever", aliases=["nhie"])
     async def _nhie(self, ctx: commands.Context):
@@ -120,10 +120,10 @@ class ConversationGames(commands.Cog):
         _view._message = _out
 
     @commands.guild_only()
-    @commands.hybrid_command(name="paranoia")
     @commands.cooldown(1, 3, commands.BucketType.guild)
-    @commands.bot_has_guild_permissions(embed_links=True)
+    @commands.bot_has_permissions(embed_links=True)
     @app_commands.default_permissions(use_application_commands=True)
+    @commands.hybrid_command(name="paranoia")
     async def _paranoia(self, ctx: commands.Context):
         """
         Paranoia questions.
@@ -145,11 +145,11 @@ class ConversationGames(commands.Cog):
         _view._message = _out
 
     @commands.guild_only()
-    @commands.hybrid_command(name="truth")
     @commands.cooldown(1, 3, commands.BucketType.guild)
-    @commands.bot_has_guild_permissions(embed_links=True)
+    @commands.bot_has_permissions(embed_links=True)
     @app_commands.default_permissions(use_application_commands=True)
     @app_commands.describe(member="The member you want to ask question.")
+    @commands.hybrid_command(name="truth")
     async def _truth(self, ctx: commands.Context, *, member: Optional[discord.Member] = None):
         """
         Truth questions, optionally ask truth questions to members!
@@ -165,7 +165,7 @@ class ConversationGames(commands.Cog):
                 title=title, description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-        _view = CGView(ctx, result)
+        _view = CGView(ctx, result, member)
         _out = await ctx.send(
             embed=embed,
             view=_view,
@@ -175,10 +175,10 @@ class ConversationGames(commands.Cog):
         _view._message = _out
 
     @commands.guild_only()
-    @commands.hybrid_command(name="dare")
     @commands.cooldown(1, 3, commands.BucketType.guild)
-    @commands.bot_has_guild_permissions(embed_links=True)
+    @commands.bot_has_permissions(embed_links=True)
     @app_commands.default_permissions(use_application_commands=True)
+    @commands.hybrid_command(name="dare")
     @app_commands.describe(member="The member you want to ask question.")
     async def _dare(self, ctx: commands.Context, *, member: Optional[discord.Member] = None):
         """
@@ -195,7 +195,7 @@ class ConversationGames(commands.Cog):
                 title=title, description=result["question"], color=await ctx.embed_color()
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-        _view = CGView(ctx, result)
+        _view = CGView(ctx, result, member)
         _out = await ctx.send(
             embed=embed,
             view=_view,

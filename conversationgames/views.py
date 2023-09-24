@@ -61,11 +61,13 @@ class CGView(discord.ui.View):
         self,
         ctx: commands.Context,
         result: Dict[str, Union[str, Dict[str, str]]],
-        timeout: float = 120.0,
+        member: Optional[discord.Member] = None,
+        timeout: Optional[float] = 120.0,
     ) -> None:
         super().__init__(timeout=timeout)
         self._ctx: commands.Context = ctx
         self._result: Dict[str, Union[str, Dict[str, str]]] = result
+        self._member: Optional[discord.Member] = member
         self._message: Optional[discord.Message] = None
 
         self.add_item(Select(self._callback))  # type: ignore
@@ -80,7 +82,11 @@ class CGView(discord.ui.View):
             pass
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
-        if self._ctx.author.id != interaction.user.id:
+        if (
+            self._member.id
+            if self._member is not None
+            else self._ctx.author.id != interaction.user.id
+        ):
             await interaction.response.send_message(
                 "You are not allowed to use this interaction", ephemeral=True
             )

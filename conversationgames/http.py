@@ -1,3 +1,4 @@
+import pathlib
 import logging
 from datetime import timedelta
 from types import TracebackType
@@ -7,6 +8,7 @@ import aiohttp
 from aiohttp_client_cache import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
 from redbot.core import commands
+from redbot.core.data_manager import cog_data_path
 from typing_extensions import Self
 
 from .constants import (
@@ -20,6 +22,9 @@ from .constants import (
 )
 
 log: logging.Logger = logging.getLogger("red.seina.conversationgames.http")
+
+DATA_PATH: pathlib.Path = cog_data_path(raw_name="ConversationGames")
+CACHE_DIRECTORY: str = str(DATA_PATH / "cache/conversationgames.db")
 
 
 class HTTPClient:
@@ -39,7 +44,7 @@ class HTTPClient:
         if not self._session:
             timeout = aiohttp.ClientTimeout(total=SESSION_TIMEOUT)
             cache = SQLiteBackend(
-                cache_name="~/.cache/conversationgames.db",
+                cache_name=CACHE_DIRECTORY,
                 expire_after=timedelta(seconds=3),
                 allowed_methods=["GET", "HEAD"],
                 urls_expire_after=URL_EXPIRE_AFTER,
