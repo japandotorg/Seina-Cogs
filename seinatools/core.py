@@ -151,6 +151,7 @@ class SeinaTools(BaseCog):  # type: ignore
             await self.cog_load()
 
     @commands.is_owner()
+    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     @commands.command(name="spy")
     async def _spy(
         self,
@@ -245,6 +246,7 @@ class SeinaTools(BaseCog):  # type: ignore
             return
 
     @commands.is_owner()
+    @commands.bot_has_permissions(embed_links=True)
     @commands.group(name="botstat", aliases=["botstatset"], invoke_without_command=True)
     async def _botstat(self, ctx: commands.Context, /):
         """
@@ -310,6 +312,7 @@ class SeinaTools(BaseCog):  # type: ignore
         return await ctx.tick()
 
     @commands.is_owner()
+    @commands.bot_has_permissions(attach_files=True)
     @commands.command(
         name="screenshot", aliases=["ss"]
     )  # https://discord.com/channels/133049272517001216/133251234164375552/941197661426565150
@@ -333,7 +336,12 @@ class SeinaTools(BaseCog):  # type: ignore
                     },
                 )
 
-                await page.goto(url)
+                try:
+                    await page.goto(url)
+                except Exception as e:
+                    log.exception(
+                        f"Something went wrong trying to fetch the url: {box(str(e), lang='py')}"
+                    )
 
                 if wait != None:
                     await page.wait_for_timeout(wait)
@@ -419,6 +427,7 @@ class SeinaTools(BaseCog):  # type: ignore
 
             if not token:
                 await ctx.send("You have not provided an api key yet.")
+                return
 
             if not user:
                 user: discord.Member = ctx.author
