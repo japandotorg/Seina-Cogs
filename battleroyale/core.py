@@ -465,9 +465,7 @@ class BattleRoyale(commands.Cog):
                 ).set_thumbnail(url=SWORDS)
             )
             return
-        users: List[discord.Member] = []
-        for member in role.members:
-            users.append(member)
+        users: List[discord.Member] = list(role.members)
         players: List[discord.Member] = list(filter(lambda u: not u.bot, users))
         if ctx.author not in players:
             players.append(ctx.author)
