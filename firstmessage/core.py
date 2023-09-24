@@ -25,7 +25,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import logging
-from typing import Final, List, Literal, Optional, Union
+from typing import Final, List, Literal, Union
 
 import discord
 from redbot.core import commands
