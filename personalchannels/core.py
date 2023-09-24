@@ -243,7 +243,7 @@ class PersonalChannels(commands.Cog):
             await ctx.send(f"{user.display_name} already has a personal channel.")
             self._create.reset_cooldown(ctx)
             return
-        if name.casefold() in await self.config.guild(ctx.guild).blacklist():
+        if await self.config.guild(ctx.guild).blacklist() in name.casefold():
             await ctx.send("This channel name is blacklisted.")
             self._create.reset_cooldown(ctx)
             return
@@ -303,6 +303,7 @@ class PersonalChannels(commands.Cog):
         await self.config.member(user).permission.set(int(perms))
         await ctx.send(f"{user.display_name} can now add {int(perms)} friends in their channel.")
 
+    @has_assigned_channel()
     @_my_channel.command(name="position")
     @commands.admin_or_permissions(manage_guild=True)
     async def _position(
@@ -312,9 +313,6 @@ class PersonalChannels(commands.Cog):
         Edit the channel position for someone's personal channel.
         """
         channel = await self.config.member(ctx.author).channel()
-        if channel is None:
-            await ctx.send(f"{user.display_name} does not have a personal channel.")
-            return
         channel = ctx.guild.get_channel(channel)
         await self.check_text_channels(ctx, channel)
         try:
@@ -423,6 +421,7 @@ class PersonalChannels(commands.Cog):
                 f"{user.display_name} {'to' if add_or_remove.lower() == 'add' else 'from'} your friend list."
             )
 
+    @commands.bot_has_permissions(embed_links=True)
     @_friends.command(name="list")
     async def _friends_list(self, ctx: commands.Context):
         """
@@ -465,7 +464,7 @@ class PersonalChannels(commands.Cog):
         channel = await self.config.member(ctx.author).channel()
         channel = ctx.guild.get_channel(channel)
         await self.check_text_channels(ctx, channel)
-        if name.casefold() in await self.config.guild(ctx.guild).blacklist():
+        if await self.config.guild(ctx.guild).blacklist() in name.casefold():
             await ctx.send("This channel name is blacklisted.")
             self._name.reset_cooldown(ctx)
             return
@@ -483,7 +482,7 @@ class PersonalChannels(commands.Cog):
     @has_assigned_channel()
     @_my_channel.command(name="topic")
     @commands.bot_has_permissions(manage_channels=True)
-    @commands.cooldown(1, 30, commands.BucketType.member)
+    @commands.cooldown(1, 600, commands.BucketType.member)
     async def _topic(self, ctx: commands.Context, *, topic: str):
         """
         Change the topic of personal channel.
@@ -493,7 +492,7 @@ class PersonalChannels(commands.Cog):
         channel = await self.config.member(ctx.author).channel()
         channel = ctx.guild.get_channel(channel)
         await self.check_text_channels(ctx, channel)
-        if topic.casefold() in await self.config.guild(ctx.guild).blacklist():
+        if await self.config.guild(ctx.guild).blacklist() in topic.casefold():
             await ctx.send("This channel topic is blacklisted.")
             self._topic.reset_cooldown(ctx)
             return
