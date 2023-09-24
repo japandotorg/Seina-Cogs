@@ -56,7 +56,7 @@ class ConversationGames(commands.Cog):
     """Conversation games"""
 
     __author__: Final[List[str]] = ["inthedark.org"]
-    __version__: Final[str] = "0.2.4"
+    __version__: Final[str] = "0.2.5"
 
     def __init__(self, bot: Red) -> None:
         super().__init__()
@@ -234,6 +234,9 @@ class ConversationGames(commands.Cog):
     async def _rating(self, ctx: commands.Context, rating: Ratings):
         """
         Set rating for the games.
+
+        Converting to R-Rating will disallow the commands from working in
+        non-nsfw channels.
         """
         await self.config.guild(ctx.guild).rating.set(rating.lower())  # type: ignore
         await ctx.send(
