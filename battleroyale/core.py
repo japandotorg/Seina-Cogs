@@ -37,10 +37,10 @@ from typing import Any, Dict, Final, List, Literal, Optional, Union
 import aiohttp
 import discord
 import prettytable as pt
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 from redbot.core import Config, bank, commands
 from redbot.core.bot import Red
-from redbot.core.data_manager import bundled_data_path
+from redbot.core.data_manager import bundled_data_path, cog_data_path
 from redbot.core.utils.chat_formatting import box, humanize_list, pagify
 from redbot.core.utils.views import SimpleMenu
 
@@ -71,6 +71,7 @@ class BattleRoyale(commands.Cog):
         self.games: Dict[discord.Message, Game] = {}
 
         self.backgrounds_path: Path = bundled_data_path(self) / "backgrounds"
+        self.custom_backgrounds_path: Path = cog_data_path(self) / "backgrounds"
         self.config: Config = Config.get_conf(self, identifier=14, force_registration=True)
 
         self.log: logging.LoggerAdapter[logging.Logger] = logging.LoggerAdapter(
@@ -134,19 +135,27 @@ class BattleRoyale(commands.Cog):
     async def generate_image(
         self, user_1: discord.Member, user_2: discord.Member, to_file: bool = True
     ) -> Union[discord.File, Image.Image]:
-        backgrounds = os.listdir(self.backgrounds_path)
-        background = random.choice(backgrounds)
-        with open(self.backgrounds_path / background, mode="rb") as f:
-            background_bytes = f.read()
-        img = Image.open(BytesIO(background_bytes))
+        backgrounds = [self.backgrounds_path / background for background in os.listdir(self.backgrounds_path)]
+        if self.custom_backgrounds_path.exists():
+            backgrounds.extend([self.custom_backgrounds_path / background for background in os.listdir(self.custom_backgrounds_path)])
+        while True:
+            background = random.choice(backgrounds)
+            with open(background, mode="rb") as f:
+                background_bytes = f.read()
+            try:
+                img = Image.open(BytesIO(background_bytes))
+            except UnidentifiedImageError:
+                continue
+            else:
+                break
         img = img.convert("RGBA")
-        avatar_1 = Image.open(BytesIO(await self._get_content_from_url(user_1.display_avatar.url)))
+        avatar_1 = Image.open(BytesIO(await user_1.display_avatar.read()))
         avatar_1 = avatar_1.resize((400, 400))
         img.paste(
             avatar_1,
             ((0 + 30), (int(img.height / 2) - 200), (0 + 30 + 400), (int(img.height / 2) + 200)),
         )
-        avatar_2 = Image.open(BytesIO(await self._get_content_from_url(user_2.display_avatar.url)))
+        avatar_2 = Image.open(BytesIO(await user_2.display_avatar.read()))
         avatar_2 = avatar_2.resize((400, 400))
         img.paste(
             avatar_2,
@@ -203,8 +212,8 @@ class BattleRoyale(commands.Cog):
         """
         Get folder path for this cog's default backgrounds.
         """
-        path: str = os.path.join(self.backgrounds_path)
-        await ctx.send(f"Your default background folder path is:\n- `{path}`")
+        path: str = os.path.join(self.custom_backgrounds_path)
+        await ctx.send(f"Your default custom backgrounds folder path is:\n- `{path}`")
 
     @commands.is_owner()
     @setbattleroyale.command(name="addbackground", aliases=["ab"])
@@ -237,7 +246,7 @@ class BattleRoyale(commands.Cog):
             raise commands.UserFeedbackCheckFailure("I was unable to get the file from Discord.")
         if preferred_filename:
             filename = f"{preferred_filename}.{ext}"
-        filepath = os.path.join(self.backgrounds_path, filename)
+        filepath = os.path.join(self.custom_backgrounds_path, filename)
         with open(filepath, "wb") as f:
             f.write(bytes_file)
         await ctx.send(f"Your custom background has been saved as `{filename}`.")
@@ -248,8 +257,12 @@ class BattleRoyale(commands.Cog):
         """
         Remove a background from the cog's backgrounds folder.
         """
-        path = os.path.join(self.backgrounds_path)
-        for f in os.listdir(path):
+        path = self.custom_backgrounds_path
+        if not path.exists() or not (custom_backgrounds := os.listdir(path)):
+            raise commands.UserFeedbackCheckFailure(
+                "I could not find any background images with that name."
+            )
+        for f in custom_backgrounds:
             if filename.lower() in f.lower():
                 break
         else:
@@ -263,6 +276,25 @@ class BattleRoyale(commands.Cog):
             await ctx.send(f"Could not delete file: {str(exc)}.")
         await ctx.send(f"Backgorund `{f}` been removed.")
 
+    @commands.is_owner()
+    @setbattleroyale.command(name="listbackgrounds")
+    async def _list_backgrounds(self, ctx: commands.Context):
+        """
+        List your cog's custom backgrounds.
+        """
+        path = self.custom_backgrounds_path
+        if not path.exists() or not (custom_backgrounds := os.listdir(path)):
+            raise commands.UserFeedbackCheckFailure(
+                "You don't have any custom background images."
+            )
+        await SimpleMenu(
+            pages=[
+                box(page, lang="py") for page in pagify(
+                    "\n".join(f"- {custom_background}" for custom_background in custom_backgrounds)
+                )
+            ]
+        ).start(ctx)
+
     @bank.is_owner_if_bank_global()
     @setbattleroyale.command(name="prize")
     async def _prize(self, ctx: commands.Context, amount: commands.Range[int, 10, 2**30]):
@@ -273,7 +305,7 @@ class BattleRoyale(commands.Cog):
 
     @commands.is_owner()
     @setbattleroyale.command(name="emoji")
-    async def _emoji(self, ctx: commands.Context, emoji: EmojiConverter):
+    async def _emoji(self, ctx: commands.Context, emoji: EmojiConverter = None):
         """
         Set an emoji to be used with Battle Royale.
         """
@@ -325,9 +357,10 @@ class BattleRoyale(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.guild_only()
-    @commands.max_concurrency(1, commands.BucketType.channel)
-    @commands.group(aliases=["br"], invoke_without_command=True)
     @commands.dynamic_cooldown(_cooldown, commands.BucketType.guild)
+    @commands.max_concurrency(1, commands.BucketType.channel)
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.group(aliases=["br"], invoke_without_command=True)
     async def battleroyale(
         self, ctx: commands.Context, delay: commands.Range[int, 10, 20] = 10, skip: bool = False
     ):
@@ -365,10 +398,7 @@ class BattleRoyale(commands.Cog):
 
         game: Game = Game(cog=self, delay=delay, skip=skip)
         self.games[join_view._message] = game
-        try:
-            await game.start(ctx, players=players, original_message=join_view._message)
-        except Exception as e:
-            self.log.exception("Something went wrong while starting the game.", exc_info=True)
+        await game.start(ctx, players=players, original_message=join_view._message)
 
     @battleroyale.command()
     async def auto(
@@ -388,10 +418,11 @@ class BattleRoyale(commands.Cog):
         - `delay`: min 10, max 20.
         - `skip`: will skip to results.
         """
-        users: List[discord.Member] = random.sample(list(ctx.guild.members), players - 1)
-        player: List[discord.Member] = list(filter(lambda u: not u.bot, users))
-        if ctx.author not in player:
-            player.append(ctx.author)
+        guild_members = list(ctx.guild.members)
+        users: List[discord.Member] = random.sample(guild_members, min(players - 1, len(guild_members)))
+        players: List[discord.Member] = list(filter(lambda u: not u.bot, users))
+        if ctx.author not in players:
+            players.append(ctx.author)
         game: Game = Game(cog=self, delay=delay, skip=skip)
         embed: discord.Embed = discord.Embed(
             title="Battle Royale",
@@ -401,10 +432,7 @@ class BattleRoyale(commands.Cog):
         embed.set_thumbnail(url=SWORDS)
         message = await ctx.send(embed=embed)
         self.games[message] = game
-        try:
-            await game.start(ctx, players=player, original_message=message)
-        except Exception as e:
-            self.log.exception("Something went wrong while starting the game.", exc_info=True)
+        await game.start(ctx, players=players, original_message=message)
 
     @battleroyale.command()
     async def role(
@@ -434,9 +462,7 @@ class BattleRoyale(commands.Cog):
                 ).set_thumbnail(url=SWORDS)
             )
             return
-        users: List[discord.Member] = []
-        for member in role.members:
-            users.append(member)
+        users: List[discord.Member] = list(role.members)
         players: List[discord.Member] = list(filter(lambda u: not u.bot, users))
         if ctx.author not in players:
             players.append(ctx.author)
@@ -457,10 +483,7 @@ class BattleRoyale(commands.Cog):
         embed.set_thumbnail(url=SWORDS)
         message = await ctx.send(embed=embed)
         self.games[message] = game
-        try:
-            await game.start(ctx, players=players, original_message=message)
-        except Exception as e:
-            self.log.exception("Something went wrong while starting the game.", exc_info=True)
+        await game.start(ctx, players=players, original_message=message)
 
     @battleroyale.command(name="profile", aliases=["stats"])
     async def profile(self, ctx: commands.Context, *, user: Optional[discord.Member] = None):
