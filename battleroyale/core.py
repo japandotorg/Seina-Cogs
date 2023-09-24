@@ -135,9 +135,16 @@ class BattleRoyale(commands.Cog):
     async def generate_image(
         self, user_1: discord.Member, user_2: discord.Member, to_file: bool = True
     ) -> Union[discord.File, Image.Image]:
-        backgrounds = [self.backgrounds_path / background for background in os.listdir(self.backgrounds_path)]
+        backgrounds = [
+            self.backgrounds_path / background for background in os.listdir(self.backgrounds_path)
+        ]
         if self.custom_backgrounds_path.exists():
-            backgrounds.extend([self.custom_backgrounds_path / background for background in os.listdir(self.custom_backgrounds_path)])
+            backgrounds.extend(
+                [
+                    self.custom_backgrounds_path / background
+                    for background in os.listdir(self.custom_backgrounds_path)
+                ]
+            )
         while True:
             background = random.choice(backgrounds)
             with open(background, mode="rb") as f:
@@ -284,12 +291,11 @@ class BattleRoyale(commands.Cog):
         """
         path = self.custom_backgrounds_path
         if not path.exists() or not (custom_backgrounds := os.listdir(path)):
-            raise commands.UserFeedbackCheckFailure(
-                "You don't have any custom background images."
-            )
+            raise commands.UserFeedbackCheckFailure("You don't have any custom background images.")
         await SimpleMenu(
             pages=[
-                box(page, lang="py") for page in pagify(
+                box(page, lang="py")
+                for page in pagify(
                     "\n".join(f"- {custom_background}" for custom_background in custom_backgrounds)
                 )
             ]
@@ -422,7 +428,9 @@ class BattleRoyale(commands.Cog):
         - `skip`: will skip to results.
         """
         guild_members = list(ctx.guild.members)
-        users: List[discord.Member] = random.sample(guild_members, min(players - 1, len(guild_members)))
+        users: List[discord.Member] = random.sample(
+            guild_members, min(players - 1, len(guild_members))
+        )
         players: List[discord.Member] = list(filter(lambda u: not u.bot, users))
         if ctx.author not in players:
             players.append(ctx.author)
