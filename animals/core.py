@@ -46,7 +46,7 @@ class Animals(commands.Cog):
     """
 
     __author__: Final[str] = humanize_list(["inthedark.org"])
-    __version__: Final[str] = "0.1.1"
+    __version__: Final[str] = "0.1.2"
 
     def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
@@ -274,17 +274,19 @@ class Animals(commands.Cog):
         else:
             await ctx.send(message, view=view)
 
-    @commands.bot_has_permissions(embed_links=True)
-    @commands.command(name="bear")
-    async def bear(self, ctx: commands.Context):
-        """
-        Random bears!
-        """
+    async def _animal(self, ctx: commands.Context, animal: str) -> None:
         await ctx.typing()
-        description = await AnimalAPI(self.session).fact("bear")
-        image = await AnimalAPI(self.session).image("bear")
+        try:
+            description = await AnimalAPI(self.session).fact(animal)
+        except Exception:
+            description = None
+        try:
+            image = await AnimalAPI(self.session).image(animal)
+        except Exception:
+            image = None
         embed: discord.Embed = discord.Embed(
             color=await ctx.embed_color(),
+            title=animal.capitalize(),
             description=description,
         )
         embed.set_image(url=image)
@@ -293,6 +295,14 @@ class Animals(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
             reference=ctx.message.to_reference(fail_if_not_exists=False),
         )
+
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.command(name="bear")
+    async def bear(self, ctx: commands.Context):
+        """
+        Random bears!
+        """
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="bird")
@@ -300,19 +310,7 @@ class Animals(commands.Cog):
         """
         Random birds!
         """
-        await ctx.typing()
-        description = await AnimalAPI(self.session).fact("bird")
-        image = await AnimalAPI(self.session).image("bird")
-        embed: discord.Embed = discord.Embed(
-            color=await ctx.embed_color(),
-            description=description,
-        )
-        embed.set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="dolphin")
@@ -320,16 +318,7 @@ class Animals(commands.Cog):
         """
         Random dolphins!
         """
-        await ctx.typing()
-        image = await AnimalAPI(self.session).image("dolphin")
-        embed: discord.Embed = discord.Embed(
-            color=await ctx.embed_color(),
-        ).set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="duck")
@@ -337,14 +326,7 @@ class Animals(commands.Cog):
         """
         Random ducks!
         """
-        await ctx.typing()
-        image = await AnimalAPI(self.session).image("duck")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="elephant")
@@ -352,14 +334,7 @@ class Animals(commands.Cog):
         """
         Random elephants!
         """
-        await ctx.typing()
-        image = await AnimalAPI(self.session).image("elephant")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="giraffe")
@@ -367,19 +342,7 @@ class Animals(commands.Cog):
         """
         Random giraffes!
         """
-        await ctx.typing()
-        description = await AnimalAPI(self.session).fact("giraffe")
-        image = await AnimalAPI(self.session).image("giraffe")
-        embed: discord.Embed = discord.Embed(
-            color=await ctx.embed_color(),
-            description=description,
-        )
-        embed.set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="hippo")
@@ -387,14 +350,7 @@ class Animals(commands.Cog):
         """
         Random hippos!
         """
-        await ctx.typing()
-        image = await AnimalAPI(self.session).image("hippo")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="horse")
@@ -402,14 +358,7 @@ class Animals(commands.Cog):
         """
         Random horses!
         """
-        await ctx.typing()
-        image = await AnimalAPI(self.session).image("horse")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="killerwhale")
@@ -417,14 +366,7 @@ class Animals(commands.Cog):
         """
         Random killer whales!
         """
-        await ctx.typing()
-        image = await AnimalAPI(self.session).image("killerwhale")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="lion")
@@ -432,19 +374,7 @@ class Animals(commands.Cog):
         """
         Random lions!
         """
-        await ctx.typing()
-        description = await AnimalAPI(self.session).fact("lion")
-        image = await AnimalAPI(self.session).image("lion")
-        embed: discord.Embed = discord.Embed(
-            color=await ctx.embed_color(),
-            description=description,
-        )
-        embed.set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="panda")
@@ -452,19 +382,7 @@ class Animals(commands.Cog):
         """
         Random pandas!
         """
-        await ctx.typing()
-        description = await AnimalAPI(self.session).fact("panda")
-        image = await AnimalAPI(self.session).image("panda")
-        embed: discord.Embed = discord.Embed(
-            color=await ctx.embed_color(),
-            description=description,
-        )
-        embed.set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="pig")
@@ -472,14 +390,7 @@ class Animals(commands.Cog):
         """
         Random pigs!
         """
-        await ctx.typing()
-        image = await AnimalAPI(self.session).image("pig")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="redpanda")
@@ -487,17 +398,7 @@ class Animals(commands.Cog):
         """
         Random red pandas!
         """
-        await ctx.typing()
-        description = await AnimalAPI(self.session).fact("redpanda")
-        image = await AnimalAPI(self.session).image("redpanda")
-        embed: discord.Embed = discord.Embed(
-            description=description, color=await ctx.embed_color()
-        ).set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="shark")
@@ -505,19 +406,7 @@ class Animals(commands.Cog):
         """
         Random sharks!
         """
-        await ctx.typing()
-        description = await AnimalAPI(self.session).fact("shark")
-        image = await AnimalAPI(self.session).image("shark")
-        embed: discord.Embed = discord.Embed(
-            color=await ctx.embed_color(),
-            description=description,
-        )
-        embed.set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="snake")
@@ -525,19 +414,7 @@ class Animals(commands.Cog):
         """
         Random snakes!
         """
-        await ctx.typing()
-        description = await AnimalAPI(self.session).fact("snake")
-        image = await AnimalAPI(self.session).image("snake")
-        embed: discord.Embed = discord.Embed(
-            color=await ctx.embed_color(),
-            description=description,
-        )
-        embed.set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="spider")
@@ -545,14 +422,7 @@ class Animals(commands.Cog):
         """
         Random spiders!
         """
-        await ctx.typing()
-        image = await AnimalAPI(self.session).image("spider")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="turtle")
@@ -560,14 +430,7 @@ class Animals(commands.Cog):
         """
         Random turtles!
         """
-        await ctx.typing()
-        image = await AnimalAPI(self.session).image("turtle")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="fox")
@@ -575,19 +438,7 @@ class Animals(commands.Cog):
         """
         Random foxes!
         """
-        await ctx.typing()
-        description = await AnimalAPI(self.session).fact("fox")
-        image = await AnimalAPI(self.session).image("fox")
-        embed: discord.Embed = discord.Embed(
-            color=await ctx.embed_color(),
-            description=description,
-        )
-        embed.set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="koala")
@@ -595,19 +446,7 @@ class Animals(commands.Cog):
         """
         Random koalas!
         """
-        await ctx.typing()
-        description = await AnimalAPI(self.session).fact("koala")
-        image = await AnimalAPI(self.session).image("koala")
-        embed: discord.Embed = discord.Embed(
-            color=await ctx.embed_color(),
-            description=description,
-        )
-        embed.set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="kangaroo")
@@ -615,19 +454,7 @@ class Animals(commands.Cog):
         """
         Random kangaroos!
         """
-        await ctx.typing()
-        description = await AnimalAPI(self.session).fact("kangaroo")
-        image = await AnimalAPI(self.session).image("kangaroo")
-        embed: discord.Embed = discord.Embed(
-            color=await ctx.embed_color(),
-            description=description,
-        )
-        embed.set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="raccoon")
@@ -635,19 +462,7 @@ class Animals(commands.Cog):
         """
         Random raccoons!
         """
-        await ctx.typing()
-        description = await AnimalAPI(self.session).fact("raccoon")
-        image = await AnimalAPI(self.session).image("raccoon")
-        embed: discord.Embed = discord.Embed(
-            color=await ctx.embed_color(),
-            description=description,
-        )
-        embed.set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="lizard")
@@ -655,11 +470,4 @@ class Animals(commands.Cog):
         """
         Random lizards!
         """
-        await ctx.typing()
-        image = await AnimalAPI(self.session).image("lizard")
-        embed: discord.Embed = discord.Embed(color=await ctx.embed_color()).set_image(url=image)
-        await ctx.send(
-            embed=embed,
-            allowed_mentions=discord.AllowedMentions(replied_user=False),
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-        )
+        await self._animal(ctx, ctx.command.name)

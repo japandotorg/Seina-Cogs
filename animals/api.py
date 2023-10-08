@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import random
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import aiohttp
 from redbot.core import commands
@@ -34,7 +34,7 @@ from .utils import raise_for_status
 
 
 class AnimalAPI:
-    def __init__(self, session: aiohttp.ClientSession):
+    def __init__(self, session: aiohttp.ClientSession) -> None:
         self.session: aiohttp.ClientSession = session
         self.endpoints: Dict[str, Dict[str, List[Dict[str, str]]]] = {
             "images": {
@@ -122,14 +122,14 @@ class AnimalAPI:
             },
         }
 
-    async def image(self, animal: str):
+    async def image(self, animal: str) -> Optional[str]:
         endpoint = random.choice(self.endpoints["images"][animal])
         async with self.session.get(url=endpoint["url"]) as response:
             if response.status != 200:
                 return raise_for_status(response)
             return (await response.json())[endpoint["key"]]
 
-    async def fact(self, animal: str):
+    async def fact(self, animal: str) -> Optional[str]:
         endpoint = random.choice(self.endpoints["facts"][animal])
         async with self.session.get(url=endpoint["url"]) as response:
             if response.status != 200:
@@ -141,7 +141,7 @@ class AnimalAPI:
 
 
 class CatAPI:
-    def __init__(self, ctx: commands.Context, session: aiohttp.ClientSession):
+    def __init__(self, ctx: commands.Context, session: aiohttp.ClientSession) -> None:
         self.ctx: commands.Context = ctx
         self.bot: Red = self.ctx.bot
         self.session: aiohttp.ClientSession = session
@@ -173,7 +173,7 @@ class CatAPI:
             "Vocalisation",
         ]
 
-    async def image(self, breed: Optional[str] = None):
+    async def image(self, breed: Optional[str] = None) -> Optional[Tuple]:
         url = self.base + "images/search?has_breeds=1"
         keys = await self.bot.get_shared_api_tokens("thecatapi")
         token = keys.get("api_key")
@@ -235,7 +235,7 @@ class CatAPI:
                 details += f"**URLs:** {' • '.join([f'[{x}]({y})' for x, y in urls.items()])}"
             return response["url"], response["breeds"][0]["name"], details
 
-    async def breeds(self):
+    async def breeds(self) -> Optional[Tuple]:
         keys = await self.bot.get_shared_api_tokens("thecatapi")
         token = keys.get("api_key")
         async with self.session.get(
@@ -253,13 +253,13 @@ class CatAPI:
 
 
 class DogAPI:
-    def __init__(self, ctx: commands.Context, session: aiohttp.ClientSession):
+    def __init__(self, ctx: commands.Context, session: aiohttp.ClientSession) -> None:
         self.ctx: commands.Context = ctx
         self.bot: Red = self.ctx.bot
         self.session: aiohttp.ClientSession = session
         self.base: str = "https://api.thedogapi.com/v1/"
 
-    async def image(self, breed: Optional[str] = None):
+    async def image(self, breed: Optional[str] = None) -> Optional[Tuple]:
         url = self.base + "images/search?has_breeds=1"
         keys = await self.bot.get_shared_api_tokens("thedogapi")
         token = keys.get("api_key")
@@ -294,7 +294,7 @@ class DogAPI:
             details += height + weight  # type: ignore
             return response["url"], response["breeds"][0]["name"], details
 
-    async def breeds(self):
+    async def breeds(self) -> Optional[Tuple]:
         keys = await self.bot.get_shared_api_tokens("thedogapi")
         token = keys.get("api_key")
         async with self.session.get(
