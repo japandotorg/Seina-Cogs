@@ -243,7 +243,7 @@ class PersonalChannels(commands.Cog):
             await ctx.send(f"{user.display_name} already has a personal channel.")
             self._create.reset_cooldown(ctx)
             return
-        if await self.config.guild(ctx.guild).blacklist() in name.casefold():
+        if name.casefold() in await self.config.guild(ctx.guild).blacklist():
             await ctx.send("This channel name is blacklisted.")
             self._create.reset_cooldown(ctx)
             return
@@ -464,7 +464,7 @@ class PersonalChannels(commands.Cog):
         channel = await self.config.member(ctx.author).channel()
         channel = ctx.guild.get_channel(channel)
         await self.check_text_channels(ctx, channel)
-        if await self.config.guild(ctx.guild).blacklist() in name.casefold():
+        if name.casefold() in await self.config.guild(ctx.guild).blacklist():
             await ctx.send("This channel name is blacklisted.")
             self._name.reset_cooldown(ctx)
             return
