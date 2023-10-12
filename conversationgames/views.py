@@ -104,7 +104,12 @@ class CGView(discord.ui.View):
         )
         embed: discord.Embed = discord.Embed(
             title=title,
-            description=self.view._result["question"] if self.values[0] == "English" else self.view._result["translations"][self.values[0]],  # type: ignore
+            description=(
+                self.view._result["question"]  # type: ignore
+                if self.values[0] == "English"
+                else f"({str(self.values[0])}) "
+                + self.view._result["translations"][self.values[0]]  # type: ignore
+            ),
             color=await self.view._ctx.embed_color(),  # type: ignore
         )
         embed.set_footer(
