@@ -1,5 +1,6 @@
 import functools
 from typing import Callable, Dict, List, Optional, Union
+from typing_extensions import Self
 
 import discord
 from redbot.core import commands
@@ -95,8 +96,14 @@ class CGView(discord.ui.View):
 
     @staticmethod
     async def _callback(self: Select, interaction: discord.Interaction) -> None:  # type: ignore
+        title = (
+            f"{interaction.user} asked {self.view._member.id}"  # type: ignore
+            if self.view._member is not None  # type: ignore
+            else None
+        )
         await interaction.response.defer()
         embed: discord.Embed = discord.Embed(
+            title=title,
             description=self.view._result["question"] if self.values[0] == "English" else self.view._result["translations"][self.values[0]],  # type: ignore
             color=await self.view._ctx.embed_color(),  # type: ignore
         )
