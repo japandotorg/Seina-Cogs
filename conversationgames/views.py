@@ -6,36 +6,47 @@ from redbot.core import commands
 from redbot.core.bot import Red
 
 
+select_options = {
+    "en": {
+        "label": "English",
+        "description": "Get English translation of this question.",
+    },
+    "bn": {
+        "label": "Bengali",
+        "description": "Get Bengali translation of this question.",
+    },
+    "de": {
+        "label": "German",
+        "description": "Get German translation of this question.",
+    },
+    "es": {
+        "label": "Spanish",
+        "description": "Get Spanish translation of this question.",
+    },
+    "fr": {
+        "label": "French",
+        "description": "Get French translation of this question.",
+    },
+    "hi": {
+        "label": "Hindi",
+        "description": "Get Hindi translation of this question.",
+    },
+    "tl": {
+        "label": "Filipino",
+        "description": "Get French translation of this question.",
+    },
+}
+
+
 class BaseLanguageOptions:
     def __init__(self) -> None:
         self._options: List[discord.SelectOption] = [
             discord.SelectOption(
-                label="English", description="Get English translation of this question."
-            ),
-            discord.SelectOption(
-                label="Bengali",
-                description="Get Bengali translation of this question.",
-                value="bn",
-            ),
-            discord.SelectOption(
-                label="German", description="Get German translation of this question.", value="de"
-            ),
-            discord.SelectOption(
-                label="Spanish",
-                description="Get Spanish translation of this question.",
-                value="es",
-            ),
-            discord.SelectOption(
-                label="French", description="Get French translation of this question.", value="fr"
-            ),
-            discord.SelectOption(
-                label="Hindi", description="Get Hindi translation of this question.", value="hi"
-            ),
-            discord.SelectOption(
-                label="Filipino",
-                description="Get Filipino translation of this question.",
-                value="tl",
-            ),
+                value=key,
+                label=select_options[key]["label"],
+                description=select_options[key]["description"],
+            )
+            for key in select_options
         ]
 
     def _get_options(self) -> List[discord.SelectOption]:
@@ -107,7 +118,7 @@ class CGView(discord.ui.View):
             description=(
                 self.view._result["question"]  # type: ignore
                 if self.values[0] == "English"
-                else f"({self.values[0].__str__()}) "
+                else f"({select_options[self.values[0]]['label']}) "
                 + self.view._result["translations"][self.values[0]]  # type: ignore
             ),
             color=await self.view._ctx.embed_color(),  # type: ignore
