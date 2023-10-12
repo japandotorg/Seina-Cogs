@@ -95,7 +95,7 @@ class ConversationGames(commands.Cog):
                 color=await ctx.embed_color(),
             )
             embed.set_footer(text=f"Rating: {result['rating']} | ID: {result['id']}")
-            _view: CGView = CGView(ctx, result)
+            _view: CGView = CGView(ctx, result, member)
             _out: discord.Message = await ctx.send(
                 embed=embed,
                 view=_view,
