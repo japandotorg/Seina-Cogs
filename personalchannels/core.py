@@ -25,9 +25,9 @@ SOFTWARE.
 # The idea of this whole cog is taken from https://github.com/fixator10/Fixator10-Cogs/tree/V3/personalroles
 
 import asyncio
+import contextlib
 import io
 from textwrap import shorten
-import contextlib
 from typing import Any, Dict, Final, List, Literal, Optional, Union
 
 import discord
