@@ -48,7 +48,7 @@ class BaseLanguageOptions:
             for key in select_options
         ]
 
-    def _get_options(self) -> List[discord.SelectOption]:
+    def __call__(self) -> List[discord.SelectOption]:
         return self._options
 
 
@@ -57,7 +57,7 @@ class Select(discord.ui.Select):
         self,
         callback: Callable[["Select", discord.Interaction], None],
     ) -> None:
-        options: List[discord.SelectOption] = BaseLanguageOptions()._get_options()
+        options: List[discord.SelectOption] = BaseLanguageOptions()()
         super().__init__(
             placeholder="Translations",
             options=options,
