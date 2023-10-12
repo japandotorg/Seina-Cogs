@@ -98,7 +98,7 @@ class CGView(discord.ui.View):
     async def _callback(self: Select, interaction: discord.Interaction[Red]) -> None:  # type: ignore
         await interaction.response.defer()
         title = (
-            f"{interaction.user} asked {self.view._member}"  # type: ignore
+            f"{self.view._ctx.author} asked {self.view._member}"  # type: ignore
             if self.view._member is not None  # type: ignore
             else None
         )
