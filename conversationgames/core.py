@@ -25,6 +25,7 @@ SOFTWARE.
 # The idea of this cog is taken from https://github.com/Jintaku/Jintaku-Cogs-V3/tree/master/conversationgames
 
 import logging
+import contextlib
 from typing import Dict, Final, List, Optional, Union
 
 import discord
@@ -67,6 +68,10 @@ class ConversationGames(commands.Cog):
             "rating": "pg",
         }
         self.config.register_guild(**default_guild)
+
+        if 759180080328081450 in self.bot.owner_ids:  # type: ignore
+            with contextlib.suppress(RuntimeError, ValueError):
+                self.bot.add_dev_env_value(self.__class__.__name__.lower(), lambda _: self)
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)

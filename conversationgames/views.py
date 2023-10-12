@@ -51,7 +51,9 @@ class BaseLanguageOptions:
     def __call__(self) -> List[discord.SelectOption]:
         return self._options
 
-    def _get_options(self) -> List[discord.SelectOption]:
+    @classmethod
+    def _get_options(cls) -> List[discord.SelectOption]:
+        self = cls()
         return self._options
 
 
