@@ -4,7 +4,6 @@ from typing import Callable, Dict, List, Optional, Union
 import discord
 from redbot.core.bot import Red
 from redbot.core import commands
-from typing_extensions import Self
 
 
 class BaseLanguageOptions:
@@ -48,14 +47,14 @@ class Select(discord.ui.Select):
         self,
         callback: Callable[["Select", discord.Interaction], None],
     ) -> None:
-        options = BaseLanguageOptions()._get_options()
+        options: List[discord.SelectOption] = BaseLanguageOptions()._get_options()
         super().__init__(
             placeholder="Translations",
             options=options,
             max_values=1,
             min_values=1,
         )
-        self.callback = functools.partial(callback, self)  # type: ignore
+        self.callback: functools.partial = functools.partial(callback, self)
 
 
 class CGView(discord.ui.View):
