@@ -2,8 +2,12 @@ import functools
 from typing import Callable, Dict, List, Optional, Union
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import commands
+<<<<<<< HEAD
+=======
+from redbot.core.bot import Red
+from typing_extensions import Self
+>>>>>>> b973310521314f4536f08711eb0d9ef3d8254592
 
 
 class BaseLanguageOptions:
