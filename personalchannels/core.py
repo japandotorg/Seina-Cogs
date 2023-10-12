@@ -27,6 +27,7 @@ SOFTWARE.
 import asyncio
 import io
 from textwrap import shorten
+import contextlib
 from typing import Any, Dict, Final, List, Literal, Optional, Union
 
 import discord
@@ -634,6 +635,8 @@ class PersonalChannels(commands.Cog):
                 )
             else:
                 await self.config.member_from_ids(ctx.guild.id, ctx.author.id).clear()
+                with contextlib.suppress(discord.Forbidden):
+                    await ctx.send("Deleted your personal channel.")
         else:
             await ctx.send("Cancelling.")
 
@@ -678,6 +681,8 @@ class PersonalChannels(commands.Cog):
                 )
             else:
                 await self.config.member_from_ids(ctx.guild.id, member.id).clear()
+                with contextlib.suppress(discord.Forbidden):
+                    await ctx.send(f"Deleted the personal channel of {member} ({member.id}).")
         else:
             await ctx.send("Cancelling.")
 
