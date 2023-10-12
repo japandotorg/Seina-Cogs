@@ -84,7 +84,7 @@ class CGView(discord.ui.View):
 
     async def interaction_check(self, interaction: discord.Interaction[Red]) -> bool:
         if (
-            self._member.id
+            self._member.id != interaction.user.id
             if self._member is not None
             else self._ctx.author.id != interaction.user.id
         ):
@@ -98,7 +98,7 @@ class CGView(discord.ui.View):
     async def _callback(self: Select, interaction: discord.Interaction[Red]) -> None:  # type: ignore
         await interaction.response.defer()
         title = (
-            f"{interaction.user} asked {self.view._member.id}"  # type: ignore
+            f"{interaction.user} asked {self.view._member}"  # type: ignore
             if self.view._member is not None  # type: ignore
             else None
         )
