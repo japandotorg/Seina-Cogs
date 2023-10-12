@@ -24,8 +24,8 @@ SOFTWARE.
 
 # The idea of this cog is taken from https://github.com/Jintaku/Jintaku-Cogs-V3/tree/master/conversationgames
 
-import logging
 import contextlib
+import logging
 from typing import Dict, Final, List, Optional, Union
 
 import discord
