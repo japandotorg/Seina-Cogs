@@ -1,8 +1,8 @@
 import functools
 from typing import Callable, Dict, List, Optional, Union
-from typing_extensions import Self
 
 import discord
+from redbot.core.bot import Red
 from redbot.core import commands
 
 
@@ -82,7 +82,7 @@ class CGView(discord.ui.View):
         except discord.HTTPException:
             pass
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction[Red]) -> bool:
         if (
             self._member.id
             if self._member is not None
@@ -95,13 +95,13 @@ class CGView(discord.ui.View):
         return True
 
     @staticmethod
-    async def _callback(self: Select, interaction: discord.Interaction) -> None:  # type: ignore
+    async def _callback(self: Select, interaction: discord.Interaction[Red]) -> None:  # type: ignore
+        await interaction.response.defer()
         title = (
             f"{interaction.user} asked {self.view._member.id}"  # type: ignore
             if self.view._member is not None  # type: ignore
             else None
         )
-        await interaction.response.defer()
         embed: discord.Embed = discord.Embed(
             title=title,
             description=self.view._result["question"] if self.values[0] == "English" else self.view._result["translations"][self.values[0]],  # type: ignore
