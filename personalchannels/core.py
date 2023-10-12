@@ -615,7 +615,7 @@ class PersonalChannels(commands.Cog):
         channel = ctx.guild.get_channel(channel)
         await self.check_text_channels(ctx, channel)
         await ctx.send(
-            f"Are you sure you want to delete you personal channel? Type `yes` to confirm otherwise type `no`."
+            f"Are you sure you want to delete your personal channel? Type `yes` to confirm otherwise type `no`."
         )
         try:
             pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
@@ -626,7 +626,7 @@ class PersonalChannels(commands.Cog):
         if pred.result:
             try:
                 await channel.delete(
-                    reason=get_audit_reason(ctx.author, "Deleted their person channel.")
+                    reason=get_audit_reason(ctx.author, "Deleted their personal channel.")
                 )
             except discord.HTTPException as e:
                 raise commands.UserFeedbackCheckFailure(
@@ -634,6 +634,50 @@ class PersonalChannels(commands.Cog):
                 )
             else:
                 await self.config.member_from_ids(ctx.guild.id, ctx.author.id).clear()
+        else:
+            await ctx.send("Cancelling.")
+
+    @_my_channel.command(name="remove")
+    @commands.admin_or_permissions(manage_guild=True)
+    @commands.bot_has_permissions(manage_channels=True)
+    @commands.cooldown(1, 30, commands.BucketType.guild)
+    async def _channel_remove(
+        self, ctx: commands.Context, *, member: Optional[discord.Member] = None
+    ):
+        """
+        Delete member's personal channel.
+        """
+        if member is None:
+            await ctx.send("`Member` is a required argument.")
+            return
+        channel = await self.config.member(member).channel()
+        if channel is None:
+            await ctx.send("User does not have a personal channel.")
+            return
+        channel = ctx.guild.get_channel(channel)
+        await self.check_text_channels(ctx, channel)
+        await ctx.send(
+            f"Are you sure you want to delete user's personal channel? Type `yes` to confirm otherwise type `no`."
+        )
+        try:
+            pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
+            await self.bot.wait_for("message", check=pred, timeout=20)
+        except asyncio.TimeoutError:
+            await ctx.send("Exiting operation.")
+            return
+        if pred.result:
+            try:
+                await channel.delete(
+                    reason=get_audit_reason(
+                        ctx.author, f"Deleted personal channel for {member} ({member.id})."
+                    )
+                )
+            except discord.HTTPException as e:
+                raise commands.UserFeedbackCheckFailure(
+                    "Unable to delete channel.\n{}".format(box(str(e), lang="py"))
+                )
+            else:
+                await self.config.member_from_ids(ctx.guild.id, member.id).clear()
         else:
             await ctx.send("Cancelling.")
 
