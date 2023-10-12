@@ -33,7 +33,7 @@ from redbot.core import Config, app_commands, commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
 
-from .constants import Ratings, Endpoints
+from .constants import Endpoints, Ratings
 from .http import TruthOrDareAPIClient
 from .views import CGView
 
