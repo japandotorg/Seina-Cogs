@@ -107,7 +107,7 @@ class CGView(discord.ui.View):
             description=(
                 self.view._result["question"]  # type: ignore
                 if self.values[0] == "English"
-                else f"({str(self.values[0])}) "
+                else f"({str(self.options[0])}) "
                 + self.view._result["translations"][self.values[0]]  # type: ignore
             ),
             color=await self.view._ctx.embed_color(),  # type: ignore
