@@ -2,8 +2,8 @@ import functools
 from typing import Callable, Dict, List, Optional, Union
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import commands
+from redbot.core.bot import Red
 
 
 class BaseLanguageOptions:
