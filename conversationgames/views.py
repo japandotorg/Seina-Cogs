@@ -5,7 +5,7 @@ import discord
 from redbot.core import commands
 from redbot.core.bot import Red
 
-select_options = {
+select_options: Dict[str, Dict[str, str]] = {
     "en": {
         "label": "English",
         "description": "Get English translation of this question.",
@@ -112,7 +112,7 @@ class CGView(discord.ui.View):
     @staticmethod
     async def _callback(self: Select, interaction: discord.Interaction[Red]) -> None:  # type: ignore
         await interaction.response.defer()
-        title = (
+        title: Optional[str] = (
             f"{self.view._ctx.author} asked {self.view._member}"  # type: ignore
             if self.view._member is not None  # type: ignore
             else None
