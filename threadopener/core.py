@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import Dict, Final, List, Optional, Tuple, Union, Any
+from typing import Any, Dict, Final, List, Optional, Tuple, Union
 
 import discord
 import TagScriptEngine as tse
@@ -31,15 +31,15 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
 
+from ._tagscript import (
+    TAGSCRIPT_LIMIT,
+    TagCharacterLimitReached,
+    process_tagscript,
+    thread_message,
+)
 from .abc import CompositeMetaClass
 from .commands import Commands
 from .cooldown import ThreadCooldown
-from ._tagscript import (
-    process_tagscript,
-    TagCharacterLimitReached,
-    thread_message,
-    TAGSCRIPT_LIMIT,
-)
 
 log: logging.Logger = logging.getLogger("red.seina.threadopener")
 

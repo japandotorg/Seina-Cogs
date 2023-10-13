@@ -28,8 +28,8 @@ import discord
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import humanize_list
 
-from .abc import MixinMeta
 from ._tagscript import TagscriptConverter
+from .abc import MixinMeta
 
 
 class Commands(MixinMeta):
