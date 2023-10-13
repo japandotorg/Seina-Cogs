@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import Dict, Final, List, Optional, Union
+from typing import Dict, Final, List, Optional, Union, Tuple
 
 import discord
 from redbot.core import Config, commands
@@ -64,9 +64,11 @@ class ThreadOpener(
         }
         self.config.register_guild(**default_guilds)
 
-        self.spam_control: commands.CooldownMapping = commands.CooldownMapping.from_cooldown(
-            1, 5, commands.BucketType.guild
-        )
+        cooldown: Tuple[int, int, commands.BucketType] = (3, 10, commands.BucketType.guild)
+
+        self.spam_control: commands.CooldownMapping[
+            commands.Context
+        ] = commands.CooldownMapping.from_cooldown(*cooldown)
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
@@ -109,10 +111,12 @@ class ThreadOpener(
             )
             return
 
-        bucket = self.spam_control.get_bucket(message)
+        ctx = await self.bot.get_context(message)
+        bucket = self.spam_control.get_bucket(ctx)
         current = message.created_at.timestamp()
         retry_after = bucket and bucket.update_rate_limit(current)
         if retry_after and message.author.id in self.bot.owner_ids:  # type: ignore
+            log.debug(f"{message.channel} ratelimit exhausted, retry after: {retry_after}.")
             return
 
         slowmode_delay = await self.config.guild(message.guild).slowmode_delay()
