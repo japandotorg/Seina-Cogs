@@ -100,6 +100,10 @@ class ThreadOpener(
             or not message.guild.me.guild_permissions.create_public_threads
         ):
             await self.config.guild(message.guild).toggle.set(False)
+            await message.channel.send(
+                "ThreadOpener has been disabled due to missing permissions in "
+                f"{message.channel.name} ({message.channel.id})"
+            )
             log.info(
                 f"ThreadOpener has been disabled due to missing permissions in {message.guild.name}.",
             )
