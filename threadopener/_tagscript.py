@@ -1,4 +1,4 @@
-from typing import List, Final, Dict, Any, final
+from typing import Any, Dict, Final, List, final
 
 import discord
 import TagScriptEngine as tse
