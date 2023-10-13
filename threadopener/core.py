@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import Dict, Final, List, Optional, Union, Tuple
+from typing import Dict, Final, List, Optional, Tuple, Union
 
 import discord
 from redbot.core import Config, commands
