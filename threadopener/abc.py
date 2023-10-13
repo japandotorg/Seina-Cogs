@@ -43,6 +43,14 @@ class MixinMeta(ABC):
     async def format_help_for_context(self, ctx: commands.Context) -> str:
         raise NotImplementedError()
 
+    @abstractmethod
+    async def red_delete_data_for_user(self, **kwargs: Any) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def validate_tagscript(self, tagscript: str) -> bool:
+        raise NotImplementedError()
+
 
 class CompositeMetaClass(type(commands.Cog), type(ABC)):
     pass

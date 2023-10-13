@@ -23,9 +23,10 @@ SOFTWARE.
 """
 
 import logging
-from typing import Dict, Final, List, Optional, Tuple, Union
+from typing import Dict, Final, List, Optional, Tuple, Union, Any
 
 import discord
+import TagScriptEngine as tse
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
@@ -33,6 +34,12 @@ from redbot.core.utils.chat_formatting import humanize_list
 from .abc import CompositeMetaClass
 from .commands import Commands
 from .cooldown import ThreadCooldown
+from ._tagscript import (
+    process_tagscript,
+    TagCharacterLimitReached,
+    thread_message,
+    TAGSCRIPT_LIMIT,
+)
 
 log: logging.Logger = logging.getLogger("red.seina.threadopener")
 
@@ -57,10 +64,12 @@ class ThreadOpener(
             identifier=69_420_666,
             force_registration=True,
         )
-        default_guilds: Dict[str, Optional[Union[List[int], bool, int]]] = {
+        default_guilds: Dict[str, Optional[Union[List[int], Any]]] = {
             "toggle": False,
             "channels": [],
             "slowmode_delay": None,
+            "message_toggle": False,
+            "message": thread_message,
             "auto_archive_duration": 10080,
         }
         self.config.register_guild(**default_guilds)
@@ -78,6 +87,16 @@ class ThreadOpener(
             f"Cog Version: **{self.__version__}**",
         ]
         return "\n".join(text)
+
+    async def red_delete_data_for_user(self, **kwargs: Any) -> None:
+        """Nothing to delete."""
+        return
+
+    async def validate_tagscript(self, tagscript: str) -> bool:
+        length = len(tagscript)
+        if length > TAGSCRIPT_LIMIT:
+            raise TagCharacterLimitReached(TAGSCRIPT_LIMIT, length)
+        return True
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
@@ -117,11 +136,12 @@ class ThreadOpener(
             log.debug(f"{message.channel} ratelimit exhausted, retry after: {retry_after}.")
             return
 
-        slowmode_delay = await self.config.guild(message.guild).slowmode_delay()
-        auto_archive_duration = await self.config.guild(message.guild).auto_archive_duration()
+        slowmode_delay: int = await self.config.guild(message.guild).slowmode_delay()
+        auto_archive_duration: Any = await self.config.guild(message.guild).auto_archive_duration()
+        message_toggle: bool = await self.config.guild(message.guild).message_toggle()
 
         try:
-            await message.create_thread(
+            thread = await message.create_thread(
                 name=f"{message.author.global_name}",
                 auto_archive_duration=auto_archive_duration,
                 slowmode_delay=slowmode_delay,
@@ -145,3 +165,28 @@ class ThreadOpener(
                 f"Guild {message.guild.id} does not have a guild info attached to it.",
                 exc_info=True,
             )
+        else:
+            if message_toggle:
+                threadmessage: str = await self.config.guild(message.guild).message()
+                color = await self.bot.get_embed_color(message.channel)
+                kwargs = process_tagscript(
+                    threadmessage,
+                    {
+                        "server": tse.GuildAdapter(message.guild),
+                        "author": tse.MemberAdapter(message.author),  # type: ignore
+                        "member": tse.MemberAdapter(message.author),  # type: ignore
+                        "color": tse.StringAdapter(str(color)),
+                    },
+                )
+                if not kwargs:
+                    await self.config.guild(message.guild).message.clear()
+                    kwargs = process_tagscript(
+                        thread_message,
+                        {
+                            "server": tse.GuildAdapter(message.guild),
+                            "author": tse.MemberAdapter(message.author),  # type: ignore
+                            "member": tse.MemberAdapter(message.author),  # type: ignore
+                            "color": tse.StringAdapter(str(color)),
+                        },
+                    )
+                await thread.send(**kwargs)

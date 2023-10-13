@@ -29,6 +29,7 @@ from redbot.core import commands
 from redbot.core.utils.chat_formatting import humanize_list
 
 from .abc import MixinMeta
+from ._tagscript import TagscriptConverter
 
 
 class Commands(MixinMeta):
@@ -110,6 +111,52 @@ class Commands(MixinMeta):
             await ctx.send("Disabled slowmode on opening threads.")
         await self.config.guild(ctx.guild).slowmode_delay.set(amount)  # type: ignore
         await ctx.send(f"Slowmode is now {amount}.")
+
+    @_thread_opener.group(name="message")  # type: ignore
+    async def _message(self, _: commands.Context):
+        """
+        Manage thread opener notifications when they are opened.
+        """
+
+    @_message.command(name="toggle")
+    async def _message_toggle(self, ctx: commands.Context, toggle: bool):
+        """Toggle the thread opener notification message."""
+        await self.config.guild(ctx.guild).message_toggle.set(toggle)  # type: ignore
+        await ctx.send(
+            f"ThreadOpener notifications are now {'enabled' if toggle else 'disabled'}."
+        )
+
+    @_message.command(name="set")
+    async def _message_set(self, ctx: commands.Context, *, message: TagscriptConverter):
+        """
+        Change the thread opener notification message.
+
+        (Supports Tagscript)
+
+        **Blocks:**
+        - [Assugnment Block](https://phen-cogs.readthedocs.io/en/latest/tags/tse_blocks.html#assignment-block)
+        - [If Block](https://phen-cogs.readthedocs.io/en/latest/tags/tse_blocks.html#if-block)
+        - [Embed Block](https://phen-cogs.readthedocs.io/en/latest/tags/parsing_blocks.html#embed-block)
+        - [Command Block](https://phen-cogs.readthedocs.io/en/latest/tags/parsing_blocks.html#command-block)
+
+        **Variable:**
+        - `{server}`: [Your guild/server.](https://phen-cogs.readthedocs.io/en/latest/tags/default_variables.html#server-block)
+        - `{author}`: [Author of the message.](https://phen-cogs.readthedocs.io/en/latest/tags/default_variables.html#author-block)
+        - `{color}`: [botname]'s default color.
+
+        **Example:**
+        ```
+        {embed(description):Welcome to the thread.}
+        {embed(thumbnail):{member(avatar)}}
+        {embed(color):{color}}
+        ```
+        """
+        if message:
+            await self.config.member(ctx.author).custom_message.set(message)  # type: ignore
+            await ctx.send("Successfully changed the thread opener notification message.")
+        else:
+            await self.config.member(ctx.author).custom_message.clear()  # type: ignore
+            await ctx.send("Successfully reset the thread opener notification message.")
 
     @_thread_opener.command(name="showsettings", aliases=["ss", "show"])  # type: ignore
     async def _show_settings(self, ctx: commands.Context):
