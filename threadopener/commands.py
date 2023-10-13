@@ -36,7 +36,7 @@ class Commands(MixinMeta):
     @commands.admin_or_permissions(manage_guild=True)
     @commands.bot_has_permissions(manage_threads=True)
     @commands.cooldown(1, 10, commands.BucketType.guild)
-    @commands.command(name="threadopener", aliases=["to"])  # type: ignore
+    @commands.group(name="threadopener", aliases=["to"])  # type: ignore
     async def _thread_opener(self, _: commands.Context):
         """Manage ThreadOpener settings."""
         pass
