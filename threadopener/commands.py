@@ -98,7 +98,7 @@ class Commands(MixinMeta):
         await self.config.guild(ctx.guild).auto_archive_duration.set(amount)  # type: ignore
         await ctx.send(f"Auto archive duration is now {amount}.")
 
-    @_thread_opener.command(name="slowmode")  # type: ignore
+    @_thread_opener.command(name="slowmode", aliases=["slow"])  # type: ignore
     async def _slowmode(self, ctx: commands.Context, amount: commands.Range[int, 0, 21600]):
         """
         Change the slowmode of threads.
@@ -135,7 +135,7 @@ class Commands(MixinMeta):
         if active_channels:
             embed.add_field(
                 name="Active Channels",
-                value=humanize_list(active_channels),
+                value=humanize_list(active_channels)[:2000],
                 inline=False,
             )
         await ctx.send(embed=embed)

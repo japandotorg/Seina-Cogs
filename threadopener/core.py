@@ -42,7 +42,7 @@ class ThreadOpener(
     metaclass=CompositeMetaClass,
 ):
     """
-    A cog to open continuouS threads to messages in a channel.
+    A cog to open continuous threads to messages in a channel.
     """
 
     __author__: Final[List[str]] = ["inthedark.org"]
@@ -56,11 +56,11 @@ class ThreadOpener(
             identifier=69_420_666,
             force_registration=True,
         )
-        default_guilds: Dict[str, Optional[Union[List[int], bool]]] = {
+        default_guilds: Dict[str, Optional[Union[List[int], bool, int]]] = {
             "toggle": False,
             "channels": [],
             "slowmode_delay": None,
-            "auto_archive_duration": None,
+            "auto_archive_duration": 10080,
         }
         self.config.register_guild(**default_guilds)
 
