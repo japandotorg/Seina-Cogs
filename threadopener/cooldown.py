@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Callable, Any, final, Tuple, Union
+from typing import Any, Callable, Dict, Optional, Tuple, Union, final
 
 import discord
 from redbot.core import commands
