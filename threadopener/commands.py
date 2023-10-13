@@ -34,9 +34,9 @@ from .abc import MixinMeta
 class Commands(MixinMeta):
     @commands.guild_only()
     @commands.admin_or_permissions(manage_guild=True)
-    @commands.bot_has_permissions(manage_threads=True)
     @commands.cooldown(1, 10, commands.BucketType.guild)
     @commands.group(name="threadopener", aliases=["to"])  # type: ignore
+    @commands.bot_has_permissions(manage_threads=True, create_public_threads=True)
     async def _thread_opener(self, _: commands.Context):
         """Manage ThreadOpener settings."""
 
