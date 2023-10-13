@@ -65,7 +65,7 @@ class ThreadOpener(
         self.config.register_guild(**default_guilds)
 
         self.spam_control: commands.CooldownMapping = commands.CooldownMapping.from_cooldown(
-            1, 10, commands.BucketType.guild
+            1, 5, commands.BucketType.guild
         )
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
