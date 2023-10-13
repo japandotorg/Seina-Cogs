@@ -23,11 +23,11 @@ SOFTWARE.
 """
 
 import logging
-from typing import Dict, Final, List, Union, Optional
+from typing import Dict, Final, List, Optional, Union
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import Config, commands
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
 
 from .abc import CompositeMetaClass

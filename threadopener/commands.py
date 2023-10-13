@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Literal, List
+from typing import List, Literal
 
 import discord
 from redbot.core import commands
@@ -39,7 +39,6 @@ class Commands(MixinMeta):
     @commands.group(name="threadopener", aliases=["to"])  # type: ignore
     async def _thread_opener(self, _: commands.Context):
         """Manage ThreadOpener settings."""
-        pass
 
     @_thread_opener.command(name="toggle")  # type: ignore
     async def _toggle(self, ctx: commands.Context, toggle: bool):
