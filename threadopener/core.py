@@ -32,6 +32,7 @@ from redbot.core.utils.chat_formatting import humanize_list
 
 from .abc import CompositeMetaClass
 from .commands import Commands
+from .cooldown import ThreadCooldown
 
 log: logging.Logger = logging.getLogger("red.seina.threadopener")
 
@@ -66,9 +67,7 @@ class ThreadOpener(
 
         cooldown: Tuple[int, int, commands.BucketType] = (3, 10, commands.BucketType.guild)
 
-        self.spam_control: commands.CooldownMapping[
-            commands.Context
-        ] = commands.CooldownMapping.from_cooldown(*cooldown)
+        self.spam_control: ThreadCooldown = ThreadCooldown.from_cooldown(*cooldown)
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
@@ -111,10 +110,10 @@ class ThreadOpener(
             )
             return
 
-        bucket = self.spam_control.get_bucket(message)  # type: ignore
+        bucket = self.spam_control.get_bucket(message)
         current = message.created_at.timestamp()
         retry_after = bucket and bucket.update_rate_limit(current)
-        if retry_after and message.author.id in self.bot.owner_ids:  # type: ignore
+        if retry_after and message.author.id not in self.bot.owner_ids:  # type: ignore
             log.debug(f"{message.channel} ratelimit exhausted, retry after: {retry_after}.")
             return
 
