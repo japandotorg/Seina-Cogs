@@ -97,6 +97,7 @@ class ThreadOpener(
         if (
             not message.guild.me.guild_permissions.manage_threads
             or not message.guild.me.guild_permissions.view_channel
+            or not message.guild.me.guild_permissions.create_public_threads
         ):
             await self.config.guild(message.guild).toggle.set(False)
             log.info(
