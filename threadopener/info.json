@@ -12,7 +12,9 @@
         "thread"
     ],
     "required_cogs": {},
-    "requirements": [],
+    "requirements": [
+        "TagScript==2.6.2"
+    ],
     "type": "COG",
     "end_user_data_statement": "This cog does not store End User Data."
 }
