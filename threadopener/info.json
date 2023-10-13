@@ -1,0 +1,18 @@
+{
+    "author": ["inthedark.org"],
+    "install_msg": "Thanks for installing the threadopener cog.",
+    "name": "ThreadOpener",
+    "disabled": false,
+    "short": "Thread opener.",
+    "description": "Open threads for every message in a channel.",
+    "tags": [
+        "channels",
+        "channel",
+        "threads",
+        "thread",
+    ],
+    "required_cogs": {},
+    "requirements": [],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not store End User Data."
+}
