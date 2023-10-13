@@ -84,7 +84,7 @@ class Commands(MixinMeta):
 
         await ctx.send(
             f"{'added' if add_or_remove.lower() == 'add' else 'removed'} "
-            "{channels} {'channel' if channels == 1 else 'channels'}."
+            f"{channels} {'channel' if channels == 1 else 'channels'}."
         )
 
     @_thread_opener.command(name="archive")  # type: ignore
@@ -101,7 +101,7 @@ class Commands(MixinMeta):
         await self.config.guild(ctx.guild).auto_archive_duration.set(amount)  # type: ignore
         await ctx.send(f"Auto archive duration is now {amount}.")
 
-    @_thread_opener.command()  # type: ignore
+    @_thread_opener.command(name="slowmode")  # type: ignore
     async def _slowmode(self, ctx: commands.Context, amount: commands.Range[int, 0, 21600]):
         """
         Change the slowmode of threads.
@@ -114,7 +114,7 @@ class Commands(MixinMeta):
         await self.config.guild(ctx.guild).slowmode_delay.set(amount)  # type: ignore
         await ctx.send(f"Slowmode is now {amount}.")
 
-    @_thread_opener.command()  # type: ignore
+    @_thread_opener.command(name="showsettings", aliases=["ss", "show"])  # type: ignore
     async def _show_settings(self, ctx: commands.Context):
         """Show ThreadOpener settings."""
         data = await self.config.guild(ctx.guild).all()  # type: ignore
