@@ -80,7 +80,7 @@ class Commands(MixinMeta):
         channels = len(channels)  # type: ignore
 
         await ctx.send(
-            f"{'added' if add_or_remove.lower() == 'add' else 'removed'} "
+            f"{'Added' if add_or_remove.lower() == 'add' else 'Removed'} "
             f"{channels} {'channel' if channels == 1 else 'channels'}."
         )
 
