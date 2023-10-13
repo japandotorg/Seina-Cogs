@@ -28,11 +28,13 @@ from typing import Any
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 
+from .cooldown import ThreadCooldown
+
 
 class MixinMeta(ABC):
     config: Config
     bot: Red
-    spam_control: commands.CooldownMapping
+    spam_control: ThreadCooldown
 
     def __init__(self, *_args: Any) -> None:
         super().__init__()
