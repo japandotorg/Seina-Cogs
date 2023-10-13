@@ -111,8 +111,7 @@ class ThreadOpener(
             )
             return
 
-        ctx = await self.bot.get_context(message)
-        bucket = self.spam_control.get_bucket(ctx)
+        bucket = self.spam_control.get_bucket(message)  # type: ignore
         current = message.created_at.timestamp()
         retry_after = bucket and bucket.update_rate_limit(current)
         if retry_after and message.author.id in self.bot.owner_ids:  # type: ignore
