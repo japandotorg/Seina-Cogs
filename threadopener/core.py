@@ -107,7 +107,7 @@ class ThreadOpener(
         bucket = self.spam_control.get_bucket(message)
         current = message.created_at.timestamp()
         retry_after = bucket and bucket.update_rate_limit(current)
-        if retry_after:
+        if retry_after and message.author.id in self.bot.owner_ids:  # type: ignore
             return
 
         slowmode_delay = await self.config.guild(message.guild).slowmode_delay()
