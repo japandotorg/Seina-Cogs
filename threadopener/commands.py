@@ -45,9 +45,6 @@ class Commands(MixinMeta):
         """
         Toggle ThreadOpener enable or disable.
         """
-        if "THREADS_ENABLED" not in ctx.guild.features:  # type: ignore
-            await ctx.send("Threads are not enabled in this server.")
-            return
         await self.config.guild(ctx.guild).toggle.set(toggle)  # type: ignore
         await ctx.send(f"Thread opener is now {'enabled' if toggle else 'disabled'}.")
 

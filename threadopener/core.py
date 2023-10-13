@@ -103,12 +103,6 @@ class ThreadOpener(
                 f"ThreadOpener has been disabled due to missing permissions in {message.guild.name}.",
             )
             return
-        if "THREADS_ENABLED" not in message.guild.features:
-            await self.config.guild(message.guild).toggle.set(False)
-            log.info(
-                f"ThreadOpener has been disabled due to missing threads channel feature in {message.guild.name}.",
-            )
-            return
 
         bucket = self.spam_control.get_bucket(message)
         current = message.created_at.timestamp()
