@@ -26,7 +26,7 @@ from typing import List, Literal
 
 import discord
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import humanize_list
+from redbot.core.utils.chat_formatting import humanize_list, box
 
 from ._tagscript import TagscriptConverter
 from .abc import MixinMeta
@@ -176,9 +176,13 @@ class Commands(MixinMeta):
         embed.add_field(
             name="Auto Archive Duration",
             value=data["auto_archive_duration"],
+        )
+        embed.add_field(
+            name=f"Message Toggle: {data['message_toggle']}",
+            value=box(str(data["message"]), lang="json"),
             inline=False,
         )
-        embed.add_field(name="Slowmode Delay", value=data["slowmode_delay"], inline=False)
+        embed.add_field(name="Slowmode Delay", value=data["slowmode_delay"])
         if active_channels:
             embed.add_field(
                 name="Active Channels",

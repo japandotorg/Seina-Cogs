@@ -29,7 +29,7 @@ import discord
 import TagScriptEngine as tse
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core.utils.chat_formatting import humanize_list
+from redbot.core.utils.chat_formatting import humanize_list, warning
 
 from ._tagscript import (
     TAGSCRIPT_LIMIT,
@@ -65,8 +65,8 @@ class ThreadOpener(
             force_registration=True,
         )
         default_guilds: Dict[str, Optional[Union[List[int], Any]]] = {
-            "toggle": False,
             "channels": [],
+            "toggle": False,
             "slowmode_delay": None,
             "message_toggle": False,
             "message": thread_message,
@@ -149,18 +149,20 @@ class ThreadOpener(
             )
         except discord.Forbidden:
             await message.channel.send(
-                "I do not have permissions to create threads in this channel."
+                warning("I do not have permissions to create threads in this channel.")
             )
         except discord.HTTPException:
             await message.channel.send(
-                "Something went wrong while creating threads in this channel."
+                warning("Something went wrong while creating threads in this channel.")
             )
             log.exception(
                 f"Something went wrong while creating threads in {message.channel.id}.",
                 exc_info=True,
             )
         except ValueError:
-            await message.channel.send("This guild does not have a guild info attached to it")
+            await message.channel.send(
+                warning("This server does not have a guild info attached to it")
+            )
             log.exception(
                 f"Guild {message.guild.id} does not have a guild info attached to it.",
                 exc_info=True,

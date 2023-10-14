@@ -2,6 +2,7 @@ from typing import Any, Dict, Final, List, final
 
 import discord
 import TagScriptEngine as tse
+from redbot.core.bot import Red
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import humanize_number
 
@@ -50,6 +51,7 @@ class TagCharacterLimitReached(TagError):
         )
 
 
+@final
 class TagscriptConverter(commands.Converter[str]):
     async def convert(self, ctx: commands.Context, argument: str) -> str:
         try:

@@ -22,11 +22,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import re
+import json
+from pathlib import Path
+from typing import Pattern, Match, Optional
+
 from redbot.core.bot import Red
+from redbot.core.errors import CogLoadError
 
 from .core import ThreadOpener
+from .utils import validate_tagscriptengine
+
+VERSION_RE: Pattern[str] = re.compile(r"TagScript==(\d\.\d\.\d)")
+
+with open(Path(__file__).parent / "info.json") as f:
+    data = json.load(f)
+
+tse_version = None
+for requirement in data.get("requirements", []):
+    match: Optional[Match[str]] = VERSION_RE.search(requirement)
+    if match:
+        tse_version = match.group(1)
+        break
+
+if not tse_version:
+    raise CogLoadError(
+        "Failed to find TagScriptEngine version number. Please report this to the cog author."
+    )
 
 
 async def setup(bot: Red) -> None:
+    await validate_tagscriptengine(bot, tse_version)
     cog = ThreadOpener(bot)
     await bot.add_cog(cog)
