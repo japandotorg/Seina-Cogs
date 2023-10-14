@@ -26,7 +26,7 @@ from typing import List, Literal
 
 import discord
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import humanize_list, box
+from redbot.core.utils.chat_formatting import box, humanize_list
 
 from ._tagscript import TagscriptConverter
 from .abc import MixinMeta

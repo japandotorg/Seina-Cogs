@@ -2,8 +2,8 @@ from typing import Any, Dict, Final, List, final
 
 import discord
 import TagScriptEngine as tse
-from redbot.core.bot import Red
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_number
 
 thread_message: str = """
