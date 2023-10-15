@@ -106,7 +106,13 @@ class Game:
                 await self.cog.add_stats_to_leaderboard("deaths", users=[killed])
 
                 if not self.skip:
-                    emoji: discord.PartialEmoji = random.choice(EMOJIS)
+                    custom_emoji: Optional[discord.Emoji] = self.ctx.bot.get_emoji(
+                        1163151336024588368
+                    )
+                    if custom_emoji:
+                        emoji = custom_emoji
+                    else:
+                        emoji: discord.PartialEmoji = random.choice(EMOJIS)
                     prompts += "\n" + random.choice(PROMPTS).format(
                         emoji=emoji,
                         killer=f"**{killer.display_name}**",
