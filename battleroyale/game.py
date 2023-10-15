@@ -33,7 +33,7 @@ from redbot.core import bank, commands
 from redbot.core.errors import BalanceTooHigh
 from redbot.core.utils.chat_formatting import humanize_list, pagify
 
-from .constants import PROMPTS, WINNER_PROMPTS, EMOJIS
+from .constants import EMOJIS, PROMPTS, WINNER_PROMPTS
 from .utils import exceptions
 from .views import RemainingPlayerView
 
