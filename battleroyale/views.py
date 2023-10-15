@@ -123,7 +123,7 @@ class RemainingPlayerView(discord.ui.View):
         self: RemainingPlayerButton, interaction: discord.Interaction[Red]
     ) -> None:
         remaining_player_str = humanize_list(
-            [m.display_name for m in sorted(self.view.remaining_players, key=lambda m: m.mention)]
+            [m.display_name for m in sorted(self.view.remaining, key=lambda m: m.mention)]
         )
         remaining_players_str = (
             f"{remaining_player_str[:2000]}..."
