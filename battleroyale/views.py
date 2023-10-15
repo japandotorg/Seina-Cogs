@@ -133,7 +133,7 @@ class RemainingPlayerView(discord.ui.View):
         embed: discord.Embed = discord.Embed.from_dict(
             {
                 "description": f"{remaining_players_str}.",
-                "color": self.view.color,
+                "color": int(self.view.color),
             }
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)
