@@ -126,8 +126,8 @@ class RemainingPlayerView(discord.ui.View):
             [m.mention for m in sorted(self.view.remaining, key=lambda m: m.mention)]
         )
         remaining_players_str = (
-            f"{remaining_player_str[:2000]}..."
-            if len(remaining_player_str) > 2000
+            f"{remaining_player_str[:4000]}..."
+            if len(remaining_player_str) > 4000
             else remaining_player_str
         )
         embed: discord.Embed = discord.Embed.from_dict(
