@@ -77,15 +77,17 @@ class JoinGameView(discord.ui.View):
     @staticmethod
     async def _callback(self: JoinGameButton, interaction: discord.Interaction) -> None:
         if len(self.view.players) > 200:
-            return await interaction.response.send_message(
+            await interaction.response.send_message(
                 "The maximum number of 200 players has been reached.",
                 ephemeral=True,
             )
+            return
         elif interaction.user in self.view.players:
-            return await interaction.response.send_message(
+            await interaction.response.send_message(
                 "You have already joined this game!",
                 ephemeral=True,
             )
+            return
         else:
             self.view.players.append(interaction.user)
             await interaction.response.send_message(
@@ -128,6 +130,14 @@ class RemainingPlayerView(discord.ui.View):
                 for m in sorted(self.view.remaining, key=lambda m: m.global_name or m.display_name)
             ]
         )
+        if not remaining_player_str:
+            await interaction.response.send_message(
+                embed=discord.Embed(
+                    description="There are not remaining players!",
+                    color=self.view.color,
+                )
+            )
+            return
         remaining_players_str = (
             f"{remaining_player_str[:4000]}..."
             if len(remaining_player_str) > 4000
