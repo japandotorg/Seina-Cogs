@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import re
 import json
+import re
 from pathlib import Path
-from typing import Pattern, Match, Optional
+from typing import Match, Optional, Pattern
 
 from redbot.core.bot import Red
 from redbot.core.errors import CogLoadError
