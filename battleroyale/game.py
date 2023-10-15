@@ -33,7 +33,7 @@ from redbot.core import bank, commands
 from redbot.core.errors import BalanceTooHigh
 from redbot.core.utils.chat_formatting import humanize_list, pagify
 
-from .constants import PROMPTS, WINNER_PROMPTS
+from .constants import PROMPTS, WINNER_PROMPTS, EMOJIS
 from .utils import exceptions
 from .views import RemainingPlayerView
 
@@ -106,8 +106,11 @@ class Game:
                 await self.cog.add_stats_to_leaderboard("deaths", users=[killed])
 
                 if not self.skip:
+                    emoji: discord.PartialEmoji = random.choice(EMOJIS)
                     prompts += "\n" + random.choice(PROMPTS).format(
-                        killer=f"**{killer.display_name}**", killed=f"**{killed.display_name}**"
+                        emoji=emoji,
+                        killer=f"**{killer.display_name}**",
+                        killed=f"**{killed.display_name}**",
                     )
                     if len(self.players) <= 30 or len(self.remaining_players) <= 2 or i >= 2:
                         start = time.time()
