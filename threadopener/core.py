@@ -74,7 +74,7 @@ class ThreadOpener(
         }
         self.config.register_guild(**default_guilds)
 
-        cooldown: Tuple[int, int, commands.BucketType] = (3, 10, commands.BucketType.guild)
+        cooldown: Tuple[float, float, commands.BucketType] = (3, 10, commands.BucketType.guild)
 
         self.spam_control: ThreadCooldown = ThreadCooldown.from_cooldown(*cooldown)
 

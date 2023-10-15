@@ -4,7 +4,7 @@ from redbot.core.bot import Red
 from redbot.core.errors import CogLoadError
 
 
-async def validate_tagscriptengine(bot: Red, tse_version: str, *, reloaded: bool = False):
+async def validate_tagscriptengine(bot: Red, tse_version: str, *, reloaded: bool = False) -> None:
     try:
         import TagScriptEngine as tse
     except ImportError as exc:
