@@ -122,13 +122,12 @@ class RemainingPlayerView(discord.ui.View):
     async def _callback(
         self: RemainingPlayerButton, interaction: discord.Interaction[Red]
     ) -> None:
-        await interaction.response.defer()
         remaining_player_str = humanize_list(
             [m.display_name for m in sorted(self.view.remaining_players, key=lambda m: m.mention)]
         )
         remaining_players_str = (
-            f"{remaining_player_str[:3000]}..."
-            if len(remaining_player_str) > 3000
+            f"{remaining_player_str[:2000]}..."
+            if len(remaining_player_str) > 2000
             else remaining_player_str
         )
         embed: discord.Embed = discord.Embed.from_dict(
@@ -137,4 +136,4 @@ class RemainingPlayerView(discord.ui.View):
                 "color": self.view.color,
             }
         )
-        await interaction.followup.send(embed=embed)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
