@@ -112,8 +112,8 @@ class Game:
                     emoji: discord.PartialEmoji = random.choice(EMOJIS)
                     prompts += "\n" + random.choice(PROMPTS).format(
                         emoji=custom_emoji if custom_emoji else emoji,
-                        killer=f"**{killer.display_name}**",
-                        killed=f"**{killed.display_name}**",
+                        killer=f"**{killer.global_name or killer.display_name}**",
+                        killed=f"**{killed.global_name or killed.display_name}**",
                     )
                     if len(self.players) <= 30 or len(self.remaining_players) <= 2 or i >= 2:
                         start = time.time()
@@ -152,7 +152,7 @@ class Game:
         winner = self.remaining_players[0]
         places.insert(0, winner)
         places_text = "".join(
-            f"**#{index}** - {player.display_name} - {kills[player]} kill{'s' if kills[player] > 1 else ''}\n"
+            f"**#{index}** - {player.global_name or player.display_name} - {kills[player]} kill{'s' if kills[player] > 1 else ''}\n"
             for index, player in enumerate(places[:10], start=1)
         )
         places_text = list(pagify(places_text, page_length=2000))[0]
