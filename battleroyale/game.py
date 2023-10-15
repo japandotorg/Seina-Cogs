@@ -75,8 +75,11 @@ class Game:
             )
             remaining_players_str = humanize_list(
                 [
-                    m.display_name
-                    for m in sorted(self.remaining_players, key=lambda m: m.display_name)
+                    m.global_name if m.global_name else m.display_name
+                    for m in sorted(
+                        self.remaining_players,
+                        key=lambda m: m.global_name if m.global_name else m.display_name,
+                    )
                 ]
             )
             remaining_players_str = (
@@ -112,8 +115,8 @@ class Game:
                     emoji: discord.PartialEmoji = random.choice(EMOJIS)
                     prompts += "\n" + random.choice(PROMPTS).format(
                         emoji=custom_emoji if custom_emoji else emoji,
-                        killer=f"**{killer.global_name or killer.display_name}**",
-                        killed=f"**{killed.global_name or killed.display_name}**",
+                        killer=f"**{killer.global_name if killer.global_name else killer.display_name}**",
+                        killed=f"**{killed.global_name if killed.global_name else killed.display_name}**",
                     )
                     if len(self.players) <= 30 or len(self.remaining_players) <= 2 or i >= 2:
                         start = time.time()

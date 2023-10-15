@@ -126,8 +126,11 @@ class RemainingPlayerView(discord.ui.View):
     ) -> None:
         remaining_player_str = humanize_list(
             [
-                m.global_name or m.display_name
-                for m in sorted(self.view.remaining, key=lambda m: m.global_name or m.display_name)
+                m.global_name if m.global_name else m.display_name
+                for m in sorted(
+                    self.view.remaining,
+                    key=lambda m: m.global_name if m.global_name else m.display_name,
+                )
             ]
         )
         if not remaining_player_str:
