@@ -26,8 +26,25 @@ from functools import partial
 from typing import Any, List, Optional
 
 import discord
+from redbot.core.bot import Red
+from redbot.core.utils.chat_formatting import humanize_list
 
 __all__ = ("JoinGameView",)
+
+
+class RemainingPlayerButton(discord.ui.Button):
+    def __init__(
+        self,
+        callback: Any,
+        custom_id: str = "REMAINING_PLAYER:BUTTON",
+        emoji: Optional[str] = None,
+    ) -> None:
+        super().__init__(
+            label="Remaining Players",
+            emoji=emoji,
+            custom_id=custom_id,
+        )
+        self.callback: partial = partial(callback, self)
 
 
 class JoinGameButton(discord.ui.Button):
@@ -75,3 +92,49 @@ class JoinGameView(discord.ui.View):
                 "You have joined this game!",
                 ephemeral=True,
             )
+
+
+class RemainingPlayerView(discord.ui.View):
+    def __init__(
+        self,
+        remaining: List[discord.Member],
+        color: discord.Color,
+        emoji: Optional[str] = None,
+        timeout: float = 120,
+    ) -> None:
+        super().__init__(timeout=timeout)
+        self.remaining: List[discord.Member] = remaining
+        self.color: discord.Color = color
+        self._message: Optional[discord.Message] = None
+
+        self.add_item(RemainingPlayerButton(self._callback, emoji=emoji))
+
+    async def on_timeout(self) -> None:
+        for item in self.children:
+            item: discord.ui.Item
+            item.disabled = True
+        try:
+            await self._message.edit(view=self)
+        except discord.HTTPException:
+            pass
+
+    @staticmethod
+    async def _callback(
+        self: RemainingPlayerButton, interaction: discord.Interaction[Red]
+    ) -> None:
+        await interaction.response.defer()
+        remaining_player_str = humanize_list(
+            [m.display_name for m in sorted(self.view.remaining_players, key=lambda m: m.mention)]
+        )
+        remaining_players_str = (
+            f"{remaining_player_str[:3000]}..."
+            if len(remaining_player_str) > 3000
+            else remaining_player_str
+        )
+        embed: discord.Embed = discord.Embed.from_dict(
+            {
+                "description": f"{remaining_players_str}.",
+                "color": self.view.color,
+            }
+        )
+        await interaction.followup.send(embed=embed)

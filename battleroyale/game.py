@@ -35,6 +35,7 @@ from redbot.core.utils.chat_formatting import humanize_list, pagify
 
 from .constants import PROMPTS, WINNER_PROMPTS
 from .utils import exceptions
+from .views import RemainingPlayerView
 
 EDIT_ORIGINAL_MESSAGE = False
 
@@ -116,31 +117,26 @@ class Game:
                         end = time.time()
                         delay = self.delay - (end - start)
                         await asyncio.sleep(delay)
-                        remaining_players_str = humanize_list(
-                            [
-                                m.display_name
-                                for m in sorted(
-                                    self.remaining_players, key=lambda m: m.display_name
-                                )
-                            ]
-                        )
-                        remaining_players_str = (
-                            f"{remaining_players_str[:3000]}..."
-                            if len(remaining_players_str) > 3000
-                            else remaining_players_str
-                        )
                         embed: discord.Embed = discord.Embed(
                             title="Battle Royale", color=await self.ctx.embed_color()
                         )
                         embed.description = (
                             f"{prompts}"
-                            f"\n\n**{len(self.remaining_players)} Remaining Players:**\n{remaining_players_str}."
+                            f"\n\n**{len(self.remaining_players)} Remaining Players**\n"
                         )[:2000]
                         embed.set_image(url="attachment://image.png")
+                        _view = RemainingPlayerView(
+                            remaining=self.remaining_players, color=await self.ctx.embed_color()
+                        )
                         if EDIT_ORIGINAL_MESSAGE:
-                            await self.original_message.edit(embed=embed, attachments=[image])
+                            _message = await self.original_message.edit(
+                                embed=embed, attachments=[image], view=_view
+                            )
+                            _view._message = _message
+
                         else:
-                            await self.ctx.send(embed=embed, files=[image])
+                            _message = await self.ctx.send(embed=embed, files=[image], view=_view)
+                            _view._message = _message
                         prompts = ""
                         i = 0
                     else:
