@@ -109,7 +109,7 @@ class Game:
                     prompts += "\n" + random.choice(PROMPTS).format(
                         killer=f"**{killer.display_name}**", killed=f"**{killed.display_name}**"
                     )
-                    if len(self.players) <= 10 or len(self.remaining_players) <= 5 or i >= 5:
+                    if len(self.players) <= 30 or len(self.remaining_players) <= 2 or i >= 2:
                         start = time.time()
                         image: discord.File = await self.cog.generate_image(
                             user_1=killer, user_2=killed, to_file=True
