@@ -100,7 +100,7 @@ class RemainingPlayerView(discord.ui.View):
         remaining: List[discord.Member],
         color: discord.Color,
         emoji: Optional[str] = None,
-        timeout: float = 120,
+        timeout: float = 45,
     ) -> None:
         super().__init__(timeout=timeout)
         self.remaining: List[discord.Member] = remaining
@@ -123,7 +123,7 @@ class RemainingPlayerView(discord.ui.View):
         self: RemainingPlayerButton, interaction: discord.Interaction[Red]
     ) -> None:
         remaining_player_str = humanize_list(
-            [m.mention for m in sorted(self.view.remaining, key=lambda m: m.mention)]
+            [m.display_name for m in sorted(self.view.remaining, key=lambda m: m.display_name)]
         )
         remaining_players_str = (
             f"{remaining_player_str[:4000]}..."

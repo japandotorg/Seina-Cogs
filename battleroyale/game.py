@@ -128,7 +128,6 @@ class Game:
                         _view = RemainingPlayerView(
                             remaining=self.remaining_players,
                             color=await self.ctx.embed_color(),
-                            timeout=delay,
                         )
                         if EDIT_ORIGINAL_MESSAGE:
                             _message = await self.original_message.edit(
