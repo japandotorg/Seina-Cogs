@@ -109,12 +109,9 @@ class Game:
                     custom_emoji: Optional[discord.Emoji] = self.ctx.bot.get_emoji(
                         1163151336024588368
                     )
-                    if custom_emoji:
-                        emoji = custom_emoji
-                    else:
-                        emoji: discord.PartialEmoji = random.choice(EMOJIS)
+                    emoji: discord.PartialEmoji = random.choice(EMOJIS)
                     prompts += "\n" + random.choice(PROMPTS).format(
-                        emoji=emoji,
+                        emoji=custom_emoji if custom_emoji else emoji,
                         killer=f"**{killer.display_name}**",
                         killed=f"**{killed.display_name}**",
                     )
