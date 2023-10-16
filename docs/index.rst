@@ -22,8 +22,8 @@ Welcome to Seina-Cogs's documentation!
     :target: https://github.com/ambv/black
     :alt: Code Style: Black
 
-.. image:: https://readthedocs.org/projects/phen-cogs/badge/?version=latest
-    :target: https://phen-cogs.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/seina-cogs/badge/?version=latest
+    :target: https://seina-cogs.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
 .. toctree::
