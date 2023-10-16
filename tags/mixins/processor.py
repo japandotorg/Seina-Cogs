@@ -85,6 +85,7 @@ class Processor(MixinMeta):
             tse.OverrideBlock(),
             tse.RedirectBlock(),
             tse.CooldownBlock(),
+            tse.UpperBlock(),
         ]
         tag_blocks = [
             DeleteBlock(),
