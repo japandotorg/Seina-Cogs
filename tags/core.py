@@ -60,7 +60,7 @@ class Tags(
     """
     Create and use tags.
 
-    The TagScript documentation can be found [here](https://phen-cogs.readthedocs.io/en/latest/).
+    The TagScript documentation can be found [here](https://seina-cogs.readthedocs.io/en/latest/).
     """
 
     __version__ = "2.4.1"
@@ -73,7 +73,7 @@ class Tags(
         text = [
             f"{pre_processed}{n}",
             f"Cog Version: **{self.__version__}**",
-            f"TagScriptEngine Version: **{tse_version}**",
+            f"AdvancedTagScriptEngine Version: **{tse_version}**",
             f"Author: {humanize_list(authors)}",
         ]
         return "\n".join(text)

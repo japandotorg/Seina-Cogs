@@ -57,7 +57,7 @@ TAG_GLOBAL_LIMIT = 250
 
 TAG_RE = re.compile(r"(?i)(\[p\])?\btag'?s?\b")
 
-DOCS_URL = "https://phen-cogs.readthedocs.io/en/latest"
+DOCS_URL = "https://seina-cogs.readthedocs.io/en/latest"
 
 log = logging.getLogger("red.seina.tags.commands")
 
@@ -233,7 +233,7 @@ class Commands(MixinMeta):
         Tag management with TagScript.
 
         These commands use TagScriptEngine.
-        Read the [TagScript documentation](https://phen-cogs.readthedocs.io/en/latest/) to learn how to use TagScript blocks.
+        Read the [TagScript documentation](https://seina-cogs.readthedocs.io/en/latest/) to learn how to use TagScript blocks.
         """
 
     @commands.mod_or_permissions(manage_guild=True)
@@ -248,7 +248,7 @@ class Commands(MixinMeta):
         """
         Add a tag with TagScript.
 
-        [Tag usage guide](https://phen-cogs.readthedocs.io/en/latest/tags/blocks.html#usage)
+        [Tag usage guide](https://seina-cogs.readthedocs.io/en/latest/tags/blocks.html#usage)
 
         **Example:**
         `[p]tag add lawsofmotion {embed(title):Newton's Laws of motion}
@@ -312,7 +312,7 @@ class Commands(MixinMeta):
         Edit a tag's TagScript.
 
         The passed tagscript will replace the tag's current tagscript.
-        View the [TagScript docs](https://phen-cogs.readthedocs.io/en/latest/blocks.html) to find information on how to write valid tagscript.
+        View the [TagScript docs](https://seina-cogs.readthedocs.io/en/latest/blocks.html) to find information on how to write valid tagscript.
 
         **Example:**
         `[p]tag edit rickroll Never gonna give you up!`
@@ -441,7 +441,7 @@ class Commands(MixinMeta):
         """
         Search the TagScript documentation for a block.
 
-        https://phen-cogs.readthedocs.io/en/latest/
+        https://seina-cogs.readthedocs.io/en/latest/
 
         **Example:**
         `[p]tag docs embed`
