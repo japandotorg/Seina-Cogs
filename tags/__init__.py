@@ -33,7 +33,7 @@ from redbot.core.errors import CogLoadError
 from .core import Tags
 from .utils import validate_tagscriptengine
 
-VERSION_RE = re.compile(r"TagScript==(\d\.\d\.\d)")
+VERSION_RE = re.compile(r"AdvancedTagScriptEngine==(\d\.\d\.\d)")
 
 with open(Path(__file__).parent / "info.json") as fp:
     data = json.load(fp)
