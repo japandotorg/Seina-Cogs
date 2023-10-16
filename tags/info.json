@@ -12,7 +12,7 @@
     ],
     "required_cogs": {},
     "requirements": [
-        "AdvancedTagScriptEngine==3.0.3",
+        "AdvancedTagScriptEngine==3.0.4",
         "tabulate",
         "rapidfuzz"
     ],
