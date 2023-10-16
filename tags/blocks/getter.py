@@ -1,6 +1,6 @@
 from typing import Optional
 
-from TagScriptEngine import StringAdapter, Block, Context
+from TagScriptEngine import Block, Context, StringAdapter
 
 
 class LooseVariableGetterBlock(Block):
