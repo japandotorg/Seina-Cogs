@@ -69,7 +69,7 @@ class ConfirmationView(BaseView):
         timeout: int = 60,
         *,
         cancel_message: str = "Action cancelled.",
-        **kwargs
+        **kwargs,
     ) -> bool:
         view = cls(timeout, cancel_message=cancel_message)
         await view.send_initial_message(ctx, content, **kwargs)
