@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 from importlib import reload
-from typing import List, Union
+from typing import Final, List, Union
 
 import discord
 from redbot.core import commands
@@ -32,6 +32,8 @@ from redbot.core.bot import Red
 from redbot.core.errors import CogLoadError
 
 from .views import PageSource, PaginatedView
+
+PIP: Final[str] = "pip(3)"
 
 
 async def menu(ctx: commands.Context, pages: List[Union[str, discord.Embed]]):
@@ -49,9 +51,10 @@ async def validate_tagscriptengine(bot: Red, tse_version: str, *, reloaded: bool
         ) from exc
 
     commands = [
-        "`pip(3) uninstall -y TagScriptEngine`",
-        "`pip(3) uninstall -y TagScript`",
-        f"`pip(3) install TagScript=={tse_version}`",
+        f"`{PIP} uninstall -y TagScript`",
+        f"`{PIP} uninstall -y TagScriptEngine`",
+        f"`{PIP} uninstall -y AdvancedTagScriptEngine`",
+        f"`{PIP} install AdvancedTagScript=={tse_version}`",
     ]
     commands = "\n".join(commands)
 
