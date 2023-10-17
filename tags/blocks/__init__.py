@@ -27,6 +27,8 @@ from .customcom import ContextVariableBlock, ConverterBlock
 from .delete import DeleteBlock
 from .react import ReactBlock
 from .silent import SilentBlock
+from .var import VarBlock
+from .comment import CommentBlock
 
 __all__ = (
     "DeleteBlock",
@@ -34,4 +36,6 @@ __all__ = (
     "ReactBlock",
     "ContextVariableBlock",
     "ConverterBlock",
+    "VarBlock",
+    "CommentBlock",
 )

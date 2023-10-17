@@ -34,7 +34,7 @@ from redbot.core import commands
 from redbot.core.utils.menus import start_adding_reactions
 
 from ..abc import MixinMeta
-from ..blocks import DeleteBlock, ReactBlock, SilentBlock
+from ..blocks import DeleteBlock, ReactBlock, SilentBlock, VarBlock, CommentBlock
 from ..errors import BlacklistCheckFailure, RequireCheckFailure, WhitelistCheckFailure
 from ..objects import SilentContext, Tag
 
@@ -86,11 +86,17 @@ class Processor(MixinMeta):
             tse.RedirectBlock(),
             tse.CooldownBlock(),
             tse.UpperBlock(),
+            tse.LowerBlock(),
+            tse.CountBlock(),
+            tse.LengthBlock(),
+            tse.StrictVariableGetterBlock(),
         ]
         tag_blocks = [
             DeleteBlock(),
             SilentBlock(),
             ReactBlock(),
+            VarBlock(),
+            CommentBlock(),
         ]
         interpreter = tse.AsyncInterpreter if data["async_enabled"] else tse.Interpreter
         self.async_enabled = data["async_enabled"]
