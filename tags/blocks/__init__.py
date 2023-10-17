@@ -23,12 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from .comment import CommentBlock
 from .customcom import ContextVariableBlock, ConverterBlock
 from .delete import DeleteBlock
 from .react import ReactBlock
 from .silent import SilentBlock
 from .var import VarBlock
-from .comment import CommentBlock
 
 __all__ = (
     "DeleteBlock",
