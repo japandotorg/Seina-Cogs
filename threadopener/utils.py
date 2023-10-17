@@ -23,9 +23,12 @@ SOFTWARE.
 """
 
 from importlib import reload
+from typing import Final
 
 from redbot.core.bot import Red
 from redbot.core.errors import CogLoadError
+
+PIP: Final[str] = "pip(3)"
 
 
 async def validate_tagscriptengine(bot: Red, tse_version: str, *, reloaded: bool = False) -> None:
@@ -38,9 +41,10 @@ async def validate_tagscriptengine(bot: Red, tse_version: str, *, reloaded: bool
         ) from exc
 
     commands = [
-        "`pip(3) uninstall -y TagScriptEngine`",
-        "`pip(3) uninstall -y TagScript`",
-        f"`pip(3) install TagScript=={tse_version}`",
+        f"`{PIP} uninstall -y TagScript`",
+        f"`{PIP} uninstall -y TagScriptEngine`",
+        f"`{PIP} uninstall -y AdvancedTagScriptEngine`",
+        f"`{PIP} install AdvancedTagScript=={tse_version}`",
     ]
     commands = "\n".join(commands)
 
