@@ -231,7 +231,7 @@ class AFK(commands.Cog):
                 await ctx.send(
                     embed=discord.Embed(
                         title="You're now AFK!",
-                        description="**Message:**\n- {message}",
+                        description=f"**Message:**\n- {message}",
                         color=ctx.author.color,
                     ),
                     reference=ctx.message.to_reference(fail_if_not_exists=False),
