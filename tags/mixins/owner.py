@@ -23,14 +23,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import re
 import ast
 import inspect
 import logging
+import re
 import textwrap
 import traceback
-from typing import List, Dict, Optional, Literal, Pattern, Iterator
 from types import CodeType
+from typing import Dict, Iterator, List, Literal, Optional, Pattern
 
 import discord
 import TagScriptEngine as tse

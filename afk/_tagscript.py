@@ -23,15 +23,14 @@ SOFTWARE.
 """
 
 from importlib import reload
-from typing import List, Final, Dict, Any, final, Tuple
+from typing import Any, Dict, Final, List, Tuple, final
 
 import discord
 import TagScriptEngine as tse
-from redbot.core.bot import Red
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.errors import CogLoadError
 from redbot.core.utils.chat_formatting import humanize_number
-
 
 __all__: Tuple[str, ...] = (
     "custom_message",

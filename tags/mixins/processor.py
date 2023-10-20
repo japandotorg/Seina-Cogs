@@ -26,7 +26,7 @@ SOFTWARE.
 import asyncio
 import logging
 from copy import copy
-from typing import Dict, List, Optional, Any, Union, Type
+from typing import Any, Dict, List, Optional, Type, Union
 
 import discord
 import TagScriptEngine as tse

@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 import re
-from typing import Optional, Pattern, Any, Match
+from typing import Any, Match, Optional, Pattern
 
 from discord.utils import escape_mentions
 from redbot.core import commands

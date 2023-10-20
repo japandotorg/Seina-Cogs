@@ -1,8 +1,8 @@
-from typing import Any, List, Optional, Tuple, Dict
+from typing import Any, Dict, List, Optional, Tuple
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.vendored.discord.ext.menus import ListPageSource
 
 __all__ = ("ConfirmationView", "PageSource", "PaginatedView")

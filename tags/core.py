@@ -24,12 +24,12 @@ SOFTWARE.
 """
 
 import asyncio
+import contextlib
 import logging
 import re
-import contextlib
 from collections import defaultdict
 from operator import itemgetter
-from typing import Any, Coroutine, List, Optional, Dict, Union, Final, Tuple
+from typing import Any, Coroutine, Dict, Final, List, Optional, Tuple, Union
 
 import aiohttp
 import discord
