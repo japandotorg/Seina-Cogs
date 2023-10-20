@@ -1,0 +1,18 @@
+{
+    "author": ["inthedark.org"],
+    "install_msg": "Thanks for installing the afk cog.",
+    "name": "AFK",
+    "disabled": false,
+    "short": "Away From Keyboard",
+    "description": "A cog for being afk and responding when idiots ping you.",
+    "tags": [
+        "afk",
+        "away",
+        "awayfromkeyboard"
+    ],
+    "required_cogs": {},
+    "requirements": [
+        "AdvancedTagScriptEngine==3.1.3"
+    ],
+    "type": "COG"
+}
