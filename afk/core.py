@@ -24,21 +24,21 @@ SOFTWARE.
 
 import logging
 from datetime import datetime, timezone
-from typing import Dict, Union, List, Final, Optional, Literal
+from typing import Dict, Final, List, Literal, Optional, Union
 
 import discord
 import TagScriptEngine as tse
-from redbot.core.bot import Red
 from redbot.core import Config, commands
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list, pagify
+from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 
 from ._tagscript import (
-    _process_tagscript,
+    TAGSCRIPT_LIMIT,
     TagCharacterLimitReached,
     TagscriptConverter,
+    _process_tagscript,
     custom_message,
-    TAGSCRIPT_LIMIT,
 )
 from .views import AFKPaginator, AFKView
 

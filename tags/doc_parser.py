@@ -29,7 +29,7 @@ import io
 import os
 import re
 import zlib
-from typing import Dict, Final, Generator, Pattern, Match, Optional
+from typing import Dict, Final, Generator, Match, Optional, Pattern
 
 
 class SphinxObjectFileReader:
