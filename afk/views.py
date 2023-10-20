@@ -28,9 +28,6 @@ import discord
 from redbot.core import commands
 from redbot.core.bot import Red
 
-if TYPE_CHECKING:
-    from .core import AFK
-
 
 def disable_items(self: discord.ui.View):
     for child in self.children:
