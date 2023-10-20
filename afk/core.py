@@ -254,7 +254,9 @@ class AFK(commands.Cog):
 
     @_afk.command(name="custom")
     @commands.cooldown(1, 30, commands.BucketType.member)
-    async def _custom(self, ctx: commands.Context, *, message: TagscriptConverter):
+    async def _custom(
+        self, ctx: commands.Context, *, message: Optional[TagscriptConverter] = None
+    ):
         """
         Change the message sent when someone pings you while you're afk.
 
