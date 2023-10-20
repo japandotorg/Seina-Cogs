@@ -54,7 +54,7 @@ custom_message: Final[
 {reason}
 }
 {embed(color):{color}}
-{embed(thumbnail):{avatar}}
+{embed(thumbnail):{author(avatar)}}
 """
 
 TAGSCRIPT_LIMIT: Final[int] = 10_000
