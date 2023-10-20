@@ -1,3 +1,27 @@
+"""
+MIT License
+
+Copyright (c) 2023-present japandotorg
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 from typing import Dict, List, Optional, Any, Union, TYPE_CHECKING
 
 import discord
@@ -12,8 +36,7 @@ def disable_items(self: discord.ui.View):
     for child in self.children:
         child: discord.ui.Item
         if hasattr(child, "disabled") and not (
-            isinstance(child, discord.ui.Button)
-            and child.style == discord.ButtonStyle.url
+            isinstance(child, discord.ui.Button) and child.style == discord.ButtonStyle.url
         ):
             child.disabled = True  # type: ignore
 
@@ -28,9 +51,7 @@ class CloseButton(discord.ui.Button):
 
 
 class AFKView(discord.ui.View):
-    def __init__(
-        self, ctx: commands.Context, data: Dict, timeout: float = 60.0
-    ) -> None:
+    def __init__(self, ctx: commands.Context, data: Dict, timeout: float = 60.0) -> None:
         super().__init__(timeout=timeout)
         self.ctx: commands.Context = ctx
         self.cog: "AFK" = ctx.cog  # type: ignore
@@ -54,9 +75,7 @@ class AFKView(discord.ui.View):
         return True
 
     @discord.ui.button(label="Show Pings", style=discord.ButtonStyle.green)
-    async def _callback(
-        self, interaction: discord.Interaction[Red], _: discord.ui.Button, /
-    ):
+    async def _callback(self, interaction: discord.Interaction[Red], _: discord.ui.Button, /):
         if len(self.data["pings"]) == 0:
             return await interaction.response.send_message(
                 "You did not recieve any pings while you were AFK!",
@@ -185,14 +204,10 @@ class AFKPaginator(ViewDisableOnTimeout):
         if not all(isinstance(x, discord.Embed) for x in contents) and not all(
             isinstance(x, str) for x in contents
         ):
-            raise TypeError(
-                "All pages must be of the same type. Either a string or an embed."
-            )
+            raise TypeError("All pages must be of the same type. Either a string or an embed.")
 
         if self.use_select and len(self.contents) > 1:
-            self.add_item(
-                PaginatorSelect(placeholder="Select a page:", length=len(contents))
-            )
+            self.add_item(PaginatorSelect(placeholder="Select a page:", length=len(contents)))
 
         buttons_to_add = (
             [FirstItemButton, BackwardButton, PageButton, ForwardButton, LastItemButton]
