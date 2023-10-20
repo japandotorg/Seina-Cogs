@@ -280,7 +280,7 @@ class AFK(commands.Cog):
         {reason}
         }
         {embed(color):{color}}
-        {embed(thumbnail):{avatar}}
+        {embed(thumbnail):{author(avatar)}}
         ```
         """
         if message:
