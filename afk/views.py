@@ -54,7 +54,6 @@ class AFKView(discord.ui.View):
     def __init__(self, ctx: commands.Context, data: Dict, timeout: float = 60.0) -> None:
         super().__init__(timeout=timeout)
         self.ctx: commands.Context = ctx
-        self.cog: "AFK" = ctx.cog  # type: ignore
         self.data: Dict = data
         self._message: Optional[discord.Message] = None
         self.add_item(CloseButton())
@@ -82,7 +81,7 @@ class AFKView(discord.ui.View):
                 ephemeral=True,
             )
         else:
-            await self.cog._ping_list(interaction, self.data)
+            await self.ctx.cog._ping_list(interaction, self.data)
 
 
 class ViewDisableOnTimeout(discord.ui.View):
