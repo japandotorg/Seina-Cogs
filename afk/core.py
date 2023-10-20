@@ -494,6 +494,7 @@ class AFK(commands.Cog):
         if amount == 0:
             await self.config.delete_after.set(None)
             await ctx.send(f"Disabled `delete_after`.")
+            return
         await self.config.delete_after.set(amount)
         await ctx.send(
             f"Changed `delete_after` to {amount}.",
