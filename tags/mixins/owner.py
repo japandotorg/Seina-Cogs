@@ -22,17 +22,21 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
+import re
+import ast
 import inspect
 import logging
 import textwrap
 import traceback
-from typing import List
+from typing import List, Dict, Optional, Literal, Pattern, Iterator
+from types import CodeType
 
 import discord
 import TagScriptEngine as tse
 from redbot.core import Config, commands
-from redbot.core.dev_commands import Dev, async_compile, cleanup_code, get_pages
 from redbot.core.utils import AsyncIter
+from redbot.core.utils.chat_formatting import pagify
 
 from ..abc import MixinMeta
 from ..blocks import ContextVariableBlock, ConverterBlock
@@ -43,13 +47,44 @@ from ..views import ConfirmationView
 
 log = logging.getLogger("red.seina.tags.owner")
 
+START_CODE_BLOCK_RE: Pattern[str] = re.compile(r"^((```[\w.+\-]+\n+(?!```))|(```\n*))")
+
+
+def _cleanup_code(content: str) -> str:
+    if content.startswith("```") and content.endswith("```"):
+        return START_CODE_BLOCK_RE.sub("", content)[:-3].rstrip("\n")
+
+    return content.strip("` \n")
+
 
 class OwnerCommands(MixinMeta):
     def __init__(self):
         self.custom_command_engine = tse.Interpreter([ContextVariableBlock(), ConverterBlock()])
         super().__init__()
 
-    async def compile_blocks(self, data: dict = None) -> List[tse.Block]:
+    @staticmethod
+    def _get_pages(message: str) -> Iterator[str]:
+        return pagify(message, delims=["\n", " "], priority=True, shorten_by=10)
+
+    @staticmethod
+    def _async_compile(source: str, filename: str, mode: Literal["eval", "exec"]) -> CodeType:
+        return compile(
+            source,
+            filename,
+            mode,
+            flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT,
+            optimize=0,
+            dont_inherit=True,
+        )
+
+    @staticmethod
+    def _sanitize_output(ctx: commands.Context, to_sanitize: str) -> str:
+        token = ctx.bot.http.token
+        if token:
+            return re.sub(re.escape(token), "[SANITIZED]", to_sanitize, re.I)
+        return to_sanitize
+
+    async def compile_blocks(self, data: Optional[Dict] = None) -> List[tse.Block]:
         blocks = []
         blocks_data = data["blocks"] if data else await self.config.blocks()
         for block_code in blocks_data.values():
@@ -59,7 +94,7 @@ class OwnerCommands(MixinMeta):
 
     def compile_block(self, code: str) -> tse.Block:
         to_compile = "def func():\n%s" % textwrap.indent(code, "  ")
-        compiled = async_compile(to_compile, "<string>", "exec")
+        compiled = self._async_compile(to_compile, "<string>", "exec")
         env = globals().copy()
         env["bot"] = self.bot
         env["tags"] = self
@@ -71,7 +106,7 @@ class OwnerCommands(MixinMeta):
         return result
 
     @staticmethod
-    def test_block(block: tse.Block):
+    def test_block(block: tse.Block) -> None:
         interpreter = tse.Interpreter([block()])
         interpreter.process("{test}")
 
@@ -105,7 +140,9 @@ class OwnerCommands(MixinMeta):
         """
 
     @tagsettings_block.command("add")
-    async def tagsettings_block_add(self, ctx: commands.Context, name: str, *, code: cleanup_code):
+    async def tagsettings_block_add(
+        self, ctx: commands.Context, name: str, *, code: _cleanup_code
+    ):
         """
         Add a custom block to the TagScript interpreter.
 
@@ -116,16 +153,16 @@ class OwnerCommands(MixinMeta):
             self.test_block(block)
         except SyntaxError as e:
             if e.text is None:
-                error = get_pages("{0.__class__.__name__}: {0}".format(e))
+                error = self._get_pages("{0.__class__.__name__}: {0}".format(e))
             else:
-                error = get_pages(
+                error = self._get_pages(
                     "{0.text}\n{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__)
                 )
             return await ctx.send_interactive(error)
         except Exception as e:
             exc = traceback.format_exception(e.__class__, e, e.__traceback__)
-            response = Dev.sanitize_output(ctx, exc)
-            return await ctx.send_interactive(get_pages(response), box_lang="py")
+            response = self._sanitize_output(ctx, exc)
+            return await ctx.send_interactive(self._get_pages(response), box_lang="py")
 
         async with self.config.blocks() as b:
             b[name] = code
@@ -172,7 +209,7 @@ class OwnerCommands(MixinMeta):
             code = blocks[name]
         except KeyError:
             return await ctx.send("That block doesn't exist.")
-        await ctx.send_interactive(get_pages(code), box_lang="py")
+        await ctx.send_interactive(self._get_pages(code), box_lang="py")
 
     @tagsettings.command("async")
     async def tagsettings_async(self, ctx: commands.Context, true_or_false: bool = None):

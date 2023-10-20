@@ -53,8 +53,8 @@ class RequireCheckFailure(TagError):
     blacklist or whitelist requirements.
     """
 
-    def __init__(self, response: Optional[str] = None):
-        self.response = response
+    def __init__(self, response: Optional[str] = None) -> None:
+        self.response: Optional[str] = response
         super().__init__(response)
 
 
@@ -81,5 +81,5 @@ class BlockCompileError(TagError):
 class TagCharacterLimitReached(TagError):
     """Raised when the TagScript character limit is reached."""
 
-    def __init__(self, limit: int, length: int):
+    def __init__(self, limit: int, length: int) -> None:
         super().__init__(f"TagScript cannot be longer than {hn(limit)} (**{hn(length)}**).")

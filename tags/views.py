@@ -1,6 +1,7 @@
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Dict
 
 import discord
+from redbot.core.bot import Red
 from redbot.core import commands
 from redbot.vendored.discord.ext.menus import ListPageSource
 
@@ -8,32 +9,33 @@ __all__ = ("ConfirmationView", "PageSource", "PaginatedView")
 
 
 class BaseView(discord.ui.View):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.message: discord.Message = None
+        self.message: Optional[discord.Message] = None
         self._author_id: Optional[int] = None
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction[Red]) -> bool:
         if interaction.user.id != self._author_id:
             await interaction.response.send_message("You can't do that.", ephemeral=True)
             return False
         return True
 
-    def disable_items(self, *, ignore_color: Tuple[discord.ui.Button] = ()):
+    def disable_items(self, *, ignore_color: Tuple[discord.ui.Button] = ()) -> None:
         for item in self.children:
+            item: discord.ui.Item
             if hasattr(item, "style") and item not in ignore_color:
                 item.style = discord.ButtonStyle.gray
             item.disabled = True
 
 
 class ConfirmationView(BaseView):
-    def __init__(self, timeout: int = 60, *, cancel_message: str = "Action cancelled."):
+    def __init__(self, timeout: int = 60, *, cancel_message: str = "Action cancelled.") -> None:
         super().__init__(timeout=timeout)
         self.value = None
         self.cancel_message = cancel_message
 
     async def send_initial_message(
-        self, ctx: commands.Context, content: str = None, **kwargs
+        self, ctx: commands.Context, content: Optional[str] = None, **kwargs: Any
     ) -> discord.Message:
         self._author_id = ctx.author.id
         message = await ctx.reply(content, view=self, **kwargs)
@@ -41,23 +43,25 @@ class ConfirmationView(BaseView):
         return message
 
     @discord.ui.button(label="Yes", style=discord.ButtonStyle.green)
-    async def yes(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def yes(self, interaction: discord.Interaction[Red], button: discord.ui.Button) -> None:
         self.value = True
         self.stop()
         await self.disable_all(button, interaction)
 
     @discord.ui.button(label="No", style=discord.ButtonStyle.red)
-    async def no(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def no(self, interaction: discord.Interaction[Red], button: discord.ui.Button) -> None:
         self.value = False
         self.stop()
         await self.disable_all(button, interaction)
         await interaction.followup.send(self.cancel_message, ephemeral=True)
 
-    async def disable_all(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def disable_all(
+        self, button: discord.ui.Button, interaction: discord.Interaction[Red]
+    ) -> None:
         self.disable_items(ignore_color=(button,))
         await interaction.response.edit_message(view=self)
 
-    async def on_timeout(self):
+    async def on_timeout(self) -> None:
         self.disable_items()
         await self.message.edit(view=self)
 
@@ -78,34 +82,34 @@ class ConfirmationView(BaseView):
 
 
 class PageSource(ListPageSource):
-    def __init__(self, pages: List[Any], per_page: int = 1):
+    def __init__(self, pages: List[Any], per_page: int = 1) -> None:
         super().__init__(pages, per_page=per_page)
 
-    async def format_page(self, view: discord.ui.View, page: Any):
+    async def format_page(self, view: discord.ui.View, page: Any) -> Any:
         return page
 
 
 class Button(discord.ui.Button):
     def __init__(
-        self, label: str, style: discord.ButtonStyle = discord.ButtonStyle.blurple, **kwargs
-    ):
+        self, label: str, style: discord.ButtonStyle = discord.ButtonStyle.blurple, **kwargs: Any
+    ) -> None:
         callback = kwargs.pop("callback")
         super().__init__(label=label, style=style, **kwargs)
         self._callback = callback
 
-    async def callback(self, interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction[Red]) -> None:
         await self._callback(interaction, self)
 
 
 class PaginatedView(BaseView):
-    def __init__(self, source: PageSource, *, timeout: int = 60):
+    def __init__(self, source: PageSource, *, timeout: int = 60) -> None:
         super().__init__(timeout=timeout)
-        self._source = source
-        self.current_page = 0
+        self._source: PageSource = source
+        self.current_page: Optional[int] = 0
         self._author_id: Optional[int] = None
         self.message: Optional[discord.Message] = None
 
-        length = source.get_max_pages()
+        length: int = source.get_max_pages()
         if length > 2:
             self.add_item(Button("first", callback=self.first))
         if length > 1:
@@ -124,7 +128,7 @@ class PaginatedView(BaseView):
         self.message = message
         return message
 
-    async def _get_kwargs_from_page(self, page) -> dict:
+    async def _get_kwargs_from_page(self, page) -> Dict:
         value = await discord.utils.maybe_coroutine(self._source.format_page, self, page)
         kwargs: Optional[dict] = None
         if isinstance(value, dict):
@@ -136,13 +140,15 @@ class PaginatedView(BaseView):
         kwargs["view"] = self
         return kwargs
 
-    async def show_page(self, page_number: int, interaction: discord.Interaction):
+    async def show_page(self, page_number: int, interaction: discord.Interaction[Red]) -> None:
         page = await self._source.get_page(page_number)
         self.current_page = page_number
         kwargs = await self._get_kwargs_from_page(page)
         await interaction.response.edit_message(**kwargs)
 
-    async def show_checked_page(self, page_number: int, interaction: discord.Interaction) -> None:
+    async def show_checked_page(
+        self, page_number: int, interaction: discord.Interaction[Red]
+    ) -> None:
         max_pages = self._source.get_max_pages()
         try:
             if max_pages is None or max_pages > page_number >= 0:
@@ -156,22 +162,28 @@ class PaginatedView(BaseView):
             # An error happened that can be handled, so ignore it.
             pass
 
-    async def first(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def first(
+        self, interaction: discord.Interaction[Red], button: discord.ui.Button
+    ) -> None:
         await self.show_checked_page(0, interaction)
 
-    async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def previous(
+        self, interaction: discord.Interaction[Red], button: discord.ui.Button
+    ) -> None:
         await self.show_checked_page(self.current_page - 1, interaction)
 
-    async def close(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def close(
+        self, interaction: discord.Interaction[Red], button: discord.ui.Button
+    ) -> None:
         await interaction.message.delete()
         self.stop()
 
-    async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def next(self, interaction: discord.Interaction[Red], button: discord.ui.Button) -> None:
         await self.show_checked_page(self.current_page + 1, interaction)
 
-    async def last(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def last(self, interaction: discord.Interaction[Red], button: discord.ui.Button) -> None:
         await self.show_checked_page(self._source.get_max_pages() - 1, interaction)
 
-    async def on_timeout(self):
+    async def on_timeout(self) -> None:
         self.disable_items()
         await self.message.edit(view=self)

@@ -109,7 +109,7 @@ class Commands(MixinMeta):
         return {"aliases": aliases, "description": description}
 
     @staticmethod
-    async def show_tag_list(ctx, data: Dict[str, List[str]], name: str, icon_url: str):
+    async def show_tag_list(ctx, data: Dict[str, List[str]], name: str, icon_url: str) -> None:
         aliases = data["aliases"]
         description = data["description"]
         e = discord.Embed(color=await ctx.embed_color())
@@ -186,7 +186,7 @@ class Commands(MixinMeta):
             embeds.append(e)
         await menu(ctx, embeds)
 
-    def validate_tag_count(self, guild: discord.Guild):
+    def validate_tag_count(self, guild: discord.Guild) -> None:
         tag_count = len(self.get_unique_tags(guild))
         if guild:
             if tag_count >= TAG_GUILD_LIMIT:
@@ -400,7 +400,7 @@ class Commands(MixinMeta):
         data = self.generate_tag_list(tags)
         await self.show_tag_list(ctx, data, "Stored Tags", ctx.guild.icon.url)
 
-    async def doc_fetch(self):
+    async def doc_fetch(self) -> None:
         async with self.session.get(f"{DOCS_URL}/objects.inv") as response:
             inv = SphinxObjectFileReader(await response.read())
         self.docs = parse_object_inv(inv, DOCS_URL)
@@ -411,7 +411,9 @@ class Commands(MixinMeta):
             await self.doc_fetch()
         return {key: value for key, value in self.docs.items() if keyword in key.lower()}
 
-    async def show_tag_usage(self, ctx: commands.Context, guild: discord.Guild = None):
+    async def show_tag_usage(
+        self, ctx: commands.Context, guild: Optional[discord.Guild] = None
+    ) -> None:
         tags = self.get_unique_tags(guild)
         if not tags:
             message = "This server has no tags" if guild else "There are no global tags."

@@ -24,22 +24,23 @@ SOFTWARE.
 """
 
 from datetime import datetime, timezone
-from typing import List, Optional
+from typing import Any, List, Optional, Final, Tuple, Dict, Union
 
 import discord
 import TagScriptEngine as tse
 from redbot.core import Config, commands
+from redbot.core.config import Group
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box, humanize_list, humanize_number, inline, pagify
 
 from .errors import TagAliasError
 
-hn = humanize_number
-ALIAS_LIMIT = 10
+hn: function = humanize_number
+ALIAS_LIMIT: Final[int] = 10
 
 
 class Tag:
-    __slots__ = (
+    __slots__: Tuple[str, ...] = (
         "cog",
         "config",
         "bot",
@@ -60,11 +61,11 @@ class Tag:
         tagscript: str,
         *,
         guild_id: Optional[int] = None,
-        author_id: int = None,
-        uses: int = 0,
-        real: bool = True,
-        aliases: List[str] = None,
-        created_at: datetime = None,
+        author_id: Optional[int] = None,
+        uses: Optional[int] = 0,
+        real: Optional[bool] = True,
+        aliases: Optional[List[str]] = None,
+        created_at: Optional[datetime] = None,
     ):
         self.cog = cog
         self.config: Config = cog.config
@@ -99,13 +100,13 @@ class Tag:
         return f"<Tag name={self.name!r} guild_id={self.guild_id} length={len(self)} aliases={self.aliases!r}>"
 
     @property
-    def cache_path(self) -> dict:
+    def cache_path(self) -> Dict:
         return (
             self.cog.guild_tag_cache[self.guild_id] if self.guild_id else self.cog.global_tag_cache
         )
 
     @property
-    def config_path(self):
+    def config_path(self) -> Union[Group, Config]:
         return self.config.guild_from_id(self.guild_id) if self.guild_id else self.config
 
     @property
@@ -143,7 +144,7 @@ class Tag:
             return await output
         return output
 
-    async def update_config(self):
+    async def update_config(self) -> None:
         if self._real_tag:
             async with self.config_path.tags() as t:
                 t[self.name] = self.to_dict()
@@ -153,13 +154,13 @@ class Tag:
         await self.update_config()
         return f"{self.name_prefix} `{self}` added."
 
-    def add_to_cache(self):
+    def add_to_cache(self) -> None:
         path = self.cache_path
         path[self.name] = self
         for alias in self.aliases:
             path[alias] = self
 
-    def remove_from_cache(self):
+    def remove_from_cache(self) -> None:
         path = self.cache_path
         del path[self.name]
         for alias in self.aliases:
@@ -181,7 +182,7 @@ class Tag:
         *,
         guild_id: Optional[int] = None,
         real_tag: bool = True,
-    ):
+    ) -> "Tag":
         kwargs = {
             "guild_id": guild_id,
             "author_id": data.get("author_id") or data.get("author"),
@@ -194,7 +195,7 @@ class Tag:
             kwargs["created_at"] = datetime.fromtimestamp(timestamp, timezone.utc)
         return cls(cog, name, data["tag"], **kwargs)
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
         return {
             "author_id": self.author_id,
             "uses": self.uses,
@@ -276,8 +277,8 @@ class Tag:
 class SilentContext(commands.Context):
     """Modified Context class to prevent command output to users."""
 
-    async def send(self, *args, **kwargs):
+    async def send(self, *args: Any, **kwargs: Any) -> None:
         pass
 
-    async def reply(self, *args, **kwargs):
+    async def reply(self, *args: Any, **kwargs: Any) -> None:
         pass

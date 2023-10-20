@@ -29,23 +29,23 @@ import io
 import os
 import re
 import zlib
-from typing import Dict
+from typing import Dict, Final, Generator, Pattern, Match, Optional
 
 
 class SphinxObjectFileReader:
     # Inspired by Sphinx's InventoryFileReader
-    BUFSIZE = 16 * 1024
+    BUFSIZE: Final[int] = 16 * 1024
 
-    def __init__(self, buffer):
+    def __init__(self, buffer: bytes) -> None:
         self.stream = io.BytesIO(buffer)
 
-    def readline(self):
+    def readline(self) -> str:
         return self.stream.readline().decode("utf-8")
 
-    def skipline(self):
+    def skipline(self) -> None:
         self.stream.readline()
 
-    def read_compressed_chunks(self):
+    def read_compressed_chunks(self) -> Generator:
         decompressor = zlib.decompressobj()
         while True:
             chunk = self.stream.read(self.BUFSIZE)
@@ -54,7 +54,7 @@ class SphinxObjectFileReader:
             yield decompressor.decompress(chunk)
         yield decompressor.flush()
 
-    def read_compressed_lines(self):
+    def read_compressed_lines(self) -> Generator:
         buf = b""
         for chunk in self.read_compressed_chunks():
             buf += chunk
@@ -67,18 +67,18 @@ class SphinxObjectFileReader:
 
 def parse_object_inv(stream: SphinxObjectFileReader, url: str) -> Dict[str, str]:
     # key: URL
-    result = {}
+    result: Dict[str, str] = {}
 
     # first line is version info
-    inv_version = stream.readline().rstrip()
+    inv_version: str = stream.readline().rstrip()
 
     if inv_version != "# Sphinx inventory version 2":
         raise RuntimeError("Invalid objects.inv file version.")
 
     # next line is "# Project: <name>"
     # then after that is "# Version: <version>"
-    projname = stream.readline().rstrip()[11:]
-    version = stream.readline().rstrip()[11:]
+    projname: str = stream.readline().rstrip()[11:]
+    version: str = stream.readline().rstrip()[11:]
 
     # next line says if it's a zlib header
     line = stream.readline()
@@ -86,9 +86,9 @@ def parse_object_inv(stream: SphinxObjectFileReader, url: str) -> Dict[str, str]
         raise RuntimeError("Invalid objects.inv file, not z-lib compatible.")
 
     # This code mostly comes from the Sphinx repository.
-    entry_regex = re.compile(r"(?x)(.+?)\s+(\S*:\S*)\s+(-?\d+)\s+(\S+)\s+(.*)")
+    entry_regex: Pattern[str] = re.compile(r"(?x)(.+?)\s+(\S*:\S*)\s+(-?\d+)\s+(\S+)\s+(.*)")
     for line in stream.read_compressed_lines():
-        match = entry_regex.match(line.rstrip())
+        match: Optional[Match[str]] = entry_regex.match(line.rstrip())
         if not match:
             continue
 

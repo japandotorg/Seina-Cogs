@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 from importlib import reload
-from typing import Final, List, Union
+from typing import Final, Generator, Sequence, List, Union
 
 import discord
 from redbot.core import commands
@@ -36,12 +36,12 @@ from .views import PageSource, PaginatedView
 PIP: Final[str] = "pip(3)"
 
 
-async def menu(ctx: commands.Context, pages: List[Union[str, discord.Embed]]):
+async def menu(ctx: commands.Context, pages: List[Union[str, discord.Embed]]) -> None:
     view = PaginatedView(PageSource(pages))
     await view.send_initial_message(ctx)
 
 
-async def validate_tagscriptengine(bot: Red, tse_version: str, *, reloaded: bool = False):
+async def validate_tagscriptengine(bot: Red, tse_version: str, *, reloaded: bool = False) -> None:
     try:
         import TagScriptEngine as tse
     except ImportError as exc:
@@ -79,7 +79,7 @@ async def validate_tagscriptengine(bot: Red, tse_version: str, *, reloaded: bool
         raise CogLoadError(message)
 
 
-def chunks(l, n):
+def chunks(l: Sequence, n: int) -> Generator:
     """
     Yield successive n-sized chunks from l.
     https://github.com/flaree/flare-cogs/blob/08b78e33ab814aa4da5422d81a5037ae3df51d4e/commandstats/commandstats.py#L16

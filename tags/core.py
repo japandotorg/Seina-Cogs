@@ -26,9 +26,10 @@ SOFTWARE.
 import asyncio
 import logging
 import re
+import contextlib
 from collections import defaultdict
 from operator import itemgetter
-from typing import Coroutine, List, Optional
+from typing import Any, Coroutine, List, Optional, Dict, Union, Final, Tuple
 
 import aiohttp
 import discord
@@ -45,9 +46,9 @@ from .errors import MissingTagPermissions, TagCharacterLimitReached
 from .mixins import Commands, OwnerCommands, Processor
 from .objects import Tag
 
-log = logging.getLogger("red.seina.tags")
+log: logging.Logger = logging.getLogger("red.seina.tags")
 
-TAGSCRIPT_LIMIT = 10_000
+TAGSCRIPT_LIMIT: Final[int] = 10_000
 
 
 class Tags(
@@ -63,10 +64,10 @@ class Tags(
     The TagScript documentation can be found [here](https://seina-cogs.readthedocs.io/en/latest/).
     """
 
-    __version__ = "2.4.1"
-    __author__ = ("inthedark.org", "PhenoM4n4n", "sravan", "npc203")
+    __version__: Final[str] = "2.5.0"
+    __author__: Final[Tuple[str, ...]] = ("inthedark.org", "PhenoM4n4n", "sravan", "npc203")
 
-    def format_help_for_context(self, ctx: commands.Context):
+    def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
         n = "\n" if "\n\n" not in pre_processed else ""
         authors = [f"**{name}**" for name in self.__author__]
@@ -79,46 +80,54 @@ class Tags(
         return "\n".join(text)
 
     def __init__(self, bot: Red) -> None:
-        self.bot = bot
-        self.config = Config.get_conf(
+        self.bot: Red = bot
+        self.config: Config = Config.get_conf(
             self,
             identifier=567234895692346562369,
             force_registration=True,
         )
-        default_guild = {"tags": {}}
-        default_global = {"tags": {}, "blocks": {}, "async_enabled": False, "dot_parameter": False}
+        default_guild: Dict[str, Dict[str, Any]] = {"tags": {}}
+        default_global: Dict[str, Union[Dict[str, Dict[str, Any]], Dict[str, str], bool]] = {
+            "tags": {},
+            "blocks": {},
+            "async_enabled": False,
+            "dot_parameter": False,
+        }
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
 
-        self.guild_tag_cache = defaultdict(dict)
-        self.global_tag_cache = {}
-        self.initialize_task = None
-        self.dot_parameter: bool = None
-        self.async_enabled: bool = None
-        self.initialize_task = self.create_task(self.initialize())
+        self.guild_tag_cache: defaultdict[int, Dict[str, Tag]] = defaultdict(dict)
+        self.global_tag_cache: Dict[str, Tag] = {}
+        self.initialize_task: Optional[asyncio.Task] = None
+        self.dot_parameter: Optional[bool] = None
+        self.async_enabled: Optional[bool] = None
+        self.initialize_task: asyncio.Task = self.create_task(self.initialize())
 
-        self.session = aiohttp.ClientSession()
-        self.docs: list = []
+        self.session: aiohttp.ClientSession = aiohttp.ClientSession()
+        self.docs: List = []
+
         if bot._cli_flags.logging_level == logging.DEBUG:
             logging.getLogger("TagScriptEngine").setLevel(logging.DEBUG)
 
-        bot.add_dev_env_value("tags", lambda ctx: self)
+        with contextlib.suppress(ValueError, TypeError, RuntimeError):
+            bot.add_dev_env_value("tags", lambda ctx: self)
+
         super().__init__()
 
-    async def cog_unload(self):
+    async def cog_unload(self) -> None:
         try:
             await self.__unload()
         except Exception as e:
             log.exception("An error occurred during cog unload.", exc_info=e)
 
-    async def __unload(self):
+    async def __unload(self) -> None:
         self.bot.remove_dev_env_value("tags")
         if self.initialize_task:
             self.initialize_task.cancel()
         await self.session.close()
         await super().cog_unload()
 
-    async def red_delete_data_for_user(self, *, requester: str, user_id: int):
+    async def red_delete_data_for_user(self, *, requester: str, user_id: int) -> None:
         if requester not in ("discord_deleted_user", "user"):
             return
         guilds_data = await self.config.all_guilds()
@@ -130,7 +139,7 @@ class Tags(
                         async with self.config.guild(guild).tags() as t:
                             del t[name]
 
-    def task_done_callback(self, task: asyncio.Task):
+    def task_done_callback(self, task: asyncio.Task) -> None:
         try:
             task.result()
         except asyncio.CancelledError:
@@ -138,12 +147,12 @@ class Tags(
         except Exception as error:
             log.exception("Task failed.", exc_info=error)
 
-    def create_task(self, coroutine: Coroutine, *, name: str = None):
+    def create_task(self, coroutine: Coroutine, *, name: Optional[str] = None) -> asyncio.Task:
         task = asyncio.create_task(coroutine, name=name)
         task.add_done_callback(self.task_done_callback)
         return task
 
-    async def initialize(self):
+    async def initialize(self) -> None:
         data = await self.config.all()
         await self.initialize_interpreter(data)
 
@@ -160,7 +169,7 @@ class Tags(
 
         log.debug("Built tag cache.")
 
-    async def cache_guild(self, guild_id: int, guild_data: dict):
+    async def cache_guild(self, guild_id: int, guild_data: Dict[str, Dict[str, Any]]) -> None:
         async for tag_name, tag_data in AsyncIter(guild_data["tags"].items(), steps=50):
             tag = Tag.from_dict(self, tag_name, tag_data, guild_id=guild_id)
             tag.add_to_cache()
@@ -223,7 +232,7 @@ class Tags(
         path = self.guild_tag_cache[guild.id] if guild else self.global_tag_cache
         return sorted(set(path.values()), key=lambda t: t.name)
 
-    async def validate_tagscript(self, ctx: commands.Context, tagscript: str):
+    async def validate_tagscript(self, ctx: commands.Context, tagscript: str) -> bool:
         length = len(tagscript)
         if length > TAGSCRIPT_LIMIT:
             raise TagCharacterLimitReached(TAGSCRIPT_LIMIT, length)

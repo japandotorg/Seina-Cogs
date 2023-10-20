@@ -26,7 +26,7 @@ SOFTWARE.
 import asyncio
 import logging
 from copy import copy
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any, Union, Type
 
 import discord
 import TagScriptEngine as tse
@@ -42,25 +42,25 @@ log = logging.getLogger("red.seina.tags.processor")
 
 
 class Processor(MixinMeta):
-    def __init__(self):
-        self.role_converter = commands.RoleConverter()
-        self.channel_converter = commands.TextChannelConverter()
-        self.member_converter = commands.MemberConverter()
-        self.emoji_converter = commands.EmojiConverter()
+    def __init__(self) -> None:
+        self.role_converter: commands.RoleConverter = commands.RoleConverter()
+        self.channel_converter: commands.TextChannelConverter = commands.TextChannelConverter()
+        self.member_converter: commands.MemberConverter = commands.MemberConverter()
+        self.emoji_converter: commands.EmojiConverter = commands.EmojiConverter()
 
         self.bot.add_dev_env_value("tse", lambda ctx: tse)
         super().__init__()
 
-    async def cog_unload(self):
+    async def cog_unload(self) -> None:
         self.bot.remove_dev_env_value("tse")
         await super().cog_unload()
 
-    async def initialize_interpreter(self, data: dict = None):
+    async def initialize_interpreter(self, data: Optional[Dict[str, Any]] = None) -> None:
         if not data:
             data = await self.config.all()
         self.dot_parameter = data["dot_parameter"]
 
-        tse_blocks = [
+        tse_blocks: List[tse.Block] = [
             tse.MathBlock(),
             tse.RandomBlock(),
             tse.RangeBlock(),
@@ -91,16 +91,20 @@ class Processor(MixinMeta):
             tse.LengthBlock(),
             tse.StrictVariableGetterBlock(),
         ]
-        tag_blocks = [
+        tag_blocks: List[tse.Block] = [
             DeleteBlock(),
             SilentBlock(),
             ReactBlock(),
             VarBlock(),
             CommentBlock(),
         ]
-        interpreter = tse.AsyncInterpreter if data["async_enabled"] else tse.Interpreter
+        interpreter: Union[Type[tse.AsyncInterpreter], Type[tse.Interpreter]] = (
+            tse.AsyncInterpreter if data["async_enabled"] else tse.Interpreter
+        )
         self.async_enabled = data["async_enabled"]
-        self.engine = interpreter(tse_blocks + tag_blocks)
+        self.engine: Union[tse.AsyncInterpreter, tse.Interpreter] = interpreter(
+            tse_blocks + tag_blocks
+        )
         for block in await self.compile_blocks(data):
             self.engine.blocks.append(block())
 
@@ -125,7 +129,9 @@ class Processor(MixinMeta):
         else:
             return await self.bot.allowed_by_whitelist_blacklist(message.author)
 
-    async def invoke_tag_message(self, message: discord.Message, prefix: str, tag_command: str):
+    async def invoke_tag_message(
+        self, message: discord.Message, prefix: str, tag_command: str
+    ) -> None:
         new_message = copy(message)
         new_message.content = f"{prefix}invoketag False {tag_command}"
         ctx = await self.bot.get_context(new_message)
@@ -149,8 +155,13 @@ class Processor(MixinMeta):
         return seed
 
     async def process_tag(
-        self, ctx: commands.Context, tag: Tag, *, seed_variables: dict = None, **kwargs
-    ) -> str:
+        self,
+        ctx: commands.Context,
+        tag: Tag,
+        *,
+        seed_variables: Optional[Dict[str, Any]] = None,
+        **kwargs,
+    ) -> Optional[str]:
         seed_variables = {} if seed_variables is None else seed_variables
         seed = self.get_seed_from_context(ctx)
         seed_variables.update(seed)
@@ -202,7 +213,9 @@ class Processor(MixinMeta):
             await asyncio.gather(*to_gather)
 
     @staticmethod
-    async def send_quietly(destination: discord.abc.Messageable, content: str = None, **kwargs):
+    async def send_quietly(
+        destination: discord.abc.Messageable, content: Optional[str] = None, **kwargs
+    ) -> Optional[discord.Message]:
         try:
             return await destination.send(content, **kwargs)
         except discord.HTTPException:
@@ -211,8 +224,8 @@ class Processor(MixinMeta):
     async def send_tag_response(
         self,
         ctx: commands.Context,
-        actions: dict,
-        content: str = None,
+        actions: Dict[str, Any],
+        content: Optional[str] = None,
         **kwargs,
     ) -> Optional[discord.Message]:
         destination = ctx.channel
@@ -245,7 +258,7 @@ class Processor(MixinMeta):
 
     async def process_commands(
         self, messages: List[discord.Message], silent: bool, overrides: dict
-    ):
+    ) -> None:
         command_tasks = []
         for message in messages:
             command_task = asyncio.create_task(self.process_command(message, silent, overrides))
@@ -255,7 +268,7 @@ class Processor(MixinMeta):
 
     async def process_command(
         self, command_message: discord.Message, silent: bool, overrides: dict
-    ):
+    ) -> None:
         command_cls = SilentContext if silent else commands.Context
         ctx = await self.bot.get_context(command_message, cls=command_cls)
         if not ctx.valid:
@@ -292,7 +305,7 @@ class Processor(MixinMeta):
             overriden_command.all_commands = all_commands
         return overriden_command
 
-    async def validate_checks(self, ctx: commands.Context, actions: dict):
+    async def validate_checks(self, ctx: commands.Context, actions: Dict[str, Any]) -> None:
         to_gather = []
         if requires := actions.get("requires"):
             to_gather.append(self.validate_requires(ctx, requires))
@@ -301,7 +314,7 @@ class Processor(MixinMeta):
         if to_gather:
             await asyncio.gather(*to_gather)
 
-    async def validate_requires(self, ctx: commands.Context, requires: dict):
+    async def validate_requires(self, ctx: commands.Context, requires: Dict[str, Any]) -> None:
         for argument in requires["items"]:
             role_or_channel = await self.role_or_channel_convert(ctx, argument)
             if not role_or_channel:
@@ -315,7 +328,7 @@ class Processor(MixinMeta):
                 return
         raise WhitelistCheckFailure(requires["response"])
 
-    async def validate_blacklist(self, ctx: commands.Context, blacklist: dict):
+    async def validate_blacklist(self, ctx: commands.Context, blacklist: Dict[str, Any]) -> None:
         for argument in blacklist["items"]:
             role_or_channel = await self.role_or_channel_convert(ctx, argument)
             if not role_or_channel:
@@ -328,7 +341,9 @@ class Processor(MixinMeta):
             ):
                 raise BlacklistCheckFailure(blacklist["response"])
 
-    async def role_or_channel_convert(self, ctx: commands.Context, argument: str):
+    async def role_or_channel_convert(
+        self, ctx: commands.Context, argument: str
+    ) -> Optional[Union[discord.Role, discord.TextChannel]]:
         objects = await asyncio.gather(
             self.role_converter.convert(ctx, argument),
             self.channel_converter.convert(ctx, argument),
@@ -339,7 +354,7 @@ class Processor(MixinMeta):
 
     async def react_to_list(
         self, ctx: commands.Context, message: discord.Message, args: List[str]
-    ):
+    ) -> None:
         if not (message and args):
             return
         for arg in args:
@@ -353,7 +368,7 @@ class Processor(MixinMeta):
                 pass
 
     @staticmethod
-    async def delete_quietly(ctx: commands.Context):
+    async def delete_quietly(ctx: commands.Context) -> None:
         if ctx.channel.permissions_for(ctx.me).manage_messages:
             try:
                 await ctx.message.delete()

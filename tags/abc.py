@@ -23,7 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from abc import ABC
+from aiohttp import ClientSession
+from abc import ABC, abstractmethod
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
@@ -39,12 +40,18 @@ class MixinMeta(ABC):
 
     config: Config
     bot: Red
+    session: ClientSession
 
     def __init__(self, *_args):
         super().__init__()
 
+    @abstractmethod
     async def cog_unload(self):
-        await super().cog_unload()
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def format_help_for_context(self, ctx: commands.Context) -> str:
+        raise NotImplementedError()
 
 
 class CompositeMetaClass(type(commands.Cog), type(ABC)):
