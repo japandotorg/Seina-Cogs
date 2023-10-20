@@ -33,7 +33,7 @@ from redbot.core.errors import CogLoadError
 
 from .views import PageSource, PaginatedView
 
-PIP: Final[str] = "pip(3)"
+PIP: Final[str] = "pip3"
 
 
 async def menu(ctx: commands.Context, pages: List[Union[str, discord.Embed]]) -> None:
@@ -54,7 +54,7 @@ async def validate_tagscriptengine(bot: Red, tse_version: str, *, reloaded: bool
         f"`{PIP} uninstall -y TagScript`",
         f"`{PIP} uninstall -y TagScriptEngine`",
         f"`{PIP} uninstall -y AdvancedTagScriptEngine`",
-        f"`{PIP} install AdvancedTagScript=={tse_version}`",
+        f"`{PIP} install AdvancedTagScriptEngine=={tse_version}`",
     ]
     commands = "\n".join(commands)
 
