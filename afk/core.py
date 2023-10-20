@@ -153,7 +153,7 @@ class AFK(commands.Cog):
             time_difference = datetime.now().timestamp() - afk_time
             if time_difference > 10:
                 ctx = await self.bot.get_context(message)
-                _view = AFKView(ctx, data)
+                _view = AFKView(ctx, self, data)
                 _view._message = await message.channel.send(
                     embed=discord.Embed(
                         title="Your AFK has been removed!",

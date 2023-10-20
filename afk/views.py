@@ -22,11 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 import discord
 from redbot.core import commands
 from redbot.core.bot import Red
+
+if TYPE_CHECKING:
+    from .core import AFK
 
 
 def disable_items(self: discord.ui.View):
@@ -48,9 +51,12 @@ class CloseButton(discord.ui.Button):
 
 
 class AFKView(discord.ui.View):
-    def __init__(self, ctx: commands.Context, data: Dict, timeout: float = 60.0) -> None:
+    def __init__(
+        self, ctx: commands.Context, cog: "AFK", data: Dict, timeout: float = 60.0
+    ) -> None:
         super().__init__(timeout=timeout)
         self.ctx: commands.Context = ctx
+        self.cog: "AFK" = cog
         self.data: Dict = data
         self._message: Optional[discord.Message] = None
         self.add_item(CloseButton())
@@ -78,7 +84,7 @@ class AFKView(discord.ui.View):
                 ephemeral=True,
             )
         else:
-            await self.ctx.cog._ping_list(interaction, self.data)
+            await self.cog._ping_list(interaction, self.data)
 
 
 class ViewDisableOnTimeout(discord.ui.View):
