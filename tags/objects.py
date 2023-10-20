@@ -35,7 +35,7 @@ from redbot.core.utils.chat_formatting import box, humanize_list, humanize_numbe
 
 from .errors import TagAliasError
 
-hn: function = humanize_number
+hn = humanize_number
 ALIAS_LIMIT: Final[int] = 10
 
 
