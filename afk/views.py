@@ -71,7 +71,7 @@ class AFKView(discord.ui.View):
     async def interaction_check(self, interaction: discord.Interaction[Red], /) -> bool:
         if self.ctx.author.id != interaction.user.id:
             await interaction.response.send_message(
-                "You're not allowed to interact with this message,", ephemeral=True
+                "You're not allowed to interact with this message.", ephemeral=True
             )
             return False
         return True
