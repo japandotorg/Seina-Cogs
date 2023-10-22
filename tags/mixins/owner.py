@@ -244,6 +244,38 @@ class OwnerCommands(MixinMeta):
             "Blocks will be parsed like this: `{declaration%s:payload}`." % parameter
         )
 
+    @tagsettings.group("limit")
+    async def tagsettings_limit(self, ctx: commands.Context):
+        """
+        Change the global and guild limit for tags.
+        """
+
+    @commands.guild_only()
+    @tagsettings_limit.command("guild")
+    async def tagsettings_limit_guild(
+        self,
+        ctx: commands.Context,
+        amount: commands.Range[int, 150, 500],
+        guild: Optional[discord.Guild] = None,
+    ):
+        """
+        Change the guild limit for tags.
+        """
+        if guild is None:
+            guild: discord.Guild = ctx.guild
+        await self.config.guild(guild).max_tags_limit.set(amount)
+        await ctx.send(f"Changed the guild limit to {amount}.")
+
+    @tagsettings_limit.command("global")
+    async def tagsettings_limit_global(
+        self, ctx: commands.Context, amount: commands.Range[int, 150, 500]
+    ):
+        """
+        Change the global limit for tags.
+        """
+        await self.config.max_tags_limit.set(amount)
+        await ctx.send(f"Changed the global limit to {amount}.")
+
     @commands.is_owner()
     @commands.command()
     async def migratealias(self, ctx: commands.Context):

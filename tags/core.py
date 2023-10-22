@@ -86,12 +86,16 @@ class Tags(
             identifier=567234895692346562369,
             force_registration=True,
         )
-        default_guild: Dict[str, Dict[str, Any]] = {"tags": {}}
-        default_global: Dict[str, Union[Dict[str, Dict[str, Any]], Dict[str, str], bool]] = {
+        default_guild: Dict[str, Union[Dict[str, Any], int]] = {
+            "tags": {},
+            "max_tags_limit": 250,
+        }
+        default_global: Dict[str, Union[Dict[str, Dict[str, Any]], Dict[str, str], bool, int]] = {
             "tags": {},
             "blocks": {},
             "async_enabled": False,
             "dot_parameter": False,
+            "max_tags_limit": 250,
         }
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)

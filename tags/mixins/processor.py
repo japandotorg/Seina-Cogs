@@ -109,7 +109,7 @@ class Processor(MixinMeta):
 
     @commands.Cog.listener()
     async def on_command_error(
-        self, ctx: commands.Context, error: commands.CommandError, unhandled_by_cog=False
+        self, ctx: commands.Context, error: commands.CommandError, unhandled_by_cog: bool = False
     ):
         if not isinstance(error, commands.CommandNotFound):
             return
@@ -159,7 +159,7 @@ class Processor(MixinMeta):
         tag: Tag,
         *,
         seed_variables: Optional[Dict[str, Any]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> Optional[str]:
         seed_variables = {} if seed_variables is None else seed_variables
         seed = self.get_seed_from_context(ctx)
@@ -213,7 +213,7 @@ class Processor(MixinMeta):
 
     @staticmethod
     async def send_quietly(
-        destination: discord.abc.Messageable, content: Optional[str] = None, **kwargs
+        destination: discord.abc.Messageable, content: Optional[str] = None, **kwargs: Any
     ) -> Optional[discord.Message]:
         try:
             return await destination.send(content, **kwargs)
@@ -225,7 +225,7 @@ class Processor(MixinMeta):
         ctx: commands.Context,
         actions: Dict[str, Any],
         content: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> Optional[discord.Message]:
         destination = ctx.channel
         embed = actions.get("embed")
@@ -256,7 +256,7 @@ class Processor(MixinMeta):
         return await self.send_quietly(destination, content, **kwargs)
 
     async def process_commands(
-        self, messages: List[discord.Message], silent: bool, overrides: dict
+        self, messages: List[discord.Message], silent: bool, overrides: Dict
     ) -> None:
         command_tasks = []
         for message in messages:
@@ -277,7 +277,7 @@ class Processor(MixinMeta):
         await self.bot.invoke(ctx)
 
     @classmethod
-    def handle_overrides(cls, command: commands.Command, overrides: dict) -> commands.Command:
+    def handle_overrides(cls, command: commands.Command, overrides: Dict) -> commands.Command:
         overriden_command = copy(command)
         # overriden_command = command.copy() # does not work as it makes ctx a regular argument
         # overriden_command.cog = command.cog
