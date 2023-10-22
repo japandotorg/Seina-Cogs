@@ -34,7 +34,7 @@ from redbot.core import commands
 from redbot.core.utils.menus import start_adding_reactions
 
 from ..abc import MixinMeta
-from ..blocks import CommentBlock, DeleteBlock, ReactBlock, SilentBlock, VarBlock
+from ..blocks import CommentBlock, DeleteBlock, ReactBlock, SilentBlock
 from ..errors import BlacklistCheckFailure, RequireCheckFailure, WhitelistCheckFailure
 from ..objects import SilentContext, Tag
 
@@ -95,7 +95,6 @@ class Processor(MixinMeta):
             DeleteBlock(),
             SilentBlock(),
             ReactBlock(),
-            VarBlock(),
             CommentBlock(),
         ]
         interpreter: Union[Type[tse.AsyncInterpreter], Type[tse.Interpreter]] = (
