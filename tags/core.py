@@ -64,7 +64,7 @@ class Tags(
     The TagScript documentation can be found [here](https://seina-cogs.readthedocs.io/en/latest/).
     """
 
-    __version__: Final[str] = "2.5.0"
+    __version__: Final[str] = "2.5.1"
     __author__: Final[Tuple[str, ...]] = ("inthedark.org", "PhenoM4n4n", "sravan", "npc203")
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
