@@ -24,11 +24,11 @@ SOFTWARE.
 """
 
 import asyncio
-from aiohttp import ClientSession
 from abc import ABC, abstractmethod
-from typing import Any, Coroutine, Dict, Optional, List
+from typing import Any, Coroutine, Dict, List, Optional
 
 import discord
+from aiohttp import ClientSession
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 
