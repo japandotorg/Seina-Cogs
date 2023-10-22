@@ -115,16 +115,20 @@ class OwnerCommands(MixinMeta):
     async def tagsettings(self, ctx: commands.Context):
         """Manage Tags cog settings."""
 
+    @commands.guild_only()
     @tagsettings.command("settings")
     async def tagsettings_settings(self, ctx: commands.Context):
         """
         View Tags settings.
         """
         data = await self.config.all()
+        guild_data = await self.config.guild(ctx.guild).all()
         description = [
             f"**AsyncInterpreter**: `{data['async_enabled']}`",
             f"**Dot Parameter Parsing**: `{data['dot_parameter']}`",
             f"**Custom Blocks**: `{len(data['blocks'])}`",
+            f"**Global Limit**: `{data['max_tags_limit']}`",
+            f"**Guild Limit**: `{guild_data['max_tags_limit']} (ID: {ctx.guild.id})`",
         ]
         embed = discord.Embed(
             title="Tags Settings",
