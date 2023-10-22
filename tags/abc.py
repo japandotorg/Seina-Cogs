@@ -23,11 +23,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from abc import ABC, abstractmethod
-
+import asyncio
 from aiohttp import ClientSession
+from abc import ABC, abstractmethod
+from typing import Any, Coroutine, Dict, Optional, List
+
+import discord
 from redbot.core import Config, commands
 from redbot.core.bot import Red
+
+from .objects import Tag
 
 
 class MixinMeta(ABC):
@@ -42,15 +47,54 @@ class MixinMeta(ABC):
     bot: Red
     session: ClientSession
 
-    def __init__(self, *_args):
+    def __init__(self, *_args: Any) -> None:
         super().__init__()
+
+    @abstractmethod
+    def create_task(self, coroutine: Coroutine, *, name: Optional[str] = None) -> asyncio.Task:
+        raise NotImplementedError()
 
     @abstractmethod
     async def cog_unload(self):
         raise NotImplementedError()
 
     @abstractmethod
+    async def initialize(self) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
     async def format_help_for_context(self, ctx: commands.Context) -> str:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def red_delete_data_for_user(self, *, requester: str, user_id: int) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def cache_guild(self, guild_id: int, guild_data: Dict[str, Dict[str, Any]]) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def search_tag(self, tag_name: str, guild: Optional[discord.Guild] = None) -> List[Tag]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_tag(
+        self,
+        guild: Optional[discord.Guild],
+        tag_name: str,
+        *,
+        check_global: bool = True,
+        global_priority: bool = False,
+    ) -> Optional[Tag]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_unique_tags(self, guild: Optional[discord.Guild] = None) -> List[Tag]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def validate_tagscript(self, ctx: commands.Context, tagscript: str) -> bool:
         raise NotImplementedError()
 
 
