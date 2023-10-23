@@ -66,14 +66,6 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def format_help_for_context(self, ctx: commands.Context) -> str:
-        raise NotImplementedError()
-
-    @abstractmethod
-    async def red_delete_data_for_user(self, *, requester: RequesterType, user_id: int) -> None:
-        raise NotImplementedError()
-
-    @abstractmethod
     async def cache_guild(self, guild_id: int, guild_data: Dict[str, Dict[str, Any]]) -> None:
         raise NotImplementedError()
 
