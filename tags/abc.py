@@ -25,7 +25,8 @@ SOFTWARE.
 
 import asyncio
 from abc import ABC, abstractmethod
-from typing import Any, Coroutine, Dict, List, Optional
+from collections import defaultdict
+from typing import Any, Coroutine, Dict, List, Optional, Union
 
 import discord
 from aiohttp import ClientSession
@@ -33,6 +34,7 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 
 from .objects import Tag
+from .utils import RequesterType
 
 
 class MixinMeta(ABC):
@@ -48,26 +50,27 @@ class MixinMeta(ABC):
     session: ClientSession
 
     def __init__(self, *_args: Any) -> None:
-        super().__init__()
+        super().__init__(*_args)
+        self.guild_tag_cache: defaultdict[int, Dict[str, Tag]]
+        self.global_tag_cache: Dict[str, Tag]
+        self.dot_parameter: Optional[bool]
+        self.async_enabled: Optional[bool]
+        self.docs: Union[List[str], Dict[str, str]]
+
+    @abstractmethod
+    async def cog_unload(self) -> None:
+        raise NotImplementedError()
 
     @abstractmethod
     def create_task(self, coroutine: Coroutine, *, name: Optional[str] = None) -> asyncio.Task:
         raise NotImplementedError()
 
     @abstractmethod
-    async def cog_unload(self):
+    def format_help_for_context(self, ctx: commands.Context) -> str:
         raise NotImplementedError()
 
     @abstractmethod
-    async def initialize(self) -> None:
-        raise NotImplementedError()
-
-    @abstractmethod
-    async def format_help_for_context(self, ctx: commands.Context) -> str:
-        raise NotImplementedError()
-
-    @abstractmethod
-    async def red_delete_data_for_user(self, *, requester: str, user_id: int) -> None:
+    async def red_delete_data_for_user(self, *, requester: RequesterType, user_id: int) -> None:
         raise NotImplementedError()
 
     @abstractmethod

@@ -29,7 +29,7 @@ import logging
 import re
 from collections import defaultdict
 from operator import itemgetter
-from typing import Any, Coroutine, Dict, Final, List, Optional, Tuple, Union
+from typing import Any, Coroutine, Dict, Final, List, Optional, Union
 
 import aiohttp
 import discord
@@ -45,6 +45,7 @@ from .abc import CompositeMetaClass
 from .errors import MissingTagPermissions, TagCharacterLimitReached
 from .mixins import Commands, OwnerCommands, Processor
 from .objects import Tag
+from .utils import RequesterType
 
 log: logging.Logger = logging.getLogger("red.seina.tags")
 
@@ -65,19 +66,7 @@ class Tags(
     """
 
     __version__: Final[str] = "2.5.2"
-    __author__: Final[Tuple[str, ...]] = ("inthedark.org", "PhenoM4n4n", "sravan", "npc203")
-
-    def format_help_for_context(self, ctx: commands.Context) -> str:
-        pre_processed = super().format_help_for_context(ctx)
-        n = "\n" if "\n\n" not in pre_processed else ""
-        authors = [f"**{name}**" for name in self.__author__]
-        text = [
-            f"{pre_processed}{n}",
-            f"Cog Version: **{self.__version__}**",
-            f"AdvancedTagScriptEngine Version: **{tse_version}**",
-            f"Author: {humanize_list(authors)}",
-        ]
-        return "\n".join(text)
+    __author__: Final[List[str]] = ["inthedark.org", "PhenoM4n4n", "sravan", "npc203"]
 
     def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
@@ -108,7 +97,7 @@ class Tags(
         self.initialize_task: asyncio.Task = self.create_task(self.initialize())
 
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
-        self.docs: List = []
+        self.docs: Union[List[str], Dict[str, str]] = []
 
         if bot._cli_flags.logging_level == logging.DEBUG:
             logging.getLogger("TagScriptEngine").setLevel(logging.DEBUG)
@@ -118,7 +107,19 @@ class Tags(
 
         super().__init__()
 
+    def format_help_for_context(self, ctx: commands.Context) -> str:
+        pre_processed = super().format_help_for_context(ctx)
+        n = "\n" if "\n\n" not in str(pre_processed) else ""
+        text = [
+            f"{pre_processed}{n}",
+            f"Cog Version: **{self.__version__}**",
+            f"AdvancedTagScriptEngine Version: **{tse_version}**",
+            f"Author: {humanize_list(self.__author__)}",
+        ]
+        return "\n".join(text)
+
     async def cog_unload(self) -> None:
+        await super().cog_unload()
         try:
             await self.__unload()
         except Exception as e:
@@ -129,9 +130,8 @@ class Tags(
         if self.initialize_task:
             self.initialize_task.cancel()
         await self.session.close()
-        await super().cog_unload()
 
-    async def red_delete_data_for_user(self, *, requester: str, user_id: int) -> None:
+    async def red_delete_data_for_user(self, *, requester: RequesterType, user_id: int) -> None:
         if requester not in ("discord_deleted_user", "user"):
             return
         guilds_data = await self.config.all_guilds()
