@@ -185,9 +185,9 @@ class Commands(MixinMeta):
 
     async def validate_tag_count(self, guild: discord.Guild) -> None:
         global_max_limit: int = await self.config.max_tags_limit()
-        guild_max_limit: int = await self.config.guild(guild).max_tags_limit()
         tag_count = len(self.get_unique_tags(guild))
         if guild:
+            guild_max_limit: int = await self.config.guild(guild).max_tags_limit()
             if tag_count >= guild_max_limit:
                 raise TagFeedbackError(
                     f"This server has reached the limit of **{guild_max_limit}** tags."
