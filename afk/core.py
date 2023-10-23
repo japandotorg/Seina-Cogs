@@ -30,6 +30,7 @@ import discord
 import TagScriptEngine as tse
 from redbot.core import Config, commands
 from redbot.core.bot import Red
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_list, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 
@@ -209,9 +210,9 @@ class AFK(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member):
-        for member_id, data in (await self.config.all_members(guild=member.guild)).items():
-            if data["afk_status"]:
-                await self.config.member_from_ids(member.guild.id, member_id).clear()
+        data = await self.config.all_members(guild=member.guild)
+        if member.id in data:
+            await self.config.member_from_ids(member.guild.id, member.id).clear()
 
     @commands.guild_only()
     @commands.group(name="afk", invoke_without_command=True)
