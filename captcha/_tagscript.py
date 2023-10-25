@@ -72,7 +72,7 @@ async def validate_tagscriptengine(bot: Red, tse_version: str, *, reloaded: bool
         import TagScriptEngine as tse
     except ImportError as exc:
         raise CogLoadError(
-            "The ThreadOpener cog failed to install AdvancedTagScriptEngine. Reinstall the cog and restart your "
+            "The Captcha cog failed to install AdvancedTagScriptEngine. Reinstall the cog and restart your "
             "bot. If it continues to fail to load, contact the cog author."
         ) from exc
 
@@ -85,7 +85,7 @@ async def validate_tagscriptengine(bot: Red, tse_version: str, *, reloaded: bool
     commands = "\n".join(commands)
 
     message = (
-        "The ThreadOpener cog attempted to install TagScriptEngine, but the version installed "
+        "The Captcha cog attempted to install TagScriptEngine, but the version installed "
         "is outdated. Shut down your bot, then in shell in your venv, run the following "
         f"commands:\n{commands}\nAfter running these commands, restart your bot and reload "
         "Tags. If it continues to fail to load, contact the cog author."
