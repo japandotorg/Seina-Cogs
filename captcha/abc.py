@@ -35,7 +35,6 @@ class MixinMeta(ABC):
     bot: Red
     config: Config
     data_path: Path
-    cog_data_path: Path
 
     def __init__(self, *_args: Any) -> None:
         super().__init__(*_args)
@@ -50,7 +49,6 @@ class MixinMeta(ABC):
 
         self.data_path: Path
         self.font_data: str
-        self.cog_data_path: Path
 
     @abstractmethod
     def format_help_for_context(self, ctx: commands.Context) -> str:

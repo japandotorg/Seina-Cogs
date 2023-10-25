@@ -94,7 +94,6 @@ class Captcha(
         self._config: Dict[int, Dict[str, Any]] = {}
 
         self.data_path: Path = bundled_data_path(self)
-        self.cog_data_path: Path = cog_data_path(self)
         self.font_data: str = os.path.join(self.data_path, "DroidSansMono.ttf")
 
         self.task: asyncio.Task = asyncio.create_task(self._initialize())
@@ -162,10 +161,10 @@ class Captcha(
 
         captcha: CaptchaObj = CaptchaObj(self, width=300, height=100)
         captcha.generate(message)
-        captcha.write(message, f"{str(self.cog_data_path)}/captchas/{member.id}.png")
+        captcha.write(message, f"{str(self.data_path)}/captchas/{member.id}.png")
 
         captcha_file: discord.File = discord.File(
-            f"{str(self.cog_data_path)}/captchas/{member.id}.png"
+            f"{str(self.data_path)}/captchas/{member.id}.png"
         )
 
         message_before_captcha: str = await self.config.guild(
@@ -252,7 +251,7 @@ class Captcha(
 
             self._user_tries[member.id].append(temp_success_message)
 
-            os.remove(f"{str(self.cog_data_path)}/captchas/{member.id}.png")
+            os.remove(f"{str(self.data_path)}/captchas/{member.id}.png")
 
             role_id: int = await self.config.guild(member.guild).role_after_captcha()
             role: Optional[discord.Role] = discord.utils.get(member.guild.roles, id=role_id)
@@ -327,6 +326,6 @@ class Captcha(
                 except KeyError:
                     pass
 
-                os.remove(f"{str(self.cog_data_path)}/captchas/{member.id}.png")
+                os.remove(f"{str(self.data_path)}/captchas/{member.id}.png")
                 del self._user_tries[member.id]
         # fmt: on
