@@ -1,0 +1,21 @@
+{
+    "author": ["inthedark.org"],
+    "install_msg": "Thanks for installing the captcha cog.",
+    "name": "Captcha",
+    "disabled": false,
+    "short": "Captcha verification system.",
+    "description": "Captcha verification system.",
+    "tags": [
+        "security",
+        "captcha",
+        "protection",
+        "mod"
+    ],
+    "required_cogs": {},
+    "requirements": [
+        "AdvancedTagScriptEngine==3.1.4",
+        "Pillow"
+    ],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not store End User Data."
+}
