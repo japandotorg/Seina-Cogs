@@ -157,11 +157,11 @@ class Captcha(
         self._verification_phase[member.id] = 0
         self._user_tries[member.id] = []
 
-        message: str = "".join(random.choice(string.ascii_uppercase) for _ in range(6))
+        message_string: str = "".join(random.choice(string.ascii_uppercase) for _ in range(6))
 
         captcha: CaptchaObj = CaptchaObj(self, width=300, height=100)
-        captcha.generate(message)
-        captcha.write(message, f"{str(self.data_path)}/{member.id}.png")
+        captcha.generate(message_string)
+        captcha.write(message_string, f"{str(self.data_path)}/{member.id}.png")
 
         captcha_file: discord.File = discord.File(f"{str(self.data_path)}/{member.id}.png")
 
@@ -201,9 +201,9 @@ class Captcha(
 
             def check(message: discord.Message) -> bool:
                 return (
-                    message.content.upper() == message
+                    message.content.upper() == message_string
                     and message.author.id == member.id
-                    and message.channel == channel
+                    and message.channel.id == channel.id
                 )
 
             await self.bot.wait_for(
@@ -211,8 +211,6 @@ class Captcha(
                 check=check,
                 timeout=timeout,
             )
-
-            del self._verification_phase[member.id]
         except asyncio.TimeoutError:
             await member.kick(
                 reason=f"{member.id} failed to solve captcha verification in time.",
@@ -221,6 +219,8 @@ class Captcha(
             del self._verification_phase[member.id]
             del self._user_tries[member.id]
         else:
+            del self._verification_phase[member.id]
+
             message_after_captcha: str = await self.config.guild(
                 member.guild
             ).message_after_captcha()
