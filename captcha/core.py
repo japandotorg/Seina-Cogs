@@ -279,12 +279,14 @@ class Captcha(
             return
         if await self.bot.cog_disabled_in_guild(self, message.guild):
             return
+        if not await self.config.guild(message.guild).toggle():
+            return
 
         if (
             not message.guild.me.guild_permissions.kick_members
-            or message.guild.me.guild_permissions.manage_roles
-            or message.guild.me.guild_permissions.embed_links
-            or message.guild.me.guild_permissions.attach_files
+            or not message.guild.me.guild_permissions.manage_roles
+            or not message.guild.me.guild_permissions.embed_links
+            or not message.guild.me.guild_permissions.attach_files
         ):
             await self.config.guild(message.guild).toggle.set(False)
             log.info(f"Disabled captcha verification due to missing permissions.")
