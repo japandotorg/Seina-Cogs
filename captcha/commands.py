@@ -48,7 +48,7 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         Toggle the captcha verification system.
         """
-        await self.config.guild(ctx.guild).toggle.set(bool)  # type: ignore
+        await self.config.guild(ctx.guild).toggle.set(toggle)  # type: ignore
         await ctx.send(
             f"Captcha verification is now {'enabled' if toggle else 'disabled'}.",
         )
