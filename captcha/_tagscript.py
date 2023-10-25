@@ -22,17 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from importlib import reload
 from typing import Any, Dict, Final, List, final
 
 import TagScriptEngine as tse
+from redbot.core.bot import Red
 from redbot.core import commands
+from redbot.core.errors import CogLoadError
 from redbot.core.utils.chat_formatting import humanize_number
 
-message_before_captcha: str = """
+PIP: Final[str] = "pip(3)"
+
+message_before_captcha: Final[
+    str
+] = """
 {member(mention)} please solve the captcha down here.
 """
 
-message_after_captcha: str = """
+message_after_captcha: Final[
+    str
+] = """
 {member(mention)} you've sucessfully completed verification in {guild(name)}
 """
 
@@ -56,6 +65,44 @@ def process_tagscript(content: str, seed_variables: Dict[str, tse.Adapter] = {})
     if embed := output.actions.get("embed"):
         kwargs["embed"] = embed
     return kwargs
+
+
+async def validate_tagscriptengine(bot: Red, tse_version: str, *, reloaded: bool = False) -> None:
+    try:
+        import TagScriptEngine as tse
+    except ImportError as exc:
+        raise CogLoadError(
+            "The ThreadOpener cog failed to install AdvancedTagScriptEngine. Reinstall the cog and restart your "
+            "bot. If it continues to fail to load, contact the cog author."
+        ) from exc
+
+    commands = [
+        f"`{PIP} uninstall -y TagScript`",
+        f"`{PIP} uninstall -y TagScriptEngine`",
+        f"`{PIP} uninstall -y AdvancedTagScriptEngine`",
+        f"`{PIP} install AdvancedTagScriptEngine=={tse_version}`",
+    ]
+    commands = "\n".join(commands)
+
+    message = (
+        "The ThreadOpener cog attempted to install TagScriptEngine, but the version installed "
+        "is outdated. Shut down your bot, then in shell in your venv, run the following "
+        f"commands:\n{commands}\nAfter running these commands, restart your bot and reload "
+        "Tags. If it continues to fail to load, contact the cog author."
+    )
+
+    if not hasattr(tse, "VersionInfo"):
+        if not reloaded:
+            reload(tse)
+            await validate_tagscriptengine(bot, tse_version, reloaded=True)
+            return
+
+        await bot.send_to_owners(message)
+        raise CogLoadError(message)
+
+    if tse.version_info < tse.VersionInfo.from_str(tse_version):
+        await bot.send_to_owners(message)
+        raise CogLoadError(message)
 
 
 class TagError(Exception):
