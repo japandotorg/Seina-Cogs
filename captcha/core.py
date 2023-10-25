@@ -27,7 +27,6 @@ import logging
 import os
 import random
 import string
-from contextlib import suppress
 from pathlib import Path
 from types import ModuleType
 from typing import Any, Dict, Final, List, Optional, Union
