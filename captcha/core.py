@@ -297,7 +297,7 @@ class Captcha(
         if not await self.bot.allowed_by_whitelist_blacklist(member):
             return
 
-        verification_channel: int = await self.config.guild(member.guild).channel()
+        verification_channel: int = await self.config.guild(message.guild).channel()
         if not verification_channel:
             return
 
