@@ -88,8 +88,6 @@ class Processor(MixinMeta):
             tse.UpperBlock(),
             tse.LowerBlock(),
             tse.CountBlock(),
-            tse.LengthBlock(),
-            tse.StrictVariableGetterBlock(),
         ]
         tag_blocks: List[tse.Block] = [
             DeleteBlock(),
