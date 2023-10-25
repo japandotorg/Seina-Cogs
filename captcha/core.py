@@ -136,9 +136,9 @@ class Captcha(
             return
         if (
             not member.guild.me.guild_permissions.kick_members
-            or member.guild.me.guild_permissions.manage_roles
-            or member.guild.me.guild_permissions.embed_links
-            or member.guild.me.guild_permissions.attach_files
+            or not member.guild.me.guild_permissions.manage_roles
+            or not member.guild.me.guild_permissions.embed_links
+            or not member.guild.me.guild_permissions.attach_files
         ):
             await self.config.guild(member.guild).toggle.set(False)
             log.info(f"Disabled captcha verification due to missing permissions.")
