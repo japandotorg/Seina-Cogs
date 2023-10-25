@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+# https://github.com/lepture/captcha/blob/master/src/captcha/image.py
+
 import random
 from io import BytesIO
 from typing import TYPE_CHECKING, List, Optional, Tuple, TypeAlias, Union
