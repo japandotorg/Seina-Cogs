@@ -22,13 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from abc import ABC, ABCMeta, abstractmethod
 from pathlib import Path
 from typing import Any, Dict, List
-from abc import ABC, abstractmethod, ABCMeta
 
 import discord
+from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core import commands, Config
 
 
 class MixinMeta(ABC):

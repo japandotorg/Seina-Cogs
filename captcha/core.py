@@ -22,32 +22,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import os
-import string
-import random
 import asyncio
 import logging
-from pathlib import Path
+import os
+import random
+import string
 from contextlib import suppress
+from pathlib import Path
 from types import ModuleType
-from typing import Dict, Optional, Union, List, Final, Any
+from typing import Any, Dict, Final, List, Optional, Union
 
 import discord
 import TagScriptEngine as tse
+from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core import commands, Config
 from redbot.core.data_manager import bundled_data_path, cog_data_path
 
-from .commands import CaptchaCommands
+from ._tagscript import TAGSCRIPT_LIMIT as TAGSCRIPT_LIMIT
+from ._tagscript import TagCharacterLimitReached as TagCharacterLimitReached
+from ._tagscript import message_after_captcha as message_after_captcha_string
+from ._tagscript import message_before_captcha as message_before_captcha_string
+from ._tagscript import process_tagscript as process_tagscript
 from .abc import CompositeMetaClass
+from .commands import CaptchaCommands
 from .objects import CaptchaObj
-from ._tagscript import (
-    message_before_captcha as message_before_captcha_string,
-    message_after_captcha as message_after_captcha_string,
-    process_tagscript as process_tagscript,
-    TAGSCRIPT_LIMIT as TAGSCRIPT_LIMIT,
-    TagCharacterLimitReached as TagCharacterLimitReached,
-)
 
 DELETE_AFTER: Final[int] = 10
 

@@ -23,12 +23,13 @@ SOFTWARE.
 """
 
 from typing import Optional
+
 import discord
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box
 
-from .abc import MixinMeta, CompositeMetaClass
 from ._tagscript import TagscriptConverter
+from .abc import CompositeMetaClass, MixinMeta
 
 
 class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):

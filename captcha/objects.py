@@ -24,9 +24,10 @@ SOFTWARE.
 
 import random
 from io import BytesIO
-from typing import Optional, TypeAlias, Union, Tuple, List, TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Optional, Tuple, TypeAlias, Union
 
-from PIL.Image import new as create, Image, QUAD, BILINEAR
+from PIL.Image import BILINEAR, QUAD, Image
+from PIL.Image import new as create
 from PIL.ImageDraw import Draw, ImageDraw
 from PIL.ImageFilter import SMOOTH
 from PIL.ImageFont import FreeTypeFont, truetype
