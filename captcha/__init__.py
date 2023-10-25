@@ -30,8 +30,8 @@ from typing import Match, Optional, Pattern
 from redbot.core.bot import Red
 from redbot.core.errors import CogLoadError
 
-from .core import Captcha
 from ._tagscript import validate_tagscriptengine
+from .core import Captcha
 
 VERSION_RE: Pattern[str] = re.compile(r"AdvancedTagScriptEngine==(\d\.\d\.\d)")
 
