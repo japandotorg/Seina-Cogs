@@ -100,10 +100,6 @@ class Captcha(
 
         self.task: asyncio.Task = asyncio.create_task(self._initialize())
 
-        for k, v in {"captcha": lambda x: self, "captchaobj": captcha_object}.items():
-            with suppress(RuntimeError):
-                self.bot.add_dev_env_value(k, v)
-
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
         n = "\n" if "\n\n" not in pre_processed else ""
