@@ -36,7 +36,7 @@ async def validate_tagscriptengine(bot: Red, tse_version: str, *, reloaded: bool
         import TagScriptEngine as tse
     except ImportError as exc:
         raise CogLoadError(
-            "The ThreadOpener cog failed to install TagScriptEngine. Reinstall the cog and restart your "
+            "The ThreadOpener cog failed to install AdvancedTagScriptEngine. Reinstall the cog and restart your "
             "bot. If it continues to fail to load, contact the cog author."
         ) from exc
 
@@ -44,7 +44,7 @@ async def validate_tagscriptengine(bot: Red, tse_version: str, *, reloaded: bool
         f"`{PIP} uninstall -y TagScript`",
         f"`{PIP} uninstall -y TagScriptEngine`",
         f"`{PIP} uninstall -y AdvancedTagScriptEngine`",
-        f"`{PIP} install AdvancedTagScript=={tse_version}`",
+        f"`{PIP} install AdvancedTagScriptEngine=={tse_version}`",
     ]
     commands = "\n".join(commands)
 
