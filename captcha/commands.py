@@ -193,6 +193,7 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
 
     @_captcha.command(name="reset", aliases=["clear"])
+    @commands.max_concurrency(1, commands.BucketType.channel)
     async def _reset(self, ctx: commands.Context):
         """
         Reset all the captcha settings back to default.
