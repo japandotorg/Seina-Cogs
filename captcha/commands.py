@@ -142,7 +142,7 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         if message is None:
             await self.config.guild(ctx.guild).message_after_captcha.clear()  # type: ignore
-            await ctx.send(f"Cleared the after captcha message.")
+            await ctx.send("Cleared the after captcha message.")
             return
         await self.config.guild(ctx.guild).message_after_captcha.set(message)  # type: ignore
         await ctx.send(f"Changed the after captcha message:\n{box(str(message), lang='json')}")
