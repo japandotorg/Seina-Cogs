@@ -564,7 +564,7 @@ class DisboardReminder(commands.Cog):
                 e.add_field(name=key, value=value, inline=False)
 
         if data["next_bump"]:
-            timestamp = datetime.fromtimestamp(data["nextBump"], timezone.utc)
+            timestamp = datetime.fromtimestamp(data["next_bump"], timezone.utc)
             e.timestamp = timestamp
             e.set_footer(text="Next bump registered for")
 
