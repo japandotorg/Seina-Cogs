@@ -474,10 +474,10 @@ class DisboardReminder(commands.Cog):
         > `[p]bprm ty {embed(description):{member(mention)}, thank you for bumping! Make sure to vote for **{server}** on [our voting page](https://disboard.org/server/{guild(id)}).}`
         """
         if message:
-            await self.config.guild(ctx.guild).tyMessage.set(message)  # type: ignore
+            await self.config.guild(ctx.guild).ty_message.set(message)  # type: ignore
             await ctx.tick()
         else:
-            await self.config.guild(ctx.guild).tyMessage.clear()  # type: ignore
+            await self.config.guild(ctx.guild).ty_message.clear()  # type: ignore
             await ctx.send("Reset this server's Thank You message.")
 
     @_bump_reminder.command(name="message")  # type: ignore
