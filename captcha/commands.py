@@ -198,6 +198,8 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         Reset all the captcha settings back to default.
         """
+        if not await self.config.guild(ctx.guild).all():  # type: ignore
+            return await ctx.send("There are no captcha settings to reset.")
         view = ConfirmView(ctx.author, disable_buttons=True)
         view.message = await ctx.send(
             "Are you sure you want to reset all the captcha settings back to default?", view=view
