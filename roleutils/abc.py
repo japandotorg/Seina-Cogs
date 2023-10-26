@@ -23,8 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Any, Dict
 from abc import ABC, abstractmethod
+from typing import Any, Dict
 
 from redbot.core import Config
 from redbot.core.bot import Red

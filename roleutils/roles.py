@@ -26,7 +26,7 @@ SOFTWARE.
 import logging
 from collections import defaultdict
 from colorsys import rgb_to_hsv
-from typing import Generator, List, Optional, Sequence, Tuple, Dict
+from typing import Dict, Generator, List, Optional, Sequence, Tuple
 
 import discord
 from redbot.core import commands
