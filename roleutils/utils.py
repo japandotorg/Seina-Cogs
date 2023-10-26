@@ -24,6 +24,7 @@ SOFTWARE.
 """
 
 import re
+import argparse
 from typing import List, Optional, Tuple
 
 import discord
@@ -102,3 +103,8 @@ async def delete_quietly(message: discord.Message):
 
 def guild_roughly_chunked(guild: discord.Guild) -> bool:
     return len(guild.members) / guild.member_count > 0.9
+
+
+class NoExitParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        raise commands.BadArgument(message)

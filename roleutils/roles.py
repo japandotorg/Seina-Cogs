@@ -26,7 +26,7 @@ SOFTWARE.
 import logging
 from collections import defaultdict
 from colorsys import rgb_to_hsv
-from typing import List, Optional
+from typing import Any, List, Optional, Set, Dict
 
 import discord
 from redbot.core import commands
@@ -36,7 +36,7 @@ from redbot.core.utils.mod import get_audit_reason
 from TagScriptEngine import Interpreter, LooseVariableGetterBlock, MemberAdapter
 
 from .abc import MixinMeta
-from .converters import FuzzyRole, StrictRole, TargeterArgs, TouchableMember
+from .converters import FuzzyRole, RoleArgumentConverter, StrictRole, TargeterArgs, TouchableMember
 from .utils import (
     can_run_command,
     guild_roughly_chunked,
@@ -613,3 +613,80 @@ class Roles(MixinMeta):
         )
         ref = ctx.message.to_reference(fail_if_not_exists=False)
         await ctx.send(embed=e, reference=ref)
+
+    async def _all_are_valid_roles(self, ctx: commands.Context, *roles: discord.Role) -> bool:
+        guild = ctx.guild
+        author = ctx.author
+
+        if not (
+            (guild.owner == author)
+            or all((author.top_role > role for role in roles))
+            or await ctx.bot.is_owner(ctx.author)
+        ):
+            return False
+
+        if not (
+            guild.me.guild_permissions.manage_roles
+            and (guild.me == guild.owner or all(guild.me.top_role > role for role in roles))
+        ):
+            return False
+
+        if any(role.managed for role in roles):
+            return False
+
+        return True
+
+    async def _update_roles_automatically(
+        self,
+        *,
+        who: discord.Member,
+        give: List[discord.Role] = None,
+        remove: List[discord.Role] = None,
+    ) -> None:
+        me = who.guild.me
+        give = give or []
+        remove = remove or []
+        hierarchy_testing = give + remove
+        roles = [r for r in who.roles if r not in remove]
+        roles.extend([r for r in give if r not in roles])
+        if sorted(roles) == sorted(who.roles):
+            return
+        if (
+            any(r >= me.top_role for r in hierarchy_testing)
+            or not me.guild_permissions.manage_roles
+        ):
+            raise commands.UserFeedbackCheckFailure("Uh Oh! Can't do that.")
+        await who.edit(roles=roles)
+
+    @commands.has_guild_permissions(manage_roles=True)
+    @commands.bot_has_permissions(manage_roles=True)
+    @role.command("custom")
+    async def role_custom(
+        self,
+        ctx: commands.Context,
+        users: commands.Greedy[discord.Member],
+        *,
+        flags: RoleArgumentConverter,
+    ):
+        """
+        Add/Remove roles to one or more users
+
+        You cannot add and remove the same Role
+
+        **Example:**
+        - `[p]role custom inthedark.org --add role1 --remove role2`
+        - `[p] role custom inthedark.org --add role1 "role to remove"`
+        """
+        _flags = flags.parsed
+        roles = _flags["add"] + _flags["remove"]
+        if not await self._all_are_valid_roles(ctx, *roles):
+            await ctx.send(
+                "Either you or I do not have the required permissions or position in the heirarchy to do that."
+            )
+            return
+        for user in users:
+            await self._update_roles_automatically(
+                who=user, give=_flags["add"], remove=_flags["remove"]
+            )
+
+        await ctx.tick()

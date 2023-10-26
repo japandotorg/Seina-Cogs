@@ -23,14 +23,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import List, Tuple, Union
+import shlex
+from typing import Dict, List, Tuple, Union, NamedTuple
 
 import discord
 from rapidfuzz import process
 from redbot.core import commands
 from unidecode import unidecode
 
-from .utils import is_allowed_by_hierarchy, is_allowed_by_role_hierarchy
+from .utils import is_allowed_by_hierarchy, is_allowed_by_role_hierarchy, NoExitParser
+
+
+class RoleArgumentConverter(NamedTuple):
+    parsed: Dict[str, List[discord.Role]]
+
+    @classmethod
+    async def convert(cls, ctx: commands.Context, argument: str):
+        parser = NoExitParser(
+            description="Role utils syntax help", add_help=False, allow_abbrev=True
+        )
+        parser.add_argument("--add", nargs="*", dest="add", default=[])
+        parser.add_argument("--remove", nargs="*", dest="remove", default=[])
+        try:
+            vals = vars(parser.parse_args(shlex.split(argument)))
+        except Exception as e:
+            raise commands.BadArgument(str(e))
+        if not vals["add"] and not vals["remove"]:
+            raise commands.BadArgument("Must provide at least one or more actions.")
+        for attr in ("add", "remove"):
+            vals[attr] = [await commands.RoleConverter().convert(ctx, r) for r in vals[attr]]
+        return cls(vals)
 
 
 # original converter from https://github.com/TrustyJAID/Trusty-cogs/blob/master/serverstats/converters.py#L19
