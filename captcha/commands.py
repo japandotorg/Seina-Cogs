@@ -200,8 +200,7 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         view = ConfirmView(ctx.author, disable_buttons=True)
         view.message = await ctx.send(
-            "Are you sure you want to reset all the captcha settings back to default?",
-            view=view
+            "Are you sure you want to reset all the captcha settings back to default?", view=view
         )
         await view.wait()
         if view.result:
