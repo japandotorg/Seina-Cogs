@@ -66,7 +66,7 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         if channel is None:
             await self.config.guild(ctx.guild).channel.clear()  # type: ignore
-            await ctx.send(f"Cleared the captcha verification channel.")
+            await ctx.send("Cleared the captcha verification channel.")
             return
         await self.config.guild(ctx.guild).channel.set(channel.id)  # type: ignore
         await ctx.send(
@@ -83,7 +83,7 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         if role is None:
             await self.config.guild(ctx.guild).role_after_captcha.clear()  # type: ignore
-            await ctx.send(f"Cleared the captcha verification role.")
+            await ctx.send("Cleared the captcha verification role.")
             return
         await self.config.guild(ctx.guild).role_after_captcha.set(role.id)  # type: ignore
         await ctx.send(
@@ -125,7 +125,7 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         if message is None:
             await self.config.guild(ctx.guild).message_before_captcha.clear()  # type: ignore
-            await ctx.send(f"Cleared the before captcha message.")
+            await ctx.send("Cleared the before captcha message.")
             return
         await self.config.guild(ctx.guild).message_before_captcha.set(message)  # type: ignore
         await ctx.send(f"Changed the before captcha message:\n{box(str(message), lang='json')}")
@@ -155,15 +155,9 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         data: Dict[str, Any] = await self.config.guild(ctx.guild).all()  # type: ignore
         role = ctx.guild.get_role(data["role_after_captcha"])
-        if role is None:
-            role = "None"
-        else:
-            role = f"<@&{role.id}> ({role.id})"
+        role = "None" if role is None else f"<@&{role.id}> ({role.id})"
         channel = ctx.guild.get_channel(data["channel"])
-        if channel is None:
-            channel = "None"
-        else:
-            channel = f"<#{channel.id}> ({channel.id})"
+        channel = "None" if channel is None else f"<#{channel.id}> ({channel.id})"
         embed: discord.Embed = discord.Embed(
             title="Captcha Settings",
             description=(
