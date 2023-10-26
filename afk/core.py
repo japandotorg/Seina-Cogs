@@ -30,7 +30,6 @@ import discord
 import TagScriptEngine as tse
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_list, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 
