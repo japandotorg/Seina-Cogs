@@ -154,9 +154,9 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         View the captcha settings.
         """
         data: Dict[str, Any] = await self.config.guild(ctx.guild).all()  # type: ignore
-        role = ctx.guild.get_role(data["role_after_captcha"])
+        role = ctx.guild.get_role(data["role_after_captcha"])  # type: ignore
         role = "None" if role is None else f"<@&{role.id}> ({role.id})"
-        channel = ctx.guild.get_channel(data["channel"])
+        channel = ctx.guild.get_channel(data["channel"])  # type: ignore
         channel = "None" if channel is None else f"<#{channel.id}> ({channel.id})"
         embed: discord.Embed = discord.Embed(
             title="Captcha Settings",
@@ -200,7 +200,7 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         await view.wait()
         if view.result:
-            await self.config.guild(ctx.guild).clear()
+            await self.config.guild(ctx.guild).clear()  # type: ignore
             await ctx.send("Successfully reset all the captcha settings back to default.")
         else:
-            await ctx.send("Cancelled, i wont reset the captcha settings.")
+            await ctx.send("Cancelled, I wont reset the captcha settings.")
