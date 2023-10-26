@@ -24,12 +24,12 @@ SOFTWARE.
 """
 
 from typing import Tuple
-from rapidfuzz import process
-from unidecode import unidecode
 
 import discord
-from redbot.core.bot import Red
+from rapidfuzz import process
 from redbot.core import commands
+from redbot.core.bot import Red
+from unidecode import unidecode
 
 
 async def is_allowed_by_role_hierarchy(
