@@ -27,6 +27,7 @@ from typing import Any, Dict, Optional
 import discord
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.views import ConfirmView
 
 from ._tagscript import TagscriptConverter
 from .abc import CompositeMetaClass, MixinMeta
@@ -146,20 +147,31 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.config.guild(ctx.guild).message_after_captcha.set(message)  # type: ignore
         await ctx.send(f"Changed the after captcha message:\n{box(str(message), lang='json')}")
 
+    @commands.bot_has_permissions(embed_links=True)
     @_captcha.command(name="settings", aliases=["showsettings", "show", "ss"])
     async def _settings(self, ctx: commands.Context):
         """
         View the captcha settings.
         """
         data: Dict[str, Any] = await self.config.guild(ctx.guild).all()  # type: ignore
+        role = ctx.guild.get_role(data["role_after_captcha"])
+        if role is None:
+            role = "None"
+        else:
+            role = f"<@&{role.id}> ({role.id})"
+        channel = ctx.guild.get_channel(data["channel"])
+        if channel is None:
+            channel = "None"
+        else:
+            channel = f"<#{channel.id}> ({channel.id})"
         embed: discord.Embed = discord.Embed(
             title="Captcha Settings",
             description=(
                 f"**Toggle**: {data['toggle']}\n"
-                f"**Channel**: {data['channel']}\n"
+                f"**Channel**: {channel}\n"
                 f"**Timeout**: {data['timeout']}\n"
                 f"**Tries**: {data['tries']}\n"
-                f"**Role**: {data['role_after_captcha']}\n"
+                f"**Role**: {role}\n"
             ),
             color=await ctx.embed_color(),
         )
@@ -179,3 +191,20 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
             reference=ctx.message.to_reference(fail_if_not_exists=False),
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
+
+    @_captcha.command(name="reset", aliases=["clear"])
+    async def _reset(self, ctx: commands.Context):
+        """
+        Reset all the captcha settings back to default.
+        """
+        view = ConfirmView(ctx.author, disable_buttons=True)
+        view.message = await ctx.send(
+            "Are you sure you want to reset all the captcha settings back to default?",
+            view=view
+        )
+        await view.wait()
+        if view.result:
+            await self.config.guild(ctx.guild).clear()
+            await ctx.send("Successfully reset all the captcha settings back to default.")
+        else:
+            await ctx.send("Cancelled, i wont reset the captcha settings.")

@@ -11,6 +11,7 @@
         "protection",
         "mod"
     ],
+    "min_bot_version": "3.5.3",
     "required_cogs": {},
     "requirements": [
         "AdvancedTagScriptEngine==3.1.4",
