@@ -77,10 +77,10 @@ class MassUnban(commands.Cog):
         ]
         return "\n".join(text)
 
-    @commands.command()
     @commands.guild_only()
     @commands.guildowner()
-    async def massunban(self, ctx: commands.Context, *, ban_reason: Optional[str] = None):
+    @commands.command(name="massunban")
+    async def _mass_unban(self, ctx: commands.GuildContext, *, ban_reason: Optional[str] = None):
         """
         Mass unban everyone, or specific people.
 
