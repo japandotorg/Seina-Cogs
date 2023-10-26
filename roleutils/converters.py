@@ -24,14 +24,14 @@ SOFTWARE.
 """
 
 import shlex
-from typing import Dict, List, Tuple, Union, NamedTuple
+from typing import Dict, List, NamedTuple, Tuple, Union
 
 import discord
 from rapidfuzz import process
 from redbot.core import commands
 from unidecode import unidecode
 
-from .utils import is_allowed_by_hierarchy, is_allowed_by_role_hierarchy, NoExitParser
+from .utils import NoExitParser, is_allowed_by_hierarchy, is_allowed_by_role_hierarchy
 
 
 class RoleArgumentConverter(NamedTuple):
