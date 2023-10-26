@@ -32,7 +32,7 @@ from redbot.core import commands
 from .abc import MixinMeta
 from .converters import FuzzyRole
 
-log = logging.getLogger("red.phenom4n4n.roleutils.autorole")
+log: logging.Logger = logging.getLogger("red.phenom4n4n.roleutils.autorole")
 
 
 class AutoRole(MixinMeta):

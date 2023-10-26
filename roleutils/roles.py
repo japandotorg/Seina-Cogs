@@ -26,7 +26,7 @@ SOFTWARE.
 import logging
 from collections import defaultdict
 from colorsys import rgb_to_hsv
-from typing import List, Optional
+from typing import Generator, List, Optional, Sequence, Tuple, Dict
 
 import discord
 from redbot.core import commands
@@ -52,7 +52,7 @@ def targeter_cog(ctx: commands.Context):
     return cog is not None and hasattr(cog, "args_to_list")
 
 
-def chunks(l, n):
+def chunks(l: Sequence, n: int) -> Generator:
     """
     Yield successive n-sized chunks from l.
     https://github.com/flaree/flare-cogs/blob/08b78e33ab814aa4da5422d81a5037ae3df51d4e/commandstats/commandstats.py#L16
@@ -66,11 +66,11 @@ class Roles(MixinMeta):
     Useful role commands.
     """
 
-    def __init__(self):
-        self.interpreter = Interpreter([LooseVariableGetterBlock()])
+    def __init__(self) -> None:
+        self.interpreter: Interpreter = Interpreter([LooseVariableGetterBlock()])
         super().__init__()
 
-    async def initialize(self):
+    async def initialize(self) -> None:
         log.debug("Roles Initialize")
         await super().initialize()
 
@@ -165,7 +165,7 @@ class Roles(MixinMeta):
             await ctx.send(members, allowed_mentions=discord.AllowedMentions.none())
 
     @staticmethod
-    def get_hsv(role: discord.Role):
+    def get_hsv(role: discord.Role) -> Tuple[float, float, float]:
         return rgb_to_hsv(*role.color.to_rgb())
 
     @commands.bot_has_permissions(embed_links=True)
@@ -192,7 +192,7 @@ class Roles(MixinMeta):
         color: Optional[discord.Color] = discord.Color.default(),
         hoist: Optional[bool] = False,
         *,
-        name: str = None,
+        name: Optional[str] = None,
     ):
         """
         Creates a role.
@@ -224,7 +224,7 @@ class Roles(MixinMeta):
         self,
         ctx: commands.Context,
         role: StrictRole(check_integrated=False),
-        hoisted: bool = None,
+        hoisted: Optional[bool] = None,
     ):
         """Toggle whether a role should appear seperate from other roles."""
         hoisted = hoisted if hoisted is not None else not role.hoist
@@ -520,7 +520,7 @@ class Roles(MixinMeta):
         role: discord.Role,
         fail_message: str = "Everyone in the server has this role.",
         adding: bool = True,
-    ):
+    ) -> None:
         if guild_roughly_chunked(ctx.guild) is False and self.bot.intents.members:
             await ctx.guild.chunk()
         member_list = self.get_member_list(members, role, adding)
@@ -545,17 +545,25 @@ class Roles(MixinMeta):
                 )
         await ctx.send(result_text)
 
-    def get_member_list(self, members: list, role: discord.Role, adding: bool = True):
+    def get_member_list(
+        self, members: List[discord.Member], role: discord.Role, adding: bool = True
+    ) -> List[discord.Member]:
         if adding:
             members = [member for member in members if role not in member.roles]
         else:
             members = [member for member in members if role in member.roles]
         return members
 
-    async def massrole(self, members: list, roles: list, reason: str, adding: bool = True):
-        completed = []
-        skipped = []
-        failed = []
+    async def massrole(
+        self,
+        members: List[discord.Member],
+        roles: List[discord.Role],
+        reason: str,
+        adding: bool = True,
+    ) -> Dict[str, List[discord.Member]]:
+        completed: List[discord.Member] = []
+        skipped: List[discord.Member] = []
+        failed: List[discord.Member] = []
         for member in members:
             if adding:
                 to_add = [role for role in roles if role not in member.roles]
@@ -584,7 +592,7 @@ class Roles(MixinMeta):
         return {"completed": completed, "skipped": skipped, "failed": failed}
 
     @staticmethod
-    def format_members(members: List[discord.Member]):
+    def format_members(members: List[discord.Member]) -> str:
         length = len(members)
         s = "" if length == 1 else "s"
         return f"**{hn(length)}** member{s}"

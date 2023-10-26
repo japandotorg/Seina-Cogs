@@ -38,7 +38,7 @@ class RoleArgumentConverter(NamedTuple):
     parsed: Dict[str, List[discord.Role]]
 
     @classmethod
-    async def convert(cls, ctx: commands.Context, argument: str):
+    async def convert(cls, ctx: commands.Context, argument: str) -> "RoleArgumentConverter":
         parser = NoExitParser(
             description="Role utils syntax help", add_help=False, allow_abbrev=True
         )
@@ -67,8 +67,8 @@ class FuzzyRole(commands.RoleConverter):
     https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/mod/mod.py#L24
     """
 
-    def __init__(self, response: bool = True):
-        self.response = response
+    def __init__(self, response: bool = True) -> None:
+        self.response: bool = response
         super().__init__()
 
     async def convert(self, ctx: commands.Context, argument: str) -> discord.Role:
@@ -96,9 +96,9 @@ class FuzzyRole(commands.RoleConverter):
 
 
 class StrictRole(FuzzyRole):
-    def __init__(self, response: bool = True, *, check_integrated: bool = True):
-        self.response = response
-        self.check_integrated = check_integrated
+    def __init__(self, response: bool = True, *, check_integrated: bool = True) -> None:
+        self.response: bool = response
+        self.check_integrated: bool = check_integrated
         super().__init__(response)
 
     async def convert(self, ctx: commands.Context, argument: str) -> discord.Role:
@@ -116,8 +116,8 @@ class StrictRole(FuzzyRole):
 
 
 class TouchableMember(commands.MemberConverter):
-    def __init__(self, response: bool = True):
-        self.response = response
+    def __init__(self, response: bool = True) -> None:
+        self.response: bool = response
         super().__init__()
 
     async def convert(self, ctx: commands.Context, argument: str) -> discord.Member:
@@ -158,7 +158,7 @@ class EmojiRole(StrictRole, RealEmojiConverter):
         return emoji, role
 
 
-class ObjectConverter(commands.IDConverter):
+class ObjectConverter(commands.IDConverter[discord.Object]):
     async def convert(self, ctx: commands.Context, argument: str) -> discord.Object:
         match = self._get_id_match(argument)
         if not match:
@@ -166,7 +166,7 @@ class ObjectConverter(commands.IDConverter):
         return discord.Object(int(match.group(0)))
 
 
-class TargeterArgs(commands.Converter):
+class TargeterArgs(commands.Converter[List[discord.Member]]):
     async def convert(self, ctx: commands.Context, argument: str) -> List[discord.Member]:
         members = await ctx.bot.get_cog("Targeter").args_to_list(ctx, argument)
         if not members:

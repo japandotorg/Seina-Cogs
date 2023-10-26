@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from typing import Any, Dict
 from abc import ABC, abstractmethod
 
 from redbot.core import Config
@@ -39,13 +40,13 @@ class MixinMeta(ABC):
 
     config: Config
     bot: Red
-    cache: dict
+    cache: Dict[str, Any]
 
     def __init__(self, *_args):
         self.config: Config
         self.bot: Red
-        self.cache: dict
+        self.cache: Dict[str, Any]
 
     @abstractmethod
-    async def initialize(self):
-        ...
+    async def initialize(self) -> None:
+        raise NotImplementedError()

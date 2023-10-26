@@ -25,7 +25,7 @@ SOFTWARE.
 
 import argparse
 import re
-from typing import List, Optional, Tuple
+from typing import List, Optional, Pattern, Tuple
 
 import discord
 from redbot.core import commands
@@ -58,10 +58,10 @@ def my_role_heirarchy(guild: discord.Guild, role: discord.Role) -> bool:
     return guild.me.top_role > role
 
 
-MENTION_RE = re.compile(r"@(everyone|here|&[0-9]{17,21})")
+MENTION_RE: Pattern[str] = re.compile(r"@(everyone|here|&[0-9]{17,21})")
 
 
-def escape_mentions(text: str):
+def escape_mentions(text: str) -> str:
     return MENTION_RE.sub("@\u200b\\1", text)
 
 
@@ -93,7 +93,7 @@ async def can_run_command(ctx: commands.Context, command: str) -> bool:
     return result
 
 
-async def delete_quietly(message: discord.Message):
+async def delete_quietly(message: discord.Message) -> None:
     if message.channel.permissions_for(message.guild.me).manage_messages:
         try:
             await message.delete()

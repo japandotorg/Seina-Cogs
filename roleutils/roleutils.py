@@ -27,11 +27,12 @@ SOFTWARE.
 import asyncio
 import logging
 from abc import ABC
-from typing import Coroutine, Literal
+from typing import Any, Coroutine, Dict, List, Literal, Final, Optional, Union
 
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.config import Config
+from redbot.core.utils.chat_formatting import humanize_list
 
 from .reactroles import ReactRoles
 from .roles import Roles
@@ -60,40 +61,46 @@ class RoleUtils(
     Includes massroling, role targeting, and reaction roles.
     """
 
-    __author__ = ["inthedark.org", "PhenoM4n4n"]
-    __version__ = "1.4.0"
+    __author__: Final[List[str]] = ["inthedark.org", "PhenoM4n4n"]
+    __version__: Final[str] = "1.4.0"
 
-    def format_help_for_context(self, ctx):
+    def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
         n = "\n" if "\n\n" not in pre_processed else ""
-        return f"{pre_processed}{n}\nCog Version: {self.__version__}"
+        return (
+            f"{pre_processed}{n}\n"
+            f"Version: {self.__version__}\n"
+            f"Author: {humanize_list(self.__author__)}"
+        )
 
-    def __init__(self, bot: Red, *_args) -> None:
-        self.cache = {}
-        self.bot = bot
-        self.config = Config.get_conf(
+    def __init__(self, bot: Red, *_args: Any) -> None:
+        self.cache: Dict[str, Any] = {}
+        self.bot: Red = bot
+        self.config: Config = Config.get_conf(
             self,
             identifier=326235423452394523,
             force_registration=True,
         )
-        default_guild = {"reactroles": {"channels": [], "enabled": True}}
+        default_guild: Dict[str, Dict[str, Union[List[int], bool]]] = {
+            "reactroles": {"channels": [], "enabled": True}
+        }
         self.config.register_guild(**default_guild)
 
-        default_guildmessage = {"reactroles": {"react_to_roleid": {}}}
+        default_guildmessage: Dict[str, Dict[str, Any]] = {"reactroles": {"react_to_roleid": {}}}
         self.config.init_custom("GuildMessage", 2)
         self.config.register_custom("GuildMessage", **default_guildmessage)
         super().__init__(*_args)
-        self.initialize_task = self.create_task(self.initialize())
+        self.initialize_task: asyncio.Task[Any] = self.create_task(self.initialize())
 
     async def red_delete_data_for_user(self, *, requester: RequestType, user_id: int) -> None:
         return
 
-    async def initialize(self):
+    async def initialize(self) -> None:
         log.debug("RoleUtils initialize")
         await super().initialize()
 
     @staticmethod
-    def task_done_callback(task: asyncio.Task):
+    def task_done_callback(task: asyncio.Task) -> None:
         try:
             task.result()
         except asyncio.CancelledError:
@@ -101,7 +108,9 @@ class RoleUtils(
         except Exception as error:
             log.exception("Task failed.", exc_info=error)
 
-    def create_task(self, coroutine: Coroutine, *, name: str = None):
+    def create_task(
+        self, coroutine: Coroutine, *, name: Optional[str] = None
+    ) -> asyncio.Task[Any]:
         task = asyncio.create_task(coroutine, name=name)
         task.add_done_callback(self.task_done_callback)
         return task

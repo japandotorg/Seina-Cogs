@@ -25,7 +25,7 @@ SOFTWARE.
 
 import asyncio
 import logging
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 import discord
 from redbot.core import commands
@@ -52,17 +52,17 @@ class ReactRoles(MixinMeta):
     Reaction Roles.
     """
 
-    def __init__(self, *_args):
+    def __init__(self, *_args: Any) -> None:
         super().__init__(*_args)
-        self.method = "build"
+        self.method: str = "build"
         self.cache["reactroles"] = {"message_cache": set()}
 
-    async def initialize(self):
+    async def initialize(self) -> None:
         log.debug("ReactRole Initialize")
         await self._update_cache()
         await super().initialize()
 
-    async def _update_cache(self):
+    async def _update_cache(self) -> None:
         all_guildmessage = await self.config.custom("GuildMessage").all()
         self.cache["reactroles"]["message_cache"].update(
             int(msg_id)
@@ -71,14 +71,16 @@ class ReactRoles(MixinMeta):
             if msg_data["reactroles"]["react_to_roleid"]
         )
 
-    def _check_payload_to_cache(self, payload):
+    def _check_payload_to_cache(
+        self, payload: Union[discord.RawReactionActionEvent, discord.RawMessageDeleteEvent]
+    ) -> bool:
         return payload.message_id in self.cache["reactroles"]["message_cache"]
 
     def _edit_cache(
         self,
-        message_id=None,
-        remove=False,
-    ):
+        message_id: Optional[int] = None,
+        remove: bool = False,
+    ) -> None:
         if remove:
             self.cache["reactroles"]["message_cache"].remove(message_id)
         else:
@@ -89,7 +91,7 @@ class ReactRoles(MixinMeta):
         guild: discord.Guild,
         message: Union[discord.Message, discord.Object],
         emoji_ids: List[str],
-    ):
+    ) -> None:
         async with self.config.custom("GuildMessage", guild.id, message.id).reactroles() as r:
             for emoji_id in emoji_ids:
                 del r["react_to_roleid"][self.emoji_id(emoji_id)]
@@ -179,7 +181,7 @@ class ReactRoles(MixinMeta):
         channel: Optional[discord.TextChannel] = None,
         color: Optional[discord.Color] = None,
         *,
-        name: str = None,
+        name: Optional[str] = None,
     ):
         """Create a reaction role.
 
