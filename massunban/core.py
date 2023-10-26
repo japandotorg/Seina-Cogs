@@ -26,9 +26,9 @@ SOFTWARE.
 from __future__ import annotations
 
 import asyncio
-import logging
 import datetime
-from typing import Final, List, Literal, Optional, Dict, Tuple
+import logging
+from typing import Dict, Final, List, Literal, Optional, Tuple
 
 import discord
 from redbot.core import commands
