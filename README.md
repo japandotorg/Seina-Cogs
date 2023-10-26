@@ -20,6 +20,7 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 | StatusRole  | 0.1.0            | <details><summary>Assign roles on custom status.</summary>Assign roles to users for the duration in which they have certain custom statuses <details> |
 | ConversationGames | 0.2.5            | <details><summary>Conversation games for members</summary>Conversation games for members</details>                         |
 | Captcha     | 0.1.0            | <details><summary>Captcha verification system</summary>Captcha verification system</details>                                     |
+| RoleUtils   | 1.4.0            | <details><summary>Reaction roles, massroling, & role targeting</summary>Reaction roles, massrolin & role targeting</details>     |
 
 
 Any questions you can find [Melon](https://discord.com/oauth2/authorize?client_id=808706062013825036&scope=bot&permissions=1099511627767%20applications.commands) and myself over on [the support server](https://discord.gg/mXfYuMy92r)
