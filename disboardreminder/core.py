@@ -23,9 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import re
 import asyncio
 import logging
+import re
 from collections import defaultdict
 from datetime import datetime, timezone
 from typing import (
@@ -33,23 +33,22 @@ from typing import (
     Coroutine,
     DefaultDict,
     Dict,
+    Final,
+    List,
+    Literal,
     Match,
     Optional,
-    Final,
     Pattern,
-    List,
-    Union,
-    Literal,
     TypeAlias,
+    Union,
 )
 
 import discord
+import TagScriptEngine as tse
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box
-
-import TagScriptEngine as tse
 
 from .converters import FuzzyRole
 
