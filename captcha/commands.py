@@ -27,6 +27,7 @@ from typing import Any, Dict, Optional
 import discord
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.views import ConfirmView
 
 from ._tagscript import TagscriptConverter
 from .abc import CompositeMetaClass, MixinMeta
@@ -65,7 +66,7 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         if channel is None:
             await self.config.guild(ctx.guild).channel.clear()  # type: ignore
-            await ctx.send(f"Cleared the captcha verification channel.")
+            await ctx.send("Cleared the captcha verification channel.")
             return
         await self.config.guild(ctx.guild).channel.set(channel.id)  # type: ignore
         await ctx.send(
@@ -82,7 +83,7 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         if role is None:
             await self.config.guild(ctx.guild).role_after_captcha.clear()  # type: ignore
-            await ctx.send(f"Cleared the captcha verification role.")
+            await ctx.send("Cleared the captcha verification role.")
             return
         await self.config.guild(ctx.guild).role_after_captcha.set(role.id)  # type: ignore
         await ctx.send(
@@ -124,7 +125,7 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         if message is None:
             await self.config.guild(ctx.guild).message_before_captcha.clear()  # type: ignore
-            await ctx.send(f"Cleared the before captcha message.")
+            await ctx.send("Cleared the before captcha message.")
             return
         await self.config.guild(ctx.guild).message_before_captcha.set(message)  # type: ignore
         await ctx.send(f"Changed the before captcha message:\n{box(str(message), lang='json')}")
@@ -141,25 +142,30 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         if message is None:
             await self.config.guild(ctx.guild).message_after_captcha.clear()  # type: ignore
-            await ctx.send(f"Cleared the after captcha message.")
+            await ctx.send("Cleared the after captcha message.")
             return
         await self.config.guild(ctx.guild).message_after_captcha.set(message)  # type: ignore
         await ctx.send(f"Changed the after captcha message:\n{box(str(message), lang='json')}")
 
+    @commands.bot_has_permissions(embed_links=True)
     @_captcha.command(name="settings", aliases=["showsettings", "show", "ss"])
     async def _settings(self, ctx: commands.Context):
         """
         View the captcha settings.
         """
         data: Dict[str, Any] = await self.config.guild(ctx.guild).all()  # type: ignore
+        role = ctx.guild.get_role(data["role_after_captcha"])
+        role = "None" if role is None else f"<@&{role.id}> ({role.id})"
+        channel = ctx.guild.get_channel(data["channel"])
+        channel = "None" if channel is None else f"<#{channel.id}> ({channel.id})"
         embed: discord.Embed = discord.Embed(
             title="Captcha Settings",
             description=(
                 f"**Toggle**: {data['toggle']}\n"
-                f"**Channel**: {data['channel']}\n"
+                f"**Channel**: {channel}\n"
                 f"**Timeout**: {data['timeout']}\n"
                 f"**Tries**: {data['tries']}\n"
-                f"**Role**: {data['role_after_captcha']}\n"
+                f"**Role**: {role}\n"
             ),
             color=await ctx.embed_color(),
         )
@@ -179,3 +185,22 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
             reference=ctx.message.to_reference(fail_if_not_exists=False),
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
+
+    @_captcha.command(name="reset", aliases=["clear"])
+    @commands.max_concurrency(1, commands.BucketType.channel)
+    async def _reset(self, ctx: commands.Context):
+        """
+        Reset all the captcha settings back to default.
+        """
+        if not await self.config.guild(ctx.guild).all():  # type: ignore
+            return await ctx.send("There are no captcha settings to reset.")
+        view = ConfirmView(ctx.author, disable_buttons=True)
+        view.message = await ctx.send(
+            "Are you sure you want to reset all the captcha settings back to default?", view=view
+        )
+        await view.wait()
+        if view.result:
+            await self.config.guild(ctx.guild).clear()
+            await ctx.send("Successfully reset all the captcha settings back to default.")
+        else:
+            await ctx.send("Cancelled, i wont reset the captcha settings.")
