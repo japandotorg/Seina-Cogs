@@ -23,12 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from rapidfuzz import process
 from typing import Optional, Union
-from unidecode import unidecode
 
 import discord
+from rapidfuzz import process
 from redbot.core import commands
+from unidecode import unidecode
 
 
 class ChannelToggle(commands.Converter):
