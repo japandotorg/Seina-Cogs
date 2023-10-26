@@ -149,7 +149,7 @@ class Roles(MixinMeta):
         Sends a list of members in a role.
 
         You can supply a custom formatting tagscript for each member.
-        The [member](https://phen-cogs.readthedocs.io/en/latest/tags/default_variables.html#author-block) block is available to use, found on the [TagScript documentation](https://phen-cogs.readthedocs.io/en/latest/index.html).
+        The [member](https://seina-cogs.readthedocs.io/en/latest/tags/default_variables.html#author-block) block is available to use, found on the [TagScript documentation](https://seina-cogs.readthedocs.io/en/latest/index.html).
 
         **Example:**
         `[p]role dump @admin <t:{member(timestamp)}> - {member(mention)}`
