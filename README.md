@@ -15,7 +15,7 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 | PersonalChannels| 0.1.1            | <details><summary>Personal channel for members</summary>Personal channel for members                                         |
 | FirstMessage| 0.1.0            | <details><summary>First Message</summary>A simple cog for jump to first message of a channel.</details>                          |
 | Animals     | 0.1.2            | <details><summary>Random animals!</summary>Random animal images & facts</details>                                                |
-| MassUnban   | 0.1.0            | <details><summary>Mass unban users.</summary>Mass unban users by the ban reason used</details>                                   |
+| MassUnban   | 0.1.1            | <details><summary>Mass unban users.</summary>Mass unban users by the ban reason used</details>                                   |
 | AntiLinks   | 0.1.1            | <details><summary>No links allowed.</summary>Removes all links in specified channels, with the ability to whitelist roles.</details> |
 | StatusRole  | 0.1.0            | <details><summary>Assign roles on custom status.</summary>Assign roles to users for the duration in which they have certain custom statuses <details> |
 | ConversationGames | 0.2.5            | <details><summary>Conversation games for members</summary>Conversation games for members</details>                         |
