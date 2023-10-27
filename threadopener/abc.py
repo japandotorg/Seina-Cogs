@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from abc import ABC, abstractmethod
+from abc import ABC, ABCMeta, abstractmethod
 from typing import Any
 
 from redbot.core import Config, commands
@@ -52,5 +52,5 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
 
-class CompositeMetaClass(type(commands.Cog), type(ABC)):
+class CompositeMetaClass(commands.CogMeta, ABCMeta):
     pass

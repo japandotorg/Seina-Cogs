@@ -29,19 +29,19 @@ from redbot.core import commands
 from redbot.core.utils.chat_formatting import box, humanize_list
 
 from ._tagscript import TagscriptConverter
-from .abc import MixinMeta
+from .abc import MixinMeta, CompositeMetaClass
 
 
-class Commands(MixinMeta):
+class Commands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
+    @commands.group(name="threadopener")  # type: ignore
     @commands.admin_or_permissions(manage_guild=True)
     @commands.cooldown(1, 10, commands.BucketType.guild)
-    @commands.group(name="threadopener", aliases=["to"])  # type: ignore
     @commands.bot_has_permissions(manage_threads=True, create_public_threads=True)
     async def _thread_opener(self, _: commands.GuildContext):
         """Manage ThreadOpener settings."""
 
-    @_thread_opener.command(name="toggle")  # type: ignore
+    @_thread_opener.command(name="toggle")
     async def _toggle(self, ctx: commands.GuildContext, toggle: bool):
         """
         Toggle ThreadOpener enable or disable.
@@ -49,12 +49,12 @@ class Commands(MixinMeta):
         await self.config.guild(ctx.guild).toggle.set(toggle)
         await ctx.send(f"Thread opener is now {'enabled' if toggle else 'disabled'}.")
 
-    @_thread_opener.command(name="channels", aliases=["channel"])  # type: ignore
+    @_thread_opener.command(name="channels", aliases=["channel"])
     async def _channels(
         self,
         ctx: commands.GuildContext,
         add_or_remove: Literal["add", "remove"],
-        channels: commands.Greedy[discord.TextChannel],  # type: ignore
+        channels: commands.Greedy[discord.TextChannel],
     ):
         """
         Add or remove channels for your guild.
@@ -85,7 +85,7 @@ class Commands(MixinMeta):
             f"{channels} {'channel' if channels == 1 else 'channels'}."
         )
 
-    @_thread_opener.command(name="archive")  # type: ignore
+    @_thread_opener.command(name="archive")
     async def _archive(
         self, ctx: commands.GuildContext, amount: Literal[0, 60, 1440, 4320, 10080]
     ):
@@ -101,7 +101,7 @@ class Commands(MixinMeta):
         await self.config.guild(ctx.guild).auto_archive_duration.set(amount)
         await ctx.send(f"Auto archive duration is now {amount}.")
 
-    @_thread_opener.command(name="slowmode", aliases=["slow"])  # type: ignore
+    @_thread_opener.command(name="slowmode", aliases=["slow"])
     async def _slowmode(self, ctx: commands.GuildContext, amount: commands.Range[int, 0, 21600]):
         """
         Change the slowmode of threads.
@@ -114,7 +114,7 @@ class Commands(MixinMeta):
         await self.config.guild(ctx.guild).slowmode_delay.set(amount)
         await ctx.send(f"Slowmode is now {amount}.")
 
-    @_thread_opener.group(name="message")  # type: ignore
+    @_thread_opener.group(name="message")
     async def _message(self, _: commands.Context):
         """
         Manage thread opener notifications when they are opened.
@@ -165,7 +165,7 @@ class Commands(MixinMeta):
             await self.config.member(ctx.author).custom_message.clear()
             await ctx.send("Successfully reset the thread opener notification message.")
 
-    @_thread_opener.command(name="showsettings", aliases=["ss", "show"])  # type: ignore
+    @_thread_opener.command(name="showsettings", aliases=["ss", "show"])
     async def _show_settings(self, ctx: commands.GuildContext):
         """Show ThreadOpener settings."""
         data = await self.config.guild(ctx.guild).all()
