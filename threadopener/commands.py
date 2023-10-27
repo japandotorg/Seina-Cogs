@@ -38,21 +38,21 @@ class Commands(MixinMeta):
     @commands.cooldown(1, 10, commands.BucketType.guild)
     @commands.group(name="threadopener", aliases=["to"])  # type: ignore
     @commands.bot_has_permissions(manage_threads=True, create_public_threads=True)
-    async def _thread_opener(self, _: commands.Context):
+    async def _thread_opener(self, _: commands.GuildContext):
         """Manage ThreadOpener settings."""
 
     @_thread_opener.command(name="toggle")  # type: ignore
-    async def _toggle(self, ctx: commands.Context, toggle: bool):
+    async def _toggle(self, ctx: commands.GuildContext, toggle: bool):
         """
         Toggle ThreadOpener enable or disable.
         """
-        await self.config.guild(ctx.guild).toggle.set(toggle)  # type: ignore
+        await self.config.guild(ctx.guild).toggle.set(toggle)
         await ctx.send(f"Thread opener is now {'enabled' if toggle else 'disabled'}.")
 
     @_thread_opener.command(name="channels", aliases=["channel"])  # type: ignore
     async def _channels(
         self,
-        ctx: commands.Context,
+        ctx: commands.GuildContext,
         add_or_remove: Literal["add", "remove"],
         channels: commands.Greedy[discord.TextChannel],  # type: ignore
     ):
@@ -69,7 +69,7 @@ class Commands(MixinMeta):
         - You can add or remove multiple channels at once.
         - You can also use channel ID instead of mentioning the channel.
         """
-        async with self.config.guild(ctx.guild).channels() as c:  # type: ignore
+        async with self.config.guild(ctx.guild).channels() as c:
             for channel in channels:
                 if add_or_remove.lower() == "add":
                     if not channel.id in c:
@@ -86,30 +86,32 @@ class Commands(MixinMeta):
         )
 
     @_thread_opener.command(name="archive")  # type: ignore
-    async def _archive(self, ctx: commands.Context, amount: Literal[0, 60, 1440, 4320, 10080]):
+    async def _archive(
+        self, ctx: commands.GuildContext, amount: Literal[0, 60, 1440, 4320, 10080]
+    ):
         """
         Change the archive duration of threads.
 
         - Use `0` to disable auto archive duration of threads.
         """
         if amount == 0:
-            await self.config.guild(ctx.guild).auto_archive_duration.clear()  # type: ignore
+            await self.config.guild(ctx.guild).auto_archive_duration.clear()
             await ctx.send("Disabled auto archive duration.")
             return
-        await self.config.guild(ctx.guild).auto_archive_duration.set(amount)  # type: ignore
+        await self.config.guild(ctx.guild).auto_archive_duration.set(amount)
         await ctx.send(f"Auto archive duration is now {amount}.")
 
     @_thread_opener.command(name="slowmode", aliases=["slow"])  # type: ignore
-    async def _slowmode(self, ctx: commands.Context, amount: commands.Range[int, 0, 21600]):
+    async def _slowmode(self, ctx: commands.GuildContext, amount: commands.Range[int, 0, 21600]):
         """
         Change the slowmode of threads.
 
         - Use `0` to dsiable slowmode delay in threads.
         """
         if amount == 0:
-            await self.config.guild(ctx.guild).slowmode_delay.clear()  # type: ignore
+            await self.config.guild(ctx.guild).slowmode_delay.clear()
             await ctx.send("Disabled slowmode on opening threads.")
-        await self.config.guild(ctx.guild).slowmode_delay.set(amount)  # type: ignore
+        await self.config.guild(ctx.guild).slowmode_delay.set(amount)
         await ctx.send(f"Slowmode is now {amount}.")
 
     @_thread_opener.group(name="message")  # type: ignore
@@ -119,16 +121,19 @@ class Commands(MixinMeta):
         """
 
     @_message.command(name="toggle")
-    async def _message_toggle(self, ctx: commands.Context, toggle: bool):
+    async def _message_toggle(self, ctx: commands.GuildContext, toggle: bool):
         """Toggle the thread opener notification message."""
-        await self.config.guild(ctx.guild).message_toggle.set(toggle)  # type: ignore
+        await self.config.guild(ctx.guild).message_toggle.set(toggle)
         await ctx.send(
             f"ThreadOpener notifications are now {'enabled' if toggle else 'disabled'}."
         )
 
     @_message.command(name="set")
     async def _message_set(
-        self, ctx: commands.Context, *, message: Optional[TagscriptConverter] = None
+        self,
+        ctx: commands.GuildContext,
+        *,
+        message: Optional[TagscriptConverter] = None,
     ):
         """
         Change the thread opener notification message.
@@ -154,21 +159,21 @@ class Commands(MixinMeta):
         ```
         """
         if message:
-            await self.config.member(ctx.author).custom_message.set(message)  # type: ignore
+            await self.config.member(ctx.author).custom_message.set(message)
             await ctx.send("Successfully changed the thread opener notification message.")
         else:
-            await self.config.member(ctx.author).custom_message.clear()  # type: ignore
+            await self.config.member(ctx.author).custom_message.clear()
             await ctx.send("Successfully reset the thread opener notification message.")
 
     @_thread_opener.command(name="showsettings", aliases=["ss", "show"])  # type: ignore
-    async def _show_settings(self, ctx: commands.Context):
+    async def _show_settings(self, ctx: commands.GuildContext):
         """Show ThreadOpener settings."""
-        data = await self.config.guild(ctx.guild).all()  # type: ignore
+        data = await self.config.guild(ctx.guild).all()
         toggle = data["toggle"]
         channels = data["channels"]
         active_channels: List[str] = []
         for channel in channels:
-            channel = ctx.guild.get_channel(channel)  # type: ignore
+            channel = ctx.guild.get_channel(channel)
             active_channels.append(channel.mention)  # type: ignore
         embed: discord.Embed = discord.Embed(
             title="ThreadOpener Settings",
