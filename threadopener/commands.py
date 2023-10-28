@@ -29,7 +29,7 @@ from redbot.core import commands
 from redbot.core.utils.chat_formatting import box, humanize_list
 
 from ._tagscript import TagscriptConverter
-from .abc import MixinMeta, CompositeMetaClass
+from .abc import CompositeMetaClass, MixinMeta
 
 
 class Commands(MixinMeta, metaclass=CompositeMetaClass):
