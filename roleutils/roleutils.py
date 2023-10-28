@@ -25,7 +25,7 @@ SOFTWARE.
 
 import asyncio
 import logging
-from typing import Any, Coroutine, Dict, Final, List, Literal, Optional, Union, Dict, TypeAlias
+from typing import Any, Coroutine, Dict, Final, List, Literal, Optional, TypeAlias, Union
 
 from redbot.core import commands
 from redbot.core.bot import Red
@@ -33,9 +33,9 @@ from redbot.core.config import Config
 from redbot.core.modlog import register_casetype
 from redbot.core.utils.chat_formatting import humanize_list
 
+from .abc import CompositeMetaClass
 from .reactroles import ReactRoles
 from .roles import Roles
-from .abc import CompositeMetaClass
 
 log: logging.Logger = logging.getLogger("red.seina.roleutils")
 

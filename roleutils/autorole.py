@@ -26,13 +26,13 @@ SOFTWARE.
 import asyncio
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Union, List, Tuple, Optional
+from typing import List, Optional, Tuple, Union
 
 import discord
 from redbot.core import commands
 from redbot.core.modlog import Case, create_case
 
-from .abc import MixinMeta, CompositeMetaClass
+from .abc import CompositeMetaClass, MixinMeta
 from .converters import FuzzyRole, StrictRole
 from .utils import my_role_heirarchy
 
