@@ -23,30 +23,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-# Multi-file class combining taken from https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/mod/mod.py
 import asyncio
 import logging
-from abc import ABC
-from typing import Any, Coroutine, Dict, Final, List, Literal, Optional, Union
+from typing import Any, Coroutine, Dict, Final, List, Literal, Optional, Union, Dict, TypeAlias
 
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.config import Config
+from redbot.core.modlog import register_casetype
 from redbot.core.utils.chat_formatting import humanize_list
 
 from .reactroles import ReactRoles
 from .roles import Roles
+from .abc import CompositeMetaClass
 
-log = logging.getLogger("red.phenom4n4n.roleutils")
+log: logging.Logger = logging.getLogger("red.seina.roleutils")
 
-RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
-
-
-class CompositeMetaClass(type(commands.Cog), type(ABC)):
-    """
-    This allows the metaclass used for proper type detection to
-    coexist with discord.py's metaclass
-    """
+RequestType: TypeAlias = Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
 
 class RoleUtils(
@@ -62,7 +55,7 @@ class RoleUtils(
     """
 
     __author__: Final[List[str]] = ["inthedark.org", "PhenoM4n4n"]
-    __version__: Final[str] = "1.4.0"
+    __version__: Final[str] = "1.5.0"
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
@@ -74,23 +67,43 @@ class RoleUtils(
         )
 
     def __init__(self, bot: Red, *_args: Any) -> None:
-        self.cache: Dict[str, Any] = {}
         self.bot: Red = bot
         self.config: Config = Config.get_conf(
             self,
             identifier=326235423452394523,
             force_registration=True,
         )
-        default_guild: Dict[str, Dict[str, Union[List[int], bool]]] = {
-            "reactroles": {"channels": [], "enabled": True}
+
+        default_guild: Dict[
+            str, Dict[str, Union[List[int], bool, Dict[str, Union[List[str], bool]]]]
+        ] = {
+            "reactroles": {"channels": [], "enabled": True},
+            "autoroles": {
+                "toggle": False,
+                "roles": [],
+                "bots": {
+                    "toggle": False,
+                    "roles": [],
+                },
+                "humans": {
+                    "toggle": False,
+                    "roles": [],
+                },
+            },
         }
         self.config.register_guild(**default_guild)
 
         default_guildmessage: Dict[str, Dict[str, Any]] = {"reactroles": {"react_to_roleid": {}}}
         self.config.init_custom("GuildMessage", 2)
         self.config.register_custom("GuildMessage", **default_guildmessage)
-        super().__init__(*_args)
+
         self.initialize_task: asyncio.Task[Any] = self.create_task(self.initialize())
+
+        self.register_cases: asyncio.Task[Any] = self.create_task(self._register_cases())
+
+        self.cache: Dict[str, Any] = {}
+
+        super().__init__(*_args)
 
     async def red_delete_data_for_user(self, *, requester: RequestType, user_id: int) -> None:
         return
@@ -98,6 +111,23 @@ class RoleUtils(
     async def initialize(self) -> None:
         log.debug("RoleUtils initialize")
         await super().initialize()
+
+    async def _register_cases(self) -> None:
+        await self.bot.wait_until_red_ready()
+        await self._register_casetype()
+
+    @staticmethod
+    async def _register_casetype() -> None:
+        autorole: Dict[str, Union[str, bool]] = {
+            "name": "autorole",
+            "default_setting": True,
+            "image": "✔️",
+            "case_str": "Auto Role",
+        }
+        try:
+            await register_casetype(**autorole)
+        except RuntimeError:
+            pass
 
     @staticmethod
     def task_done_callback(task: asyncio.Task) -> None:

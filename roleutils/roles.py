@@ -35,7 +35,7 @@ from redbot.core.utils.chat_formatting import pagify, text_to_file
 from redbot.core.utils.mod import get_audit_reason
 from TagScriptEngine import Interpreter, LooseVariableGetterBlock, MemberAdapter
 
-from .abc import MixinMeta
+from .abc import MixinMeta, CompositeMetaClass
 from .converters import FuzzyRole, RoleArgumentConverter, StrictRole, TargeterArgs, TouchableMember
 from .utils import (
     can_run_command,
@@ -61,7 +61,7 @@ def chunks(l: Sequence, n: int) -> Generator:
         yield l[i : i + n]
 
 
-class Roles(MixinMeta):
+class Roles(MixinMeta, metaclass=CompositeMetaClass):
     """
     Useful role commands.
     """

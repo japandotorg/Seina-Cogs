@@ -33,7 +33,7 @@ from redbot.core.utils.chat_formatting import pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
-from .abc import MixinMeta
+from .abc import MixinMeta, CompositeMetaClass
 from .converters import EmojiRole, ObjectConverter, RealEmojiConverter, StrictRole
 from .utils import delete_quietly, my_role_heirarchy
 
@@ -47,7 +47,7 @@ class ReactRules:
     DROP = "DROP"
 
 
-class ReactRoles(MixinMeta):
+class ReactRoles(MixinMeta, metaclass=CompositeMetaClass):
     """
     Reaction Roles.
     """

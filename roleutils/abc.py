@@ -23,10 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from abc import ABC, abstractmethod
+from abc import ABC, ABCMeta, abstractmethod
 from typing import Any, Dict
 
-from redbot.core import Config
+from redbot.core import Config, commands
 from redbot.core.bot import Red
 
 
@@ -42,7 +42,7 @@ class MixinMeta(ABC):
     bot: Red
     cache: Dict[str, Any]
 
-    def __init__(self, *_args):
+    def __init__(self, *_args: Any) -> None:
         self.config: Config
         self.bot: Red
         self.cache: Dict[str, Any]
@@ -50,3 +50,10 @@ class MixinMeta(ABC):
     @abstractmethod
     async def initialize(self) -> None:
         raise NotImplementedError()
+
+
+class CompositeMetaClass(commands.CogMeta, ABCMeta):
+    """
+    This allows the metaclass used for proper type detection to
+    coexist with discord.py's metaclass
+    """
