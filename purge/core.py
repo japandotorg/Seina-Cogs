@@ -25,7 +25,7 @@ SOFTWARE.
 import asyncio
 import logging
 import re
-from typing import Any, Callable, Coroutine, Dict, Final, List, Optional, Union, Annotated
+from typing import Annotated, Any, Callable, Coroutine, Dict, Final, List, Optional, Union
 
 import arrow
 import discord
