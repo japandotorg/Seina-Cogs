@@ -116,7 +116,7 @@ class Purge(commands.Cog):
     async def _purge(
         self,
         ctx: commands.GuildContext,
-        number: commands.Range[int, 1, 2000] = 100,
+        number: commands.Range[int, 1, 2000],
     ):
         """
         Removes messages that meet a criteria.
@@ -138,9 +138,7 @@ class Purge(commands.Cog):
             await _cleanup(ctx, number, check)
 
     @_purge.command(name="embeds", aliases=["embed"])  # type: ignore
-    async def _embeds(
-        self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000] = 100
-    ):
+    async def _embeds(self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000]):
         """
         Removes messages that have embeds in them.
 
@@ -157,8 +155,8 @@ class Purge(commands.Cog):
     async def _regex(
         self,
         ctx: commands.GuildContext,
-        pattern: Optional[str] = None,
-        number: commands.Range[int, 1, 2000] = 100,
+        pattern: Optional[str],
+        number: commands.Range[int, 1, 2000],
     ):
         """
         Removes messages that matches the regex pattern.
@@ -182,7 +180,7 @@ class Purge(commands.Cog):
         await _cleanup(ctx, number, check)
 
     @_purge.command(name="files", aliases=["file"])  # type: ignore
-    async def _files(self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000] = 100):
+    async def _files(self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000]):
         """
         Removes messages that have attachments in them.
 
@@ -196,9 +194,7 @@ class Purge(commands.Cog):
         await _cleanup(ctx, number, lambda e: len(e.attachments))
 
     @_purge.command(name="images", aliases=["image"])  # type: ignore
-    async def _images(
-        self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000] = 100
-    ):
+    async def _images(self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000]):
         """
         Removes messages that have embeds or attachments.
 
@@ -216,7 +212,7 @@ class Purge(commands.Cog):
         self,
         ctx: commands.GuildContext,
         member: discord.Member,
-        number: commands.Range[int, 1, 2000] = 100,
+        number: commands.Range[int, 1, 2000],
     ):
         """
         Removes all messages by the member.
@@ -257,8 +253,8 @@ class Purge(commands.Cog):
     async def _bot(
         self,
         ctx: commands.GuildContext,
+        number: commands.Range[int, 1, 2000],
         prefix: Optional[str] = None,
-        number: commands.Range[int, 1, 2000] = 100,
     ):
         """
         Removes bot messages, optionally takes a prefix argument.
@@ -269,7 +265,7 @@ class Purge(commands.Cog):
 
         **Examples:**
         - `[p]purge bot`
-        - `[p]purge bot ? 2000`
+        - `[p]purge bot 2000 ?`
         """
 
         def predicate(message: discord.Message) -> Union[Optional[bool], str]:
@@ -284,7 +280,7 @@ class Purge(commands.Cog):
     async def _emoji(
         self,
         ctx: commands.GuildContext,
-        number: commands.Range[int, 1, 2000] = 100,
+        number: commands.Range[int, 1, 2000],
     ):
         """
         Removes all messages containing custom emoji.
@@ -309,7 +305,7 @@ class Purge(commands.Cog):
     async def _reactions(
         self,
         ctx: commands.GuildContext,
-        number: commands.Range[int, 1, 2000] = 100,
+        number: commands.Range[int, 1, 2000],
     ):
         """
         Removes all reactions from messages that have them.
@@ -337,7 +333,7 @@ class Purge(commands.Cog):
     async def _self(
         self,
         ctx: commands.GuildContext,
-        number: commands.Range[int, 1, 2000] = 100,
+        number: commands.Range[int, 1, 2000],
     ):
         """
         Removes your messages from the channel.
@@ -355,7 +351,7 @@ class Purge(commands.Cog):
     async def _mine(
         self,
         ctx: commands.GuildContext,
-        number: commands.Range[int, 1, 2000] = 100,
+        number: commands.Range[int, 1, 2000],
     ):
         """
         Removes my messages from the channel.
@@ -373,7 +369,7 @@ class Purge(commands.Cog):
     async def _links(
         self,
         ctx: commands.GuildContext,
-        number: commands.Range[int, 1, 2000] = 100,
+        number: commands.Range[int, 1, 2000],
     ):
         """
         Removes all messages containing a link.
@@ -593,13 +589,9 @@ class Purge(commands.Cog):
         )
 
     @_purge.command(name="duplicates", aliases=["duplicate", "spam"])  # type: ignore
-    async def _duplicates(
-        self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000] = 50
-    ):
+    async def _duplicates(self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000]):
         """
         Deletes duplicate messages in the channel from the last X messages and keeps only one copy.
-
-        Defaults to 50.
 
         **Arguments:**
         - `<number>` The number of messages to check for duplicates. Must be a positive integer.
