@@ -1,4 +1,4 @@
-from typing import Optional, Literal, Annotated
+from typing import Annotated, Literal, Optional
 
 import discord
 from redbot.core import commands
