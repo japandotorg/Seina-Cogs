@@ -1,16 +1,16 @@
 import logging
-import traceback
 import textwrap
-from typing import Final, List, Dict, Any, Optional
+import traceback
+from typing import Any, Dict, Final, List, Optional
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import Config, commands
+from redbot.core.bot import Red
 from redbot.core.utils import chat_formatting as cf
 
 from .abc import CompositeMetaClass
-from .utils import async_compile, get_syntax_error
 from .commands import CommandsMixin
+from .utils import async_compile, get_syntax_error
 
 log: logging.Logger = logging.getLogger("red.seina.errorhandler")
 
