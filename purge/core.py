@@ -443,7 +443,8 @@ class Purge(commands.Cog):
             ctx.guild,
             type="purge",
             reason=reason,
-            user=ctx.author,
+            user=ctx.guild.me,
+            moderator=ctx.author,
         )
         await mod.mass_purge(to_delete, ctx.channel, reason=reason)
         await ctx.send(
@@ -515,7 +516,8 @@ class Purge(commands.Cog):
             ctx.guild,
             type="purge",
             reason=reason,
-            user=ctx.author,
+            user=ctx.guild.me,
+            moderator=ctx.author,
         )
         await mod.mass_purge(to_delete, ctx.channel, reason=reason)
         await ctx.send(
@@ -579,7 +581,8 @@ class Purge(commands.Cog):
             ctx.guild,
             type="purge",
             reason=reason,
-            user=ctx.author,
+            user=ctx.guild.me,
+            moderator=ctx.author,
         )
         await mod.mass_purge(to_delete, ctx.channel, reason=reason)
         await ctx.send(
@@ -625,7 +628,8 @@ class Purge(commands.Cog):
             ctx.guild,
             type="purge",
             reason="Duplicate message purge.",
-            user=ctx.author,
+            user=ctx.guild.me,
+            moderator=ctx.author,
         )
         await mod.mass_purge(to_delete, ctx.channel, reason="Duplicate message purge.")
         await ctx.send(

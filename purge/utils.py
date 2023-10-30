@@ -128,7 +128,8 @@ async def _cleanup(
             ctx.guild,
             type="purge",
             reason=reason,
-            user=ctx.author,
+            user=ctx.guild.me,
+            moderator=ctx.author,
         )
 
     spammers: Union[Counter[str], List[Tuple[str, int]]] = Counter(
