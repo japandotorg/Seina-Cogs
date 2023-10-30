@@ -41,7 +41,6 @@ from .utils import (
     LINKS_RE,
     _cleanup,
     _create_case,
-    copy_doc,
     get_message_from_reference,
     get_messages_for_deletion,
     has_hybrid_permissions,
@@ -388,7 +387,6 @@ class Purge(commands.Cog):
         """
         await _cleanup(ctx, number, lambda m: LINKS_RE.search(m.content))
 
-    @copy_doc(CleanupCog.after)  # type: ignore
     @_purge.command(name="after")  # type: ignore
     async def _after(
         self,
@@ -396,6 +394,18 @@ class Purge(commands.Cog):
         message_id: Optional[RawMessageIdsConverter],
         delete_pinned: Optional[bool] = False,
     ):
+        """
+        Delete all messages after a specified message.
+
+        To get a message id, enable developer mode in Discord's
+        settings, 'appearance' tab. Then right click a message
+        and copy its id.
+        Replying to a message will cleanup all messages after it.
+
+        **Arguments:**
+        - `<message_id>` The id of the message to cleanup after. This message won't be deleted.
+        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
+        """
         after: Optional[discord.Message] = None
 
         if message_id:
@@ -446,7 +456,6 @@ class Purge(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
-    @copy_doc(CleanupCog.before)  # type: ignore
     @_purge.command(name="before")  # type: ignore
     async def _before(
         self,
@@ -455,6 +464,19 @@ class Purge(commands.Cog):
         number: commands.Range[int, 1, 2000],
         delete_pinned: Optional[bool] = False,
     ):
+        """
+        Deletes X messages before the specified message.
+
+        To get a message id, enable developer mode in Discord's
+        settings, 'appearance' tab. Then right click a message
+        and copy its id.
+        Replying to a message will cleanup all messages before it.
+
+        **Arguments:**
+        - `<message_id>` The id of the message to cleanup before. This message won't be deleted.
+        - `<number>` The max number of messages to cleanup. Must be a positive integer.
+        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
+        """
         before: Optional[discord.Message] = None
 
         if message_id:
@@ -506,7 +528,6 @@ class Purge(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
-    @copy_doc(CleanupCog.between)  # type: ignore
     @_purge.command(name="between")  # type: ignore
     async def _between(
         self,
@@ -515,6 +536,19 @@ class Purge(commands.Cog):
         two: RawMessageIdsConverter,
         delete_pinned: Optional[bool] = None,
     ):
+        """
+        Delete the messages between Message One and Message Two, providing the messages IDs.
+
+        The first message ID should be the older message and the second one the newer.
+
+        **Arguments:**
+        - `<one>` The id of the message to cleanup after. This message won't be deleted.
+        - `<two>` The id of the message to cleanup before. This message won't be deleted.
+        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False.
+
+        **Example:**
+        - `[p]cleanup between 123456789123456789 987654321987654321`
+        """
         try:
             message_one: Optional[discord.Message] = await ctx.channel.fetch_message(one)  # type: ignore
         except discord.NotFound:
@@ -558,11 +592,18 @@ class Purge(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
-    @copy_doc(CleanupCog.cleanup_duplicates)  # type: ignore
     @_purge.command(name="duplicates", aliases=["duplicate", "spam"])  # type: ignore
     async def _duplicates(
         self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000] = 50
     ):
+        """
+        Deletes duplicate messages in the channel from the last X messages and keeps only one copy.
+
+        Defaults to 50.
+
+        **Arguments:**
+        - `<number>` The number of messages to check for duplicates. Must be a positive integer.
+        """
         messages: List[discord.Message] = []
         spam: List[discord.Message] = []
 

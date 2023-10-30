@@ -24,7 +24,6 @@ SOFTWARE.
 
 import datetime
 import re
-import types
 from collections import Counter
 from typing import Any, Callable, Dict, List, Optional, Pattern, Tuple, TypeVar, Union
 
@@ -257,18 +256,5 @@ def has_hybrid_permissions(**perms: bool) -> Callable[[T], T]:
         commands.check(predicate)(func)
         discord.app_commands.default_permissions(**perms)(func)
         return func
-
-    return decorator
-
-
-def copy_doc(
-    original: Union[commands.Command, types.FunctionType]
-) -> Callable[[Union[commands.Command, types.FunctionType]], Any]:
-    def decorator(overriden: Union[commands.Command, types.FunctionType]) -> None:
-        doc = original.help if isinstance(original, commands.Command) else original.__doc__
-        if isinstance(overriden, commands.Command):
-            overriden._help_override = doc
-        else:
-            overriden.__doc__ = doc
 
     return decorator
