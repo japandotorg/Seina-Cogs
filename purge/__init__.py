@@ -14,6 +14,6 @@ async def setup(bot: Red) -> None:
             raise CogLoadError(
                 f"This cog conflicts with {cog_name} and both cannot be loaded at the same time."
             )
-            
+
     cog = Purge(bot)
     await bot.add_cog(cog)

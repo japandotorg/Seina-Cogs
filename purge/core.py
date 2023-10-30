@@ -1,28 +1,28 @@
-import re
 import asyncio
 import logging
+import re
 from datetime import datetime, timedelta
-from typing import Callable, Coroutine, Final, List, Optional, Union, Any, Dict
+from typing import Any, Callable, Coroutine, Dict, Final, List, Optional, Union
 
 import discord
+from redbot.cogs.cleanup.cleanup import Cleanup as CleanupCog
+from redbot.core import app_commands, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.utils import mod
-from redbot.core.utils.chat_formatting import humanize_number, humanize_list
-from redbot.cogs.cleanup.cleanup import Cleanup as CleanupCog
-from redbot.core import commands, app_commands, modlog
+from redbot.core.utils.chat_formatting import humanize_list, humanize_number
 
+from .converters import PurgeFlags, RawMessageIdsConverter
 from .utils import (
-    has_hybrid_permissions,
-    get_message_from_reference,
-    get_messages_for_deletion,
-    with_typing,
+    CUSTOM_EMOJI_RE,
+    LINKS_RE,
     _cleanup,
     _create_case,
     copy_doc,
-    CUSTOM_EMOJI_RE,
-    LINKS_RE,
+    get_message_from_reference,
+    get_messages_for_deletion,
+    has_hybrid_permissions,
+    with_typing,
 )
-from .converters import PurgeFlags, RawMessageIdsConverter
 
 log: logging.Logger = logging.getLogger("red.seina.purge")
 

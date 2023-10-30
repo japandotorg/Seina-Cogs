@@ -1,13 +1,13 @@
-import re
 import datetime
-from collections import Counter
 import functools
+import re
 import types
-from typing import Callable, Any, Optional, Union, List, Tuple, Dict, TypeVar, Awaitable, Pattern
+from collections import Counter
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Pattern, Tuple, TypeVar, Union
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import commands, modlog
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_number
 
 T = TypeVar("T")
