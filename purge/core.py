@@ -253,8 +253,8 @@ class Purge(commands.Cog):
     async def _bot(
         self,
         ctx: commands.GuildContext,
+        prefix: Optional[str],  # type: ignore
         number: commands.Range[int, 1, 2000],
-        prefix: Optional[str] = None,
     ):
         """
         Removes bot messages, optionally takes a prefix argument.
@@ -267,6 +267,8 @@ class Purge(commands.Cog):
         - `[p]purge bot`
         - `[p]purge bot 2000 ?`
         """
+        if not prefix:
+            prefix: Optional[str] = None
 
         def predicate(message: discord.Message) -> Union[Optional[bool], str]:
             return (
