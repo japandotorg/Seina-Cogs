@@ -55,11 +55,14 @@ class CommandsMixin(MixinMeta, metaclass=CompositeMetaClass):
         """
         Set the string to evaluate, use a python code block.
 
-        Environment variables:
+        **Environment variables:**
             cf      - redbot.core.utils.chat_formatting module
             ctx     - context of invokation
             error   - the error that was raised
             discord - discord.py library
+
+        **Examples:**
+        - https://sourceb.in/Xalopv0AhZ
         """
         body: str = cleanup_code(code)
         await self.config.message.set(body)
