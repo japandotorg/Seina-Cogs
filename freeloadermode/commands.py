@@ -22,15 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from datetime import timedelta, timezone, datetime
-from typing import Literal, Optional, Union, Dict, Any
+from datetime import datetime, timedelta, timezone
+from typing import Any, Dict, Literal, Optional, Union
 
 import discord
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box
 
-from .converters import TimeConverter, BanLengthConverter, TagScriptConverter
 from .abc import CompositeMetaClass, MixinMeta
+from .converters import BanLengthConverter, TagScriptConverter, TimeConverter
 from .utils import guild_roughly_chunked
 
 

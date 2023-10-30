@@ -23,28 +23,27 @@ SOFTWARE.
 """
 
 import asyncio
-import logging
 import contextlib
+import logging
 from datetime import datetime, timedelta, timezone
-from typing import Coroutine, Final, List, Dict, Union, Any, Optional, Literal
+from typing import Any, Coroutine, Dict, Final, List, Literal, Optional, Union
 
 import discord
+import TagScriptEngine as tse
 from discord.ext import tasks
-from redbot.core.bot import Red
 from redbot.core import Config, commands, modlog
+from redbot.core.bot import Red
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_list
-
-import TagScriptEngine as tse
 from redbot.core.utils.mod import get_audit_reason
 
-from .abc import CompositeMetaClass
 from ._tagscript import (
     TAGSCRIPT_LIMIT,
     TagCharacterLimitReached,
     freeloader_message,
     process_tagscript,
 )
+from .abc import CompositeMetaClass
 from .commands import CommandsMixin
 
 log: logging.Logger = logging.getLogger("red.seina.freeloadermode")
