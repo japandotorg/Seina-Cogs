@@ -22,12 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Final, List, Dict, Union, final
+from typing import Dict, Final, List, Union, final
 
 import discord
-from redbot.core.utils.chat_formatting import humanize_number
-
 import TagScriptEngine as tse
+from redbot.core.utils.chat_formatting import humanize_number
 
 TAGSCRIPT_LIMIT: Final[int] = 10_000
 
