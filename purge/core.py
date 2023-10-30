@@ -25,7 +25,7 @@ SOFTWARE.
 import asyncio
 import logging
 import re
-from typing import Any, Callable, Coroutine, Dict, Final, List, Optional, Union
+from typing import Any, Callable, Coroutine, Dict, Final, List, Optional, Union, Annotated
 
 import arrow
 import discord
@@ -35,7 +35,7 @@ from redbot.core.bot import Red
 from redbot.core.utils import mod
 from redbot.core.utils.chat_formatting import humanize_list, humanize_number
 
-from .converters import PurgeFlags, RawMessageIdsConverter
+from .converters import PurgeFlags, RawMessageIdsConverter, Snowflake
 from .utils import (
     CUSTOM_EMOJI_RE,
     LINKS_RE,
@@ -638,7 +638,7 @@ class Purge(commands.Cog):
     async def _custom(
         self,
         ctx: commands.GuildContext,
-        number: Optional[commands.Range[int, 1, 2000]] = None,
+        number: Optional[commands.Range[int, 1, 2000]] = None,  # type: ignore
         *,
         flags: PurgeFlags,
     ):
@@ -705,12 +705,12 @@ class Purge(commands.Cog):
 
         if flags.after:
             if number is None:
-                number = 2000
+                number: int = 2000
 
         if number is None:
-            number = 100
+            number: int = 100
 
-        before = flags.before if flags.before else None
-        after = flags.after if flags.after else None
+        before: Optional[Annotated[int, Snowflake]] = flags.before if flags.before else None
+        after: Optional[Annotated[int, Snowflake]] = flags.after if flags.after else None
 
         await _cleanup(ctx, number, predicate, before=before, after=after)
