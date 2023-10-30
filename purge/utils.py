@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-import datetime
->>>>>>> b2270ebe6fe66f8b58d33e35756ec68ee17ffbc6
 import re
 import datetime
 import types
