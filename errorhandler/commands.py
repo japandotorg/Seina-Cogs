@@ -37,7 +37,6 @@ class CommandsMixin(MixinMeta, metaclass=CompositeMetaClass):
         """
         Set and view the code for when a CommandInvokeError is raised.
         """
-        pass
 
     @_error_handler.command(name="view")  # type: ignore
     async def _error_handler_view(self, ctx: commands.Context):
