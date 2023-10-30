@@ -24,6 +24,7 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 | Lock        | 1.1.5            | <details><summary>Lock channels</summary>Lock channels or the whole server</details>                                             |
 | DisboardReminder | 1.3.7            | <details><summary>Set a reminder to bump on disboard</summary>Set a reminder to bump on disboard</details>                  |
 | Purge       | 0.1.0            | <details><summary>Advanced Purge/Cleanup.</summary>Purge (deleted) messages that meet a criteria.</details>                      |
+| FreeloaderMode | 0.1.0         | <details><summary>Ban users that leave your server right after an event or something.</summary>Ban freeloaders who leave your server right after an event or something.</details> |
 
 
 Any questions you can find [Melon](https://discord.com/oauth2/authorize?client_id=808706062013825036&scope=bot&permissions=1099511627767%20applications.commands) and myself over on [the support server](https://discord.gg/mXfYuMy92r)
