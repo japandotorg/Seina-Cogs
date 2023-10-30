@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import re
-from datetime import datetime, timedelta
+import arrow
 from typing import Any, Callable, Coroutine, Dict, Final, List, Optional, Union
 
 import discord
@@ -110,8 +110,7 @@ class Purge(commands.Cog):
         if ctx.invoked_subcommand is None:
 
             def check(message: discord.Message) -> bool:
-                date = datetime.utcnow() - timedelta(days=14)
-                return message.created_at > date
+                return message.created_at > arrow.utcnow().shift(days=-14).datetime
 
             await _cleanup(ctx, number, check)
 
@@ -151,8 +150,10 @@ class Purge(commands.Cog):
         """
 
         def check(message: discord.Message) -> bool:
-            date = datetime.utcnow() - timedelta(days=14)
-            ret = bool(re.match(rf"{pattern}", message.content)) and message.created_at > date
+            ret = (
+                bool(re.match(rf"{pattern}", message.content))
+                and message.created_at > arrow.utcnow().shift(days=-14).datetime
+            )
             return ret
 
         await _cleanup(ctx, number, check)
@@ -249,11 +250,10 @@ class Purge(commands.Cog):
         """
 
         def predicate(message: discord.Message) -> Union[Optional[bool], str]:
-            date = datetime.utcnow() - timedelta(days=14)
             return (
                 (message.webhook_id is None and message.author.bot)
                 or (prefix and message.content.startswith(prefix))
-            ) and message.created_at > date
+            ) and message.created_at > arrow.utcnow().shift(days=-14).datetime
 
         await _cleanup(ctx, number, predicate)
 
@@ -275,8 +275,10 @@ class Purge(commands.Cog):
         """
 
         def predicate(message: discord.Message) -> bool:
-            date = datetime.utcnow() - timedelta(days=14)
-            return bool(CUSTOM_EMOJI_RE.search(message.content) and message.created_at > date)
+            return bool(
+                CUSTOM_EMOJI_RE.search(message.content)
+                and message.created_at > arrow.utcnow().shift(days=-14).datetime
+            )
 
         await _cleanup(ctx, number, predicate)
 

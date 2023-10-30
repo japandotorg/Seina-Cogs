@@ -1,6 +1,5 @@
-import datetime
-import functools
 import re
+import datetime
 import types
 from collections import Counter
 from typing import Any, Callable, Dict, List, Optional, Pattern, Tuple, TypeVar, Union
@@ -185,7 +184,9 @@ async def get_messages_for_deletion(
     after: Optional[Union[discord.Message, datetime.datetime]] = None,
     delete_pinned: Optional[bool] = False,
 ) -> List[discord.Message]:
-    date = datetime.datetime.utcnow() - datetime.timedelta(days=14)
+    date: datetime.datetime = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
+        days=14, minutes=-5
+    )
 
     def predicate(message: discord.Message) -> bool:
         return (

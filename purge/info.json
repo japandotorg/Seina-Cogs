@@ -13,7 +13,9 @@
         "server"
     ],
     "required_cogs": {},
-    "requirements": [],
+    "requirements": [
+        "arrow"
+    ],
     "type": "COG",
     "end_user_data_statement": "This cog does not store any user data."
 }
