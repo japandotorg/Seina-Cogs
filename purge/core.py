@@ -91,7 +91,7 @@ class Purge(commands.Cog):
     @commands.bot_has_permissions(manage_messages=True)
     @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @app_commands.describe(number="The number of messages you want to delete.")
-    @commands.group(name="purge", aliases=["clean", "cleanup"], invoke_without_command=True)
+    @commands.hybrid_group(name="purge", aliases=["clean", "cleanup"], invoke_without_command=True)
     async def _purge(
         self,
         ctx: commands.GuildContext,
