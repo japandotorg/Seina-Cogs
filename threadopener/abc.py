@@ -40,7 +40,7 @@ class MixinMeta(ABC):
         super().__init__()
 
     @abstractmethod
-    async def format_help_for_context(self, ctx: commands.Context) -> str:
+    def format_help_for_context(self, ctx: commands.Context) -> str:
         raise NotImplementedError()
 
     @abstractmethod
