@@ -21,7 +21,6 @@ from .utils import (
     get_message_from_reference,
     get_messages_for_deletion,
     has_hybrid_permissions,
-    with_typing,
 )
 
 log: logging.Logger = logging.getLogger("red.seina.purge")
@@ -86,7 +85,6 @@ class Purge(commands.Cog):
         self.task.cancel()
         await super().cog_unload()
 
-    @with_typing
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
     @has_hybrid_permissions(manage_messages=True, read_message_history=True)
@@ -117,8 +115,7 @@ class Purge(commands.Cog):
 
             await _cleanup(ctx, number, check)
 
-    @with_typing
-    @_purge.command(name="embeds", aliases=["embed"])
+    @_purge.command(name="embeds", aliases=["embed"])  # type: ignore
     async def _embeds(
         self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000] = 100
     ):
@@ -134,8 +131,7 @@ class Purge(commands.Cog):
         """
         await _cleanup(ctx, number, lambda e: len(e.embeds))
 
-    @with_typing
-    @_purge.command(name="regex")
+    @_purge.command(name="regex")  # type: ignore
     async def _regex(
         self,
         ctx: commands.GuildContext,
@@ -161,8 +157,7 @@ class Purge(commands.Cog):
 
         await _cleanup(ctx, number, check)
 
-    @with_typing
-    @_purge.command(name="files", aliases=["file"])
+    @_purge.command(name="files", aliases=["file"])  # type: ignore
     async def _files(self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000] = 100):
         """
         Removes messages that have attachments in them.
@@ -176,8 +171,7 @@ class Purge(commands.Cog):
         """
         await _cleanup(ctx, number, lambda e: len(e.attachments))
 
-    @with_typing
-    @_purge.command(name="images", aliases=["image"])
+    @_purge.command(name="images", aliases=["image"])  # type: ignore
     async def _images(
         self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000] = 100
     ):
@@ -193,8 +187,7 @@ class Purge(commands.Cog):
         """
         await _cleanup(ctx, number, lambda e: len(e.embeds) or len(e.attachments))
 
-    @with_typing
-    @_purge.command(name="user", aliases=["member"])
+    @_purge.command(name="user", aliases=["member"])  # type: ignore
     async def _user(
         self,
         ctx: commands.GuildContext,
@@ -214,8 +207,7 @@ class Purge(commands.Cog):
         """
         await _cleanup(ctx, number, lambda e: e.author == member)
 
-    @with_typing
-    @_purge.command(name="contains", aliases=["contain"])
+    @_purge.command(name="contains", aliases=["contain"])  # type: ignore
     async def _contains(self, ctx: commands.GuildContext, *, text: str):
         """
         Removes all messages containing a text.
@@ -237,8 +229,7 @@ class Purge(commands.Cog):
         else:
             await _cleanup(ctx, 100, lambda e: text in e.content)
 
-    @with_typing
-    @_purge.command(name="bot", aliases=["bots"])
+    @_purge.command(name="bot", aliases=["bots"])  # type: ignore
     async def _bot(
         self,
         ctx: commands.GuildContext,
@@ -266,8 +257,7 @@ class Purge(commands.Cog):
 
         await _cleanup(ctx, number, predicate)
 
-    @with_typing
-    @_purge.command(name="emoji", aliases=["emojis"])
+    @_purge.command(name="emoji", aliases=["emojis"])  # type: ignore
     async def _emoji(
         self,
         ctx: commands.GuildContext,
@@ -290,8 +280,7 @@ class Purge(commands.Cog):
 
         await _cleanup(ctx, number, predicate)
 
-    @with_typing
-    @_purge.command(name="reactions", aliases=["reaction"])
+    @_purge.command(name="reactions", aliases=["reaction"])  # type: ignore
     async def _reactions(
         self,
         ctx: commands.GuildContext,
@@ -319,8 +308,7 @@ class Purge(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
-    @with_typing
-    @_purge.command(name="self")
+    @_purge.command(name="self")  # type: ignore
     async def _self(
         self,
         ctx: commands.GuildContext,
@@ -338,8 +326,7 @@ class Purge(commands.Cog):
         """
         await _cleanup(ctx, number, lambda e: e.author == ctx.author)
 
-    @with_typing
-    @_purge.command(name="mine")
+    @_purge.command(name="mine")  # type: ignore
     async def _mine(
         self,
         ctx: commands.GuildContext,
@@ -357,8 +344,7 @@ class Purge(commands.Cog):
         """
         await _cleanup(ctx, number, lambda e: e.author == ctx.guild.me)
 
-    @with_typing
-    @_purge.command(name="links", aliases=["link"])
+    @_purge.command(name="links", aliases=["link"])  # type: ignore
     async def _links(
         self,
         ctx: commands.GuildContext,
@@ -376,9 +362,8 @@ class Purge(commands.Cog):
         """
         await _cleanup(ctx, number, lambda m: LINKS_RE.search(m.content))
 
-    @with_typing
-    @copy_doc(CleanupCog.after)
-    @_purge.command(name="after")
+    @copy_doc(CleanupCog.after)  # type: ignore
+    @_purge.command(name="after")  # type: ignore
     async def _after(
         self,
         ctx: commands.GuildContext,
@@ -435,9 +420,8 @@ class Purge(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
-    @with_typing
-    @copy_doc(CleanupCog.before)
-    @_purge.command(name="before")
+    @copy_doc(CleanupCog.before)  # type: ignore
+    @_purge.command(name="before")  # type: ignore
     async def _before(
         self,
         ctx: commands.GuildContext,
@@ -496,9 +480,8 @@ class Purge(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
-    @with_typing
-    @copy_doc(CleanupCog.between)
-    @_purge.command(name="between")
+    @copy_doc(CleanupCog.between)  # type: ignore
+    @_purge.command(name="between")  # type: ignore
     async def _between(
         self,
         ctx: commands.GuildContext,
@@ -549,9 +532,8 @@ class Purge(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
-    @with_typing
-    @copy_doc(CleanupCog.cleanup_duplicates)
-    @_purge.command(name="duplicates", aliases=["duplicate", "spam"])
+    @copy_doc(CleanupCog.cleanup_duplicates)  # type: ignore
+    @_purge.command(name="duplicates", aliases=["duplicate", "spam"])  # type: ignore
     async def _duplicates(
         self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000] = 50
     ):
@@ -593,8 +575,7 @@ class Purge(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
-    @with_typing
-    @_purge.command(name="custom")
+    @_purge.command(name="custom")  # type: ignore
     async def _custom(
         self,
         ctx: commands.GuildContext,

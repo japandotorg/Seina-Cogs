@@ -3,7 +3,7 @@ import functools
 import re
 import types
 from collections import Counter
-from typing import Any, Awaitable, Callable, Dict, List, Optional, Pattern, Tuple, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, Pattern, Tuple, TypeVar, Union
 
 import discord
 from redbot.core import commands, modlog
@@ -234,16 +234,6 @@ def has_hybrid_permissions(**perms: bool) -> Callable[[T], T]:
         return func
 
     return decorator
-
-
-def with_typing(func: Callable[..., Awaitable[Any]]) -> Callable[..., Awaitable[Any]]:
-    @functools.wraps(func)
-    async def wrapper(*args: Any, **kwargs: Any) -> Optional[discord.Message]:
-        context = args[0] if isinstance(args[0], commands.Context) else args[1]
-        async with context.typing():
-            return await func(*args, **kwargs)
-
-    return wrapper
 
 
 def copy_doc(
