@@ -1,5 +1,4 @@
 import datetime
-import functools
 import re
 import types
 from collections import Counter
