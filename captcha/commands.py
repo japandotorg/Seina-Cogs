@@ -169,7 +169,7 @@ class CaptchaCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
             color=await ctx.embed_color(),
         )
-        embed.set_thumbnail(url=getattr(ctx.guild.icon, "url", ""))
+        embed.set_thumbnail(url=getattr(ctx.guild.icon, "url", None))
         embed.add_field(
             name="Before Captcha Message:",
             value=box(str(data["message_before_captcha"]), lang="json"),
