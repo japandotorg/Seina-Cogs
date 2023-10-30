@@ -1,9 +1,9 @@
 import asyncio
 import logging
 import re
-import arrow
 from typing import Any, Callable, Coroutine, Dict, Final, List, Optional, Union
 
+import arrow
 import discord
 from redbot.cogs.cleanup.cleanup import Cleanup as CleanupCog
 from redbot.core import app_commands, commands, modlog
