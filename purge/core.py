@@ -166,7 +166,7 @@ class Purge(commands.Cog):
         - `<number`: The number of messages you want to delete.
 
         **Examples:**
-        - `[p]purge regex (?i)(h(?:appy)`
+        - `[p]purge regex (?i)(h(?:appy) 1`
         - `[p]purge regex (?i)(h(?:appy) 10`
         """
 
@@ -188,7 +188,7 @@ class Purge(commands.Cog):
         - `<number`: The number of messages you want to delete.
 
         **Examples:**
-        - `[p]purge files`
+        - `[p]purge files 10`
         - `[p]purge files 2000`
         """
         await _cleanup(ctx, number, lambda e: len(e.attachments))
@@ -202,7 +202,7 @@ class Purge(commands.Cog):
         - `<number`: The number of messages you want to delete.
 
         **Examples:**
-        - `[p]purge images`
+        - `[p]purge images 10`
         - `[p]purge images 2000`
         """
         await _cleanup(ctx, number, lambda e: len(e.embeds) or len(e.attachments))
@@ -253,22 +253,20 @@ class Purge(commands.Cog):
     async def _bot(
         self,
         ctx: commands.GuildContext,
-        prefix: Optional[str],  # type: ignore
-        number: commands.Range[int, 1, 2000],
+        prefix: Optional[str] = None,
+        number: commands.Range[int, 1, 2000] = 100,
     ):
         """
         Removes bot messages, optionally takes a prefix argument.
 
         **Arguments:**
         - `<prefix>`: The bot's prefix you want to remove.
-        - `<number`: The number of messages you want to delete.
+        - `<number`: The number of messages you want to delete. (Defaults to 100)
 
         **Examples:**
         - `[p]purge bot`
-        - `[p]purge bot 2000 ?`
+        - `[p]purge bot ? 2000`
         """
-        if not prefix:
-            prefix: Optional[str] = None
 
         def predicate(message: discord.Message) -> Union[Optional[bool], str]:
             return (
@@ -291,7 +289,7 @@ class Purge(commands.Cog):
         - `<number`: The number of messages you want to delete.
 
         **Examples:**
-        - `[p]purge emoji`
+        - `[p]purge emoji 10`
         - `[p]purge emoji 200`
         """
 
@@ -316,7 +314,7 @@ class Purge(commands.Cog):
         - `<number`: The number of messages you want to delete.
 
         **Examples:**
-        - `[p]purge reactions`
+        - `[p]purge reactions 10`
         - `[p]purge reactions 200`
         """
         total_reactions: int = 0
@@ -344,7 +342,7 @@ class Purge(commands.Cog):
         - `<number`: The number of messages you want to delete.
 
         **Examples:**
-        - `[p]purge self`
+        - `[p]purge self 10`
         - `[p]purge self 2000`
         """
         await _cleanup(ctx, number, lambda e: e.author == ctx.author)
@@ -362,7 +360,7 @@ class Purge(commands.Cog):
         - `<number`: The number of messages you want to delete.
 
         **Examples:**
-        - `[p]purge mine`
+        - `[p]purge mine 10`
         - `[p]purge mine 2000`
         """
         await _cleanup(ctx, number, lambda e: e.author == ctx.guild.me)
@@ -380,7 +378,7 @@ class Purge(commands.Cog):
         - `<number`: The number of messages you want to delete.
 
         **Examples:**
-        - `[p]purge links`
+        - `[p]purge links 10`
         - `[p]purge links 2000`
         """
         await _cleanup(ctx, number, lambda m: LINKS_RE.search(m.content))
