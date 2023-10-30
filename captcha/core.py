@@ -35,7 +35,7 @@ import discord
 import TagScriptEngine as tse
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core.data_manager import bundled_data_path, cog_data_path
+from redbot.core.data_manager import bundled_data_path
 
 from ._tagscript import TAGSCRIPT_LIMIT as TAGSCRIPT_LIMIT
 from ._tagscript import TagCharacterLimitReached as TagCharacterLimitReached
