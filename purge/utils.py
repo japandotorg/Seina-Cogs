@@ -1,25 +1,7 @@
 """
-MIT License
+Mozilla Public License Version 2.0
 
 Copyright (c) 2023-present japandotorg
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 """
 
 import datetime
@@ -132,6 +114,7 @@ async def _cleanup(
             moderator=ctx.author,
         )
 
+    # https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/mod.py#L1814
     spammers: Union[Counter[str], List[Tuple[str, int]]] = Counter(
         m.author.display_name for m in deleted
     )
@@ -249,6 +232,7 @@ async def _check_permissions(ctx: commands.GuildContext, perms: Dict[str, bool])
     return all(getattr(resolved, name, None) == value for name, value in perms.items())
 
 
+# https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/utils/checks.py#L59
 def has_hybrid_permissions(**perms: bool) -> Callable[[T], T]:
     async def predicate(ctx: commands.GuildContext) -> bool:
         return await _check_permissions(ctx, perms)
