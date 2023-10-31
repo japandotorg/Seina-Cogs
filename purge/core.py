@@ -35,7 +35,7 @@ class Purge(commands.Cog):
     __doc__ = CleanupCog.__doc__
 
     __author__: Final[List[str]] = ["inthedark.org"]
-    __version__: Final[str] = "0.1.0"
+    __version__: Final[str] = "0.1.1"
 
     def __init__(self, bot: Red) -> None:
         super().__init__()
@@ -99,6 +99,9 @@ class Purge(commands.Cog):
         self,
         ctx: commands.GuildContext,
         number: commands.Range[int, 1, 2000],
+        channel: Optional[
+            Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
     ):
         """
         Removes messages that meet a criteria.
@@ -107,6 +110,7 @@ class Purge(commands.Cog):
 
         **Arguments:**
         - `<number`: The number of messages you want to delete.
+        - `<channel>`: The channel you want to delete messages in. (Defaults to current channel)
 
         **Example:**
         - `[p]purge 10`
@@ -117,21 +121,29 @@ class Purge(commands.Cog):
             def check(message: discord.Message) -> bool:
                 return message.created_at > arrow.utcnow().shift(days=-14).datetime
 
-            await _cleanup(ctx, number, check)
+            await _cleanup(ctx, number, check, channel=channel)
 
     @_purge.command(name="embeds", aliases=["embed"])  # type: ignore
-    async def _embeds(self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000]):
+    async def _embeds(
+        self,
+        ctx: commands.GuildContext,
+        number: commands.Range[int, 1, 2000],
+        channel: Optional[
+            Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
+    ):
         """
         Removes messages that have embeds in them.
 
         **Arguments:**
         - `<number`: The number of messages you want to delete.
+        - `<channel>`: The channel you want to delete messages in. (Defaults to current channel)
 
         **Examples:**
         - `[p]purge embeds 10`
         - `[p]purge embeds 2000`
         """
-        await _cleanup(ctx, number, lambda e: len(e.embeds))
+        await _cleanup(ctx, number, lambda e: len(e.embeds), channel=channel)
 
     @_purge.command(name="regex")  # type: ignore
     async def _regex(
@@ -139,6 +151,9 @@ class Purge(commands.Cog):
         ctx: commands.GuildContext,
         pattern: Optional[str],
         number: commands.Range[int, 1, 2000],
+        channel: Optional[
+            Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
     ):
         """
         Removes messages that matches the regex pattern.
@@ -146,6 +161,7 @@ class Purge(commands.Cog):
         **Arguments:**
         - `<pattern>`: The regex pattern to match.
         - `<number`: The number of messages you want to delete.
+        - `<channel>`: The channel you want to delete messages in. (Defaults to current channel)
 
         **Examples:**
         - `[p]purge regex (?i)(h(?:appy) 1`
@@ -159,35 +175,51 @@ class Purge(commands.Cog):
             )
             return ret
 
-        await _cleanup(ctx, number, check)
+        await _cleanup(ctx, number, check, channel=channel)
 
     @_purge.command(name="files", aliases=["file"])  # type: ignore
-    async def _files(self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000]):
+    async def _files(
+        self,
+        ctx: commands.GuildContext,
+        number: commands.Range[int, 1, 2000],
+        channel: Optional[
+            Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
+    ):
         """
         Removes messages that have attachments in them.
 
         **Arguments:**
         - `<number`: The number of messages you want to delete.
+        - `<channel>`: The channel you want to delete messages in. (Defaults to current channel)
 
         **Examples:**
         - `[p]purge files 10`
         - `[p]purge files 2000`
         """
-        await _cleanup(ctx, number, lambda e: len(e.attachments))
+        await _cleanup(ctx, number, lambda e: len(e.attachments), channel=channel)
 
     @_purge.command(name="images", aliases=["image"])  # type: ignore
-    async def _images(self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000]):
+    async def _images(
+        self,
+        ctx: commands.GuildContext,
+        number: commands.Range[int, 1, 2000],
+        channel: Optional[
+            Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
+    ):
         """
         Removes messages that have embeds or attachments.
 
         **Arguments:**
         - `<number`: The number of messages you want to delete.
+        - `<channel>`: The channel you want to delete messages in. (Defaults to current channel)
 
         **Examples:**
         - `[p]purge images 10`
         - `[p]purge images 2000`
         """
-        await _cleanup(ctx, number, lambda e: len(e.embeds) or len(e.attachments))
+        await _cleanup(ctx, number, lambda e: len(e.embeds) or len(e.attachments), channel=channel)
 
     @_purge.command(name="user", aliases=["member"])  # type: ignore
     async def _user(
@@ -195,6 +227,9 @@ class Purge(commands.Cog):
         ctx: commands.GuildContext,
         member: discord.Member,
         number: commands.Range[int, 1, 2000],
+        channel: Optional[
+            Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
     ):
         """
         Removes all messages by the member.
@@ -202,21 +237,31 @@ class Purge(commands.Cog):
         **Arguments:**
         - `<member>`: The user to delete messages for.
         - `<number`: The number of messages you want to delete.
+        - `<channel>`: The channel you want to delete messages in. (Defaults to current channel)
 
         **Examples:**
         - `[p]purge user @member`
         - `[p]purge user @member 2000`
         """
-        await _cleanup(ctx, number, lambda e: e.author == member)
+        await _cleanup(ctx, number, lambda e: e.author == member, channel=channel)
 
     @_purge.command(name="contains", aliases=["contain"])  # type: ignore
-    async def _contains(self, ctx: commands.GuildContext, *, text: str):
+    async def _contains(
+        self,
+        ctx: commands.GuildContext,
+        *,
+        text: str,
+        channel: Optional[
+            Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
+    ):
         """
         Removes all messages containing a text.
         The text must be at least 3 characters long.
 
         **Arguments:**
         - `<text>`: the text to be removed.
+        - `<channel>`: The channel you want to delete messages in. (Defaults to current channel)
 
         **Examples:**
         - `[p]purge contains hi`
@@ -229,7 +274,7 @@ class Purge(commands.Cog):
                 allowed_mentions=discord.AllowedMentions(replied_user=False),
             )
         else:
-            await _cleanup(ctx, 100, lambda e: text in e.content)
+            await _cleanup(ctx, 100, lambda e: text in e.content, channel=channel)
 
     @_purge.command(name="bot", aliases=["bots"])  # type: ignore
     async def _bot(
@@ -237,6 +282,9 @@ class Purge(commands.Cog):
         ctx: commands.GuildContext,
         prefix: Optional[str] = None,
         number: commands.Range[int, 1, 2000] = 100,
+        channel: Optional[
+            Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
     ):
         """
         Removes bot messages, optionally takes a prefix argument.
@@ -244,6 +292,7 @@ class Purge(commands.Cog):
         **Arguments:**
         - `<prefix>`: The bot's prefix you want to remove.
         - `<number`: The number of messages you want to delete. (Defaults to 100)
+        - `<channel>`: The channel you want to delete messages in. (Defaults to current channel)
 
         **Examples:**
         - `[p]purge bot`
@@ -256,19 +305,23 @@ class Purge(commands.Cog):
                 or (prefix and message.content.startswith(prefix))
             ) and message.created_at > arrow.utcnow().shift(days=-14).datetime
 
-        await _cleanup(ctx, number, predicate)
+        await _cleanup(ctx, number, predicate, channel=channel)
 
     @_purge.command(name="emoji", aliases=["emojis"])  # type: ignore
     async def _emoji(
         self,
         ctx: commands.GuildContext,
         number: commands.Range[int, 1, 2000],
+        channel: Optional[
+            Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
     ):
         """
         Removes all messages containing custom emoji.
 
         **Arguments:**
         - `<number`: The number of messages you want to delete.
+        - `<channel>`: The channel you want to delete messages in. (Defaults to current channel)
 
         **Examples:**
         - `[p]purge emoji 10`
@@ -281,7 +334,7 @@ class Purge(commands.Cog):
                 and message.created_at > arrow.utcnow().shift(days=-14).datetime
             )
 
-        await _cleanup(ctx, number, predicate)
+        await _cleanup(ctx, number, predicate, channel=channel)
 
     # https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/mod.py#L1829
     @_purge.command(name="reactions", aliases=["reaction"])  # type: ignore
@@ -289,19 +342,26 @@ class Purge(commands.Cog):
         self,
         ctx: commands.GuildContext,
         number: commands.Range[int, 1, 2000],
+        channel: Optional[  # type: ignore
+            Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
     ):
         """
         Removes all reactions from messages that have them.
 
         **Arguments:**
         - `<number`: The number of messages you want to delete.
+        - `<channel>`: The channel you want to delete messages in. (Defaults to current channel)
 
         **Examples:**
         - `[p]purge reactions 10`
         - `[p]purge reactions 200`
         """
+        channel: Union[
+            discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel
+        ] = (channel if channel else ctx.channel)
         total_reactions: int = 0
-        async for message in ctx.history(limit=number, before=ctx.message):
+        async for message in channel.history(limit=number, before=ctx.message):
             if len(message.reactions):
                 total_reactions += sum(r.count for r in message.reactions)
                 await message.clear_reactions()
@@ -317,54 +377,66 @@ class Purge(commands.Cog):
         self,
         ctx: commands.GuildContext,
         number: commands.Range[int, 1, 2000],
+        channel: Optional[
+            Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
     ):
         """
         Removes your messages from the channel.
 
         **Arguments:**
         - `<number`: The number of messages you want to delete.
+        - `<channel>`: The channel you want to delete messages in. (Defaults to current channel)
 
         **Examples:**
         - `[p]purge self 10`
         - `[p]purge self 2000`
         """
-        await _cleanup(ctx, number, lambda e: e.author == ctx.author)
+        await _cleanup(ctx, number, lambda e: e.author == ctx.author, channel=channel)
 
     @_purge.command(name="mine")  # type: ignore
     async def _mine(
         self,
         ctx: commands.GuildContext,
         number: commands.Range[int, 1, 2000],
+        channel: Optional[
+            Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
     ):
         """
         Removes my messages from the channel.
 
         **Arguments:**
         - `<number`: The number of messages you want to delete.
+        - `<channel>`: The channel you want to delete messages in. (Defaults to current channel)
 
         **Examples:**
         - `[p]purge mine 10`
         - `[p]purge mine 2000`
         """
-        await _cleanup(ctx, number, lambda e: e.author == ctx.guild.me)
+        await _cleanup(ctx, number, lambda e: e.author == ctx.guild.me, channel=channel)
 
     @_purge.command(name="links", aliases=["link"])  # type: ignore
     async def _links(
         self,
         ctx: commands.GuildContext,
         number: commands.Range[int, 1, 2000],
+        channel: Optional[
+            Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
     ):
         """
         Removes all messages containing a link.
 
         **Arguments:**
         - `<number`: The number of messages you want to delete.
+        - `<channel>`: The channel you want to delete messages in. (Defaults to current channel)
 
         **Examples:**
         - `[p]purge links 10`
         - `[p]purge links 2000`
         """
-        await _cleanup(ctx, number, lambda m: LINKS_RE.search(m.content))
+        await _cleanup(ctx, number, lambda m: LINKS_RE.search(m.content), channel=channel)
 
     @_purge.command(name="after")  # type: ignore
     async def _after(

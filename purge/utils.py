@@ -67,7 +67,14 @@ async def _cleanup(
     *,
     before: Optional[int] = None,
     after: Optional[int] = None,
+    channel: Optional[  # type: ignore
+        Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+    ] = None,
 ):
+    channel: Union[
+        discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel
+    ] = (channel if channel else ctx.channel)
+
     limit = max(1, min(limit or 1, 2000))
 
     passed_before: Union[discord.Message, discord.Object] = (
@@ -90,7 +97,7 @@ async def _cleanup(
     )
 
     try:
-        deleted: Union[List[discord.Message], int] = await ctx.channel.purge(
+        deleted: Union[List[discord.Message], int] = await channel.purge(
             limit=limit,
             before=passed_before,
             after=passed_after,
