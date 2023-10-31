@@ -51,7 +51,7 @@ class AFK(commands.Cog):
     """
 
     __author__: Final[str] = humanize_list(["inthedark.org"])
-    __version__: Final[str] = "0.1.0"
+    __version__: Final[str] = "0.1.1"
 
     def __init__(self, bot: Red) -> None:
         super().__init__()
@@ -65,7 +65,10 @@ class AFK(commands.Cog):
             "blocked": [],
             "custom_message": custom_message,
         }
-        default_guild: Dict[str, List[int]] = {"ignored_channels": []}
+        default_guild: Dict[str, Union[List[int], str]] = {
+            "ignored_channels": [],
+            "nickname": "[AFK]",
+        }
         default_global: Dict[str, int] = {"delete_after": 10}
         self.config.register_member(**default_member)
         self.config.register_guild(**default_guild)
@@ -122,6 +125,19 @@ class AFK(commands.Cog):
         async with self.config.member(member).pings() as pings:
             pings.append(self._make_message(message))
 
+    async def _update_nickname(self, member: discord.Member, *, force: bool = False) -> None:
+        custom: str = await self.config.guild(member.guild).nickname()
+        original: str = member.nick or member.display_name
+        forced: str = f"{custom} " if force else original.strip(f"{custom} ")
+        nickname: str = f"{forced}{original}"
+        if len(nickname) >= 32 or len(nickname.split(" ")) > 3:
+            nickname: str = nickname.split(" ")[-1]
+            nickname: str = f"{forced}{nickname}"
+        try:
+            await member.edit(nick=nickname)
+        except discord.HTTPException:
+            pass
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         if message.is_system():
@@ -152,6 +168,7 @@ class AFK(commands.Cog):
             data = await self.config.member(message.author)()  # type: ignore
             time_difference = datetime.now().timestamp() - afk_time
             if time_difference > 10:
+                await self._update_nickname(message.author)  # type: ignore
                 ctx = await self.bot.get_context(message)
                 _view = AFKView(ctx, self, data)
                 _view._message = await message.channel.send(
@@ -227,6 +244,7 @@ class AFK(commands.Cog):
                 await member_config.afk_status.set(True)
                 if not message:
                     message = "AFK"
+                await self._update_nickname(ctx.author, force=True)  # type: ignore
                 await member_config.afk_message.set(message)
                 await ctx.send(
                     embed=discord.Embed(
