@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 import io
+import asyncio
 import logging
 from typing import Any, Dict, Final, List, Optional, Tuple, Union
 
@@ -61,7 +62,12 @@ class VoiceNoteLog(commands.Cog):
             "channel": None,
             "toggle": False,
         }
+        default_global: Dict[str, bool] = {
+            "notice": False,
+        }
         self.config.register_guild(**default_guild)
+
+        self.task: asyncio.Task[Any] = asyncio.create_task(self.initialize())
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
@@ -77,6 +83,22 @@ class VoiceNoteLog(commands.Cog):
         if not message.attachments or not message.flags.value >> 13:
             return False
         return True
+
+    async def initialize(self) -> None:
+        await self.bot.wait_until_red_ready()
+        if not await self.config.notice():
+            try:
+                await self.bot.send_to_owners(
+                    "In order to use the **VoiceNoteLog** cog, you'll have to install ffmpeg in your server.\n"
+                    "**Linux:** `sudo apt install ffmpeg -y`\n"
+                    "**WIndows:** <https://www.geeksforgeeks.org/how-to-install-ffmpeg-on-windows/>\n"
+                )
+                await self.config.notice.set(True)
+            except (discord.NotFound, discord.HTTPException):
+                log.exception("Failed to send the notice message!")
+
+    async def cog_unload(self) -> None:
+        self.task.cancel()
 
     async def _embed(self, text: str, message: discord.Message) -> discord.Embed:
         embed: discord.Embed = discord.Embed(
