@@ -66,6 +66,7 @@ class VoiceNoteLog(commands.Cog):
             "notice": False,
         }
         self.config.register_guild(**default_guild)
+        self.config.register_global(**default_global)
 
         self.task: asyncio.Task[Any] = asyncio.create_task(self.initialize())
 

@@ -13,7 +13,6 @@
         "mod"
     ],
     "required_cogs": {},
-    "min_python_version": [],
     "requirements": [
         "pydub",
         "SpeechRecognition"
