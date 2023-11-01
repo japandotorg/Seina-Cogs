@@ -14,7 +14,10 @@
     ],
     "required_cogs": {},
     "min_python_version": [],
-    "requirements": [],
+    "requirements": [
+        "pydub",
+        "SpeechRecognition"
+    ],
     "type": "COG",
     "end_user_data_statement": "This cog does not store End User Data."
 }
