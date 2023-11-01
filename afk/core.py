@@ -128,11 +128,10 @@ class AFK(commands.Cog):
     async def _update_nickname(self, member: discord.Member, *, force: bool = False) -> None:
         custom: str = await self.config.guild(member.guild).nickname()
         original: str = member.nick or member.display_name
+        if len(original) >= 26:
+            return
         forced: str = f"{custom}" if force else original.replace(f"{custom}", "")
         nickname: str = f"{forced}{original}"
-        if len(nickname) >= 32 or len(nickname.split(" ")) > 3:
-            nickname: str = nickname.split(" ")[-1]
-            nickname: str = f"{forced} {nickname}"
         try:
             await member.edit(nick=nickname)
         except discord.HTTPException:
@@ -317,6 +316,29 @@ class AFK(commands.Cog):
                 reference=ctx.message.to_reference(fail_if_not_exists=False),
                 allowed_mentions=discord.AllowedMentions(replied_user=False),
             )
+
+    @commands.mod_or_permissions(administrator=True)
+    @_afk.command(name="nickname", aliases=["nick"])
+    async def _nickname(
+        self, ctx: commands.Context, *, text: Optional[commands.Range[str, 3, 6]] = None
+    ):
+        """
+        [Admin/Mod] change the afk nickname identifier of your server.
+        """
+        if not text:
+            await self.config.guild(ctx.guild).nickname.clear()  # type: ignore
+            await ctx.send(
+                f"Cleared the afk nickname identifier to default.",
+                reference=ctx.message.to_reference(fail_if_not_exists=False),
+                allowed_mentions=discord.AllowedMentions(replied_user=False),
+            )
+            return
+        await self.config.guild(ctx.guild).nickname.set(text)  # type: ignore
+        await ctx.send(
+            f"Changed the afk nickname identifer to {text}.",
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
+            allowed_mentions=discord.AllowedMentions(replied_user=False),
+        )
 
     @_afk.command(name="block")
     @commands.cooldown(1, 30, commands.BucketType.member)
