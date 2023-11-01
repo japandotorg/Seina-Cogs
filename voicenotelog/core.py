@@ -23,14 +23,14 @@ SOFTWARE.
 """
 
 import io
-import pydub
 import logging
-import speech_recognition as speech
-from typing import Final, List, Dict, Union, Optional, Any, Tuple
+from typing import Any, Dict, Final, List, Optional, Tuple, Union
 
 import discord
-from redbot.core.bot import Red
+import pydub
+import speech_recognition as speech
 from redbot.core import Config, commands
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box, humanize_list
 
 from .views import JumpToMessageView
