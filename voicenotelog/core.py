@@ -200,7 +200,7 @@ class VoiceNoteLog(commands.Cog):
                 allowed_mentions=discord.AllowedMentions(replied_user=False),
             )
             return
-        await self.config.guild(ctx.guild).channel.set(channel)
+        await self.config.guild(ctx.guild).channel.set(channel.id)
         await ctx.send(
             f"Configured the voice note logging channel to {channel.mention}!",
             reference=ctx.message.to_reference(fail_if_not_exists=False),
