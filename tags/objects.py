@@ -263,7 +263,7 @@ class Tag:
         if self.guild_id:
             e.set_author(name=ctx.guild, icon_url=ctx.guild.icon.url)
         else:
-            e.set_author(name=ctx.me, icon_url=ctx.me.avatar_url)
+            e.set_author(name=ctx.me, icon_url=ctx.me.avatar.url)
         return e
 
     async def send_info(self, ctx: commands.Context) -> discord.Message:
