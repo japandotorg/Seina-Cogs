@@ -140,9 +140,7 @@ class Tag:
             cooldown_key=self.cooldown_key,
             **kwargs,
         )
-        if cog.async_enabled:
-            return await output
-        return output
+        return await output if cog.async_enabled else output
 
     async def update_config(self) -> None:
         if self._real_tag:
