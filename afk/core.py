@@ -135,6 +135,8 @@ class AFK(commands.Cog):
             forced: str = original[len(custom) :]
             if forced == (member.global_name or member.name):
                 forced = None  # type: ignore
+        else:
+            return
         try:
             await member.edit(nick=forced)  # type: ignore
         except discord.HTTPException:
