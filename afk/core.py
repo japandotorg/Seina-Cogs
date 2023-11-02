@@ -131,6 +131,7 @@ class AFK(commands.Cog):
         if force:
             if len(original) > 26:
                 return
+            forced: str = f"{custom}{original}"
         elif original.startswith(custom):
             forced: str = original[len(custom) :]
             if forced == (member.global_name or member.name):
@@ -138,7 +139,7 @@ class AFK(commands.Cog):
         else:
             return
         try:
-            await member.edit(nick=forced)  # type: ignore
+            await member.edit(nick=forced)
         except discord.HTTPException:
             pass
 
