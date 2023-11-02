@@ -130,7 +130,7 @@ class AFK(commands.Cog):
         original: str = member.nick or member.display_name
         if len(original) > 26:
             return
-        forced: str = f"{custom}{original}" if force else original.strip(f"{custom}")
+        forced: str = f"{custom}{original}" if force else original[len(custom) :]
         try:
             await member.edit(nick=forced)
         except discord.HTTPException:
