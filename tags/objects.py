@@ -140,9 +140,7 @@ class Tag:
             cooldown_key=self.cooldown_key,
             **kwargs,
         )
-        if cog.async_enabled:
-            return await output
-        return output
+        return await output if cog.async_enabled else output
 
     async def update_config(self) -> None:
         if self._real_tag:
@@ -263,7 +261,7 @@ class Tag:
         if self.guild_id:
             e.set_author(name=ctx.guild, icon_url=ctx.guild.icon.url)
         else:
-            e.set_author(name=ctx.me, icon_url=ctx.me.avatar_url)
+            e.set_author(name=ctx.me, icon_url=ctx.me.display_avatar.url)
         return e
 
     async def send_info(self, ctx: commands.Context) -> discord.Message:
