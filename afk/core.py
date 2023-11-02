@@ -128,11 +128,15 @@ class AFK(commands.Cog):
     async def _update_nickname(self, member: discord.Member, *, force: bool = False) -> None:
         custom: str = await self.config.guild(member.guild).nickname()
         original: str = member.nick or member.display_name
-        if len(original) > 26:
-            return
-        forced: str = f"{custom}{original}" if force else original[len(custom) :]
+        if force:
+            if len(original) > 26:
+                return
+        elif original.startswith(custom):
+            forced: str = original[len(custom) :]
+            if forced == (member.global_name or member.name):
+                forced = None  # type: ignore
         try:
-            await member.edit(nick=forced)
+            await member.edit(nick=forced)  # type: ignore
         except discord.HTTPException:
             pass
 
