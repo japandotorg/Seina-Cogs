@@ -364,7 +364,7 @@ class AFK(commands.Cog):
 
     @commands.guild_only()
     @_afk.command(name="togglenick")
-    @commands.mod_or_permissions(administrator=True)
+    @commands.admin_or_permissions(manage_guild=True)
     @commands.cooldown(1, 30, commands.BucketType.member)
     async def _togglenick(self, ctx: commands.Context):
         """
