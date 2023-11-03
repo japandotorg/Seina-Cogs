@@ -56,9 +56,7 @@ class AFK(commands.Cog):
     def __init__(self, bot: Red) -> None:
         super().__init__()
         self.bot: Red = bot
-        self.config: Config = Config.get_conf(
-            self, identifier=69_420_666, force_registration=True
-        )
+        self.config: Config = Config.get_conf(self, identifier=69_420_666, force_registration=True)
         default_member: Dict[str, Union[str, bool, int, List]] = {
             "afk_status": False,
             "afk_message": "",
@@ -121,18 +119,14 @@ class AFK(commands.Cog):
         ctx = await self.bot.get_context(interaction.message)
         await AFKPaginator(ctx, embeds, interaction, 60, use_select=True).start()
 
-    async def _pinged_user(
-        self, message: discord.Message, member: discord.Member
-    ) -> None:
+    async def _pinged_user(self, message: discord.Message, member: discord.Member) -> None:
         data = await self.config.member(member).all()  # type: ignore
         if message.author.id in data["blocked"]:
             return
         async with self.config.member(member).pings() as pings:
             pings.append(self._make_message(message))
 
-    async def _update_nickname(
-        self, member: discord.Member, *, force: bool = False
-    ) -> None:
+    async def _update_nickname(self, member: discord.Member, *, force: bool = False) -> None:
         if not await self.config.guild(member.guild).toggle_nickname():
             return
         custom: str = await self.config.guild(member.guild).nickname()
@@ -162,8 +156,7 @@ class AFK(commands.Cog):
 
         if (
             message.author.bot
-            or message.channel.id
-            in await self.config.guild(message.guild).ignored_channels()
+            or message.channel.id in await self.config.guild(message.guild).ignored_channels()
         ):
             return
 
@@ -505,9 +498,7 @@ class AFK(commands.Cog):
                 entries = afk_members[index : index + entries_per_page]
                 embed: discord.Embed = discord.Embed(color=await ctx.embed_color())
 
-                for i, (member, afk_time, message) in enumerate(
-                    entries, start=index + 1
-                ):
+                for i, (member, afk_time, message) in enumerate(entries, start=index + 1):
                     embed.add_field(
                         name=f"**{i}.** {member.name} ({member.id})",
                         value=f"- {message} - <t:{afk_time}:R>",
@@ -554,9 +545,7 @@ class AFK(commands.Cog):
             return
 
         ignored_channels = [ctx.guild.get_channel(channel_id) for channel_id in ignored_list]  # type: ignore
-        ignored_channels = [
-            channel for channel in ignored_channels if channel is not None
-        ]
+        ignored_channels = [channel for channel in ignored_channels if channel is not None]
 
         ignored_channels = sorted(ignored_channels, key=lambda x: x.name)
 
@@ -564,9 +553,7 @@ class AFK(commands.Cog):
         pages = []
         for index in range(0, len(ignored_channels), entries_per_page):
             entries = ignored_channels[index : index + entries_per_page]
-            page_content = "\n".join(
-                f"{channel.mention} ({channel.id})" for channel in entries
-            )
+            page_content = "\n".join(f"{channel.mention} ({channel.id})" for channel in entries)
             embed: discord.Embed = discord.Embed(
                 title="Ignored Channels",
                 description=page_content,
