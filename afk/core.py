@@ -173,6 +173,10 @@ class AFK(commands.Cog):
             data = await self.config.member(message.author)()  # type: ignore
             time_difference = datetime.now().timestamp() - afk_time
             if time_difference > 10:
+                await member_config.afk_status.clear()
+                await member_config.afk_message.clear()
+                await member_config.afk_time.clear()
+                await member_config.pings.clear()
                 await self._update_nickname(message.author)  # type: ignore
                 ctx = await self.bot.get_context(message)
                 _view = AFKView(ctx, self, data)
@@ -185,10 +189,6 @@ class AFK(commands.Cog):
                     allowed_mentions=discord.AllowedMentions(replied_user=False),
                     view=_view,
                 )
-                await member_config.afk_status.clear()
-                await member_config.afk_message.clear()
-                await member_config.afk_time.clear()
-                await member_config.pings.clear()
                 return
 
         for member in message.mentions:
