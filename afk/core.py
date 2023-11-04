@@ -129,6 +129,9 @@ class AFK(commands.Cog):
     async def _update_nickname(self, member: discord.Member, *, force: bool = False) -> None:
         if not await self.config.guild(member.guild).toggle_nickname():
             return
+        if not member.guild.me.guild_permissions.manage_nicknames:
+            await self.config.guild(member.guild).toggle_nickname.clear()
+            return
         custom: str = await self.config.guild(member.guild).nickname()
         original: str = member.nick or member.display_name
         if force:
@@ -173,10 +176,7 @@ class AFK(commands.Cog):
             data = await self.config.member(message.author)()  # type: ignore
             time_difference = datetime.now().timestamp() - afk_time
             if time_difference > 10:
-                if await self.config.guild(message.guild).toggle_nickname():
-                    if not message.guild.me.guild_permissions.manage_nicknames:
-                        await self.config.guild(message.guild).toggle_nickname.clear()
-                    await self._update_nickname(message.author)  # type: ignore
+                await self._update_nickname(message.author)  # type: ignore
                 await member_config.afk_status.clear()
                 await member_config.afk_message.clear()
                 await member_config.afk_time.clear()
