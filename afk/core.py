@@ -68,6 +68,7 @@ class AFK(commands.Cog):
         default_guild: Dict[str, Union[List[int], str]] = {
             "ignored_channels": [],
             "nickname": "[AFK]",
+            "toggle_nickname": False,
         }
         default_global: Dict[str, int] = {"delete_after": 10}
         self.config.register_member(**default_member)
@@ -126,6 +127,8 @@ class AFK(commands.Cog):
             pings.append(self._make_message(message))
 
     async def _update_nickname(self, member: discord.Member, *, force: bool = False) -> None:
+        if not await self.config.guild(member.guild).toggle_nickname():
+            return
         custom: str = await self.config.guild(member.guild).nickname()
         original: str = member.nick or member.display_name
         if force:
@@ -325,6 +328,7 @@ class AFK(commands.Cog):
 
     @commands.mod_or_permissions(administrator=True)
     @_afk.command(name="nickname", aliases=["nick"])
+    @commands.cooldown(1, 30, commands.BucketType.member)
     async def _nickname(
         self, ctx: commands.Context, *, text: Optional[commands.Range[str, 3, 6]] = None
     ):
@@ -342,6 +346,29 @@ class AFK(commands.Cog):
         await self.config.guild(ctx.guild).nickname.set(text)  # type: ignore
         await ctx.send(
             f"Changed the afk nickname identifer to {text}.",
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
+            allowed_mentions=discord.AllowedMentions(replied_user=False),
+        )
+
+    @commands.guild_only()
+    @_afk.command(name="togglenick")
+    @commands.admin_or_permissions(manage_guild=True)
+    @commands.cooldown(1, 30, commands.BucketType.member)
+    async def _togglenick(self, ctx: commands.Context):
+        """
+        [Admin/Mod] Toggle the afk nickname identifier of your server.
+        """
+        if not ctx.guild.me.guild_permissions.manage_nicknames:
+            await ctx.send(
+                "I don't have permissions to change nicknames.",
+                reference=ctx.message.to_reference(fail_if_not_exists=False),
+                allowed_mentions=discord.AllowedMentions(replied_user=False),
+            )
+            return
+        toggle = await self.config.guild(ctx.guild).toggle_nickname()
+        await self.config.guild(ctx.guild).toggle_nickname.set(not toggle)  # type: ignore
+        await ctx.send(
+            f"{'Enabled' if not toggle else 'Disabled'} the afk nickname identifier.",
             reference=ctx.message.to_reference(fail_if_not_exists=False),
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
@@ -544,6 +571,41 @@ class AFK(commands.Cog):
         await self.config.delete_after.set(amount)
         await ctx.send(
             f"Changed `delete_after` to {amount}.",
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
+            allowed_mentions=discord.AllowedMentions(replied_user=False),
+        )
+
+    @_afk.command(name="settings")
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.admin_or_permissions(manage_guild=True)
+    async def _settings(self, ctx: commands.Context):
+        """
+        Shows the settings for the server.
+        """
+        data = await self.config.guild(ctx.guild).all()  # type: ignore
+        nickname = data["nickname"]
+        toggle_nickname = data["toggle_nickname"]
+        if toggle_nickname:
+            toggle_nickname = "Enabled"
+        else:
+            toggle_nickname = "Disabled"
+        ignored_channels = data["ignored_channels"]
+        if not ignored_channels:
+            ignored_channels = "None"
+        else:
+            ignored_channels = humanize_list(ignored_channels)
+        msg = (
+            f"**Nickname:** {nickname}\n"
+            f"**Toggle Nickname:** {toggle_nickname}\n"
+            f"**Ignored Channels:** {ignored_channels}"
+        )
+        embed: discord.Embed = discord.Embed(
+            title="AFK Settings",
+            description=msg,
+            color=await ctx.embed_color(),
+        )
+        await ctx.send(
+            embed=embed,
             reference=ctx.message.to_reference(fail_if_not_exists=False),
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
