@@ -65,7 +65,7 @@ class AFK(commands.Cog):
             "blocked": [],
             "custom_message": custom_message,
         }
-        default_guild: Dict[str, Union[List[int], str]] = {
+        default_guild: Dict[str, Union[List[int], str, bool]] = {
             "ignored_channels": [],
             "nickname": "[AFK]",
             "toggle_nickname": False,
@@ -150,16 +150,13 @@ class AFK(commands.Cog):
     async def on_message(self, message: discord.Message):
         if message.is_system():
             return
-
         if not message.guild:
             return
-
         if (
             message.author.bot
             or message.channel.id in await self.config.guild(message.guild).ignored_channels()
         ):
             return
-
         if not message.channel.permissions_for(message.guild.me).send_messages:
             return
         if await self.bot.cog_disabled_in_guild(self, message.guild):
@@ -358,14 +355,14 @@ class AFK(commands.Cog):
         """
         [Admin/Mod] Toggle the afk nickname identifier of your server.
         """
-        if not ctx.guild.me.guild_permissions.manage_nicknames:
+        if not ctx.guild.me.guild_permissions.manage_nicknames:  # type: ignore
             await ctx.send(
                 "I don't have permissions to change nicknames.",
                 reference=ctx.message.to_reference(fail_if_not_exists=False),
                 allowed_mentions=discord.AllowedMentions(replied_user=False),
             )
             return
-        toggle = await self.config.guild(ctx.guild).toggle_nickname()
+        toggle = await self.config.guild(ctx.guild).toggle_nickname()  # type: ignore
         await self.config.guild(ctx.guild).toggle_nickname.set(not toggle)  # type: ignore
         await ctx.send(
             f"{'Enabled' if not toggle else 'Disabled'} the afk nickname identifier.",
