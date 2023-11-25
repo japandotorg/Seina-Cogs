@@ -36,7 +36,7 @@ from .abc import CompositeMetaClass, MixinMeta
 from .converters import FuzzyRole, StrictRole
 from .utils import my_role_heirarchy
 
-log: logging.Logger = logging.getLogger("red.phenom4n4n.roleutils.autorole")
+log: logging.Logger = logging.getLogger("red.seina.roleutils.autorole")
 
 
 class AutoRole(MixinMeta, metaclass=CompositeMetaClass):

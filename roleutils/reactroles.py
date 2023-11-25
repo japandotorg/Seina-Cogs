@@ -37,7 +37,7 @@ from .abc import CompositeMetaClass, MixinMeta
 from .converters import EmojiRole, ObjectConverter, RealEmojiConverter, StrictRole
 from .utils import delete_quietly, my_role_heirarchy
 
-log = logging.getLogger("red.phenom4n4n.roleutils.reactroles")
+log = logging.getLogger("red.seina.roleutils.reactroles")
 
 
 class ReactRules:
