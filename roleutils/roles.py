@@ -44,7 +44,7 @@ from .utils import (
     is_allowed_by_role_hierarchy,
 )
 
-log = logging.getLogger("red.phenom4n4n.roleutils")
+log = logging.getLogger("red.seina.roleutils")
 
 
 def targeter_cog(ctx: commands.Context):
