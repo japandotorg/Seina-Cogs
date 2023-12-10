@@ -10,7 +10,6 @@
         "voicechannel"
     ],
     "required_cogs": {},
-    "min_python_version": [],
     "requirements": [],
     "type": "COG"
 }
