@@ -24,7 +24,6 @@ SOFTWARE.
 
 from redbot.core.bot import Red
 
-
 from .core import Activities
 
 

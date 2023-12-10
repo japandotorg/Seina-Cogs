@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Union, Any, Final, List
+from typing import Any, Final, List, Union
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
 
 from .enums import Activity
@@ -42,7 +42,7 @@ class Activities(commands.Cog):
 
     def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
-        
+
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
         n = "\n" if "\n\n" not in pre_processed else ""
@@ -63,7 +63,7 @@ class Activities(commands.Cog):
             raise TypeError(
                 f"Excepted activities.enums.Activity or int, not {type(activity)}.",
             )
-        
+
         return await channel.create_invite(
             reason="Created discord activities invite link.",
             target_type=discord.InviteTarget.embedded_application,
@@ -200,77 +200,77 @@ class Activities(commands.Cog):
         Create an activity invite link for Know What I Meme.
         """
         await self._create_game(ctx, channel, Activity.know_what_i_meme)
-        
+
     @_activity.command(name="landio", aliases=["land"])
     async def _land_io(self, ctx: commands.Context, channel: discord.VoiceChannel):
         """
         Create an activity invite link for Land IO.
         """
         await self._create_game(ctx, channel, Activity.land_io)
-        
+
     @_activity.command(name="letterleague", aliases=["letter"])
     async def _letter_league(self, ctx: commands.Context, channel: discord.VoiceChannel):
         """
         Create an activity invite link for Letter League.
         """
         await self._create_game(ctx, channel, Activity.letter_league)
-        
+
     @_activity.command(name="pokernight", aliases=["poker"])
     async def _poker_night(self, ctx: commands.Context, channel: discord.VoiceChannel):
         """
         Create an activity invite link for Poker Night.
         """
         await self._create_game(ctx, channel, Activity.poker_night)
-        
+
     @_activity.command(name="puttparty", aliases=["putt"])
     async def _putt_party(self, ctx: commands.Context, channel: discord.VoiceChannel):
         """
         Create an activity invite link for Putt Party.
         """
         await self._create_game(ctx, channel, Activity.putt_party)
-        
+
     @_activity.command(name="putts")
     async def _putts(self, ctx: commands.Context, channel: discord.VoiceChannel):
         """
         Create an activity invite link for Putts.
         """
         await self._create_game(ctx, channel, Activity.putts)
-        
+
     @_activity.command(name="sketchheads", aliases=["sketch"])
     async def _sketch_heads(self, ctx: commands.Context, channel: discord.VoiceChannel):
         """
         Create an activity invite link for Sketch Heads.
         """
         await self._create_game(ctx, channel, Activity.sketch_heads)
-        
+
     @_activity.command(name="sketchyartist", aliases=["sketchy"])
     async def _sketchy_artist(self, ctx: commands.Context, channel: discord.VoiceChannel):
         """
         Create an activity invite link for Sketchy Artist.
         """
         await self._create_game(ctx, channel, Activity.sketchy_artist)
-        
+
     @_activity.command(name="spellcast", aliases=["spell"])
     async def _spell(self, ctx: commands.Context, channel: discord.VoiceChannel):
         """
         Create an activity invite link for Spell Cast.
         """
         await self._create_game(ctx, channel, Activity.spell_cast)
-        
+
     @_activity.command(name="watchtogether", aliases=["watch"])
     async def _watch_together(self, ctx: commands.Context, channel: discord.VoiceChannel):
         """
         Create an activity invite link for Watch Together.
         """
         await self._create_game(ctx, channel, Activity.watch_together)
-        
+
     @_activity.command(name="wordsnacks", aliases=["word", "snacks"])
     async def _word_snacks(self, ctx: commands.Context, channel: discord.VoiceChannel):
         """
         Create an activity invite link for Word Snacks.
         """
         await self._create_game(ctx, channel, Activity.word_snacks)
-        
+
     @_activity.command(name="youtubetogether", aliases=["youtube"])
     async def _youtube_together(self, ctx: commands.Context, channel: discord.VoiceChannel):
         """
