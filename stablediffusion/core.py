@@ -22,26 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import io
-import yarl
 import asyncio
-import aiohttp
+import io
+from typing import Any, Dict, Final, List, Literal, Optional, Union
 from urllib.parse import quote_plus
-from typing import (
-    Dict,
-    Final,
-    Literal,
-    List,
-    Optional,
-    Union,
-    Any,
-)
 
+import aiohttp
 import backoff
-
 import discord
-from redbot.core.bot import Red
+import yarl
 from redbot.core import commands
+from redbot.core.bot import Red
 
 
 class DiffusionError(discord.errors.DiscordException):
