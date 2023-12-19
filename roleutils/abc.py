@@ -47,10 +47,6 @@ class MixinMeta(ABC):
         self.bot: Red
         self.cache: Dict[str, Any]
 
-    @abstractmethod
-    async def initialize(self) -> None:
-        raise NotImplementedError()
-
 
 class CompositeMetaClass(commands.CogMeta, ABCMeta):
     """
