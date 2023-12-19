@@ -28,6 +28,7 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 | ErrorHandler | 0.1.0           | <details><summary>Allow custom error message.</summary>Adds ability to replace the output of the bots error handler when CommandInvokeError is raised, all other errors get handled by the old handler.</details> |
 | VoiceNoteLog | 0.1.0           | <details><summary>Log the voice note sent by your server members.</summary>Log voice notes sent by your server members.</details> | 
 | Activities  | 0.1.0            | <details><summary>Discord Voice Channel Activities.</summary>Discord Voice Channel Activities.</details>                         |
+| StableDiffusion | 0.1.0            | <details><summary>Stable Diffusion using the Replicate API.</summary>Stable Diffusion using the Replicate API.</details>        |
 
 
 Any questions you can find [Melon](https://discord.com/oauth2/authorize?client_id=808706062013825036&scope=bot&permissions=1099511627767%20applications.commands) and myself over on [the support server](https://discord.gg/mXfYuMy92r)
