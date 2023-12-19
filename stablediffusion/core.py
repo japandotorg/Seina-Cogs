@@ -118,7 +118,7 @@ class StableDiffusion(commands.Cog):
                 raise DiffusionError(
                     "Couldn't get a result after 90 seconds. Aborting...",
                 )
-            response = await self._request("GET", url=f"{id}")
+            response = await self._request("GET", url=f"/{id}")
             response = await response.json(content_type=None)
             if response.get("error"):
                 raise DiffusionError(response["error"])
