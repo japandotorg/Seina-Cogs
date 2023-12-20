@@ -26,12 +26,12 @@ SOFTWARE.
 import asyncio
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Final, List, Optional, Tuple, Union, Any, Dict, NoReturn
+from typing import Any, Dict, Final, List, NoReturn, Optional, Tuple, Union
 
 import discord
 from redbot.core import commands
-from redbot.core.utils.antispam import AntiSpam
 from redbot.core.modlog import Case, create_case
+from redbot.core.utils.antispam import AntiSpam
 
 from .abc import CompositeMetaClass, MixinMeta
 from .converters import FuzzyRole, StrictRole
