@@ -40,7 +40,7 @@ log: logging.Logger = logging.getLogger("red.seina.roleutils.autorole")
 
 
 class AutoRoles(MixinMeta, metaclass=CompositeMetaClass):
-    """Manage autoroles and sticky roles."""
+    """Manage autoroles."""
 
     def __init__(self, *_args: Any) -> None:
         super().__init__(*_args)
