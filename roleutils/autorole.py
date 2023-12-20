@@ -110,18 +110,18 @@ class AutoRoles(MixinMeta, metaclass=CompositeMetaClass):
         return case
 
     async def _handle_member_join(self, member: discord.Member):
-        roles: List[discord.Role] = []
+        role_ids: List[int] = []
         settings: Dict[str, Any] = await self.config.guild(member.guild).autoroles.all()
         if settings["toggle"]:
-            roles.extend(settings["roles"])
+            role_ids.extend(settings["roles"])
         if not member.bot and settings["humans"]["toggle"]:
-            roles.extend(settings["humans"]["roles"])
+            role_ids.extend(settings["humans"]["roles"])
         elif member.bot and settings["bots"]["toggle"]:
-            roles.extend(settings["bots"]["roles"])
+            role_ids.extend(settings["bots"]["roles"])
         roles: List[discord.Role] = [
             role
-            for role in roles
-            if member.get_role(role.id) is None and member.guild.me.top_role > role
+            for role in [member.guild.get_role(role) for role in role_ids]
+            if role is not None and member.guild.me.top_role > role
         ]
         if not roles:
             return
