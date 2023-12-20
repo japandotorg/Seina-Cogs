@@ -34,8 +34,8 @@ from redbot.core.modlog import register_casetype
 from redbot.core.utils.chat_formatting import humanize_list
 
 from .abc import CompositeMetaClass
-from .reactroles import ReactRoles
 from .autorole import AutoRoles
+from .reactroles import ReactRoles
 from .roles import Roles
 
 log: logging.Logger = logging.getLogger("red.seina.roleutils")
