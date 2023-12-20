@@ -26,50 +26,36 @@ SOFTWARE.
 import asyncio
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import List, Optional, Tuple, Union
+from typing import Final, List, Optional, Tuple, Union, Any, Dict, NoReturn
 
 import discord
 from redbot.core import commands
+from redbot.core.utils.antispam import AntiSpam
 from redbot.core.modlog import Case, create_case
 
 from .abc import CompositeMetaClass, MixinMeta
 from .converters import FuzzyRole, StrictRole
-from .utils import my_role_heirarchy
 
 log: logging.Logger = logging.getLogger("red.seina.roleutils.autorole")
 
 
-class AutoRole(MixinMeta, metaclass=CompositeMetaClass):
+class AutoRoles(MixinMeta, metaclass=CompositeMetaClass):
     """Manage autoroles and sticky roles."""
+
+    def __init__(self, *_args: Any) -> None:
+        super().__init__(*_args)
+        self.queue: asyncio.Queue[discord.Member] = asyncio.Queue()
+        self.spam: Dict[int, AntiSpam] = {}
+
+        self._task: asyncio.Task[NoReturn] = asyncio.create_task(self._handler_task())
 
     async def initialize(self) -> None:
         log.debug("AutoRole Initialize")
         await super().initialize()
 
-    async def _bulk_add_roles_to_member(
-        self,
-        member: discord.Member,
-        roles: List[discord.Role],
-    ) -> Tuple[List[discord.Role], List[discord.Role]]:
-        to_add: List[discord.Role] = []
-        not_needed: List[discord.Role] = []
-        for role in roles:
-            allowed = my_role_heirarchy(member.guild, role)
-            if not allowed:
-                not_needed.append(role)
-            elif role in member.roles:
-                not_needed.append(role)
-            else:
-                to_add.append(role)
-        if to_add:
-            await member.add_roles(*to_add, reason="[RoleUtils] assigned autorole added.")
-            await self._create_case(
-                member.guild,
-                type="autorole",
-                reason="[RoleUtils] assigned autorole added.",
-                user=member,
-            )
-        return to_add, not_needed
+    async def cog_unload(self) -> None:
+        if self._task:
+            self._task.cancel()
 
     # https://github.com/TrustyJAID/Trusty-cogs/blob/master/roletools/events.py#L138
     async def _check_for_guild_verification(
@@ -123,9 +109,48 @@ class AutoRole(MixinMeta, metaclass=CompositeMetaClass):
             case = None
         return case
 
-    async def _auto_apply_role(self, member: discord.Member, roles: List[discord.Role]) -> None:
-        await self._wait_for_guild_verification(member, member.guild)
-        await self._bulk_add_roles_to_member(member, roles)
+    async def _handle_member_join(self, member: discord.Member):
+        roles: List[discord.Role] = []
+        settings: Dict[str, Any] = await self.config.guild(member.guild).autoroles.all()
+        if settings["toggle"]:
+            roles.extend(settings["roles"])
+        if not member.bot and settings["humans"]["toggle"]:
+            roles.extend(settings["humans"]["roles"])
+        elif member.bot and settings["bots"]["toggle"]:
+            roles.extend(settings["bots"]["roles"])
+        roles: List[discord.Role] = [
+            role
+            for role in roles
+            if member.get_role(role.id) is None and member.guild.me.top_role > role
+        ]
+        if not roles:
+            return
+        reason: Final[str] = f"[RoleUtils] assigned autorole added."
+        try:
+            await member.add_roles(*roles, reason=reason)
+        except discord.HTTPException:
+            log.exception(
+                "Uh Oh! Something went wrong trying to add roles to %s", member, exc_info=True
+            )
+            return
+        await self._create_case(member.guild, type="autorole", reason=reason, user=member)
+
+    async def _handler_task(self):
+        __intervals: List[Tuple[timedelta, int]] = [
+            (timedelta(seconds=10), 5),
+            (timedelta(minutes=10), 10),
+            (timedelta(hours=1), 20),
+            (timedelta(days=1), 40),
+        ]
+        while True:
+            member: discord.Member = await self.queue.get()
+            await self._wait_for_guild_verification(member, member.guild)
+            if member.guild.id not in self.spam:
+                self.spam[member.guild.id] = AntiSpam(__intervals)
+            if self.spam[member.guild.id].spammy:
+                await asyncio.sleep(69)
+            self.spam[member.guild.id].stamp()
+            await self._handle_member_join(member)
 
     @commands.guild_only()
     @commands.has_permissions(manage_roles=True)
@@ -155,7 +180,7 @@ class AutoRole(MixinMeta, metaclass=CompositeMetaClass):
         await ctx.send(f"Assigned {role.name} ({role.id}) as an autorole.")
 
     @_autorole.command()
-    async def remove(self, ctx: commands.Context, *, role: FuzzyRole):
+    async def remove(self, ctx: commands.GuildContext, *, role: FuzzyRole):
         """Remove an autorole."""
         async with self.config.guild(ctx.guild).autoroles.roles() as roles:
             if role.id in roles:
@@ -167,49 +192,84 @@ class AutoRole(MixinMeta, metaclass=CompositeMetaClass):
         await ctx.send(f"Removed {role.name} ({role.id}) from the autoroles list.")
 
     @_autorole.group(name="humans")
-    async def _humans(self, _: commands.Context):
+    async def _humans(self, _: commands.GuildContext):
         """Manage autoroles for humans."""
 
     @_humans.command(name="toggle")
-    async def humans_toggle(self, ctx: commands.Context, toggle: bool):
+    async def humans_toggle(self, ctx: commands.GuildContext, toggle: bool):
         """Toggle the human only autorole system."""
+        await self.config.guild(ctx.guild).autoroles.humans.toggle.set(toggle)
+        await ctx.send(
+            f"Human auto role system is now {'enabled' if toggle else 'disabled'}.",
+        )
 
     @_humans.command(name="add")
-    async def humans_add(self, ctx: commands.Context, *, role: FuzzyRole):
+    async def humans_add(self, ctx: commands.GuildContext, *, role: StrictRole):
         """Add a role to be added to all new humans on join."""
+        async with self.config.guild(ctx.guild).autoroles.humans.roles() as roles:
+            if role.id not in roles:
+                roles.append(role.id)
+            else:
+                raise commands.UserFeedbackCheckFailure(
+                    f"{role.name} ({role.id}) is already an assigned humans autorole.",
+                )
+        await ctx.send(f"Assigned {role.name} ({role.id}) as an humans autorole.")
 
     @_humans.command(name="remove")
-    async def humans_remove(self, ctx: commands.Context, *, role: Union[FuzzyRole, int]):
+    async def humans_remove(self, ctx: commands.Context, *, role: FuzzyRole):
         """Remove an autorole for humans."""
+        async with self.config.guild(ctx.guild).autoroles.humans.roles() as roles:
+            if role.id in roles:
+                roles.remove(role.id)
+            else:
+                raise commands.UserFeedbackCheckFailure(
+                    f"{role.name} ({role.id}) is not an assigned humans autorole.",
+                )
+        await ctx.send(f"Removed {role.name} ({role.id}) from the humans autorole list.")
 
     @_autorole.group(name="bots")
     async def _bots(self, ctx: commands.Context):
         """Manage autoroles for bots."""
 
+    @_bots.command(name="toggle")
+    async def bots_toggle(self, ctx: commands.GuildContext, toggle: bool):
+        """Toggle the bots only autorole system."""
+        await self.config.guild(ctx.guild).autoroles.bots.toggle.set(toggle)
+        await ctx.send(
+            f"Bots auto role system is now {'enabled' if toggle else 'disabled'}.",
+        )
+
     @_bots.command(name="add")
-    async def bots_add(self, ctx: commands.Context, *, role: FuzzyRole):
+    async def bots_add(self, ctx: commands.Context, *, role: StrictRole):
         """Add a role to be added to all new bots on join."""
+        async with self.config.guild(ctx.guild).autoroles.bots.roles() as roles:
+            if role.id not in roles:
+                roles.append(role.id)
+            else:
+                raise commands.UserFeedbackCheckFailure(
+                    f"{role.name} ({role.id}) is already an assigned bots autorole.",
+                )
+        await ctx.send(f"Assigned {role.name} ({role.id}) as an bots autorole.")
 
     @_bots.command(name="remove")
-    async def bots_remove(self, ctx: commands.Context, *, role: Union[FuzzyRole, int]):
+    async def bots_remove(self, ctx: commands.Context, *, role: FuzzyRole):
         """Remove an autorole for bots."""
+        async with self.config.guild(ctx.guild).autoroles.bots.roles() as roles:
+            if role.id in roles:
+                roles.remove(role.id)
+            else:
+                raise commands.UserFeedbackCheckFailure(
+                    f"{role.name} ({role.id}) is not an assigned bots autorole.",
+                )
+        await ctx.send(f"Removed {role.name} ({role.id}) from the humans autorole list.")
 
-    @_autorole.group(invoke_without_command=True, name="sticky")
-    async def _sticky(self, ctx: commands.Context, true_or_false: bool = None):
-        """Toggle whether the bot should reapply roles on member joins and leaves."""
+    @commands.Cog.listener()
+    async def on_member_join(self, member: discord.Member):
+        if member.pending:
+            return
+        await self.queue.put(member)
 
-    @_sticky.command(aliases=["bl"])
-    async def blacklist(self, ctx: commands.Context, *, role: FuzzyRole):
-        """Blacklist a role from being reapplied on joins."""
-
-    @_sticky.command(aliases=["unbl"])
-    async def unblacklist(self, ctx: commands.Context, *, role: Union[FuzzyRole, int]):
-        """Remove a role from the sticky blacklist."""
-
-    # @commands.Cog.listener("on_member_join")
-    async def on_member_join_autorole(self, member: discord.Member):
-        pass
-
-    # @commands.Cog.listener("on_member_join")
-    async def on_member_join_humans_autorole(self, member: discord.Member):
-        pass
+    @commands.Cog.listener()
+    async def on_member_update(self, before: discord.Member, after: discord.Member):
+        if before.pending and not after.pending:
+            await self.queue.put(after)
