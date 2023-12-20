@@ -75,7 +75,7 @@ class RoleUtils(
         )
 
         default_guild: Dict[
-            str, Dict[str, Union[List[int], bool, Dict[str, Union[List[str], bool]]]]
+            str, Dict[str, Union[List[int], bool, Dict[str, Union[List[int], bool]]]]
         ] = {
             "reactroles": {"channels": [], "enabled": True},
             "autoroles": {
@@ -104,9 +104,6 @@ class RoleUtils(
         self.cache: Dict[str, Any] = {}
 
         super().__init__(*_args)
-
-    async def red_delete_data_for_user(self, *, requester: RequestType, user_id: int) -> None:
-        return
 
     async def initialize(self) -> None:
         log.debug("RoleUtils initialize")
