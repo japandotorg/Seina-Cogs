@@ -53,7 +53,7 @@ class RoleUtils(
     """
     Useful role commands.
 
-    Includes massroling, role targeting, and reaction roles.
+    Includes massroling, role targeting, autoroling and reaction roles.
     """
 
     __author__: Final[List[str]] = ["inthedark.org", "PhenoM4n4n"]
