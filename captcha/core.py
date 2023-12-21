@@ -125,6 +125,18 @@ class Captcha(
             raise TagCharacterLimitReached(TAGSCRIPT_LIMIT, length)
         return True
 
+    async def _get_or_fetch_guild(self, guild_id: int) -> Optional[discord.Guild]:
+        guild: Optional[discord.Guild] = self.bot.get_guild(guild_id)
+        if guild is not None:
+            return guild
+        if not self.bot.is_ws_ratelimited():
+            try:
+                guild: Optional[discord.Guild] = await self.bot.fetch_guild(guild_id)
+            except discord.HTTPException:
+                pass
+            else:
+                return guild
+
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member) -> None:
         if member.bot:
@@ -267,6 +279,39 @@ class Captcha(
         await self._captchas[member.id].delete()
         del self._captchas[member.id]
         del self._user_tries[member.id]
+
+    @commands.Cog.listener()
+    async def on_raw_member_remove(self, payload: discord.RawMemberRemoveEvent) -> None:
+        member: Union[discord.Member, discord.User] = payload.user
+        guild: Optional[discord.Guild] = await self._get_or_fetch_guild(payload.guild_id)
+        if guild is None:
+            return
+        if await self.bot.cog_disabled_in_guild_raw(self.__class__.__name__, payload.guild_id):
+            return
+        if not await self.config.guild(guild).toggle():
+            return
+
+        if (
+            not guild.me.guild_permissions.kick_members
+            or not guild.me.guild_permissions.manage_roles
+            or not guild.me.guild_permissions.embed_links
+            or not guild.me.guild_permissions.attach_files
+        ):
+            await self.config.guild(guild).toggle.set(False)
+            log.info(f"Disabled captcha verification due to missing permissions.")
+            return
+
+        if member.id in self._verification_phase:
+            for user_try in self._user_tries[member.id]:
+                await user_try.delete()
+            await self._captchas[member.id].delete()
+            del self._captchas[member.id]
+            try:
+                del self._verification_phase[member.id]
+            except KeyError:
+                pass
+            os.remove(f"{str(self.data_path)}/{member.id}.png")
+            del self._user_tries[member.id]
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
