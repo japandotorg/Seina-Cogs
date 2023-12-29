@@ -26,7 +26,7 @@ import asyncio
 import random
 import time
 from collections import Counter
-from typing import List, Optional
+from typing import List, Optional, Protocol, TypeVar
 
 import discord
 from redbot.core import bank, commands
@@ -37,13 +37,28 @@ from .constants import EMOJIS, PROMPTS, WINNER_PROMPTS
 from .utils import exceptions
 from .views import RemainingPlayerView
 
+T = TypeVar("T", covariant=True)
+
 EDIT_ORIGINAL_MESSAGE = False
 
 
 __all__ = ("Game",)
 
 
-class Game:
+class GameBase(Protocol[T]):
+    def __init__(self, cog: commands.Cog, delay: int = 10, skip: bool = False) -> None:
+        ...
+
+    async def start(
+        self,
+        ctx: commands.Context,
+        players: List[discord.Member],
+        original_message: Optional[discord.Message] = None,
+    ) -> discord.Member:
+        ...
+
+
+class Game(GameBase):
     def __init__(self, cog: commands.Cog, delay: int = 10, skip: bool = False) -> None:
         self.cog: commands.Cog = cog
         self.ctx: commands.Context = None
