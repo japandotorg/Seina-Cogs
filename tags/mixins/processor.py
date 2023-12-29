@@ -85,15 +85,11 @@ class Processor(MixinMeta):
             tse.OverrideBlock(),
             tse.RedirectBlock(),
             tse.CooldownBlock(),
-            tse.UpperBlock(),
-            tse.LowerBlock(),
-            tse.CountBlock(),
         ]
         tag_blocks: List[tse.Block] = [
             DeleteBlock(),
             SilentBlock(),
             ReactBlock(),
-            CommentBlock(),
         ]
         interpreter: Union[Type[tse.AsyncInterpreter], Type[tse.Interpreter]] = (
             tse.AsyncInterpreter if data["async_enabled"] else tse.Interpreter
