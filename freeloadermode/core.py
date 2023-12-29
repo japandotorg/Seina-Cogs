@@ -267,7 +267,7 @@ class FreeloaderMode(
         return changed
 
     async def _check_tempban_expirations(self) -> None:
-        guilds_data: Dict[int, Dict[str, Any]] = await self.config.all_guild()
+        guilds_data: Dict[int, Dict[str, Any]] = await self.config.all_guilds()
         async for guild_id, guild_data in AsyncIter(guilds_data.items(), steps=100):
             if not (guild := self.bot.get_guild(guild_id)):
                 continue
