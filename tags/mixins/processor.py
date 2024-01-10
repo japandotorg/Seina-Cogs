@@ -25,6 +25,7 @@ SOFTWARE.
 
 import asyncio
 import logging
+import contextvars
 from copy import copy
 from typing import Any, Dict, List, Optional, Type, Union
 
@@ -34,7 +35,7 @@ from redbot.core import commands
 from redbot.core.utils.menus import start_adding_reactions
 
 from ..abc import MixinMeta
-from ..blocks import CommentBlock, DeleteBlock, ReactBlock, SilentBlock
+from ..blocks import DeleteBlock, ReactBlock, SilentBlock
 from ..errors import BlacklistCheckFailure, RequireCheckFailure, WhitelistCheckFailure
 from ..objects import SilentContext, Tag
 
@@ -250,20 +251,25 @@ class Processor(MixinMeta):
         return await self.send_quietly(destination, content, **kwargs)
 
     async def process_commands(
-        self, messages: List[discord.Message], silent: bool, overrides: Dict
+        self, messages: List[discord.Message], silent: bool, overrides: Dict[Any, Any]
     ) -> None:
         command_tasks = []
+        context: contextvars.Context = contextvars.copy_context()
         for message in messages:
-            command_task = asyncio.create_task(self.process_command(message, silent, overrides))
+            command_task = asyncio.create_task(
+                self.process_command(message, silent, overrides), context=context
+            )
             command_tasks.append(command_task)
             await asyncio.sleep(0.1)
         await asyncio.gather(*command_tasks)
 
     async def process_command(
-        self, command_message: discord.Message, silent: bool, overrides: dict
+        self, command_message: discord.Message, silent: bool, overrides: Dict[Any, Any]
     ) -> None:
         command_cls = SilentContext if silent else commands.Context
-        ctx = await self.bot.get_context(command_message, cls=command_cls)
+        ctx: Union[SilentContext, commands.Context] = await self.bot.get_context(
+            command_message, cls=command_cls
+        )
         if not ctx.valid:
             return
         if overrides:
@@ -271,7 +277,9 @@ class Processor(MixinMeta):
         await self.bot.invoke(ctx)
 
     @classmethod
-    def handle_overrides(cls, command: commands.Command, overrides: Dict) -> commands.Command:
+    def handle_overrides(
+        cls, command: commands.Command, overrides: Dict[Any, Any]
+    ) -> commands.Command:
         overriden_command = copy(command)
         # overriden_command = command.copy() # does not work as it makes ctx a regular argument
         # overriden_command.cog = command.cog
