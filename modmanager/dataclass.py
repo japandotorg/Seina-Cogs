@@ -25,10 +25,9 @@ SOFTWARE.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal
+from typing import Literal
 
-if TYPE_CHECKING:
-    from .abc import Manager
+from .abc import Manager
 
 
 @dataclass
