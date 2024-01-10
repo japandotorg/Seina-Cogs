@@ -30,14 +30,14 @@ from typing import Dict, Final, List, Union
 
 import discord
 import discord.ext.tasks
-from redbot.core.bot import Red
 from redbot.core import commands, modlog
+from redbot.core.bot import Red
 from redbot.core.config import Config
 from redbot.core.utils import AsyncIter
 
 from .abc import CompositeMetaClass
-from .manager import PunishmentManager
 from .commands import Commands
+from .manager import PunishmentManager
 
 log: logging.Logger = logging.getLogger("red.seina.modmanager")
 

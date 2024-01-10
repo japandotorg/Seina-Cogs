@@ -27,21 +27,21 @@ from __future__ import annotations
 import logging
 from typing import (
     TYPE_CHECKING,
-    Generic,
-    Protocol,
-    TypeVar,
     Dict,
+    Generic,
     Iterable,
     List,
     Optional,
+    Protocol,
     Tuple,
+    TypeVar,
     Union,
 )
-from typing_extensions import Self
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import modlog
+from redbot.core.bot import Red
+from typing_extensions import Self
 
 from .abc import Manager
 from .dataclass import Punishment

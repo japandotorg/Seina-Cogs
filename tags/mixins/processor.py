@@ -24,8 +24,8 @@ SOFTWARE.
 """
 
 import asyncio
-import logging
 import contextvars
+import logging
 from copy import copy
 from typing import Any, Dict, List, Optional, Type, Union
 

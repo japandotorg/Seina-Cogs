@@ -28,8 +28,8 @@ from abc import ABC, ABCMeta, abstractmethod
 from typing import TYPE_CHECKING, Any, Union
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.config import Config
 
 if TYPE_CHECKING:
