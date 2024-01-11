@@ -221,7 +221,7 @@ class PunishmentManager(
                 punishment_reason=reason,
             )
             ban: Optional[discord.User] = await self._get_ban(user, guild)
-            if ban is None:
+            if not ban:
                 await self.punish(user, guild, punishment)
 
     async def _add_to_kick_list(
