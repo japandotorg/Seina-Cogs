@@ -265,6 +265,8 @@ class PunishmentManager(
         for member_id, reason in data.items():
             try:
                 member: discord.Member = await self.bot.get_or_fetch_member(guild, int(member_id))
+            except discord.NotFound:
+                continue
             except discord.HTTPException as error:
                 log.exception(
                     "Failed to get/fetch member_id {}".format(member_id),
