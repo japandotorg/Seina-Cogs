@@ -107,6 +107,10 @@ class PunishmentManager(
             await guild.ban(
                 discord.Object(member if isinstance(member, int) else member.id), reason=reason
             )
+        except Exception as error:
+            log.exception("Failed to ban **{}**.".format(member), exc_info=error)
+            raise error
+        else:
             if await self.cog.config.guild(guild).modlog():
                 await modlog.create_case(
                     self.bot,
@@ -117,9 +121,6 @@ class PunishmentManager(
                     moderator=guild.me,
                     reason=reason,
                 )
-        except Exception as error:
-            log.exception("Failed to ban **{}**.".format(member), exc_info=error)
-            raise error
 
     async def _kick(
         self,
@@ -134,6 +135,10 @@ class PunishmentManager(
             return
         try:
             await member.kick(reason=reason)
+        except Exception as error:
+            log.exception("Failed to kick **{}**.".format(member), exc_info=error)
+            raise error
+        else:
             if await self.cog.config.guild(member.guild).modlog():
                 await modlog.create_case(
                     self.bot,
@@ -144,9 +149,6 @@ class PunishmentManager(
                     moderator=member.guild.me,
                     reason=reason,
                 )
-        except Exception as error:
-            log.exception("Failed to kick **{}**.".format(member), exc_info=error)
-            raise error
 
     async def _in_ban_list(self, id: int, guild: discord.Guild) -> bool:
         data: Dict[str, str] = await self.cog.config.guild(guild).bans()
