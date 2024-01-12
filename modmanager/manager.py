@@ -73,7 +73,7 @@ class PunishmentManager(
         self.bot: Red = cog.bot
 
     @staticmethod
-    async def _get_ban(
+    async def _get_ban_from_guild_bans(
         member: Union[discord.Member, discord.User],
         guild: discord.Guild,
         limit: int = 1000,
@@ -84,6 +84,21 @@ class PunishmentManager(
                 return ban.user
             else:
                 return None
+
+    @staticmethod
+    async def _get_ban(
+        member: Union[discord.Member, discord.User],
+        guild: discord.Guild,
+    ) -> Optional[discord.User]:
+        try:
+            ban: discord.BanEntry = await guild.fetch_ban(member)
+        except (discord.NotFound, discord.Forbidden):
+            return None
+        except discord.HTTPException as error:
+            log.exception("Uh Oh! Something went wrong.", exc_info=error)
+            return None
+        else:
+            return ban.user
 
     def _get_manager(self) -> Self:
         return self
