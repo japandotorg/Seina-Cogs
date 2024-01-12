@@ -24,7 +24,6 @@ SOFTWARE.
 """
 
 import asyncio
-import contextvars
 import logging
 from copy import copy
 from typing import Any, Dict, List, Optional, Type, Union
@@ -254,11 +253,8 @@ class Processor(MixinMeta):
         self, messages: List[discord.Message], silent: bool, overrides: Dict[Any, Any]
     ) -> None:
         command_tasks = []
-        context: contextvars.Context = contextvars.copy_context()
         for message in messages:
-            command_task = asyncio.create_task(
-                self.process_command(message, silent, overrides), context=context
-            )
+            command_task = asyncio.create_task(self.process_command(message, silent, overrides))
             command_tasks.append(command_task)
             await asyncio.sleep(0.1)
         await asyncio.gather(*command_tasks)
