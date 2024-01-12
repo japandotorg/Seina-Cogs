@@ -73,13 +73,13 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         self,
         ctx: commands.GuildContext,
         add_or_remove: Literal["add", "remove"],
-        users: commands.Greedy[discord.User],
+        users: commands.Greedy[commands.RawUserIdConverter],
         *,
         reason: str = "No reason provided.",
     ):
         """Force add users to the ban list."""
         if add_or_remove.lower() == "add":
-            await self.manager._add_to_ban_list(users, ctx.guild, reason)
+            await self.manager._add_to_ban_list(users, ctx.guild, reason)  # type: ignore
         elif add_or_remove.lower() == "remove":
             if not await self.manager._get_ban_list(ctx.guild):
                 await ctx.send(
@@ -88,7 +88,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
                     allowed_mentions=discord.AllowedMentions(replied_user=False),
                 )
                 return
-            await self.manager._remove_from_ban_list(users, ctx.guild)
+            await self.manager._remove_from_ban_list(users, ctx.guild)  # type: ignore
         else:
             await ctx.send_help(ctx.command)
             return
@@ -103,13 +103,13 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         self,
         ctx: commands.GuildContext,
         add_or_remove: Literal["add", "remove", "clear"],
-        users: commands.Greedy[discord.User],
+        users: commands.Greedy[commands.RawUserIdConverter],
         *,
         reason: str = "No reason provided.",
     ):
         """Force add users to the kick list."""
         if add_or_remove.lower() == "add":
-            await self.manager._add_to_kick_list(users, ctx.guild, reason)
+            await self.manager._add_to_kick_list(users, ctx.guild, reason)  # type: ignore
         elif add_or_remove.lower() == "remove":
             if not await self.manager._get_kick_list(ctx.guild):
                 await ctx.send(
@@ -118,7 +118,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
                     allowed_mentions=discord.AllowedMentions(replied_user=False),
                 )
                 return
-            await self.manager._remove_from_kick_list(users, ctx.guild)
+            await self.manager._remove_from_kick_list(users, ctx.guild)  # type: ignore
         else:
             await ctx.send_help(ctx.command)
             return
