@@ -102,7 +102,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
     async def _kick(
         self,
         ctx: commands.GuildContext,
-        add_or_remove: Literal["add", "remove", "clear"],
+        add_or_remove: Literal["add", "remove"],
         users: commands.Greedy[commands.RawUserIdConverter],
         *,
         reason: str = "No reason provided.",
