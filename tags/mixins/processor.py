@@ -252,9 +252,11 @@ class Processor(MixinMeta):
     async def process_commands(
         self, messages: List[discord.Message], silent: bool, overrides: Dict[Any, Any]
     ) -> None:
-        command_tasks = []
+        command_tasks: List[asyncio.Task[None]] = []
         for message in messages:
-            command_task = asyncio.create_task(self.process_command(message, silent, overrides))
+            command_task: asyncio.Task[None] = asyncio.create_task(
+                self.process_command(message, silent, overrides)
+            )
             command_tasks.append(command_task)
             await asyncio.sleep(0.1)
         await asyncio.gather(*command_tasks)
