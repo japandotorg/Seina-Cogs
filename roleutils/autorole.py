@@ -26,10 +26,11 @@ SOFTWARE.
 import asyncio
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, Final, List, NoReturn, Optional, Tuple, Union
+from typing import Any, Dict, Final, List, NoReturn, Optional, Tuple, Union, Literal
 
 import discord
 from redbot.core import commands
+from redbot.core.utils.mod import get_audit_reason
 from redbot.core.modlog import Case, create_case
 from redbot.core.utils.antispam import AntiSpam
 
@@ -108,6 +109,62 @@ class AutoRoles(MixinMeta, metaclass=CompositeMetaClass):
         except RuntimeError:
             case = None
         return case
+
+    async def _give_sticky_role(
+        self,
+        member: discord.Member,
+        role: Union[discord.Role, StrictRole],
+        reason: Optional[str] = None,
+    ) -> None:
+        if not member.guild.get_member(member.id):
+            return
+        guild: discord.Guild = member.guild
+        if not guild.me.guild_permissions.manage_roles:
+            return
+        await member.add_roles(role, reason=reason)
+
+    async def _remove_sticky_role(
+        self,
+        member: discord.Member,
+        role: Union[discord.Role, StrictRole],
+        reason: Optional[str] = None,
+    ) -> None:
+        if not member.guild.get_member(member.id):
+            return
+        guild: discord.Guild = member.guild
+        if not guild.me.guild_permissions.manage_roles:
+            return
+        await member.remove_roles(role, reason=reason)
+
+    async def _sticky_join(self, member: discord.Member) -> None:
+        guild: discord.Guild = member.guild
+        if await self.bot.cog_disabled_in_guild(self, guild):
+            return
+        to_reapply: List[int] = await self.config.member(member).sticky_roles()
+        if not to_reapply:
+            return
+        to_add: List[discord.Role] = []
+        for role_id in to_reapply:
+            role: Optional[discord.Role] = guild.get_role(int(role_id))
+            if role and role.position < guild.me.top_role.position:
+                to_add.append(role)
+        if to_add:
+            await member.add_roles(*to_add, reason="Applied configured sticky roles.")
+
+    async def _sticky_remove(self, member: discord.Member) -> None:
+        guild: discord.Guild = member.guild
+        if await self.bot.cog_disabled_in_guild(self, guild):
+            return
+        to_reapply: List[int] = await self.config.member(member).sticky_roles()
+        reapply: bool = False
+        for role in member.roles:
+            if not await self.config.role(role).sticky():
+                continue
+            if role.id not in to_reapply:
+                to_reapply.append(role.id)
+                reapply: bool = True
+        if reapply:
+            await self.config.member(member).sticky_roles.set(to_reapply)
 
     async def _handle_member_join(self, member: discord.Member):
         role_ids: List[int] = []
@@ -263,8 +320,101 @@ class AutoRoles(MixinMeta, metaclass=CompositeMetaClass):
                 )
         await ctx.send(f"Removed {role.name} ({role.id}) from the humans autorole list.")
 
+    @_autorole.group(name="sticky", aliases=["stickyrole"])
+    async def _sticky(self, _: commands.GuildContext):
+        """"""
+
+    @_sticky.command(name="set", aliases=["role"])
+    async def _autorole_sticky_set(
+        self,
+        ctx: commands.GuildContext,
+        add_or_remove: Literal["add", "remove"],
+        *,
+        role: StrictRole,
+    ):
+        """"""
+        if add_or_remove.lower() == "add":
+            if await self.config.role(role).sticky():
+                await ctx.send(
+                    "{} is already a sticky role.".format(role.name),
+                )
+                return
+            await self.config.role(role).sticky.set(True)
+            await ctx.send("Successfully configured {} as a sticky role.".format(role.name))
+        elif add_or_remove.lower() == "remove":
+            if not await self.config.role(role).sticky():
+                await ctx.send(
+                    "{} is not a sticky role.".format(role.name),
+                )
+                return
+            await self.config.role(role).sticky.set(False)
+            await ctx.send("Successfully removed {} from sticky roles.".format(role.name))
+        else:
+            await ctx.send_help(ctx.command)
+
+    @_sticky.command(name="add")
+    async def _autorole_sticky_add(
+        self,
+        ctx: commands.GuildContext,
+        users: commands.Greedy[discord.Member],
+        *,
+        role: StrictRole,
+    ):
+        """"""
+        failed: List[str] = []
+        for user in users:
+            async with self.config.member(user).sticky_roles() as settings:
+                if role.id not in settings:
+                    settings.append(role.id)
+            try:
+                await self._give_sticky_role(
+                    user, role, reason=get_audit_reason(ctx.author, "Sticky role applied.")
+                )
+            except discord.HTTPException:
+                failed.append(
+                    "There was an error applying the sticky role to {} ({}).\n".format(
+                        user.display_name, user.id
+                    )
+                )
+        await ctx.send(
+            "{} is configured as a sticky role for {} users.".format(role.name, len(users))
+        )
+        if failed:
+            await ctx.send("".join([f for f in failed]))
+
+    @_sticky.command(name="remove")
+    async def _autorole_sticky_remove(
+        self,
+        ctx: commands.GuildContext,
+        users: commands.Greedy[discord.Member],
+        *,
+        role: StrictRole,
+    ):
+        """"""
+        failed: List[str] = []
+        for user in users:
+            async with self.config.member(user).sticky_roles() as settings:
+                if role.id in settings:
+                    settings.remove(role.id)
+            try:
+                await self._remove_sticky_role(
+                    user, role, reason=get_audit_reason(ctx.author, "Sticky role removed.")
+                )
+            except discord.HTTPException:
+                failed.append(
+                    "There was an error applying the sticky role to {} ({}).\n".format(
+                        user.display_name, user.id
+                    )
+                )
+        await ctx.send("Removed the sticky role {} from {} users.".format(role.name, len(users)))
+        if failed:
+            await ctx.send("".join([f for f in failed]))
+
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
+        if await self.bot.cog_disabled_in_guild(self, member.guild):
+            return
+        await self._sticky_join(member)
         if member.pending:
             return
         await self.queue.put(member)
@@ -273,3 +423,9 @@ class AutoRoles(MixinMeta, metaclass=CompositeMetaClass):
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         if before.pending and not after.pending:
             await self.queue.put(after)
+
+    @commands.Cog.listener()
+    async def on_member_remove(self, member: discord.Member):
+        if await self.bot.cog_disabled_in_guild(self, member.guild):
+            return
+        await self._sticky_remove(member)

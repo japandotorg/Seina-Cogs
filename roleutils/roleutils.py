@@ -93,7 +93,15 @@ class RoleUtils(
                 },
             },
         }
+        default_role: Dict[str, bool] = {
+            "sticky": False,
+        }
+        default_member: Dict[str, List[int]] = {
+            "sticky_roles": [],
+        }
         self.config.register_guild(**default_guild)
+        self.config.register_role(**default_role)
+        self.config.register_member(**default_member)
 
         default_guildmessage: Dict[str, Dict[str, Any]] = {"reactroles": {"react_to_roleid": {}}}
         self.config.init_custom("GuildMessage", 2)
