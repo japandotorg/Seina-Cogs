@@ -36,7 +36,7 @@ from redbot.core.utils.chat_formatting import humanize_list
 
 from .model import ShazamClient
 
-log: logging.Logger = logging.getLogger("red.seina.massunban")
+log: logging.Logger = logging.getLogger("red.seina.shazam")
 
 RequestType = Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
