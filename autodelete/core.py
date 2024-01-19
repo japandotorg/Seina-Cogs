@@ -106,7 +106,7 @@ class AutoDelete(commands.Cog):
             f"Deleted **{len(messages)}** messages from {channel.mention}",
             file=discord.File(
                 io.BytesIO(file.encode()),
-                filename=f"{channel.name}-{date}.txt",
+                filename=f"{channel.name}-{date}.html",
             ),
         )
 
