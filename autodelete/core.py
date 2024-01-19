@@ -182,7 +182,7 @@ class AutoDelete(commands.Cog):
                 raise commands.UserFeedbackCheckFailure(
                     "`Days` is a required argument that is missing.",
                 )
-            if channel.id in channels:
+            if str(channel.id) in channels:
                 raise commands.UserFeedbackCheckFailure(
                     f"{channel.mention} already has an auto delete rule.",
                 )
@@ -194,7 +194,7 @@ class AutoDelete(commands.Cog):
                 allowed_mentions=discord.AllowedMentions(replied_user=False),
             )
         elif add_or_remove.lower() == "remove":
-            if channel.id not in channels:
+            if str(channel.id) not in channels:
                 raise commands.UserFeedbackCheckFailure(
                     f"{channel.mention} has no auto delete rule.",
                 )
