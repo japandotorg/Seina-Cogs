@@ -22,15 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import datetime
 import io
 import logging
-import datetime
-from typing import Union, Dict, List, Final, Optional, Literal
+from typing import Dict, Final, List, Literal, Optional, Union
 
 import discord
 from discord.ext import tasks
+from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core import commands, Config
 from redbot.core.utils.chat_formatting import humanize_list
 
 from .models import Transcript
