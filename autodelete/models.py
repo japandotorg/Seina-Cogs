@@ -22,28 +22,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import re
-import pytz
-import html
 import datetime
+import html
+import re
 import traceback
 from typing import List, Protocol, Self, Union
 
-from chat_exporter.construct.message import gather_messages
+import discord
+import pytz
 from chat_exporter.construct.assets.component import Component
+from chat_exporter.construct.message import gather_messages
 from chat_exporter.ext.cache import clear_cache
 from chat_exporter.ext.discord_utils import DiscordUtils
 from chat_exporter.ext.html_generator import (
-    fill_out,
-    total,
-    channel_topic,
-    meta_data_temp,
-    fancy_time,
-    channel_subject,
     PARSE_MODE_NONE,
+    channel_subject,
+    channel_topic,
+    fancy_time,
+    fill_out,
+    meta_data_temp,
+    total,
 )
-
-import discord
 
 
 class DAOProtocol(Protocol):
