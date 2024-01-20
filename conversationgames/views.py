@@ -93,7 +93,7 @@ class Select(discord.ui.Select):
             max_values=1,
             min_values=1,
         )
-        self.callback: functools.partial = functools.partial(callback, self)
+        self.callback: functools.partial = functools.partial(callback, self) # type: ignore
 
 
 class CGView(discord.ui.View):
@@ -121,7 +121,7 @@ class CGView(discord.ui.View):
         except discord.HTTPException:
             pass
 
-    async def interaction_check(self, interaction: discord.Interaction[Red]) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction[Red]) -> bool: # type: ignore
         if (
             self._member.id != interaction.user.id
             if self._member is not None
@@ -147,7 +147,9 @@ class CGView(discord.ui.View):
                 self.view._result["question"]  # type: ignore
                 if self.values[0] == "English"
                 else f"({select_options[self.values[0]]['label']}) "
-                + self.view._result["translations"][self.values[0]]  # type: ignore
+                + self.view._result["question"] # type: ignore
+                if self.values[0] == "English"
+                else self.view._result["translations"][self.values[0]]  # type: ignore
             ),
             color=await self.view._ctx.embed_color(),  # type: ignore
         )
