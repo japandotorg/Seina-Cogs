@@ -93,7 +93,7 @@ class Select(discord.ui.Select):
             max_values=1,
             min_values=1,
         )
-        self.callback: functools.partial = functools.partial(callback, self) # type: ignore
+        self.callback: functools.partial = functools.partial(callback, self)  # type: ignore
 
 
 class CGView(discord.ui.View):
@@ -121,7 +121,7 @@ class CGView(discord.ui.View):
         except discord.HTTPException:
             pass
 
-    async def interaction_check(self, interaction: discord.Interaction[Red]) -> bool: # type: ignore
+    async def interaction_check(self, interaction: discord.Interaction[Red]) -> bool:  # type: ignore
         if (
             self._member.id != interaction.user.id
             if self._member is not None
