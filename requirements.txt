@@ -13,3 +13,4 @@ shazamio
 backoff
 pydub
 SpeechRecognition
+Red-DiscordBot
