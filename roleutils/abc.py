@@ -48,8 +48,7 @@ class MixinMeta(ABC):
         self.cache: Dict[str, Any]
 
     @abstractmethod
-    async def initialize(self) -> None:
-        ...
+    async def initialize(self) -> None: ...
 
 
 class CompositeMetaClass(commands.CogMeta, ABCMeta):

@@ -5,7 +5,6 @@ Copyright (c) 2018-2023 Sitryk
 Copyright (c) 2023-present japandotorg
 """
 
-
 from abc import ABC, ABCMeta, abstractmethod
 from typing import Any
 

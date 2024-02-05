@@ -214,9 +214,7 @@ class AFKPaginator(ViewDisableOnTimeout):
         buttons_to_add = (
             [FirstItemButton, BackwardButton, PageButton, ForwardButton, LastItemButton]
             if len(self.contents) > 2
-            else [BackwardButton, PageButton, ForwardButton]
-            if not len(self.contents) == 1
-            else []
+            else [BackwardButton, PageButton, ForwardButton] if not len(self.contents) == 1 else []
         )
         for i in buttons_to_add:
             self.add_item(i())

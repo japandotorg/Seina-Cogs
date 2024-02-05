@@ -38,7 +38,9 @@ blocks: List[tse.Block] = [
 
 tagscript_engine: tse.Interpreter = tse.Interpreter(blocks)
 
-freeloader_message: str = "You have been banned with a {action} of {time} days in the server **{server(name)}**. Reason: **Freeloading**."
+freeloader_message: str = (
+    "You have been banned with a {action} of {time} days in the server **{server(name)}**. Reason: **Freeloading**."
+)
 
 
 def process_tagscript(

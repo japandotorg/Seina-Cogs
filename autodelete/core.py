@@ -113,9 +113,9 @@ class AutoDelete(commands.Cog):
     @tasks.loop(minutes=60)
     async def _auto_deleter(self) -> None:
         await self.bot.wait_until_red_ready()
-        config: Dict[
-            int, Dict[str, Union[Dict[str, int], Optional[int], List[int]]]
-        ] = await self.config.all_guilds()
+        config: Dict[int, Dict[str, Union[Dict[str, int], Optional[int], List[int]]]] = (
+            await self.config.all_guilds()
+        )
         for guild_id, guild_data in config.items():
             guild: Optional[discord.Guild] = self.bot.get_guild(int(guild_id))
             if not guild:

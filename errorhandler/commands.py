@@ -5,7 +5,6 @@ Copyright (c) 2018-2023 Sitryk
 Copyright (c) 2023-present japandotorg
 """
 
-
 import discord
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box

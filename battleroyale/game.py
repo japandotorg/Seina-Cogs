@@ -46,16 +46,14 @@ __all__ = ("Game",)
 
 
 class GameBase(Protocol[T]):
-    def __init__(self, cog: commands.Cog, delay: int = 10, skip: bool = False) -> None:
-        ...
+    def __init__(self, cog: commands.Cog, delay: int = 10, skip: bool = False) -> None: ...
 
     async def start(
         self,
         ctx: commands.Context,
         players: List[discord.Member],
         original_message: Optional[discord.Message] = None,
-    ) -> discord.Member:
-        ...
+    ) -> discord.Member: ...
 
 
 class Game(GameBase):

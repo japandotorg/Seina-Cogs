@@ -61,12 +61,12 @@ LOCK_REASON: Final[str] = "DisboardReminder auto-lock"
 MENTION_RE: Pattern[str] = re.compile(r"<@!?(\d{15,20})>")
 BUMP_RE: Pattern[str] = re.compile(r"!d bump\b")
 
-DEFAULT_GUILD_MESSAGE: Final[
-    str
-] = "It's been 2 hours since the last successful bump, could someone run </bump:947088344167366698>?"
-DEFAULT_GUILD_THANKYOU_MESSAGE: Final[
-    str
-] = "{member(mention)} thank you for bumping! Make sure to leave a review at <https://disboard.org/server/{guild(id)}>."
+DEFAULT_GUILD_MESSAGE: Final[str] = (
+    "It's been 2 hours since the last successful bump, could someone run </bump:947088344167366698>?"
+)
+DEFAULT_GUILD_THANKYOU_MESSAGE: Final[str] = (
+    "{member(mention)} thank you for bumping! Make sure to leave a review at <https://disboard.org/server/{guild(id)}>."
+)
 
 
 class DisboardReminder(commands.Cog):

@@ -113,9 +113,9 @@ class ModManager(
 
     @discord.ext.tasks.loop(seconds=60, reconnect=True)
     async def _check_list_and_punish(self) -> None:
-        all_guilds: Dict[
-            int, Dict[str, Union[bool, Dict[str, str]]]
-        ] = await self.config.all_guilds()
+        all_guilds: Dict[int, Dict[str, Union[bool, Dict[str, str]]]] = (
+            await self.config.all_guilds()
+        )
         async for guild_id, guild_data in AsyncIter(all_guilds.items(), steps=100):
             if not (guild := self.bot.get_guild(guild_id)):
                 continue

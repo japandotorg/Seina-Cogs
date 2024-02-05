@@ -57,8 +57,7 @@ log: logging.Logger = logging.getLogger("red.seina.modmanager.manager")
 class PunishmentManagerProtocol(Protocol):
     bot: Red
 
-    def __init__(self, cog: ModManager) -> None:
-        ...
+    def __init__(self, cog: ModManager) -> None: ...
 
 
 class PunishmentManager(

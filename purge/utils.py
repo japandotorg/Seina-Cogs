@@ -167,9 +167,9 @@ async def get_message_from_reference(
     reference: discord.MessageReference,
 ) -> Optional[discord.Message]:
     message: Optional[discord.Message] = None
-    resolved: Optional[
-        Union[discord.Message, discord.DeletedReferencedMessage]
-    ] = reference.resolved
+    resolved: Optional[Union[discord.Message, discord.DeletedReferencedMessage]] = (
+        reference.resolved
+    )
     if resolved and isinstance(resolved, discord.Message):
         message: Optional[discord.Message] = resolved
     elif message := reference.cached_message:

@@ -202,9 +202,11 @@ class FreeloaderMode(
                 "server": tse.GuildAdapter(member.guild),
                 "member": tse.MemberAdapter(member),
                 "action": tse.StringAdapter(str(action)),
-                "time": tse.IntAdapter(int(time))
-                if str(action) == "tempban"
-                else tse.StringAdapter("infinite"),
+                "time": (
+                    tse.IntAdapter(int(time))
+                    if str(action) == "tempban"
+                    else tse.StringAdapter("infinite")
+                ),
             },
         )
 
@@ -216,9 +218,11 @@ class FreeloaderMode(
                     "server": tse.GuildAdapter(member.guild),
                     "member": tse.MemberAdapter(member),
                     "action": tse.StringAdapter(str(action)),
-                    "time": tse.IntAdapter(int(time))
-                    if str(action) == "tempban"
-                    else tse.StringAdapter("infinite"),
+                    "time": (
+                        tse.IntAdapter(int(time))
+                        if str(action) == "tempban"
+                        else tse.StringAdapter("infinite")
+                    ),
                 },
             )
 

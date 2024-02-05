@@ -5,7 +5,6 @@ Copyright (c) 2018-2023 Sitryk
 Copyright (c) 2023-present japandotorg
 """
 
-
 import ast
 import re
 from types import CodeType

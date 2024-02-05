@@ -5,7 +5,6 @@ Copyright (c) 2018-2023 Sitryk
 Copyright (c) 2023-present japandotorg
 """
 
-
 import logging
 import textwrap
 import traceback
@@ -22,9 +21,9 @@ from .utils import async_compile, get_syntax_error
 
 log: logging.Logger = logging.getLogger("red.seina.errorhandler")
 
-DEFAULT_REPLY: Final[
-    str
-] = "await ctx.send(f\"`Error in command '{ctx.command.qualified_name}'. Check your console or logs for details.`\")"
+DEFAULT_REPLY: Final[str] = (
+    "await ctx.send(f\"`Error in command '{ctx.command.qualified_name}'. Check your console or logs for details.`\")"
+)
 
 
 class ErrorHandler(

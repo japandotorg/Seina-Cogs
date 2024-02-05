@@ -44,8 +44,7 @@ class Manager(ABC):
         user: Union[discord.User, discord.Member],
         guild: discord.Guild,
         punishment: Punishment,
-    ) -> None:
-        ...
+    ) -> None: ...
 
 
 class MixinMeta(ABC):
