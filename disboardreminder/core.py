@@ -274,7 +274,7 @@ class DisboardReminder(commands.Cog):
         if not kwargs:
             await self.config.guild(guild).message.clear()
             log.info(
-                f"Cleared the bump reminder message to default due to fault in the tagscript."
+                "Cleared the bump reminder message to default due to fault in the tagscript."
             )
             kwargs = self.process_tagscript(DEFAULT_GUILD_MESSAGE)
         kwargs["allowed_mentions"] = allowed_mentions
@@ -307,7 +307,7 @@ class DisboardReminder(commands.Cog):
         embed = message.embeds[0]
         if ":thumbsup:" in embed.description:  # type: ignore
             return embed
-        if message.webhook_id and "Bump done!" in embed.description:  # type: ignore
+        if message.webhook_id and ("Bump done!" or "Bump effectué !") in embed.description:  # type: ignore
             return embed
 
     async def respond_to_bump(
