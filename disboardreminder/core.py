@@ -273,9 +273,7 @@ class DisboardReminder(commands.Cog):
         kwargs = self.process_tagscript(message)
         if not kwargs:
             await self.config.guild(guild).message.clear()
-            log.info(
-                "Cleared the bump reminder message to default due to fault in the tagscript."
-            )
+            log.info("Cleared the bump reminder message to default due to fault in the tagscript.")
             kwargs = self.process_tagscript(DEFAULT_GUILD_MESSAGE)
         kwargs["allowed_mentions"] = allowed_mentions
 
