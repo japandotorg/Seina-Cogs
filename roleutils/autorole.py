@@ -182,7 +182,7 @@ class AutoRoles(MixinMeta, metaclass=CompositeMetaClass):
         ]
         if not roles:
             return
-        reason: Final[str] = f"[RoleUtils] assigned autorole added."
+        reason: Final[str] = "[RoleUtils] assigned autorole added."
         try:
             await member.add_roles(*roles, reason=reason)
         except discord.HTTPException:
