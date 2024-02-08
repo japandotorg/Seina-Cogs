@@ -300,15 +300,6 @@ class DisboardReminder(commands.Cog):
             return
         return guild.get_channel(bump_chan_id)  # type: ignore
 
-    def validate_success(self, message: discord.Message) -> Optional[discord.Embed]:
-        if not message.embeds:
-            return
-        embed = message.embeds[0]
-        if ":thumbsup:" in embed.description:  # type: ignore
-            return embed
-        if message.webhook_id and ("Bump done!" or "Bump effectué !") in embed.description:  # type: ignore
-            return embed
-
     async def respond_to_bump(
         self,
         data: Dict[str, Any],
