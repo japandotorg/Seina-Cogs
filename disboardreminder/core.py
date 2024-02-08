@@ -51,6 +51,7 @@ from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box
 
 from .converters import FuzzyRole
+from .models import LocalizedMessageValidator
 
 log: logging.Logger = logging.getLogger("red.seina.disboardreminder")
 
@@ -179,7 +180,7 @@ class DisboardReminder(commands.Cog):
             if guild_data["channel"]:
                 self.channel_cache[guild_id] = guild_data["channel"]
 
-    async def red_delete_data_for_user(self, *, requester: RequestType, user_id: int) -> None:
+    async def red_delete_data_for_user(self, *, requester: RequestType, user_id: int) -> None:  # type: ignore
         return
 
     async def bump_check_loop(self) -> None:
@@ -273,9 +274,7 @@ class DisboardReminder(commands.Cog):
         kwargs = self.process_tagscript(message)
         if not kwargs:
             await self.config.guild(guild).message.clear()
-            log.info(
-                "Cleared the bump reminder message to default due to fault in the tagscript."
-            )
+            log.info("Cleared the bump reminder message to default due to fault in the tagscript.")
             kwargs = self.process_tagscript(DEFAULT_GUILD_MESSAGE)
         kwargs["allowed_mentions"] = allowed_mentions
 
@@ -386,7 +385,28 @@ class DisboardReminder(commands.Cog):
         clean = data["clean"]
         my_perms = channel.permissions_for(guild.me)
 
-        if embed := self.validate_success(message):
+        i18n: LocalizedMessageValidator = LocalizedMessageValidator(
+            {
+                "ar",
+                "az",
+                "cs",
+                "de",
+                "en",
+                "fr",
+                "he",
+                "hi",
+                "id",
+                "ja",
+                "ko",
+                "pl",
+                "pt",
+                "ro",
+                "tr",
+                "vi",
+                "zh-CN",
+            }
+        )
+        if embed := i18n.validate_success(message):
             last_bump = data["next_bump"]
             if last_bump and last_bump - message.created_at.timestamp() > 0:
                 return
