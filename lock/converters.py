@@ -57,7 +57,7 @@ class LockableChannel(commands.TextChannelConverter):
         argument: str,
     ) -> Optional[discord.TextChannel]:
         channel = await super().convert(ctx, argument)
-        if channel.permissions_for(ctx.me).manage_roles:  # type: ignore
+        if not channel.permissions_for(ctx.me).manage_roles:  # type: ignore
             raise commands.BadArgument(
                 f"I do not have permissions to edit permissions in {channel.mention}.",
             )
