@@ -152,7 +152,7 @@ class Captcha(
             or not member.guild.me.guild_permissions.attach_files
         ):
             await self.config.guild(member.guild).toggle.set(False)
-            log.info(f"Disabled captcha verification due to missing permissions.")
+            log.info("Disabled captcha verification due to missing permissions.")
             return
 
         if not await self.bot.allowed_by_whitelist_blacklist(member):
@@ -298,7 +298,7 @@ class Captcha(
             or not guild.me.guild_permissions.attach_files
         ):
             await self.config.guild(guild).toggle.set(False)
-            log.info(f"Disabled captcha verification due to missing permissions.")
+            log.info("Disabled captcha verification due to missing permissions.")
             return
 
         if member.id in self._verification_phase:
@@ -331,7 +331,7 @@ class Captcha(
             or not message.guild.me.guild_permissions.attach_files
         ):
             await self.config.guild(message.guild).toggle.set(False)
-            log.info(f"Disabled captcha verification due to missing permissions.")
+            log.info("Disabled captcha verification due to missing permissions.")
             return
 
         member: discord.Member = message.author  # type: ignore
@@ -357,12 +357,18 @@ class Captcha(
                 await member.kick(
                     reason=f"{member.id} failed to complete the captcha verification!"
                 )
+                
+                try:
+                    for user_try in self._user_tries[member.id]:
+                        await user_try.delete()
+                except KeyError:
+                    pass
 
-                for user_try in self._user_tries[member.id]:
-                    await user_try.delete()
-
-                await self._captchas[member.id].delete()
-                del self._captchas[member.id]
+                try:
+                    await self._captchas[member.id].delete()
+                    del self._captchas[member.id]
+                except KeyError:
+                    pass
 
                 try:
                     del self._verification_phase[member.id]
