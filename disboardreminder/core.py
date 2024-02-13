@@ -324,6 +324,8 @@ class DisboardReminder(commands.Cog):
                     member_adapter = tse.MemberAdapter(m.author)  # type: ignore
                     break
         if member_adapter is None:
+            if message.interaction:
+                member_adapter = tse.MemberAdapter(message.interaction.user) # type: ignore
             member_adapter = tse.StringAdapter("Unknown User")
         ty_message = data["ty_message"]
         if my_perms.send_messages:
