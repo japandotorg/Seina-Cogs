@@ -159,10 +159,10 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         ```
         """
         if message:
-            await self.config.member(ctx.author).message.set(message)
+            await self.config.guild(ctx.guild).message.set(message)
             await ctx.send("Successfully changed the thread opener notification message.")
         else:
-            await self.config.member(ctx.author).message.clear()
+            await self.config.guild(ctx.guild).message.clear()
             await ctx.send("Successfully reset the thread opener notification message.")
 
     @_thread_opener.command(name="showsettings", aliases=["ss", "show"])
