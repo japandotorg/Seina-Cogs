@@ -325,7 +325,7 @@ class DisboardReminder(commands.Cog):
                     break
         if member_adapter is None:
             member_adapter = (
-                tse.MemberAdapter(message.interaction.user) # type: ignore
+                tse.MemberAdapter(message.interaction.user)  # type: ignore
                 if message.interaction
                 else tse.StringAdapter("Unknown User")
             )
