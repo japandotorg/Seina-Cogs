@@ -27,20 +27,22 @@ import logging
 import re
 import time
 import types
+import orjson
 from collections import Counter
-from typing import Dict, Final, List, Optional, Pattern, Union
+from typing import Any, Dict, Final, List, Optional, Pattern, Union
 from urllib.parse import quote_plus
 
 import discord
 import TagScriptEngine as tse
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import box, humanize_list, inline, pagify
+from redbot.core.utils.chat_formatting import box, humanize_list, inline, pagify, text_to_file
 from tabulate import tabulate
 
 from ..abc import MixinMeta
 from ..converters import (
     GlobalTagConverter,
     GuildTagConverter,
+    MessageConverter,
     PastebinConverter,
     TagConverter,
     TagName,
@@ -355,6 +357,7 @@ class Commands(MixinMeta):
         **Example:**
         `[p]tag info notsupport`
         """
+        assert isinstance(tag, Tag)
         await tag.send_info(ctx)
 
     @tag.command("raw")
@@ -531,6 +534,47 @@ class Commands(MixinMeta):
         await self.process_tag(ctx, tag)
         await ctx.tick()
 
+    @commands.admin_or_permissions(manage_guild=True)
+    @tag.command("backup")
+    async def tag_backup(self, ctx: commands.Context):
+        """
+        Backup all the tag data for your server.
+        """
+        assert isinstance(ctx.guild, discord.Guild)
+        guild_data: Dict[str, Any] = await self.config.guild(ctx.guild).all()
+        file: discord.File = text_to_file(
+            orjson.dumps(guild_data, option=orjson.OPT_INDENT_2).decode("UTF-8"),
+            filename="tag-backup-{}.json".format(ctx.guild.id),
+        )
+        await ctx.tick()
+        await ctx.send(files=[file])
+
+    @commands.admin_or_permissions(manage_guild=True)
+    @tag.command("restore")
+    async def tag_restore(self, ctx: commands.Context, message: MessageConverter):
+        """
+        Restore all tag data for your server.
+
+        This command will restore all data from the backup file.
+        This command will also delete all the previously made tags if
+        not present in the backup file.
+
+        You can pass a message ID, a ChannelID-MessageID pair, or a message link
+        to the `message` argument.
+        Alternatively, if you want to reply to a message, pass anything to the
+        message argument while replying to a message.
+        """
+        msg: discord.Message = message
+        assert isinstance(ctx.guild, discord.Guild)
+        if not msg.attachments and not msg.attachments[0].filename == "tag-backup-{}.json".format(
+            ctx.guild.id
+        ):
+            raise commands.UserFeedbackCheckFailure(
+                "You must pass a message that has a backup file attachment sent by me.",
+            )
+        await self.config.guild(ctx.guild).set(orjson.loads(await msg.attachments[0].read()))
+        await self.initialize()
+
     @commands.is_owner()
     @tag.group("global")
     @copy_doc(tag)
@@ -623,3 +667,26 @@ class Commands(MixinMeta):
     @copy_doc(tag_usage)
     async def tag_global_usage(self, ctx: commands.Context):
         await self.show_tag_usage(ctx)
+
+    @tag_global.command("backup")
+    async def tag_global_backup(self, ctx: commands.Context):
+        """
+        Backup all the global tag data.
+        """
+        global_data: Dict[str, Any] = await self.config.all()
+        file: discord.File = text_to_file(
+            orjson.dumps(global_data, option=orjson.OPT_INDENT_2).decode("UTF-8"),
+            filename="global-tag-backup.json",
+        )
+        await ctx.send()
+        await ctx.send(files=[file])
+
+    # TODO: finish this later
+    # @tag_global.command("restore")
+    # async def tag_global_restore(self, ctx: commands.Context, message: MessageConverter):
+    #     """"""
+    #     msg: discord.Message = message
+    #     if not msg.attachments and not msg.attachments[0].filename == "global-tag-backup.json":
+    #         raise commands.UserFeedbackCheckFailure(
+    #             "You must pass a message that has a backup file attachment sent by me.",
+    #         )
