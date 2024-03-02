@@ -541,11 +541,12 @@ class Commands(MixinMeta):
         Backup all the tag data for your server.
         """
         assert isinstance(ctx.guild, discord.Guild)
-        guild_data: Dict[str, Any] = await self.config.guild(ctx.guild).all()
-        file: discord.File = text_to_file(
-            orjson.dumps(guild_data, option=orjson.OPT_INDENT_2).decode("UTF-8"),
-            filename="tag-backup-{}.json".format(ctx.guild.id),
-        )
+        async with ctx.typing():
+            guild_data: Dict[str, Any] = await self.config.guild(ctx.guild).all()
+            file: discord.File = text_to_file(
+                orjson.dumps(guild_data, option=orjson.OPT_INDENT_2).decode("UTF-8"),
+                filename="tag-backup-{}.json".format(ctx.guild.id),
+            )
         await ctx.tick()
         await ctx.send(files=[file])
 
@@ -566,6 +567,7 @@ class Commands(MixinMeta):
         """
         msg: discord.Message = message
         assert isinstance(ctx.guild, discord.Guild)
+        await ctx.typing()
         if not msg.attachments and not msg.attachments[0].filename == "tag-backup-{}.json".format(
             ctx.guild.id
         ):
