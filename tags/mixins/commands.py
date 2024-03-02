@@ -576,6 +576,8 @@ class Commands(MixinMeta):
             )
         await self.config.guild(ctx.guild).set(orjson.loads(await msg.attachments[0].read()))
         await self.initialize()
+        await ctx.tick()
+        await ctx.send("Backup restored!")
 
     @commands.is_owner()
     @tag.group("global")
