@@ -27,12 +27,12 @@ import logging
 import re
 import time
 import types
-import orjson
 from collections import Counter
 from typing import Any, Dict, Final, List, Optional, Pattern, Union
 from urllib.parse import quote_plus
 
 import discord
+import orjson
 import TagScriptEngine as tse
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box, humanize_list, inline, pagify, text_to_file

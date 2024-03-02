@@ -29,11 +29,10 @@ from collections import defaultdict
 from typing import Any, Coroutine, Dict, List, Optional, Union
 
 import discord
+import TagScriptEngine as tse
 from aiohttp import ClientSession
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-
-import TagScriptEngine as tse
 
 from .objects import Tag
 
@@ -57,72 +56,60 @@ class MixinMeta(ABC):
         self.dot_parameter: Optional[bool]
         self.async_enabled: Optional[bool]
         self.docs: Union[List[str], Dict[str, str]]
-        
+
     @staticmethod
     @abstractmethod
-    def get_seed_from_context(ctx: commands.Context) -> Dict[str, tse.Adapter]:
-        ...
-        
+    def get_seed_from_context(ctx: commands.Context) -> Dict[str, tse.Adapter]: ...
+
     @staticmethod
     @abstractmethod
-    def generate_tag_list(tags: List[Tag]) -> Dict[str, List[str]]:
-        ...
-        
+    def generate_tag_list(tags: List[Tag]) -> Dict[str, List[str]]: ...
+
     @staticmethod
     @abstractmethod
-    async def show_tag_list(ctx, data: Dict[str, List[str]], name: str, icon_url: str) -> None:
-        ...
-        
+    async def show_tag_list(ctx, data: Dict[str, List[str]], name: str, icon_url: str) -> None: ...
+
     @classmethod
     @abstractmethod
     def handle_overrides(
         cls, command: commands.Command, overrides: Dict[Any, Any]
-    ) -> commands.Command:
-        ...
+    ) -> commands.Command: ...
 
     @abstractmethod
-    def create_task(self, coroutine: Coroutine, *, name: Optional[str] = None) -> asyncio.Task:
-        ...
-        
+    def create_task(self, coroutine: Coroutine, *, name: Optional[str] = None) -> asyncio.Task: ...
+
     @staticmethod
     @abstractmethod
-    async def send_quietly(destination: discord.abc.Messageable, content: Optional[str] = None, **kwargs: Any) -> Optional[discord.Message]:
-        ...
-        
+    async def send_quietly(
+        destination: discord.abc.Messageable, content: Optional[str] = None, **kwargs: Any
+    ) -> Optional[discord.Message]: ...
+
     @staticmethod
     @abstractmethod
-    async def delete_quietly(ctx: commands.Context) -> None:
-        ...
+    async def delete_quietly(ctx: commands.Context) -> None: ...
 
     @abstractmethod
-    async def cog_unload(self) -> None:
-        ...
+    async def cog_unload(self) -> None: ...
 
     @abstractmethod
-    async def initialize(self) -> None:
-        ...
+    async def initialize(self) -> None: ...
 
     @abstractmethod
-    async def cache_guild(self, guild_id: int, guild_data: Dict[str, Dict[str, Any]]) -> None:
-        ...
-        
+    async def cache_guild(self, guild_id: int, guild_data: Dict[str, Dict[str, Any]]) -> None: ...
+
     @abstractmethod
-    async def doc_fetch(self) -> None:
-        ...
-        
+    async def doc_fetch(self) -> None: ...
+
     @abstractmethod
-    async def doc_search(self, keyword: str) -> Dict[str, str]:
-        ...
-        
+    async def doc_search(self, keyword: str) -> Dict[str, str]: ...
+
     @abstractmethod
     async def show_tag_usage(
         self, ctx: commands.Context, guild: Optional[discord.Guild] = None
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @abstractmethod
-    def search_tag(self, tag_name: str, guild: Optional[discord.Guild] = None) -> List[Tag]:
-        ...
+    def search_tag(self, tag_name: str, guild: Optional[discord.Guild] = None) -> List[Tag]: ...
 
     @abstractmethod
     def get_tag(
@@ -132,9 +119,8 @@ class MixinMeta(ABC):
         *,
         check_global: bool = True,
         global_priority: bool = False,
-    ) -> Optional[Tag]:
-        ...
-        
+    ) -> Optional[Tag]: ...
+
     @abstractmethod
     async def process_tag(
         self,
@@ -143,37 +129,30 @@ class MixinMeta(ABC):
         *,
         seed_variables: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> Optional[str]:
-        ...
-        
+    ) -> Optional[str]: ...
+
     @abstractmethod
     async def create_tag(
         self, ctx: commands.Context, tag_name: str, tagscript: str, *, global_tag: bool = False
-    ):
-        ...
+    ): ...
 
     @abstractmethod
-    def get_unique_tags(self, guild: Optional[discord.Guild] = None) -> List[Tag]:
-        ...
+    def get_unique_tags(self, guild: Optional[discord.Guild] = None) -> List[Tag]: ...
 
     @abstractmethod
-    async def validate_tagscript(self, ctx: commands.Context, tagscript: str) -> bool:
-        ...
-        
-    @abstractmethod
-    async def validate_tag_count(self, guild: discord.Guild) -> None:
-        ...
+    async def validate_tagscript(self, ctx: commands.Context, tagscript: str) -> bool: ...
 
     @abstractmethod
-    async def message_eligible_as_tag(self, message: discord.Message) -> bool:
-        ...
+    async def validate_tag_count(self, guild: discord.Guild) -> None: ...
+
+    @abstractmethod
+    async def message_eligible_as_tag(self, message: discord.Message) -> bool: ...
 
     @abstractmethod
     async def invoke_tag_message(
         self, message: discord.Message, prefix: str, tag_command: str
-    ) -> None:
-        ...
-        
+    ) -> None: ...
+
     @abstractmethod
     async def send_tag_response(
         self,
@@ -181,44 +160,38 @@ class MixinMeta(ABC):
         actions: Dict[str, Any],
         content: Optional[str] = None,
         **kwargs: Any,
-    ) -> Optional[discord.Message]:
-        ...
-        
+    ) -> Optional[discord.Message]: ...
+
     @abstractmethod
     async def process_command(
         self, command_message: discord.Message, silent: bool, overrides: Dict[Any, Any]
-    ) -> None:
-        ...
-        
+    ) -> None: ...
+
     @abstractmethod
     async def process_commands(
         self, messages: List[discord.Message], silent: bool, overrides: Dict[Any, Any]
-    ) -> None:
-        ...
-        
+    ) -> None: ...
+
     @abstractmethod
-    async def validate_checks(self, ctx: commands.Context, actions: Dict[str, Any]) -> None:
-        ...
-        
+    async def validate_checks(self, ctx: commands.Context, actions: Dict[str, Any]) -> None: ...
+
     @abstractmethod
-    async def validate_requires(self, ctx: commands.Context, requires: Dict[str, Any]) -> None:
-        ...
-        
+    async def validate_requires(self, ctx: commands.Context, requires: Dict[str, Any]) -> None: ...
+
     @abstractmethod
-    async def validate_blacklist(self, ctx: commands.Context, blacklist: Dict[str, Any]) -> None:
-        ...
-        
+    async def validate_blacklist(
+        self, ctx: commands.Context, blacklist: Dict[str, Any]
+    ) -> None: ...
+
     @abstractmethod
     async def role_or_channel_convert(
         self, ctx: commands.Context, argument: str
-    ) -> Optional[Union[discord.Role, discord.TextChannel]]:
-        ...
-        
+    ) -> Optional[Union[discord.Role, discord.TextChannel]]: ...
+
     @abstractmethod
     async def react_to_list(
         self, ctx: commands.Context, message: discord.Message, args: List[str]
-    ) -> None:
-        ...
+    ) -> None: ...
 
 
 class CompositeMetaClass(type(commands.Cog), type(ABC)):
