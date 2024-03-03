@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 from datetime import datetime, timezone
-from typing import Any, Dict, Final, List, Optional, Tuple, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, Final, List, Optional, Tuple, Union
 
 import discord
 import TagScriptEngine as tse
