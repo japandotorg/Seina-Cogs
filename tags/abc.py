@@ -164,12 +164,12 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def process_command(
-        self, command_message: discord.Message, silent: bool, overrides: Dict[Any, Any]
+        self, command_message: discord.Message, silent: bool, reply: bool, overrides: Dict[Any, Any]
     ) -> None: ...
 
     @abstractmethod
     async def process_commands(
-        self, messages: List[discord.Message], silent: bool, overrides: Dict[Any, Any]
+        self, messages: List[discord.Message], silent: bool, reply: bool, overrides: Dict[Any, Any]
     ) -> None: ...
 
     @abstractmethod

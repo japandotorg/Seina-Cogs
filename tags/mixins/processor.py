@@ -34,9 +34,9 @@ from redbot.core import commands
 from redbot.core.utils.menus import start_adding_reactions
 
 from ..abc import MixinMeta
-from ..blocks import DeleteBlock, ReactBlock, SilentBlock
+from ..blocks import DeleteBlock, ReactBlock, SilentBlock, ReplyBlock
 from ..errors import BlacklistCheckFailure, RequireCheckFailure, WhitelistCheckFailure
-from ..objects import SilentContext, Tag
+from ..objects import ReplyContext, SilentContext, Tag
 
 log = logging.getLogger("red.seina.tags.processor")
 
@@ -89,6 +89,7 @@ class Processor(MixinMeta):
         tag_blocks: List[tse.Block] = [
             DeleteBlock(),
             SilentBlock(),
+            ReplyBlock(),
             ReactBlock(),
         ]
         interpreter: Union[Type[tse.AsyncInterpreter], Type[tse.Interpreter]] = (
@@ -199,8 +200,9 @@ class Processor(MixinMeta):
             to_gather.append(self.react_to_list(ctx, msg, react))
         if command_messages:
             silent = actions.get("silent", False)
-            overrides = actions.get("overrides")
-            to_gather.append(self.process_commands(command_messages, silent, overrides))
+            reply = actions.get("reply", False)
+            overrides = actions.get("overrides", {})
+            to_gather.append(self.process_commands(command_messages, silent, reply, overrides))
 
         if to_gather:
             await asyncio.gather(*to_gather)
@@ -250,22 +252,22 @@ class Processor(MixinMeta):
         return await self.send_quietly(destination, content, **kwargs)
 
     async def process_commands(
-        self, messages: List[discord.Message], silent: bool, overrides: Dict[Any, Any]
+        self, messages: List[discord.Message], silent: bool, reply: bool, overrides: Dict[Any, Any]
     ) -> None:
         command_tasks: List[asyncio.Task[None]] = []
         for message in messages:
             command_task: asyncio.Task[None] = asyncio.create_task(
-                self.process_command(message, silent, overrides)
+                self.process_command(message, silent, reply, overrides)
             )
             command_tasks.append(command_task)
             await asyncio.sleep(0.1)
         await asyncio.gather(*command_tasks)
 
     async def process_command(
-        self, command_message: discord.Message, silent: bool, overrides: Dict[Any, Any]
+        self, command_message: discord.Message, silent: bool, reply: bool, overrides: Dict[Any, Any]
     ) -> None:
-        command_cls = SilentContext if silent else commands.Context
-        ctx: Union[SilentContext, commands.Context] = await self.bot.get_context(
+        command_cls = SilentContext if silent else (ReplyContext if reply else commands.Context)
+        ctx: Union[SilentContext, ReplyContext, commands.Context] = await self.bot.get_context(
             command_message, cls=command_cls
         )
         if not ctx.valid:

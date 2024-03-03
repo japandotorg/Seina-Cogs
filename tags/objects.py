@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 from datetime import datetime, timezone
-from typing import Any, Dict, Final, List, Optional, Tuple, Union
+from typing import Any, Dict, Final, List, Optional, Tuple, Union, TYPE_CHECKING
 
 import discord
 import TagScriptEngine as tse
@@ -34,6 +34,9 @@ from redbot.core.config import Group
 from redbot.core.utils.chat_formatting import box, humanize_list, humanize_number, inline, pagify
 
 from .errors import TagAliasError
+
+if TYPE_CHECKING:
+    from .core import Tags
 
 hn = humanize_number
 ALIAS_LIMIT: Final[int] = 10
@@ -132,7 +135,7 @@ class Tag:
     async def run(self, seed_variables: dict, **kwargs) -> tse.Response:
         self.uses += 1
         seed_variables["uses"] = tse.IntAdapter(self.uses)
-        cog = self.cog
+        cog: "Tags" = self.cog
         output = cog.engine.process(
             self.tagscript,
             seed_variables,
@@ -280,3 +283,21 @@ class SilentContext(commands.Context):
 
     async def reply(self, *args: Any, **kwargs: Any) -> None:
         pass
+
+
+class ReplyContext(commands.Context):
+    """Modified Context class to patch send to reference to users."""
+
+    async def send(self, *args: Any, **kwargs: Any) -> discord.Message:
+        return await super().send(
+            *args,
+            reference=self.message.to_reference(fail_if_not_exists=False),
+            **kwargs,
+        )
+
+    async def reply(self, *args: Any, **kwargs: Any) -> discord.Message:
+        return await super().send(
+            *args,
+            reference=self.message.to_reference(fail_if_not_exists=False),
+            **kwargs,
+        )
