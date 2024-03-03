@@ -682,7 +682,7 @@ class Commands(MixinMeta):
             orjson.dumps(global_data, option=orjson.OPT_INDENT_2).decode("UTF-8"),
             filename="global-tag-backup.json",
         )
-        await ctx.send()
+        await ctx.tick()
         await ctx.send(files=[file])
 
     @tag_global.command("restore")
