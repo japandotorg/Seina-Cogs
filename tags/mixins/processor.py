@@ -34,7 +34,7 @@ from redbot.core import commands
 from redbot.core.utils.menus import start_adding_reactions
 
 from ..abc import MixinMeta
-from ..blocks import DeleteBlock, ReactBlock, SilentBlock, ReplyBlock
+from ..blocks import DeleteBlock, ReactBlock, ReplyBlock, SilentBlock
 from ..errors import BlacklistCheckFailure, RequireCheckFailure, WhitelistCheckFailure
 from ..objects import ReplyContext, SilentContext, Tag
 
@@ -264,7 +264,11 @@ class Processor(MixinMeta):
         await asyncio.gather(*command_tasks)
 
     async def process_command(
-        self, command_message: discord.Message, silent: bool, reply: bool, overrides: Dict[Any, Any]
+        self,
+        command_message: discord.Message,
+        silent: bool,
+        reply: bool,
+        overrides: Dict[Any, Any],
     ) -> None:
         command_cls = SilentContext if silent else (ReplyContext if reply else commands.Context)
         ctx: Union[SilentContext, ReplyContext, commands.Context] = await self.bot.get_context(
