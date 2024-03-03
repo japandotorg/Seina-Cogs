@@ -25,6 +25,7 @@ SOFTWARE.
 
 import asyncio
 import logging
+import contextlib
 from copy import copy
 from typing import Any, Dict, List, Optional, Type, Union
 
@@ -211,10 +212,8 @@ class Processor(MixinMeta):
     async def send_quietly(
         destination: discord.abc.Messageable, content: Optional[str] = None, **kwargs: Any
     ) -> Optional[discord.Message]:
-        try:
+        with contextlib.suppress(discord.HTTPException):
             return await destination.send(content, **kwargs)
-        except discord.HTTPException:
-            pass
 
     async def send_tag_response(
         self,
@@ -226,6 +225,10 @@ class Processor(MixinMeta):
         destination = ctx.channel
         embed = actions.get("embed")
         replying = False
+        
+        if reply := actions.get("reply"):
+            if reply:
+                replying = True
 
         if target := actions.get("target"):
             if target == "dm":
