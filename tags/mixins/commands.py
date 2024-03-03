@@ -685,12 +685,15 @@ class Commands(MixinMeta):
         await ctx.send()
         await ctx.send(files=[file])
 
-    # TODO: finish this later
-    # @tag_global.command("restore")
-    # async def tag_global_restore(self, ctx: commands.Context, message: MessageConverter):
-    #     """"""
-    #     msg: discord.Message = message
-    #     if not msg.attachments and not msg.attachments[0].filename == "global-tag-backup.json":
-    #         raise commands.UserFeedbackCheckFailure(
-    #             "You must pass a message that has a backup file attachment sent by me.",
-    #         )
+    @tag_global.command("restore")
+    async def tag_global_restore(self, ctx: commands.Context, message: MessageConverter):
+        """"""
+        msg: discord.Message = message
+        if not msg.attachments and not msg.attachments[0].filename == "global-tag-backup.json":
+            raise commands.UserFeedbackCheckFailure(
+                "You must pass a message that has a backup file attachment sent by me.",
+            )
+        await self.config.set(orjson.loads(await msg.attachments[0].read()))
+        await self.initialize()
+        await ctx.tick()
+        await ctx.send("Backup restored!")
