@@ -9,7 +9,7 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 | Name        | Status/Version   | Description (Click to see full status)                                                                                           |
 |-------------|------------------|----------------------------------------------------------------------------------------------------------------------------------|
 | AFK         | 0.1.1            | <details>Away From Keyboard<summary>A cog for being afk and responding when idiots ping you</summary></details>                  |
-| Tags        | 2.5.2            | <details>Create and use Tags<summary>Create and use custom commands with tagscript</summary></details>                          |
+| Tags        | 2.5.5            | <details>Create and use Tags<summary>Create and use custom commands with tagscript</summary></details>                          |
 | SeinaTools  | 0.1.4            | <details><summary>My tools for Red-DiscordBot</summary>Some cool utility tools for Red-DiscordBot</details>                      |
 | BattleRoyale| 0.1.2            | <details><summary>Play battle royale</summary>Play battle royale with your friends or join automated matches                     |
 | PersonalChannels| 0.1.1            | <details><summary>Personal channel for members</summary>Personal channel for members                                         |
