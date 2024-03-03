@@ -496,7 +496,7 @@ class Commands(MixinMeta):
 
         e = discord.Embed(
             color=await ctx.embed_color(),
-            title="TagScriptEngine",
+            title="AdvancedTagScriptEngine",
             description=f"Executed in **{round((end - start) * 1000, 3)}** ms",
         )
         for page in pagify(tagscript, page_length=1024):
