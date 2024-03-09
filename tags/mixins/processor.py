@@ -24,8 +24,8 @@ SOFTWARE.
 """
 
 import asyncio
-import logging
 import contextlib
+import logging
 from copy import copy
 from typing import Any, Dict, List, Optional, Type, Union
 
@@ -225,7 +225,7 @@ class Processor(MixinMeta):
         destination = ctx.channel
         embed = actions.get("embed")
         replying = False
-        
+
         if reply := actions.get("reply"):
             if reply:
                 replying = True
