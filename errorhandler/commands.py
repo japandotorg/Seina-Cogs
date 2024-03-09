@@ -50,7 +50,7 @@ class CommandsMixin(MixinMeta, metaclass=CompositeMetaClass):
         body: str = cleanup_code(code)
         await self.config.message.set(body)
         await ctx.send(
-            f"Handler code set to:\n{box(code, lang='py')}",
+            f"Handler code set to:\n{box(body, lang='py')}",
             reference=ctx.message.to_reference(fail_if_not_exists=False),
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
