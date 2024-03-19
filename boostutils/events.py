@@ -50,6 +50,11 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
     async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
         if not after.guild:
             return
+        if (
+            after.guild.system_channel is None
+            or not after.guild.system_channel_flags.premium_subscriptions
+        ):
+            return
         if role := after.guild.premium_subscriber_role:
             if role in before.roles and role not in after.roles:
                 self.bot.dispatch("member_unboost", before)
