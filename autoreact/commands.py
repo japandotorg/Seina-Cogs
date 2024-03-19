@@ -248,6 +248,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             return
         reaction: Dict[str, List[str]] = await self.config.guild(ctx.guild).reaction()
         del reaction[trigger]
+        await self.config.guild(ctx.guild).reaction.set(reaction)
         del self.cache.autoreact[ctx.guild.id][trigger]
         await ctx.send("Successfully cleared every auto reaction for that trigger.")
 
