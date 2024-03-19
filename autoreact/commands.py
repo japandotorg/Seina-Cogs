@@ -109,7 +109,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         if ctx.guild.id not in self.cache.event:
             self.cache.event[ctx.guild.id] = {}
         if "emojis" not in self.cache.event[ctx.guild.id]:
-            self.cache.event[ctx.guild.id]["emojis"].append(str(reaction))
+            self.cache.event[ctx.guild.id]["emojis"] = []
         self.cache.event[ctx.guild.id]["emojis"].append(str(reaction))
         await ctx.send("Successfully added {} as a reaction for emojis.".format(reaction))
 
@@ -132,7 +132,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         if ctx.guild.id not in self.cache.event:
             self.cache.event[ctx.guild.id] = {}
         if "stickers" not in self.cache.event[ctx.guild.id]:
-            self.cache.event[ctx.guild.id]["stickers"].append(str(reaction))
+            self.cache.event[ctx.guild.id]["stickers"] = []
         self.cache.event[ctx.guild.id]["stickers"].append(str(reaction))
         await ctx.send("Successfully added {} as a reaction for stickers.".format(reaction))
 
