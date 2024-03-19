@@ -1,0 +1,23 @@
+{
+    "author": [
+        "inthedark.org"
+    ],
+    "install_msg": "Thanks for installing the auto reaction cog.",
+    "name": "AutoReact",
+    "disabled": false,
+    "short": "Create automatic reactions for specific triggers or events.",
+    "description": "Create automatic reactions for specific triggers or events.",
+    "tags": [
+        "reaction",
+        "autoreact",
+        "react",
+        "smart"
+    ],
+    "min_bot_version": "3.5.3",
+    "min_python_version": [
+        3,
+        11,
+        0
+    ],
+    "type": "COG"
+}
