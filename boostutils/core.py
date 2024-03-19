@@ -1,13 +1,13 @@
 from typing import Any, Dict, Final, List, Union
 
+from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core import commands, Config
 from redbot.core.utils.chat_formatting import humanize_list
 
+from ._tagscript import TAGSCRIPT_LIMIT, TagCharacterLimitReached, boosted, unboosted
 from .abc import CompositeMetaClass
-from .events import EventMixin
 from .commands.message import MessageCommands
-from ._tagscript import boosted, unboosted, TAGSCRIPT_LIMIT, TagCharacterLimitReached
+from .events import EventMixin
 
 
 class BoostUtils(

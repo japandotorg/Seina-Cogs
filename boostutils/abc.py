@@ -1,8 +1,8 @@
 from abc import ABC, ABCMeta, abstractmethod
 from typing import Any
 
+from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core import commands, Config
 
 
 class CompositeMetaClass(commands.CogMeta, ABCMeta):
