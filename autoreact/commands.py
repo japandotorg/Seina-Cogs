@@ -146,7 +146,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         self, ctx: commands.GuildContext, trigger: str, reaction: EmojiConverter
     ):
         """Remove a reaction from an auto reaction trigger."""
-        if reaction not in self.cache.autoreact.get(ctx.guild.id, {}).get(trigger, []):
+        if str(reaction) not in self.cache.autoreact.get(ctx.guild.id, {}).get(trigger, []):
             await ctx.send("That auto reaction doesn't belong to that trigger.")
             return
         reactions: Dict[str, List[str]] = await self.config.guild(ctx.guild).reaction()
@@ -158,7 +158,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
     @_autoreact_remove.command(name="images")  # type: ignore
     async def _autoreact_remove_images(self, ctx: commands.GuildContext, reaction: EmojiConverter):
         """Remove a reaction for images."""
-        if reaction not in self.cache.event.get(ctx.guild.id, {}).get("images", []):
+        if str(reaction) not in self.cache.event.get(ctx.guild.id, {}).get("images", []):
             await ctx.send("That auto reaction doesn't belong to images.")
             return
         event: Dict[str, List[str]] = await self.config.guild(ctx.guild).event()
@@ -172,7 +172,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         self, ctx: commands.GuildContext, reaction: EmojiConverter
     ):
         """Remove a reaction for spoilers."""
-        if reaction not in self.cache.event.get(ctx.guild.id, {}).get("spoilers", []):
+        if str(reaction) not in self.cache.event.get(ctx.guild.id, {}).get("spoilers", []):
             await ctx.send("That auto reaction doesn't belong to spoilers.")
             return
         event: Dict[str, List[str]] = await self.config.guild(ctx.guild).event()
@@ -184,7 +184,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
     @_autoreact_remove.command(name="emojis")  # type: ignore
     async def _autoreact_remove_emojis(self, ctx: commands.GuildContext, reaction: EmojiConverter):
         """Remove a reaction for emojis."""
-        if reaction not in self.cache.event.get(ctx.guild.id, {}).get("emojis", []):
+        if str(reaction) not in self.cache.event.get(ctx.guild.id, {}).get("emojis", []):
             await ctx.send("That auto reaction doesn't belong to emojis.")
             return
         event: Dict[str, List[str]] = await self.config.guild(ctx.guild).event()
@@ -198,7 +198,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         self, ctx: commands.GuildContext, reaction: EmojiConverter
     ):
         """Remove a reaction for stickers."""
-        if reaction not in self.cache.event.get(ctx.guild.id, {}).get("stickers", []):
+        if str(reaction) not in self.cache.event.get(ctx.guild.id, {}).get("stickers", []):
             await ctx.send("That auto reaction doesn't belong to stickers.")
             return
         event: Dict[str, List[str]] = await self.config.guild(ctx.guild).event()
