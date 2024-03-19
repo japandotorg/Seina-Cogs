@@ -1,4 +1,4 @@
-from typing import Dict, Generic, List, TYPE_CHECKING, Protocol, TypeVar
+from typing import TYPE_CHECKING, Dict, Generic, List, Protocol, TypeVar
 
 if TYPE_CHECKING:
     from .core import AutoReact

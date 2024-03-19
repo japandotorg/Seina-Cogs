@@ -5,11 +5,11 @@ from redbot.core import commands
 
 from .abc import CompositeMetaClass, MixinMeta
 from .utils import (
-    paginate,
-    EmojiConverter,
-    MAXIMUM_TRIGGER_REACTIONS,
     MAXIMUM_EVENT_REACTIONS,
     MAXIMUM_TRIGGER_LENGTH,
+    MAXIMUM_TRIGGER_REACTIONS,
+    EmojiConverter,
+    paginate,
 )
 
 

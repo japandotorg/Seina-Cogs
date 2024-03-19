@@ -9,8 +9,8 @@ from redbot.core.utils.chat_formatting import humanize_list
 
 from .abc import CompositeMetaClass
 from .cache import Cache
-from .events import EventMixin
 from .commands import Commands
+from .events import EventMixin
 
 
 class AutoReact(
