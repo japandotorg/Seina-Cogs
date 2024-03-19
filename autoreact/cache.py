@@ -21,5 +21,5 @@ class Cache(CacheProtocol, Generic[_T]):
     async def initialize(self) -> None:
         autoreact: Dict[int, Dict[str, Dict[str, List[str]]]] = await self.cog.config.all_guilds()
         for guild_id, guild_data in autoreact.items():
-            self.autoreact[guild_id] = guild_data.get("reaction", {})
-            self.event[guild_id] = guild_data.get("event", {})
+            self.autoreact[guild_id] = guild_data["reaction"]
+            self.event[guild_id] = guild_data["event"]
