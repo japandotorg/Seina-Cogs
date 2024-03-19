@@ -87,7 +87,7 @@ class MessageCommands(MixinMeta, metaclass=CompositeMetaClass):
                 *fields,
                 per_embed=3,
                 title="Boost Messages Settings for **__{}__**".format(ctx.guild.name),
-                color=await ctx.embed_color(),
+                color=int(await ctx.embed_color()),
             ),
         ]
         await SimpleMenu(embeds).start(ctx)  # type: ignore
