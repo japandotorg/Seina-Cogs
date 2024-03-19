@@ -1,0 +1,19 @@
+{
+    "author": ["inthedark.org"],
+    "install_msg": "Thanks for installing the boostutils cog.",
+    "name": "BoostUtils",
+    "disabled": false,
+    "short": "Booster Utilities. (WIP)",
+    "description": "Various nitro boosting utilities. (WORK IN PROGRESS)",
+    "tags": [
+        "boost",
+        "nitro",
+        "booster",
+        "nitrobooster"
+    ],
+    "required_cogs": {},
+    "requirements": [
+        "AdvancedTagScriptEngine==3.1.4"
+    ],
+    "type": "COG"
+}

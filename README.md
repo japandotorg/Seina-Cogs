@@ -31,6 +31,7 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 | StableDiffusion | 0.1.0            | <details><summary>Stable Diffusion using the Replicate API.</summary>Stable Diffusion using the Replicate API.</details>        |
 | ModManager  | 0.1.0 | <details><summary>Force ban/kick users.</summary>Force ban/kick users so that they stay in the ban/kick list even if someone tries to manually unban them.</details>  |
 | AutoDelete  | 0.1.0 | <details><summary>Auto delete messages in specific channels with fancy html logging.</summary>Auto delete messages in specific channels with fancy html logging.</details>  |
+| BoostUtils  | 0.1.0 | <details><summary>Booster Utilities. (WIP)</summary>Various nitro boosting utilities. (WORK IN PROGRESS)</details>                          |
 
 
 Any questions you can find [Melon](https://discord.com/oauth2/authorize?client_id=808706062013825036&scope=bot&permissions=1099511627767%20applications.commands) and myself over on [the support server](https://discord.gg/mXfYuMy92r)
