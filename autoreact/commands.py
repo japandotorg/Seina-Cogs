@@ -43,6 +43,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         if trigger not in reactions:
             reactions[trigger] = []
         reactions[trigger].append(str(reaction))
+        await self.config.guild(ctx.guild).reaction.set(reactions)
         if ctx.guild.id not in self.cache.autoreact:
             self.cache.autoreact[ctx.guild.id] = {}
         if trigger not in self.cache.autoreact[ctx.guild.id]:
@@ -63,6 +64,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         if "images" not in event:
             event["images"] = []
         event["images"].append(str(reaction))
+        await self.config.guild(ctx.guild).event.set(event)
         if ctx.guild.id not in self.cache.event:
             self.cache.event[ctx.guild.id] = {}
         if "images" not in self.cache.event[ctx.guild.id]:
@@ -86,6 +88,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         if "spoilers" not in event:
             event["spoilers"] = []
         event["spoilers"].append(str(reaction))
+        await self.config.guild(ctx.guild).event.set(event)
         if ctx.guild.id not in self.cache.event:
             self.cache.event[ctx.guild.id] = {}
         if "spoilers" not in self.cache.event[ctx.guild.id]:
@@ -106,6 +109,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         if "emojis" not in event:
             event["emojis"] = []
         event["emojis"].append(str(reaction))
+        await self.config.guild(ctx.guild).event.set(event)
         if ctx.guild.id not in self.cache.event:
             self.cache.event[ctx.guild.id] = {}
         if "emojis" not in self.cache.event[ctx.guild.id]:
@@ -129,6 +133,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         if "stickers" not in event:
             event["stickers"] = []
         event["stickers"].append(str(reaction))
+        await self.config.guild(ctx.guild).event.set(event)
         if ctx.guild.id not in self.cache.event:
             self.cache.event[ctx.guild.id] = {}
         if "stickers" not in self.cache.event[ctx.guild.id]:
@@ -146,6 +151,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             return
         reactions: Dict[str, List[str]] = await self.config.guild(ctx.guild).reaction()
         reactions[trigger].remove(str(reaction))
+        await self.config.guild(ctx.guild).reaction.set(reactions)
         self.cache.autoreact[ctx.guild.id][trigger].remove(str(reaction))
         await ctx.send("Successfully removed that auto reaction.")
 
@@ -157,6 +163,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             return
         event: Dict[str, List[str]] = await self.config.guild(ctx.guild).event()
         event["images"].remove(str(reaction))
+        await self.config.guild(ctx.guild).event.set(event)
         self.cache.event[ctx.guild.id]["images"].remove(str(reaction))
         await ctx.send("Successfully removed that auto reaction.")
 
@@ -170,6 +177,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             return
         event: Dict[str, List[str]] = await self.config.guild(ctx.guild).event()
         event["spoilers"].remove(str(reaction))
+        await self.config.guild(ctx.guild).event.set(event)
         self.cache.event[ctx.guild.id]["spoilers"].remove(str(reaction))
         await ctx.send("Successfully removed that auto reaction.")
 
@@ -181,6 +189,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             return
         event: Dict[str, List[str]] = await self.config.guild(ctx.guild).event()
         event["emojis"].remove(str(reaction))
+        await self.config.guild(ctx.guild).event.set(event)
         self.cache.event[ctx.guild.id]["emojis"].remove(str(reaction))
         await ctx.send("Successfully removed that auto reaction.")
 
@@ -194,6 +203,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             return
         event: Dict[str, List[str]] = await self.config.guild(ctx.guild).event()
         event["stickers"].remove(str(reaction))
+        await self.config.guild(ctx.guild).event.set(event)
         self.cache.event[ctx.guild.id]["stickers"].remove(str(reaction))
         await ctx.send("Successfully removed that auto reaction.")
 
