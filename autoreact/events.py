@@ -36,6 +36,14 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
     async def on_message(self, message: discord.Message) -> None:
         if message.guild is None:
             return
+        if not message.channel.permissions_for(message.guild.me).add_reactions:
+            return
+        if await self.bot.cog_disabled_in_guild(self, message.guild):
+            return
+        if not await self.bot.ignored_channel_or_guild(message):
+            return
+        if not await self.bot.allowed_by_whitelist_blacklist(message.author):
+            return
         await self.wait_until_cog_ready()
         if message.guild.id in self.cache.autoreact:
             asyncio.ensure_future(self.do_autoreact(message))
