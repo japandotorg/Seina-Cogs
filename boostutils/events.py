@@ -73,6 +73,8 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
         toggle: bool = await self.config.guild(guild).boost_message.toggle()  # type: ignore
         if not toggle:
             return
+        if await self.bot.cog_disabled_in_guild(self, guild):
+            return
         kwargs: Dict[str, Any] = process_tagscript(
             message,
             {
@@ -92,6 +94,8 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
         for channel_id in channels:
             channel: discord.TextChannel = guild.get_channel(channel_id)  # type: ignore
             if channel:
+                if not channel.permissions_for(guild.me).send_messages:
+                    return
                 await channel.send(**kwargs)
 
     @commands.Cog.listener()
@@ -101,6 +105,8 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
         message: str = await self.config.guild(guild).boost_message.unboosted()  # type: ignore
         toggle: bool = await self.config.guild(guild).boost_message.toggle()  # type: ignore
         if not toggle:
+            return
+        if await self.bot.cog_disabled_in_guild(self, guild):
             return
         kwargs: Dict[str, Any] = process_tagscript(
             message,
@@ -121,4 +127,6 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
         for channel_id in channels:
             channel: discord.TextChannel = guild.get_channel(channel_id)  # type: ignore
             if channel:
+                if not channel.permissions_for(guild.me).send_messages:
+                    return
                 await channel.send(**kwargs)
