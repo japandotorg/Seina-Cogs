@@ -1,19 +1,18 @@
 from typing import Any, Dict, List
 
 import discord
+import TagScriptEngine as tse
 from redbot.core import commands
 
-import TagScriptEngine as tse
-
+from ._tagscript import boosted, process_tagscript, unboosted
 from .abc import CompositeMetaClass, MixinMeta
-from ._tagscript import process_tagscript, boosted, unboosted
 
 
 class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
         if not message.guild or message.author.bot:
-            
+
             return
         if message.guild.system_channel_flags.premium_subscriptions and message.type in (
             discord.MessageType.premium_guild_subscription,

@@ -2,11 +2,11 @@ from typing import Dict, List, Literal, Optional, Union
 
 import discord
 from redbot.core import commands
-from redbot.core.utils.views import SimpleMenu
 from redbot.core.utils.chat_formatting import box, humanize_list
+from redbot.core.utils.views import SimpleMenu
 
-from ..abc import MixinMeta, CompositeMetaClass
 from .._tagscript import TagscriptConverter
+from ..abc import CompositeMetaClass, MixinMeta
 from ..utils import group_embeds_by_fields
 
 
