@@ -21,8 +21,8 @@ class BoostUtils(
     __author__: Final[List[str]] = ["inthedark.org"]
     __version__: Final[str] = "0.1.0"
 
-    def __init__(self, bot: Red, _args: Any) -> None:
-        super().__init__(*_args)
+    def __init__(self, bot: Red) -> None:
+        super().__init__()
         self.bot: Red = bot
         self.config: Config = Config.get_conf(
             self,
