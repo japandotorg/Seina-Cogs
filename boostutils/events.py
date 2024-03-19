@@ -37,7 +37,7 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
         guild: discord.Guild = member.guild
         channels: List[int] = await self.config.guild(guild).boost_message.channels()  # type: ignore
         message: str = await self.config.guild(guild).boost_message.boosted()  # type: ignore
-        toggle: bool = await self.config.guild(guild).boost_message.toggle() # type: ignore
+        toggle: bool = await self.config.guild(guild).boost_message.toggle()  # type: ignore
         if not toggle:
             return
         kwargs: Dict[str, Any] = process_tagscript(
@@ -66,7 +66,7 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
         guild: discord.Guild = member.guild
         channels: List[int] = await self.config.guild(guild).boost_message.channels()  # type: ignore
         message: str = await self.config.guild(guild).boost_message.unboosted()  # type: ignore
-        toggle: bool = await self.config.guild(guild).boost_message.toggle() # type: ignore
+        toggle: bool = await self.config.guild(guild).boost_message.toggle()  # type: ignore
         if not toggle:
             return
         kwargs: Dict[str, Any] = process_tagscript(
