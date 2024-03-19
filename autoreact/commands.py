@@ -40,6 +40,8 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             )
             return
         reactions: Dict[str, List[str]] = await self.config.guild(ctx.guild).reaction()
+        if trigger not in reactions:
+            reactions[trigger] = []
         reactions[trigger].append(str(reaction))
         if ctx.guild.id not in self.cache.autoreact:
             self.cache.autoreact[ctx.guild.id] = {}
@@ -58,6 +60,8 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             await ctx.send("There are too many reactions for that trigger.")
             return
         event: Dict[str, List[str]] = await self.config.guild(ctx.guild).event()
+        if "images" not in event:
+            event["images"] = []
         event["images"].append(str(reaction))
         if ctx.guild.id not in self.cache.event:
             self.cache.event[ctx.guild.id] = {}
@@ -79,6 +83,8 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             await ctx.send("There are too many reactions for that trigger.")
             return
         event: Dict[str, List[str]] = await self.config.guild(ctx.guild).event()
+        if "spoilers" not in event:
+            event["spoilers"] = []
         event["spoilers"].append(str(reaction))
         if ctx.guild.id not in self.cache.event:
             self.cache.event[ctx.guild.id] = {}
@@ -97,6 +103,8 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             await ctx.send("There are too many reactions for that trigger.")
             return
         event: Dict[str, List[str]] = await self.config.guild(ctx.guild).event()
+        if "emojis" not in event:
+            event["emojis"] = []
         event["emojis"].append(str(reaction))
         if ctx.guild.id not in self.cache.event:
             self.cache.event[ctx.guild.id] = {}
@@ -118,6 +126,8 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             await ctx.send("There are too many reactions for that trigger.")
             return
         event: Dict[str, List[str]] = await self.config.guild(ctx.guild).event()
+        if "stickers" not in event:
+            event["stickers"] = []
         event["stickers"].append(str(reaction))
         if ctx.guild.id not in self.cache.event:
             self.cache.event[ctx.guild.id] = {}
