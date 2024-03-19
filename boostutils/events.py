@@ -37,7 +37,7 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
     async def on_message(self, message: discord.Message) -> None:
         if not message.guild or message.author.bot:
             return
-        if (
+        if message.guild.system_channel is None or (
             message.guild.system_channel
             and not message.guild.system_channel.permissions_for(message.guild.me).view_channel
         ):
