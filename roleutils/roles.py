@@ -33,6 +33,7 @@ from redbot.core import commands
 from redbot.core.utils.chat_formatting import humanize_number as hn
 from redbot.core.utils.chat_formatting import pagify, text_to_file
 from redbot.core.utils.mod import get_audit_reason
+from redbot.core.utils.views import SimpleMenu
 from TagScriptEngine import Interpreter, LooseVariableGetterBlock, MemberAdapter
 
 from .abc import CompositeMetaClass, MixinMeta
@@ -279,6 +280,7 @@ class Roles(MixinMeta, metaclass=CompositeMetaClass):
     async def addmulti(self, ctx: commands.Context, role: StrictRole, *members: TouchableMember):
         """Add a role to multiple members."""
         reason = get_audit_reason(ctx.author)
+        pages = []
         already_members = []
         success_members = []
         for member in members:
@@ -292,7 +294,19 @@ class Roles(MixinMeta, metaclass=CompositeMetaClass):
             msg.append(f"Added **{role}** to {humanize_roles(success_members)}.")
         if already_members:
             msg.append(f"{humanize_roles(already_members)} already had **{role}**.")
-        await ctx.send("\n".join(msg))
+        
+        # Define the number of lines per page
+        lines_per_page = 10
+        # Split the msg list into chunks of lines_per_page
+        msg_chunks = [msg[i:i + lines_per_page] for i in range(0, len(msg), lines_per_page)]
+        # Add each chunk to the pages list
+        for chunk in msg_chunks:
+            pages.append('\n'.join(chunk))
+        await SimpleMenu(
+            pages,
+            disable_after_timeout=True,
+            timeout=120,
+        ).start(ctx)
 
     @commands.has_guild_permissions(manage_roles=True)
     @commands.bot_has_permissions(manage_roles=True)
@@ -302,6 +316,7 @@ class Roles(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Remove a role from multiple members."""
         reason = get_audit_reason(ctx.author)
+        pages = []
         already_members = []
         success_members = []
         for member in members:
@@ -315,7 +330,20 @@ class Roles(MixinMeta, metaclass=CompositeMetaClass):
             msg.append(f"Removed **{role}** from {humanize_roles(success_members)}.")
         if already_members:
             msg.append(f"{humanize_roles(already_members)} didn't have **{role}**.")
-        await ctx.send("\n".join(msg))
+        
+        # Define the number of lines per page
+        lines_per_page = 10
+        # Split the msg list into chunks of lines_per_page
+        msg_chunks = [msg[i:i + lines_per_page] for i in range(0, len(msg), lines_per_page)]
+        # Add each chunk to the pages list
+        for chunk in msg_chunks:
+            pages.append('\n'.join(chunk))
+
+        await SimpleMenu(
+            pages,
+            disable_after_timeout=True,
+            timeout=120,
+        ).start(ctx)
 
     @commands.has_guild_permissions(manage_roles=True)
     @commands.bot_has_permissions(manage_roles=True)
