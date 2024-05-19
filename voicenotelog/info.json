@@ -1,0 +1,22 @@
+{
+    "author": ["inthedark.org"],
+    "install_msg": "Thanks for installing the voicenotelog cog.",
+    "name": "VoiceNoteLog",
+    "disabled": false,
+    "short": "Log the voice note sent by your server members.",
+    "description": "Log the voice note sent by your server members.",
+    "tags": [
+        "voice",
+        "audio",
+        "voicenote",
+        "logging",
+        "mod"
+    ],
+    "required_cogs": {},
+    "requirements": [
+        "pydub",
+        "SpeechRecognition"
+    ],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not store End User Data."
+}

@@ -1,0 +1,17 @@
+{
+    "author": ["inthedark.org"],
+    "install_msg": "Thanks for installing the stablediffusion cog.",
+    "name": "StableDiffusion",
+    "disabled": false,
+    "short": "Stable Diffusion using the Replicate API.",
+    "description": "Stable Diffusion using the Replicate API.",
+    "tags": [
+        "ai",
+        "stablediffusion",
+        "stable",
+        "diffusion"
+    ],
+    "required_cogs": {},
+    "requirements": ["backoff"],
+    "type": "COG"
+}

@@ -27,15 +27,15 @@ from .comment import CommentBlock
 from .customcom import ContextVariableBlock, ConverterBlock
 from .delete import DeleteBlock
 from .react import ReactBlock
+from .reply import ReplyBlock
 from .silent import SilentBlock
-from .var import VarBlock
 
 __all__ = (
     "DeleteBlock",
     "SilentBlock",
+    "ReplyBlock",
     "ReactBlock",
     "ContextVariableBlock",
     "ConverterBlock",
-    "VarBlock",
     "CommentBlock",
 )

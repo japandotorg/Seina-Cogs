@@ -1,0 +1,22 @@
+{
+    "author": ["inthedark.org"],
+    "install_msg": "Thanks for installing the auto delete cog.",
+    "name": "AutoDelete",
+    "disabled": false,
+    "short": "Auto delete messages in specific channels with fancy html logging.",
+    "description": "Auto delete messages in specific channels with fancy html logging.",
+    "tags": [
+        "autodelete",
+        "purge",
+        "cleanup",
+        "deleter",
+        "delete"
+    ],
+    "min_bot_version": "3.5.3",
+    "min_python_version": [3, 11, 0],
+    "required_cogs": {},
+    "requirements": [
+        "chat-exporter"
+    ],
+    "type": "COG"
+}

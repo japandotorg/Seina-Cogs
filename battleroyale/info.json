@@ -17,7 +17,8 @@
     "requirements": [
         "pillow",
         "prettytable",
-        "typing_extensions"
+        "typing_extensions",
+        "emoji"
     ],
     "type": "COG",
     "end_user_data_statement": "This cog does not store End User Data."

@@ -95,9 +95,11 @@ class FirstMessage(commands.Cog):
             )
             embed.set_author(
                 name=messages[0].author.display_name,
-                icon_url=messages[0].author.avatar.url
-                if messages[0].author.avatar
-                else messages[0].author.display_avatar.url,
+                icon_url=(
+                    messages[0].author.avatar.url
+                    if messages[0].author.avatar
+                    else messages[0].author.display_avatar.url
+                ),
             )
 
         except (discord.Forbidden, discord.HTTPException, IndexError, AttributeError):

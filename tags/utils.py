@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 from importlib import reload
-from typing import Final, Generator, List, Sequence, Union
+from typing import Final, Generator, List, Literal, Sequence, TypeAlias, Union
 
 import discord
 from redbot.core import commands
@@ -34,6 +34,8 @@ from redbot.core.errors import CogLoadError
 from .views import PageSource, PaginatedView
 
 PIP: Final[str] = "pip3"
+
+RequesterType: TypeAlias = Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
 
 async def menu(ctx: commands.Context, pages: List[Union[str, discord.Embed]]) -> None:

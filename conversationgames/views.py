@@ -1,3 +1,27 @@
+"""
+MIT License
+
+Copyright (c) 2023-present japandotorg
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 import functools
 from typing import Callable, Dict, List, Optional, Union
 
@@ -69,7 +93,7 @@ class Select(discord.ui.Select):
             max_values=1,
             min_values=1,
         )
-        self.callback: functools.partial = functools.partial(callback, self)
+        self.callback: functools.partial = functools.partial(callback, self)  # type: ignore
 
 
 class CGView(discord.ui.View):
@@ -97,7 +121,7 @@ class CGView(discord.ui.View):
         except discord.HTTPException:
             pass
 
-    async def interaction_check(self, interaction: discord.Interaction[Red]) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction[Red]) -> bool:  # type: ignore
         if (
             self._member.id != interaction.user.id
             if self._member is not None
@@ -122,8 +146,7 @@ class CGView(discord.ui.View):
             description=(
                 self.view._result["question"]  # type: ignore
                 if self.values[0] == "English"
-                else f"({select_options[self.values[0]]['label']}) "
-                + self.view._result["translations"][self.values[0]]  # type: ignore
+                else f"({select_options[self.values[0]]['label']}) {self.view._result['translations'][self.values[0]]}"  # type: ignore
             ),
             color=await self.view._ctx.embed_color(),  # type: ignore
         )

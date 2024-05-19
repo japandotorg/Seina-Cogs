@@ -26,6 +26,7 @@ SOFTWARE.
 import re
 from typing import Any, Match, Optional, Pattern
 
+import discord
 from discord.utils import escape_mentions
 from redbot.core import commands
 
@@ -99,3 +100,19 @@ class PastebinConverter(TagScriptConverter):
                 raise commands.BadArgument(f"`{argument}` is not a valid Pastebin link.")
             tagscript = await resp.text()
         return await super().convert(ctx, tagscript)
+
+
+class MessageConverter(commands.MessageConverter):
+    async def convert(self, ctx: commands.Context, argument: str = None) -> discord.Message:
+        try:
+            return await super().convert(ctx, argument)
+        except Exception:
+            if (
+                hasattr(ctx.message, "reference")
+                and ctx.message.reference is not None
+                and isinstance(ctx.message.reference.resolved, discord.Message)
+            ):
+                return ctx.message.reference.resolved
+            raise commands.BadArgument(
+                "Could not find a message with the ID.",
+            )

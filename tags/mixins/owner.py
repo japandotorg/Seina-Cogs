@@ -115,16 +115,20 @@ class OwnerCommands(MixinMeta):
     async def tagsettings(self, ctx: commands.Context):
         """Manage Tags cog settings."""
 
+    @commands.guild_only()
     @tagsettings.command("settings")
     async def tagsettings_settings(self, ctx: commands.Context):
         """
         View Tags settings.
         """
         data = await self.config.all()
+        guild_data = await self.config.guild(ctx.guild).all()
         description = [
             f"**AsyncInterpreter**: `{data['async_enabled']}`",
             f"**Dot Parameter Parsing**: `{data['dot_parameter']}`",
             f"**Custom Blocks**: `{len(data['blocks'])}`",
+            f"**Global Limit**: `{data['max_tags_limit']}`",
+            f"**Guild Limit**: `{guild_data['max_tags_limit']} (ID: {ctx.guild.id})`",
         ]
         embed = discord.Embed(
             title="Tags Settings",
@@ -243,6 +247,38 @@ class OwnerCommands(MixinMeta):
             f"`dot parameter` parsing has been {enabled}.\n"
             "Blocks will be parsed like this: `{declaration%s:payload}`." % parameter
         )
+
+    @tagsettings.group("limit")
+    async def tagsettings_limit(self, ctx: commands.Context):
+        """
+        Change the global and guild limit for tags.
+        """
+
+    @commands.guild_only()
+    @tagsettings_limit.command("guild")
+    async def tagsettings_limit_guild(
+        self,
+        ctx: commands.Context,
+        amount: commands.Range[int, 150, 500],
+        guild: Optional[discord.Guild] = None,
+    ):
+        """
+        Change the guild limit for tags.
+        """
+        if guild is None:
+            guild: discord.Guild = ctx.guild
+        await self.config.guild(guild).max_tags_limit.set(amount)
+        await ctx.send(f"Changed the guild limit to {amount}.")
+
+    @tagsettings_limit.command("global")
+    async def tagsettings_limit_global(
+        self, ctx: commands.Context, amount: commands.Range[int, 150, 500]
+    ):
+        """
+        Change the global limit for tags.
+        """
+        await self.config.max_tags_limit.set(amount)
+        await ctx.send(f"Changed the global limit to {amount}.")
 
     @commands.is_owner()
     @commands.command()

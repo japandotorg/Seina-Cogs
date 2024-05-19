@@ -1,0 +1,24 @@
+{
+    "author": ["inthedark.org"],
+    "install_msg": "Thanks for installing the mod manager cog.",
+    "name": "FreeloaderMode",
+    "disabled": false,
+    "short": "Force ban/kick users so that they stay in the ban/kick list even if someone tries to manually unban them.",
+    "description": "Force ban/kick users so that they stay in the ban/kick list even if someone tries to manually unban them.",
+    "tags": [
+        "kick",
+        "manager",
+        "modmanager",
+        "mod",
+        "ban"
+    ],
+    "min_bot_version": "3.5.3",
+    "min_python_version": [3, 10, 0],
+    "required_cogs": {},
+    "requirements": [
+        "typing-extensions"
+    ],
+    "type": "COG",
+    "end_user_data_statement": "This cog stores end user ids as user data for banning/kicking users."
+}
+

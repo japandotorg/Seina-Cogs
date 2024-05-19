@@ -1,0 +1,16 @@
+AdvancedTagScriptEngine
+Pillow
+prettytable
+typing_extensions
+emoji
+aiohttp-client-cache
+unidecode
+rapidfuzz
+tabulate
+arrow
+playwright
+shazamio
+backoff
+pydub
+SpeechRecognition
+Red-DiscordBot

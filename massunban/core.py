@@ -26,13 +26,15 @@ SOFTWARE.
 from __future__ import annotations
 
 import asyncio
+import datetime
 import logging
-from typing import Final, List, Literal, Optional
+from typing import Dict, Final, List, Literal, Optional, Tuple
 
 import discord
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.antispam import AntiSpam
 from redbot.core.utils.chat_formatting import humanize_list
 from redbot.core.utils.predicates import MessagePredicate
 
@@ -50,11 +52,20 @@ class MassUnban(commands.Cog):
     """
 
     __author__: Final[List[str]] = ["inthedark.org", "aikaterna"]
-    __version__: Final[str] = "0.1.0"
+    __version__: Final[str] = "0.1.1"
+
+    __intervals: List[Tuple[datetime.timedelta, int]] = [
+        (datetime.timedelta(seconds=10), 1),
+        (datetime.timedelta(minutes=1), 3),
+        (datetime.timedelta(hours=1), 10),
+        (datetime.timedelta(days=1), 20),
+    ]
 
     def __init__(self, bot: Red) -> None:
         super().__init__()
         self.bot: Red = bot
+
+        self.spam: Dict[int, Dict[int, AntiSpam]] = {}
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
@@ -66,10 +77,10 @@ class MassUnban(commands.Cog):
         ]
         return "\n".join(text)
 
-    @commands.command()
     @commands.guild_only()
     @commands.guildowner()
-    async def massunban(self, ctx: commands.Context, *, ban_reason: Optional[str] = None):
+    @commands.command(name="massunban")
+    async def _mass_unban(self, ctx: commands.GuildContext, *, ban_reason: Optional[str] = None):
         """
         Mass unban everyone, or specific people.
 
@@ -85,6 +96,15 @@ class MassUnban(commands.Cog):
         Every unban will show up in your modlog if mod logging is on for unbans. Check `[p]modlogset cases` to verify if mod log creation on unbans is on.
         This can mean that your bot will be ratelimited on sending messages if you unban lots of users as it will create a modlog entry for each unban.
         """
+        if ctx.guild.id not in self.spam:
+            self.spam[ctx.guild.id] = {}
+        if ctx.author.id not in self.spam[ctx.guild.id]:
+            self.spam[ctx.guild.id][ctx.author.id] = AntiSpam(self.__intervals)
+        if self.spam[ctx.guild.id][ctx.author.id].spammy:
+            await ctx.send(
+                "You've used this command too many times recently, please try again later."
+            )
+            return
         try:
             banlist: List[discord.BanEntry] = [
                 entry async for entry in ctx.guild.bans(limit=2**15)
@@ -94,6 +114,7 @@ class MassUnban(commands.Cog):
             await ctx.send(msg)
             return
         except (discord.HTTPException, TypeError):
+            await ctx.send("Something went wrong getting the ban list.")
             log.exception("Something went wrong while fetching the ban list!", exc_info=True)
             return
 
@@ -125,13 +146,15 @@ class MassUnban(commands.Cog):
                             await asyncio.sleep(0.5)
                             unban_count += 1
                 else:
-                    return await ctx.send(_("Alright, I'm not unbanning everyone."))
+                    await ctx.send(_("Alright, I'm not unbanning everyone."))
+                    return
             except asyncio.TimeoutError:
-                return await ctx.send(
+                await ctx.send(
                     _(
                         "Response timed out. Please run this command again if you wish to try again."
                     )
                 )
+                return
         else:
             async with ctx.typing():
                 for ban_entry in banlist:
@@ -147,4 +170,5 @@ class MassUnban(commands.Cog):
                         await asyncio.sleep(0.5)
                         unban_count += 1
 
+        self.spam[ctx.guild.id][ctx.author.id].stamp()
         await ctx.send(_("Done. Unbanned {unban_count} users.").format(unban_count=unban_count))

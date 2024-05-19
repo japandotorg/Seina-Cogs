@@ -51,7 +51,7 @@ class AFK(commands.Cog):
     """
 
     __author__: Final[str] = humanize_list(["inthedark.org"])
-    __version__: Final[str] = "0.1.0"
+    __version__: Final[str] = "0.1.1"
 
     def __init__(self, bot: Red) -> None:
         super().__init__()
@@ -65,7 +65,11 @@ class AFK(commands.Cog):
             "blocked": [],
             "custom_message": custom_message,
         }
-        default_guild: Dict[str, List[int]] = {"ignored_channels": []}
+        default_guild: Dict[str, Union[List[int], str, bool]] = {
+            "ignored_channels": [],
+            "nickname": "[AFK]",
+            "toggle_nickname": False,
+        }
         default_global: Dict[str, int] = {"delete_after": 10}
         self.config.register_member(**default_member)
         self.config.register_guild(**default_guild)
@@ -122,20 +126,40 @@ class AFK(commands.Cog):
         async with self.config.member(member).pings() as pings:
             pings.append(self._make_message(message))
 
+    async def _update_nickname(self, member: discord.Member, *, force: bool = False) -> None:
+        if not await self.config.guild(member.guild).toggle_nickname():
+            return
+        if not member.guild.me.guild_permissions.manage_nicknames:
+            await self.config.guild(member.guild).toggle_nickname.clear()
+            return
+        custom: str = await self.config.guild(member.guild).nickname()
+        original: str = member.nick or member.display_name
+        if force:
+            if len(original) > 26:
+                return
+            forced: str = f"{custom}{original}"
+        elif original.startswith(custom):
+            forced: str = original[len(custom) :]
+            if forced == (member.global_name or member.name):
+                forced = None  # type: ignore
+        else:
+            return
+        try:
+            await member.edit(nick=forced)
+        except discord.HTTPException:
+            pass
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         if message.is_system():
             return
-
         if not message.guild:
             return
-
         if (
             message.author.bot
             or message.channel.id in await self.config.guild(message.guild).ignored_channels()
         ):
             return
-
         if not message.channel.permissions_for(message.guild.me).send_messages:
             return
         if await self.bot.cog_disabled_in_guild(self, message.guild):
@@ -152,8 +176,13 @@ class AFK(commands.Cog):
             data = await self.config.member(message.author)()  # type: ignore
             time_difference = datetime.now().timestamp() - afk_time
             if time_difference > 10:
+                await self._update_nickname(message.author)  # type: ignore
+                await member_config.afk_status.clear()
+                await member_config.afk_message.clear()
+                await member_config.afk_time.clear()
+                await member_config.pings.clear()
                 ctx = await self.bot.get_context(message)
-                _view = AFKView(ctx, data)
+                _view = AFKView(ctx, self, data)
                 _view._message = await message.channel.send(
                     embed=discord.Embed(
                         title="Your AFK has been removed!",
@@ -163,10 +192,6 @@ class AFK(commands.Cog):
                     allowed_mentions=discord.AllowedMentions(replied_user=False),
                     view=_view,
                 )
-                await member_config.afk_status.clear()
-                await member_config.afk_message.clear()
-                await member_config.afk_time.clear()
-                await member_config.pings.clear()
                 return
 
         for member in message.mentions:
@@ -209,9 +234,9 @@ class AFK(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member):
-        for member_id, data in (await self.config.all_members(guild=member.guild)).items():
-            if data["afk_status"]:
-                await self.config.member_from_ids(member.guild.id, member_id).clear()
+        data = await self.config.all_members(guild=member.guild)
+        if member.id in data:
+            await self.config.member_from_ids(member.guild.id, member.id).clear()
 
     @commands.guild_only()
     @commands.group(name="afk", invoke_without_command=True)
@@ -227,6 +252,7 @@ class AFK(commands.Cog):
                 await member_config.afk_status.set(True)
                 if not message:
                     message = "AFK"
+                await self._update_nickname(ctx.author, force=True)  # type: ignore
                 await member_config.afk_message.set(message)
                 await ctx.send(
                     embed=discord.Embed(
@@ -254,7 +280,9 @@ class AFK(commands.Cog):
 
     @_afk.command(name="custom")
     @commands.cooldown(1, 30, commands.BucketType.member)
-    async def _custom(self, ctx: commands.Context, *, message: TagscriptConverter):
+    async def _custom(
+        self, ctx: commands.Context, *, message: Optional[TagscriptConverter] = None
+    ):
         """
         Change the message sent when someone pings you while you're afk.
 
@@ -280,7 +308,7 @@ class AFK(commands.Cog):
         {reason}
         }
         {embed(color):{color}}
-        {embed(thumbnail):{avatar}}
+        {embed(thumbnail):{author(avatar)}}
         ```
         """
         if message:
@@ -297,6 +325,53 @@ class AFK(commands.Cog):
                 reference=ctx.message.to_reference(fail_if_not_exists=False),
                 allowed_mentions=discord.AllowedMentions(replied_user=False),
             )
+
+    @commands.mod_or_permissions(administrator=True)
+    @_afk.command(name="nickname", aliases=["nick"])
+    @commands.cooldown(1, 30, commands.BucketType.member)
+    async def _nickname(
+        self, ctx: commands.Context, *, text: Optional[commands.Range[str, 3, 6]] = None
+    ):
+        """
+        [Admin/Mod] change the afk nickname identifier of your server.
+        """
+        if not text:
+            await self.config.guild(ctx.guild).nickname.clear()  # type: ignore
+            await ctx.send(
+                f"Cleared the afk nickname identifier to default.",
+                reference=ctx.message.to_reference(fail_if_not_exists=False),
+                allowed_mentions=discord.AllowedMentions(replied_user=False),
+            )
+            return
+        await self.config.guild(ctx.guild).nickname.set(text)  # type: ignore
+        await ctx.send(
+            f"Changed the afk nickname identifer to {text}.",
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
+            allowed_mentions=discord.AllowedMentions(replied_user=False),
+        )
+
+    @commands.guild_only()
+    @_afk.command(name="togglenick")
+    @commands.admin_or_permissions(manage_guild=True)
+    @commands.cooldown(1, 30, commands.BucketType.member)
+    async def _togglenick(self, ctx: commands.Context):
+        """
+        [Admin/Mod] Toggle the afk nickname identifier of your server.
+        """
+        if not ctx.guild.me.guild_permissions.manage_nicknames:  # type: ignore
+            await ctx.send(
+                "I don't have permissions to change nicknames.",
+                reference=ctx.message.to_reference(fail_if_not_exists=False),
+                allowed_mentions=discord.AllowedMentions(replied_user=False),
+            )
+            return
+        toggle = await self.config.guild(ctx.guild).toggle_nickname()  # type: ignore
+        await self.config.guild(ctx.guild).toggle_nickname.set(not toggle)  # type: ignore
+        await ctx.send(
+            f"{'Enabled' if not toggle else 'Disabled'} the afk nickname identifier.",
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
+            allowed_mentions=discord.AllowedMentions(replied_user=False),
+        )
 
     @_afk.command(name="block")
     @commands.cooldown(1, 30, commands.BucketType.member)
@@ -492,9 +567,45 @@ class AFK(commands.Cog):
         if amount == 0:
             await self.config.delete_after.set(None)
             await ctx.send(f"Disabled `delete_after`.")
+            return
         await self.config.delete_after.set(amount)
         await ctx.send(
             f"Changed `delete_after` to {amount}.",
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
+            allowed_mentions=discord.AllowedMentions(replied_user=False),
+        )
+
+    @_afk.command(name="settings")
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.admin_or_permissions(manage_guild=True)
+    async def _settings(self, ctx: commands.Context):
+        """
+        Shows the settings for the server.
+        """
+        data = await self.config.guild(ctx.guild).all()  # type: ignore
+        nickname = data["nickname"]
+        toggle_nickname = data["toggle_nickname"]
+        if toggle_nickname:
+            toggle_nickname = "Enabled"
+        else:
+            toggle_nickname = "Disabled"
+        ignored_channels = data["ignored_channels"]
+        if not ignored_channels:
+            ignored_channels = "None"
+        else:
+            ignored_channels = humanize_list(ignored_channels)
+        msg = (
+            f"**Nickname:** {nickname}\n"
+            f"**Toggle Nickname:** {toggle_nickname}\n"
+            f"**Ignored Channels:** {ignored_channels}"
+        )
+        embed: discord.Embed = discord.Embed(
+            title="AFK Settings",
+            description=msg,
+            color=await ctx.embed_color(),
+        )
+        await ctx.send(
+            embed=embed,
             reference=ctx.message.to_reference(fail_if_not_exists=False),
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )

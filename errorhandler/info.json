@@ -1,0 +1,17 @@
+{
+    "author": ["inthedark.org", "sitryk"],
+    "install_msg": "Thanks for installing the error handler cog.",
+    "name": "ErrorHandler",
+    "disabled": false,
+    "short": "Allow custom error message.",
+    "description": "Adds ability to replace the output of the bots error handler when CommandInvokeError is raised, all other errors get handled by the old handler.",
+    "tags": [
+        "error",
+        "errorhandler",
+        "utility"
+    ],
+    "required_cogs": {},
+    "requirements": [],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not store End User Data."
+}

@@ -1,0 +1,15 @@
+{
+    "author": ["inthedark.org"],
+    "install_msg": "Thanks for installing the activities cog.",
+    "name": "Activities",
+    "disabled": false,
+    "short": "Discord Voice Channel Activities.",
+    "description": "Discord Voice Channel Activities.",
+    "tags": [
+        "activities",
+        "voicechannel"
+    ],
+    "required_cogs": {},
+    "requirements": [],
+    "type": "COG"
+}

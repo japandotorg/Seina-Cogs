@@ -1,0 +1,21 @@
+{
+    "author": ["inthedark.org"],
+    "install_msg": "Thanks for installing the Purge cog.",
+    "name": "Purge",
+    "disabled": false,
+    "short": "Advanced Purge/Cleanup.",
+    "description": "Purge (deleted) messages that meet a criteria.",
+    "tags": [
+        "cleanup",
+        "purge",
+        "mod",
+        "utility",
+        "server"
+    ],
+    "required_cogs": {},
+    "requirements": [
+        "arrow"
+    ],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not store any user data."
+}

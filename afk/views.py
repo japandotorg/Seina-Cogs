@@ -51,10 +51,12 @@ class CloseButton(discord.ui.Button):
 
 
 class AFKView(discord.ui.View):
-    def __init__(self, ctx: commands.Context, data: Dict, timeout: float = 60.0) -> None:
+    def __init__(
+        self, ctx: commands.Context, cog: "AFK", data: Dict, timeout: float = 60.0
+    ) -> None:
         super().__init__(timeout=timeout)
         self.ctx: commands.Context = ctx
-        self.cog: "AFK" = ctx.cog  # type: ignore
+        self.cog: "AFK" = cog
         self.data: Dict = data
         self._message: Optional[discord.Message] = None
         self.add_item(CloseButton())
@@ -69,7 +71,7 @@ class AFKView(discord.ui.View):
     async def interaction_check(self, interaction: discord.Interaction[Red], /) -> bool:
         if self.ctx.author.id != interaction.user.id:
             await interaction.response.send_message(
-                "You're not allowed to interact with this message,", ephemeral=True
+                "You're not allowed to interact with this message.", ephemeral=True
             )
             return False
         return True
@@ -212,9 +214,7 @@ class AFKPaginator(ViewDisableOnTimeout):
         buttons_to_add = (
             [FirstItemButton, BackwardButton, PageButton, ForwardButton, LastItemButton]
             if len(self.contents) > 2
-            else [BackwardButton, PageButton, ForwardButton]
-            if not len(self.contents) == 1
-            else []
+            else [BackwardButton, PageButton, ForwardButton] if not len(self.contents) == 1 else []
         )
         for i in buttons_to_add:
             self.add_item(i())

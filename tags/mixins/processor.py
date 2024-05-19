@@ -24,6 +24,7 @@ SOFTWARE.
 """
 
 import asyncio
+import contextlib
 import logging
 from copy import copy
 from typing import Any, Dict, List, Optional, Type, Union
@@ -34,9 +35,9 @@ from redbot.core import commands
 from redbot.core.utils.menus import start_adding_reactions
 
 from ..abc import MixinMeta
-from ..blocks import CommentBlock, DeleteBlock, ReactBlock, SilentBlock, VarBlock
+from ..blocks import DeleteBlock, ReactBlock, ReplyBlock, SilentBlock
 from ..errors import BlacklistCheckFailure, RequireCheckFailure, WhitelistCheckFailure
-from ..objects import SilentContext, Tag
+from ..objects import ReplyContext, SilentContext, Tag
 
 log = logging.getLogger("red.seina.tags.processor")
 
@@ -85,18 +86,12 @@ class Processor(MixinMeta):
             tse.OverrideBlock(),
             tse.RedirectBlock(),
             tse.CooldownBlock(),
-            tse.UpperBlock(),
-            tse.LowerBlock(),
-            tse.CountBlock(),
-            tse.LengthBlock(),
-            tse.StrictVariableGetterBlock(),
         ]
         tag_blocks: List[tse.Block] = [
             DeleteBlock(),
             SilentBlock(),
+            ReplyBlock(),
             ReactBlock(),
-            VarBlock(),
-            CommentBlock(),
         ]
         interpreter: Union[Type[tse.AsyncInterpreter], Type[tse.Interpreter]] = (
             tse.AsyncInterpreter if data["async_enabled"] else tse.Interpreter
@@ -110,7 +105,7 @@ class Processor(MixinMeta):
 
     @commands.Cog.listener()
     async def on_command_error(
-        self, ctx: commands.Context, error: commands.CommandError, unhandled_by_cog=False
+        self, ctx: commands.Context, error: commands.CommandError, unhandled_by_cog: bool = False
     ):
         if not isinstance(error, commands.CommandNotFound):
             return
@@ -160,7 +155,7 @@ class Processor(MixinMeta):
         tag: Tag,
         *,
         seed_variables: Optional[Dict[str, Any]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> Optional[str]:
         seed_variables = {} if seed_variables is None else seed_variables
         seed = self.get_seed_from_context(ctx)
@@ -206,31 +201,34 @@ class Processor(MixinMeta):
             to_gather.append(self.react_to_list(ctx, msg, react))
         if command_messages:
             silent = actions.get("silent", False)
-            overrides = actions.get("overrides")
-            to_gather.append(self.process_commands(command_messages, silent, overrides))
+            reply = actions.get("reply", False)
+            overrides = actions.get("overrides", {})
+            to_gather.append(self.process_commands(command_messages, silent, reply, overrides))
 
         if to_gather:
             await asyncio.gather(*to_gather)
 
     @staticmethod
     async def send_quietly(
-        destination: discord.abc.Messageable, content: Optional[str] = None, **kwargs
+        destination: discord.abc.Messageable, content: Optional[str] = None, **kwargs: Any
     ) -> Optional[discord.Message]:
-        try:
+        with contextlib.suppress(discord.HTTPException):
             return await destination.send(content, **kwargs)
-        except discord.HTTPException:
-            pass
 
     async def send_tag_response(
         self,
         ctx: commands.Context,
         actions: Dict[str, Any],
         content: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> Optional[discord.Message]:
         destination = ctx.channel
         embed = actions.get("embed")
         replying = False
+
+        if reply := actions.get("reply"):
+            if reply:
+                replying = True
 
         if target := actions.get("target"):
             if target == "dm":
@@ -257,20 +255,28 @@ class Processor(MixinMeta):
         return await self.send_quietly(destination, content, **kwargs)
 
     async def process_commands(
-        self, messages: List[discord.Message], silent: bool, overrides: dict
+        self, messages: List[discord.Message], silent: bool, reply: bool, overrides: Dict[Any, Any]
     ) -> None:
-        command_tasks = []
+        command_tasks: List[asyncio.Task[None]] = []
         for message in messages:
-            command_task = asyncio.create_task(self.process_command(message, silent, overrides))
+            command_task: asyncio.Task[None] = asyncio.create_task(
+                self.process_command(message, silent, reply, overrides)
+            )
             command_tasks.append(command_task)
             await asyncio.sleep(0.1)
         await asyncio.gather(*command_tasks)
 
     async def process_command(
-        self, command_message: discord.Message, silent: bool, overrides: dict
+        self,
+        command_message: discord.Message,
+        silent: bool,
+        reply: bool,
+        overrides: Dict[Any, Any],
     ) -> None:
-        command_cls = SilentContext if silent else commands.Context
-        ctx = await self.bot.get_context(command_message, cls=command_cls)
+        command_cls = SilentContext if silent else (ReplyContext if reply else commands.Context)
+        ctx: Union[SilentContext, ReplyContext, commands.Context] = await self.bot.get_context(
+            command_message, cls=command_cls
+        )
         if not ctx.valid:
             return
         if overrides:
@@ -278,7 +284,9 @@ class Processor(MixinMeta):
         await self.bot.invoke(ctx)
 
     @classmethod
-    def handle_overrides(cls, command: commands.Command, overrides: dict) -> commands.Command:
+    def handle_overrides(
+        cls, command: commands.Command, overrides: Dict[Any, Any]
+    ) -> commands.Command:
         overriden_command = copy(command)
         # overriden_command = command.copy() # does not work as it makes ctx a regular argument
         # overriden_command.cog = command.cog
