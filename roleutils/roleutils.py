@@ -57,7 +57,7 @@ class RoleUtils(
     """
 
     __author__: Final[List[str]] = ["inthedark.org", "PhenoM4n4n"]
-    __version__: Final[str] = "1.6.0"
+    __version__: Final[str] = "1.6.1"
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
