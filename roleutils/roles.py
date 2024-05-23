@@ -294,14 +294,14 @@ class Roles(MixinMeta, metaclass=CompositeMetaClass):
             msg.append(f"Added **{role}** to {humanize_roles(success_members)}.")
         if already_members:
             msg.append(f"{humanize_roles(already_members)} already had **{role}**.")
-        
+
         # Define the number of lines per page
         lines_per_page = 10
         # Split the msg list into chunks of lines_per_page
-        msg_chunks = [msg[i:i + lines_per_page] for i in range(0, len(msg), lines_per_page)]
+        msg_chunks = [msg[i : i + lines_per_page] for i in range(0, len(msg), lines_per_page)]
         # Add each chunk to the pages list
         for chunk in msg_chunks:
-            pages.append('\n'.join(chunk))
+            pages.append("\n".join(chunk))
         await SimpleMenu(
             pages,
             disable_after_timeout=True,
@@ -330,14 +330,14 @@ class Roles(MixinMeta, metaclass=CompositeMetaClass):
             msg.append(f"Removed **{role}** from {humanize_roles(success_members)}.")
         if already_members:
             msg.append(f"{humanize_roles(already_members)} didn't have **{role}**.")
-        
+
         # Define the number of lines per page
         lines_per_page = 10
         # Split the msg list into chunks of lines_per_page
-        msg_chunks = [msg[i:i + lines_per_page] for i in range(0, len(msg), lines_per_page)]
+        msg_chunks = [msg[i : i + lines_per_page] for i in range(0, len(msg), lines_per_page)]
         # Add each chunk to the pages list
         for chunk in msg_chunks:
-            pages.append('\n'.join(chunk))
+            pages.append("\n".join(chunk))
 
         await SimpleMenu(
             pages,
