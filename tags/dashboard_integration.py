@@ -92,7 +92,6 @@ class DashboardIntegration:
             tags = {tag.tag_name.data: tag.tagscript.data for tag in tags_form.tags}
             for tag_name, tagscript in tags.items():
                 if tag_name not in existing_tags:
-                    __import__
                     try:
                         self.validate_tag_count(guild)
                     except TagFeedbackError as e:
