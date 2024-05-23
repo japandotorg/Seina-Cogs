@@ -28,7 +28,7 @@ import re
 import time
 import types
 from collections import Counter
-from typing import Any, Dict, Final, List, Optional, Pattern, Union
+from typing import Any, Dict, Final, List, Optional, Pattern, Union, Optional
 from urllib.parse import quote_plus
 
 import discord
@@ -108,7 +108,9 @@ class Commands(MixinMeta):
         return {"aliases": aliases, "description": description}
 
     @staticmethod
-    async def show_tag_list(ctx, data: Dict[str, List[str]], name: str, icon_url: str) -> None:
+    async def show_tag_list(
+        ctx, data: Dict[str, List[str]], name: str, icon_url: Optional[str] = None
+    ) -> None:
         aliases = data["aliases"]
         description = data["description"]
         e = discord.Embed(color=await ctx.embed_color())
@@ -384,7 +386,7 @@ class Commands(MixinMeta):
         if not tags:
             return await ctx.send(f"There are no close matches for '{keyword}'.")
         data = self.generate_tag_list(tags)
-        await self.show_tag_list(ctx, data, "Search Results", ctx.guild.icon.url)
+        await self.show_tag_list(ctx, data, "Search Results", getattr(ctx.guild.icon, "url", None))
 
     @tag.command("list")
     async def tag_list(self, ctx: commands.Context):
@@ -400,7 +402,7 @@ class Commands(MixinMeta):
         if not tags:
             return await ctx.send("There are no stored tags on this server.")
         data = self.generate_tag_list(tags)
-        await self.show_tag_list(ctx, data, "Stored Tags", ctx.guild.icon.url)
+        await self.show_tag_list(ctx, data, "Stored Tags", getattr(ctx.guild.icon, "url", None))
 
     async def doc_fetch(self) -> None:
         async with self.session.get(f"{DOCS_URL}/objects.inv") as response:
@@ -656,7 +658,7 @@ class Commands(MixinMeta):
         if not tags:
             return await ctx.send(f"There are no close matches for '{keyword}'.")
         data = self.generate_tag_list(tags)
-        await self.show_tag_list(ctx, data, "Search Results", ctx.me.avatar.url)
+        await self.show_tag_list(ctx, data, "Search Results", getattr(ctx.me.avatar, "url", None))
 
     @tag_global.command("list")
     @copy_doc(tag_list)
@@ -665,7 +667,7 @@ class Commands(MixinMeta):
         if not tags:
             return await ctx.send("There are no global tags.")
         data = self.generate_tag_list(tags)
-        await self.show_tag_list(ctx, data, "Global Tags", ctx.me.avatar.url)
+        await self.show_tag_list(ctx, data, "Global Tags", getattr(ctx.me.avatar, "url", None))
 
     @tag_global.command("usage", aliases=["stats"])
     @copy_doc(tag_usage)
