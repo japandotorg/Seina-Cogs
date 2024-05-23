@@ -28,7 +28,7 @@ import re
 import time
 import types
 from collections import Counter
-from typing import Any, Dict, Final, List, Optional, Pattern, Union, Optional
+from typing import Any, Dict, Final, List, Optional, Pattern, Union
 from urllib.parse import quote_plus
 
 import discord
