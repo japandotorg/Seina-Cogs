@@ -1,13 +1,14 @@
-from redbot.core import commands
-from redbot.core.bot import Red
-import discord
+import datetime
 import typing
 
-import datetime
+import discord
+from redbot.core import commands
+from redbot.core.bot import Red
 
 from .converters import TagConverter
 from .errors import TagFeedbackError
 from .objects import Tag
+
 
 def dashboard_page(*args, **kwargs):
     def decorator(func: typing.Callable):
@@ -24,10 +25,12 @@ class DashboardIntegration:
     async def on_dashboard_cog_add(self, dashboard_cog: commands.Cog) -> None:
         dashboard_cog.rpc.third_parties_handler.add_third_party(self)
 
-
-    async def get_dashboard_page(self, user: discord.User, guild: typing.Optional[discord.Guild], **kwargs) -> typing.Dict[str, typing.Any]:
+    async def get_dashboard_page(
+        self, user: discord.User, guild: typing.Optional[discord.Guild], **kwargs
+    ) -> typing.Dict[str, typing.Any]:
         import wtforms
         from markupsafe import Markup
+
         class MarkdownTextAreaField(wtforms.TextAreaField):
             def __call__(
                 self,
@@ -41,16 +44,37 @@ class DashboardIntegration:
                 if disable_toolbar:
                     kwargs["class"] += " markdown-text-area-field-toolbar-disabled"
                 return super().__call__(**kwargs)
+
         class TagForm(kwargs["Form"]):
-            tag_name: wtforms.StringField = wtforms.StringField("Name", validators=[wtforms.validators.InputRequired(), wtforms.validators.Regexp(r"^[^\s]+$"), wtforms.validators.Length(max=300)])
-            tagscript: MarkdownTextAreaField = MarkdownTextAreaField("Script", validators=[wtforms.validators.InputRequired(), wtforms.validators.Length(max=1700), kwargs["DpyObjectConverter"](TagConverter)])
+            tag_name: wtforms.StringField = wtforms.StringField(
+                "Name",
+                validators=[
+                    wtforms.validators.InputRequired(),
+                    wtforms.validators.Regexp(r"^[^\s]+$"),
+                    wtforms.validators.Length(max=300),
+                ],
+            )
+            tagscript: MarkdownTextAreaField = MarkdownTextAreaField(
+                "Script",
+                validators=[
+                    wtforms.validators.InputRequired(),
+                    wtforms.validators.Length(max=1700),
+                    kwargs["DpyObjectConverter"](TagConverter),
+                ],
+            )
+
         class TagsForm(kwargs["Form"]):
             def __init__(self, tags: typing.Dict[str, str]) -> None:
                 super().__init__(prefix="tags_form_")
                 for name, tagscript in tags.items():
                     self.tags.append_entry({"tag_name": name, "tagscript": tagscript})
-                self.tags.default = [entry for entry in self.tags.entries if entry.csrf_token.data is None]
-                self.tags.entries = [entry for entry in self.tags.entries if entry.csrf_token.data is not None]
+                self.tags.default = [
+                    entry for entry in self.tags.entries if entry.csrf_token.data is None
+                ]
+                self.tags.entries = [
+                    entry for entry in self.tags.entries if entry.csrf_token.data is not None
+                ]
+
             tags: wtforms.FieldList = wtforms.FieldList(wtforms.FormField(TagForm))
             submit: wtforms.SubmitField = wtforms.SubmitField("Save Modifications")
 
@@ -58,7 +82,12 @@ class DashboardIntegration:
             existing_tags = self.guild_tag_cache[guild.id].copy()
         else:
             existing_tags = self.global_tag_cache.copy()
-        tags_form: TagsForm = TagsForm({tag.name: tag.tagscript for tag in sorted(existing_tags.values(), key=lambda tag: tag.name)})
+        tags_form: TagsForm = TagsForm(
+            {
+                tag.name: tag.tagscript
+                for tag in sorted(existing_tags.values(), key=lambda tag: tag.name)
+            }
+        )
         if tags_form.validate_on_submit() and await tags_form.validate_dpy_converters():
             tags = {tag.tag_name.data: tag.tagscript.data for tag in tags_form.tags}
             for tag_name, tagscript in tags.items():
@@ -67,7 +96,10 @@ class DashboardIntegration:
                     try:
                         self.validate_tag_count(guild)
                     except TagFeedbackError as e:
-                        return {"status": 1, "notifications": [{"message": str(e), "category": "warning"}]}
+                        return {
+                            "status": 1,
+                            "notifications": [{"message": str(e), "category": "warning"}],
+                        }
                     tag = Tag(
                         self,
                         tag_name,
@@ -84,7 +116,9 @@ class DashboardIntegration:
                     await existing_tags[tag_name].delete()
             return {
                 "status": 0,
-                "notifications": [{"message": "Successfully saved the modifications.", "category": "success"}],
+                "notifications": [
+                    {"message": "Successfully saved the modifications.", "category": "success"}
+                ],
                 "redirect_url": kwargs["request_url"],
             }
 
@@ -96,7 +130,9 @@ class DashboardIntegration:
             html_form.append('    <div class="row mb-3">')
             if i > 0:
                 html_form.append('        <hr class="horizontal dark" />')
-            tag_form.tag_name.render_kw, tag_form.tagscript.render_kw = {"class": "form-control form-control-default"}, {"class": "form-control form-control-default"}
+            tag_form.tag_name.render_kw, tag_form.tagscript.render_kw = {
+                "class": "form-control form-control-default"
+            }, {"class": "form-control form-control-default"}
             html_form.extend(
                 [
                     f"        {tag_form.hidden_tag()}",
@@ -116,7 +152,9 @@ class DashboardIntegration:
                     "    </div>",
                 ]
             )
-        tags_form.submit.render_kw = {"class": "btn mb-0 bg-gradient-success btn-md w-100 my-4 mb-2"}
+        tags_form.submit.render_kw = {
+            "class": "btn mb-0 bg-gradient-success btn-md w-100 my-4 mb-2"
+        }
         html_form.extend(
             [
                 '    <a href="javascript:void(0);" onclick="createTag(this);" class="text-success mr-3"><i class="fa fa-plus-circle"></i> Create Tag</a>'
@@ -137,8 +175,12 @@ class DashboardIntegration:
             },
         }
 
-    @dashboard_page(name=None, description="Manage global Tags.", is_owner=True, methods=("GET", "POST"))
-    async def dashboard_global_page(self, user: discord.User, **kwargs) -> typing.Dict[str, typing.Any]:
+    @dashboard_page(
+        name=None, description="Manage global Tags.", is_owner=True, methods=("GET", "POST")
+    )
+    async def dashboard_global_page(
+        self, user: discord.User, **kwargs
+    ) -> typing.Dict[str, typing.Any]:
         if user.id not in self.bot.owner_ids:
             return {"status": 1}
         return await self.get_dashboard_page(user=user, guild=None, **kwargs)
@@ -147,16 +189,14 @@ class DashboardIntegration:
     async def dashboard_guild_page(
         self, user: discord.User, guild: discord.Guild, **kwargs
     ) -> typing.Dict[str, typing.Any]:
-            member = guild.get_member(user.id)
-            if (
-                user.id not in self.bot.owner_ids
-                and (
-                    member is None
-                    or not (await self.bot.is_mod(member) or member.guild_permissions.manage_guild)
-                )
-            ):
-                return {"status": 1}
-            return await self.get_dashboard_page(user=user, guild=guild, **kwargs)
+        member = guild.get_member(user.id)
+        if user.id not in self.bot.owner_ids and (
+            member is None
+            or not (await self.bot.is_mod(member) or member.guild_permissions.manage_guild)
+        ):
+            return {"status": 1}
+        return await self.get_dashboard_page(user=user, guild=guild, **kwargs)
+
 
 WEB_CONTENT = """
     {{ tags_form|safe }}
