@@ -4,11 +4,11 @@ from typing import Any, Dict, List, Optional
 import discord
 from redbot.core import commands
 
-from ..objects import Tag
 from ..abc import MixinMeta
-from ..errors import TagFeedbackError
 from ..converters import TagConverter
-from .utils import dashboard_page, WEB_CONTENT, get_tags_cog
+from ..errors import TagFeedbackError
+from ..objects import Tag
+from .utils import WEB_CONTENT, dashboard_page, get_tags_cog
 
 
 class DashboardMixin(MixinMeta):

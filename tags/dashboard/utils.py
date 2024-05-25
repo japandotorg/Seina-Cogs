@@ -27,7 +27,7 @@ def get_tags_cog(
     *,
     guild_id: Optional[int],
     author_id: int,
-    created_at: datetime.datetime
+    created_at: datetime.datetime,
 ) -> Tag:
     cog: Optional[commands.Cog] = bot.get_cog("Tags")
     return Tag(
