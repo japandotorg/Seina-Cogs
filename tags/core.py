@@ -42,7 +42,7 @@ from redbot.core.utils.chat_formatting import humanize_list
 from TagScriptEngine import __version__ as tse_version
 
 from .abc import CompositeMetaClass
-from .dashboard_integration import DashboardIntegration
+from .dashboard import DashboardMixin
 from .errors import MissingTagPermissions, TagCharacterLimitReached
 from .mixins import Commands, OwnerCommands, Processor
 from .objects import Tag
@@ -58,7 +58,7 @@ class Tags(
     OwnerCommands,
     Processor,
     commands.Cog,
-    DashboardIntegration,
+    DashboardMixin,
     metaclass=CompositeMetaClass,
 ):
     """
@@ -67,7 +67,7 @@ class Tags(
     The TagScript documentation can be found [here](https://seina-cogs.readthedocs.io/en/latest/).
     """
 
-    __version__: Final[str] = "2.7.6"
+    __version__: Final[str] = "2.7.7"
     __author__: Final[List[str]] = ["inthedark.org", "PhenoM4n4n", "sravan", "npc203"]
 
     def __init__(self, bot: Red) -> None:
