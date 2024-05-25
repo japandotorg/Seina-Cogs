@@ -1,5 +1,13 @@
-from .commands import Commands
-from .owner import OwnerCommands
-from .processor import Processor
+from typing import Tuple
 
-__all__ = ("Commands", "Processor", "OwnerCommands")
+from .commands import (
+    Commands as Commands,
+)
+from .owner import (
+    OwnerCommands as OwnerCommands,
+)
+from .processor import (
+    Processor as Processor,
+)
+
+__all__: Tuple[str, ...] = ("Commands", "Processor", "OwnerCommands")

@@ -23,14 +23,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .comment import CommentBlock
-from .customcom import ContextVariableBlock, ConverterBlock
-from .delete import DeleteBlock
-from .react import ReactBlock
-from .reply import ReplyBlock
-from .silent import SilentBlock
+from typing import Tuple
 
-__all__ = (
+from .comment import (
+    CommentBlock as CommentBlock,
+)
+from .customcom import (
+    ContextVariableBlock as ContextVariableBlock,
+    ConverterBlock as ConverterBlock,
+)
+from .delete import (
+    DeleteBlock as DeleteBlock,
+)
+from .react import (
+    ReactBlock as ReactBlock,
+)
+from .reply import (
+    ReplyBlock as ReplyBlock,
+)
+from .silent import (
+    SilentBlock as SilentBlock,
+)
+
+__all__: Tuple[str, ...] = (
     "DeleteBlock",
     "SilentBlock",
     "ReplyBlock",
