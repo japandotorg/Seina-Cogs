@@ -33,7 +33,6 @@ from .react import ReactBlock as ReactBlock
 from .reply import ReplyBlock as ReplyBlock
 from .silent import SilentBlock as SilentBlock
 
-
 __all__: Tuple[str, ...] = (
     "DeleteBlock",
     "SilentBlock",
