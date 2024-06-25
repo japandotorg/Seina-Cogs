@@ -25,6 +25,8 @@ SOFTWARE.
 
 from typing import ClassVar, Dict, List, Optional, Tuple, Union
 
+import discord
+
 from TagScriptEngine import Block, Context
 
 
@@ -84,7 +86,7 @@ class AllowedMentionsBlock(Block):
             "mentions": {
                 "everyone": False,
                 "users": True,
-                "roles": [int(r.strip()) for r in param.split(",")],
+                "roles": [discord.Object(id=r.strip()) for r in param.split(",")],
                 "replied_user": True,
             },
             "override": True if ctx.verb.payload else False,
