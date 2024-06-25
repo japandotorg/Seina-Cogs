@@ -32,11 +32,11 @@ class AllowedMentionsBlock(Block):
     """
     The "allowed mentions" block attempts to enable mentioning of roles.
     Passing no parameter enables mentioning of all roles within the message
-    content. However passing a role name or ID to the block parameter allows 
-    mentioning of that specific role only. Multiple role name or IDs can be 
-    included, separated by a comma ",". By default, mentioning is only 
-    triggered if the execution author has "manage server" permissions. However, 
-    using the "override" keyword as a payload allows mentioning to be triggered 
+    content. However passing a role name or ID to the block parameter allows
+    mentioning of that specific role only. Multiple role name or IDs can be
+    included, separated by a comma ",". By default, mentioning is only
+    triggered if the execution author has "manage server" permissions. However,
+    using the "override" keyword as a payload allows mentioning to be triggered
     by anyone.
 
     **Usage:** ``{allowedmentions(<role, None>):["override", None]}``

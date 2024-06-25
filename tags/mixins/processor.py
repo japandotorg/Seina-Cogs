@@ -331,7 +331,10 @@ class Processor(MixinMeta):
         return overriden_command
 
     async def _get_roles(self, ctx: commands.Context, mentions: List[str]) -> List[discord.Role]:
-        tasks = [await asyncio.to_thread(self._convert_roles_silently, ctx, argument) for argument in mentions]
+        tasks = [
+            await asyncio.to_thread(self._convert_roles_silently, ctx, argument)
+            for argument in mentions
+        ]
         converted = await asyncio.gather(*tasks)
         return [role for role in converted if role is not None]
 
