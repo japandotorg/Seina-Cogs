@@ -26,7 +26,6 @@ SOFTWARE.
 from typing import ClassVar, Dict, List, Optional, Tuple, Union
 
 import discord
-
 from TagScriptEngine import Block, Context
 
 
