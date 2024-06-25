@@ -66,7 +66,7 @@ class AllowedMentionsBlock(Block):
         return super().will_accept(ctx)
 
     def process(self, ctx: Context) -> Optional[str]:
-        actions: Optional[Dict[str, Union[Dict[str, Union[bool, List[int]]], bool]]] = (
+        actions: Optional[Dict[str, Union[bool, List[str]]]] = (
             ctx.response.actions.get("allowed_mentions")
         )
         if actions:

@@ -27,7 +27,7 @@ import asyncio
 import contextlib
 import logging
 from copy import copy
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import Any, Coroutine, Dict, List, Optional, Type, Union
 
 import discord
 import TagScriptEngine as tse
@@ -331,8 +331,11 @@ class Processor(MixinMeta):
         return overriden_command
 
     async def _get_roles(self, ctx: commands.Context, mentions: List[str]) -> List[discord.Role]:
-        tasks = [await asyncio.to_thread(self._convert_roles_silently, ctx, argument) for argument in mentions]
-        converted = await asyncio.gather(*tasks)
+        tasks: List[Coroutine[Any, Any, Optional[discord.Role]]] = [
+            await asyncio.to_thread(self._convert_roles_silently, ctx, argument)
+            for argument in mentions
+        ]
+        converted: List[Optional[discord.Role]] = await asyncio.gather(*tasks)
         return [role for role in converted if role is not None]
 
     async def _convert_roles_silently(
