@@ -25,6 +25,10 @@ SOFTWARE.
 
 from typing import Tuple
 
+
+from .allowed_mentions import (
+    AllowedMentionsBlock as AllowedMentionsBlock
+)
 from .comment import (
     CommentBlock as CommentBlock,
 )

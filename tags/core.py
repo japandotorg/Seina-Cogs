@@ -67,7 +67,7 @@ class Tags(
     The TagScript documentation can be found [here](https://seina-cogs.readthedocs.io/en/latest/).
     """
 
-    __version__: Final[str] = "2.7.7"
+    __version__: Final[str] = "2.7.8"
     __author__: Final[List[str]] = ["inthedark.org", "PhenoM4n4n", "sravan", "npc203"]
 
     def __init__(self, bot: Red) -> None:

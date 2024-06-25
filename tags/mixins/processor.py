@@ -35,7 +35,7 @@ from redbot.core import commands
 from redbot.core.utils.menus import start_adding_reactions
 
 from ..abc import MixinMeta
-from ..blocks import DeleteBlock, ReactBlock, ReplyBlock, SilentBlock
+from ..blocks import DeleteBlock, ReactBlock, ReplyBlock, SilentBlock, AllowedMentionsBlock
 from ..errors import BlacklistCheckFailure, RequireCheckFailure, WhitelistCheckFailure
 from ..objects import ReplyContext, SilentContext, Tag
 
@@ -88,6 +88,7 @@ class Processor(MixinMeta):
             tse.CooldownBlock(),
         ]
         tag_blocks: List[tse.Block] = [
+            AllowedMentionsBlock(),
             DeleteBlock(),
             SilentBlock(),
             ReplyBlock(),
@@ -246,7 +247,25 @@ class Processor(MixinMeta):
 
         if not (content or embed is not None):
             return
+
         kwargs["embed"] = embed
+
+        if allowed_mentions := actions.get("allowed_mentions"):
+            if isinstance(ctx.author, discord.Member):
+                if ctx.author.guild_permissions.manage_guild or allowed_mentions.get(
+                    "override", False
+                ):
+                    kwargs["allowed_mentions"] = discord.AllowedMentions(
+                        **allowed_mentions.get(
+                            "mentions",
+                            {
+                                "everyone": False,
+                                "users": True,
+                                "roles": False,
+                                "replied_user": True,
+                            },
+                        )
+                    )
 
         if replying:
             ref = ctx.message.to_reference(fail_if_not_exists=False)
@@ -285,7 +304,7 @@ class Processor(MixinMeta):
 
     @classmethod
     def handle_overrides(
-        cls, command: commands.Command, overrides: Dict[Any, Any]
+        cls, command: commands.Command, overrides: Dict[str, Any]
     ) -> commands.Command:
         overriden_command = copy(command)
         # overriden_command = command.copy() # does not work as it makes ctx a regular argument
