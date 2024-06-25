@@ -78,3 +78,9 @@ Override Block
 ^^^^^^^^^^^^^^
 
 .. autoclass:: TagScriptEngine.OverrideBlock
+
+^^^^^^^^^^^^^^^^^^^^^
+AllowedMentions Block
+^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: tags.blocks.AllowedMentionsBlock
