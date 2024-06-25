@@ -25,8 +25,6 @@ SOFTWARE.
 
 from typing import ClassVar, Dict, List, Optional, Tuple, Union
 
-import discord
-
 from TagScriptEngine import Block, Context
 
 
@@ -34,11 +32,12 @@ class AllowedMentionsBlock(Block):
     """
     The "allowed mentions" block attempts to enable mentioning of roles.
     Passing no parameter enables mentioning of all roles within the message
-    content. However passing a role ID to the block parameter allows mentioning
-    of that specific role only. Multiple role IDs can be included, separated by
-    a comma ",". By default, mentioning is only triggered if the execution
-    author has "manage server" permissions. However, using the "override"
-    keyword as a payload allows mentioning to be triggered by anyone.
+    content. However passing a role name or ID to the block parameter allows 
+    mentioning of that specific role only. Multiple role name or IDs can be 
+    included, separated by a comma ",". By default, mentioning is only 
+    triggered if the execution author has "manage server" permissions. However, 
+    using the "override" keyword as a payload allows mentioning to be triggered 
+    by anyone.
 
     **Usage:** ``{allowedmentions(<role, None>):["override", None]}``
 
@@ -46,12 +45,13 @@ class AllowedMentionsBlock(Block):
 
     **Payload:** "override", None
 
-    **Parameter:** role IDs, None
+    **Parameter:** role, None
 
     **Examples:** ::
 
         {allowedmentions}
         {allowedmentions:override}
+        {allowedmentions(@Admin, Moderator):override}
         {allowedmentions(763522431151112265, 812949167190048769)}
         {mentions(763522431151112265, 812949167190048769):override}
     """
@@ -73,22 +73,12 @@ class AllowedMentionsBlock(Block):
             return None
         if not (param := ctx.verb.parameter):
             ctx.response.actions["allowed_mentions"] = {
-                "mentions": {
-                    "everyone": False,
-                    "users": True,
-                    "roles": True,
-                    "replied_user": True,
-                },
+                "mentions": True,
                 "override": True if ctx.verb.payload else False,
             }
             return ""
         ctx.response.actions["allowed_mentions"] = {
-            "mentions": {
-                "everyone": False,
-                "users": True,
-                "roles": [discord.Object(id=r.strip()) for r in param.split(",")],
-                "replied_user": True,
-            },
+            "mentions": [r.strip() for r in param.split(",")],
             "override": True if ctx.verb.payload else False,
         }
         return ""

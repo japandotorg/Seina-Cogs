@@ -252,20 +252,18 @@ class Processor(MixinMeta):
 
         if allowed_mentions := actions.get("allowed_mentions"):
             if isinstance(ctx.author, discord.Member):
-                if ctx.author.guild_permissions.manage_guild or allowed_mentions.get(
-                    "override", False
+                if (
+                    self.bot.is_owner(ctx.author)
+                    or ctx.author.guild_permissions.manage_guild
+                    or allowed_mentions.get("override", False)
                 ):
-                    kwargs["allowed_mentions"] = discord.AllowedMentions(
-                        **allowed_mentions.get(
-                            "mentions",
-                            {
-                                "everyone": False,
-                                "users": True,
-                                "roles": False,
-                                "replied_user": True,
-                            },
-                        )
-                    )
+                    mentions = allowed_mentions.get("mentions", True)
+                    if isinstance(mentions, list):
+                        roles: List[discord.Role] = await self._get_roles(ctx, mentions)
+                        if roles:
+                            kwargs["allowed_mentions"] = discord.AllowedMentions(roles=roles)
+                    else:
+                        kwargs["allowed_mentions"] = discord.AllowedMentions(roles=mentions)
 
         if replying:
             ref = ctx.message.to_reference(fail_if_not_exists=False)
@@ -331,6 +329,18 @@ class Processor(MixinMeta):
                 all_commands[name] = cls.handle_overrides(child, overrides)
             overriden_command.all_commands = all_commands
         return overriden_command
+
+    async def _get_roles(self, ctx: commands.Context, mentions: List[str]) -> List[discord.Role]:
+        tasks = [await asyncio.to_thread(self._convert_roles_silently, ctx, argument) for argument in mentions]
+        converted = await asyncio.gather(*tasks)
+        return [role for role in converted if role is not None]
+
+    async def _convert_roles_silently(
+        self, ctx: commands.Context, argument: str
+    ) -> Optional[discord.Role]:
+        with contextlib.suppress(commands.RoleNotFound):
+            return await self.role_converter.convert(ctx, argument.strip("@"))
+        return None
 
     async def validate_checks(self, ctx: commands.Context, actions: Dict[str, Any]) -> None:
         to_gather = []
