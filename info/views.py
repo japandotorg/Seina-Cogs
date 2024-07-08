@@ -38,7 +38,6 @@ class UISelect(discord.ui.Select["UIView"]):
                 emoji=self.cache.get_select_emoji("home"),
                 value="home",
                 description="General info, join dates, badges, status, etc...",
-                default=True,
             ),
             discord.SelectOption(
                 label="Avatar",
