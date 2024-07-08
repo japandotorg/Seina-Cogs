@@ -139,10 +139,11 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.has_permissions(embed_links=True)
     @commands.bot_has_permissions(embed_links=True)
-    @commands.command(name="userinfo", aliases=["ui"], help=Mod.userinfo.help)
+    @commands.command(name="userinfo", aliases=["ui"])
     async def _user_info(
         self, ctx: commands.GuildContext, *, member: Optional[discord.Member] = None
     ):
+        """Check user's info, defaults to author."""
         await self._callback(ctx, member if member else ctx.author)
 
     async def _user_info_context(
