@@ -1,6 +1,6 @@
 import discord
-from redbot.core.bot import Red
 from redbot.core import app_commands
+from redbot.core.bot import Red
 
 
 def guild_only_and_has_embed_links(interaction: discord.Interaction[Red]) -> bool:

@@ -4,8 +4,8 @@ import discord
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import humanize_list
 
+from .abc import CompositeMetaClass, MixinMeta
 from .cache import BadgeEmoji, DeviceEmoji, SelectEmoji, StatusEmoji
-from .abc import MixinMeta, CompositeMetaClass
 
 
 class SettingsCommands(MixinMeta, metaclass=CompositeMetaClass):
