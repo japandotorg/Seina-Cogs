@@ -2,7 +2,7 @@ import asyncio
 import contextlib
 import datetime
 import functools
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Union, cast
+from typing import TYPE_CHECKING, Any, List, Optional, Set, Union, cast
 
 import discord
 from redbot.cogs.mod.mod import Mod
@@ -12,34 +12,41 @@ from redbot.core.utils import AsyncIter
 from redbot.core.utils.common_filters import filter_invites
 
 from .cache import Cache
+from .utils import get_roles
+
+if TYPE_CHECKING:
+    from .core import Info
 
 
 class UISelect(discord.ui.Select["UIView"]):
     if TYPE_CHECKING:
         view: "UIView"
 
-    def __init__(self, callback: Any) -> None:
+    def __init__(self, cog: "Info", user: discord.Member, callback: Any) -> None:
+        self.bot: Red = cog.bot
+        self.user: discord.Member = user
+        self.cache: Cache = cog.cache
         self.options: List[discord.SelectOption] = [
             discord.SelectOption(
                 label="Home",
-                emoji=self.view.cache.get_select_emoji("home"),
+                emoji=self.cache.get_select_emoji("home"),
                 value="home",
                 description="General info, join dates, badges, status, etc...",
                 default=True,
             ),
             discord.SelectOption(
                 label="Avatar",
-                emoji=self.view.cache.get_select_emoji("avatar"),
+                emoji=self.cache.get_select_emoji("avatar"),
                 value="avatar",
                 description="View the user's global avatar...",
             ),
         ]
         self._task: asyncio.Task[None] = asyncio.create_task(self.release())
-        if self.view._get_roles(self.view.user):
+        if get_roles(self.user):
             self.options.append(
                 discord.SelectOption(
                     label="Roles",
-                    emoji=self.view.cache.get_select_emoji("roles"),
+                    emoji=self.cache.get_select_emoji("roles"),
                     value="roles",
                     description="View the user's roles..",
                 )
@@ -58,21 +65,21 @@ class UISelect(discord.ui.Select["UIView"]):
             self._task.cancel()
 
     async def release(self):
-        if self.view.user.guild_avatar:
+        if self.user.guild_avatar:
             self.options.append(
                 discord.SelectOption(
                     label="Guid Avatar",
-                    emoji=self.view.cache.get_select_emoji("gavatar"),
+                    emoji=self.cache.get_select_emoji("gavatar"),
                     value="gavatar",
                     description="View the user's guild avatar...",
                 )
             )
-        fetched: discord.User = await self.view.bot.fetch_user(self.view.user.id)
+        fetched: discord.User = await self.bot.fetch_user(self.user.id)
         if fetched.banner:
             self.options.append(
                 discord.SelectOption(
                     label="Banner",
-                    emoji=self.view.cache.get_select_emoji("banner"),
+                    emoji=self.cache.get_select_emoji("banner"),
                     value="banner",
                     description="View the user's banner...",
                 )
@@ -97,23 +104,9 @@ class UIView(discord.ui.View):
         self.embed: discord.Embed = discord.utils.MISSING
         self._message: discord.Message = discord.utils.MISSING
 
-        self._select: UISelect = UISelect(self._callback)
+        cog: "Info" = cast("Info", ctx.cog)
+        self._select: UISelect = UISelect(cog, self.user, self._callback)
         self.add_item(self._select)
-
-    @staticmethod
-    def _get_perms(perms: discord.Permissions) -> List[str]:
-        if perms.administrator:
-            return ["Administrator"]
-        gp: Dict[str, bool] = dict(
-            {x for x in perms if x[1] is True} - set(discord.Permissions(521942715969))
-        )
-        return [p.replace("_", " ").title() for p in gp]
-
-    @staticmethod
-    def _get_roles(member: discord.Member) -> Optional[List[str]]:
-        roles: List[discord.Role] = list(reversed(member.roles))[:-1]
-        if roles:
-            return [x.mention for x in roles]
 
     @staticmethod
     async def _callback(self: UISelect, interaction: discord.Interaction[Red]) -> None:
@@ -124,45 +117,41 @@ class UIView(discord.ui.View):
             await interaction.edit_original_response(embed=embed)
         elif value == "avatar":
             embed: discord.Embed = discord.Embed(
-                color=self.view.user.color, title="{}'s Avatar".format(self.view.user.display_name)
+                color=self.user.color, title="{}'s Avatar".format(self.user.display_name)
             )
             embed.set_image(
-                url=(
-                    self.view.user.avatar.url
-                    if self.view.user.avatar
-                    else self.view.user.default_avatar.url
-                )
+                url=(self.user.avatar.url if self.user.avatar else self.user.default_avatar.url)
             )
             await interaction.edit_original_response(embed=embed)
         elif value == "gavatar":
             embed: discord.Embed = discord.Embed(
-                color=self.view.user.color,
-                title="{}'s Guild Avatar".format(self.view.user.display_name),
+                color=self.user.color,
+                title="{}'s Guild Avatar".format(self.user.display_name),
             )
-            if gavatar := self.view.user.guild_avatar:
+            if gavatar := self.user.guild_avatar:
                 embed.set_image(url=gavatar.url)
             else:
                 embed.description = "{}  does not have a guild specific avatar.".format(
-                    self.view.user.mention
+                    self.user.mention
                 )
             await interaction.edit_original_response(embed=embed)
         elif value == "banner":
             embed: discord.Embed = discord.Embed(
-                color=self.view.user.color, title="{}'s Banner".format(self.view.user.display_name)
+                color=self.user.color, title="{}'s Banner".format(self.user.display_name)
             )
-            if banner := (await self.view.bot.fetch_user(self.view.user.id)).banner:
+            if banner := (await self.bot.fetch_user(self.user.id)).banner:
                 embed.set_image(url=banner.url)
             else:
-                embed.description = "{} does not have a banner.".format(self.view.user.mention)
+                embed.description = "{} does not have a banner.".format(self.user.mention)
             await interaction.edit_original_response(embed=embed)
         elif value == "roles":
             embed: discord.Embed = discord.Embed(
-                color=self.view.user.color, title="{}'s Roles".format(self.view.user.display_name)
+                color=self.user.color, title="{}'s Roles".format(self.user.display_name)
             )
             embed.description = (
                 await self.view._format_roles()
-                if self.view._get_roles(self.view.user)
-                else "{} does not have any roles in this server.".format(self.view.user.mention)
+                if get_roles(self.user)
+                else "{} does not have any roles in this server.".format(self.user.mention)
             )
             await interaction.edit_original_response(embed=embed)
 
@@ -193,7 +182,7 @@ class UIView(discord.ui.View):
         return True
 
     async def _format_roles(self) -> Union[str, discord.utils.MISSING]:
-        roles: Optional[List[str]] = self._get_roles(self.user)
+        roles: Optional[List[str]] = get_roles(self.user)
         if roles:
             string: str = ", ".join(roles)
             if len(string) > 4000:
