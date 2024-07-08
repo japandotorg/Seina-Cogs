@@ -32,7 +32,7 @@ class UISelect(discord.ui.Select["UIView"]):
         self.banner: Optional[discord.Asset] = banner
         self.gavatar: Optional[discord.Asset] = gavatar
 
-        self.options: List[discord.SelectOption] = [
+        options: List[discord.SelectOption] = [
             discord.SelectOption(
                 label="Home",
                 emoji=self.cache.get_select_emoji("home"),
@@ -48,7 +48,7 @@ class UISelect(discord.ui.Select["UIView"]):
             ),
         ]
         if self.gavatar:
-            self.options.append(
+            options.append(
                 discord.SelectOption(
                     label="Guid Avatar",
                     emoji=self.cache.get_select_emoji("gavatar"),
@@ -57,7 +57,7 @@ class UISelect(discord.ui.Select["UIView"]):
                 )
             )
         if self.banner:
-            self.options.append(
+            options.append(
                 discord.SelectOption(
                     label="Banner",
                     emoji=self.cache.get_select_emoji("banner"),
@@ -66,7 +66,7 @@ class UISelect(discord.ui.Select["UIView"]):
                 )
             )
         if get_roles(self.user):
-            self.options.append(
+            options.append(
                 discord.SelectOption(
                     label="Roles",
                     emoji=self.cache.get_select_emoji("roles"),
@@ -79,7 +79,7 @@ class UISelect(discord.ui.Select["UIView"]):
             placeholder="Choose a page to view...",
             min_values=1,
             max_values=1,
-            options=self.options,
+            options=options,
         )
         self.callback: functools.partial[Any] = functools.partial(callback, self)
 
