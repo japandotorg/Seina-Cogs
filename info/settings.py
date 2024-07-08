@@ -54,11 +54,10 @@ class SettingsCommands(MixinMeta, metaclass=CompositeMetaClass):
         
         **Arguments**:
         
-        `<name> :` Name of the default emoji. Available options - {}.
+        `<name> :` Name of the default emoji. Available options - online, away, 
+        dnd, offline, or streaming.
         `<emoji>:` The corresponding emoji.
-        """.format(
-            humanize_list(list(StatusEmoji.__args__), style="or")
-        )
+        """
         emoji_id: int = emoji.id if isinstance(emoji, discord.Emoji) else emoji
         await self.cache.set_status_emoji(name, emoji_id)
         await ctx.tick()
@@ -72,11 +71,11 @@ class SettingsCommands(MixinMeta, metaclass=CompositeMetaClass):
         
         **Arguments**:
         
-        `<name> :` Name of the default emoji. Available options - {}.
+        `<name> :` Name of the default emoji. Available options - mobile_online, 
+        mobile_idle, mobile_dnd, mobile_offline, web_online, web_idle, web_dnd, 
+        web_offline, desktop_online, desktop_idle, desktop_dnd, or desktop_offline.
         `<emoji>:` The corresponding emoji.
-        """.format(
-            humanize_list(list(DeviceEmoji.__args__), style="or")
-        )
+        """
         emoji_id: int = emoji.id if isinstance(emoji, discord.Emoji) else emoji
         await self.cache.set_device_emoji(name, emoji_id)
         await ctx.tick()
@@ -86,15 +85,17 @@ class SettingsCommands(MixinMeta, metaclass=CompositeMetaClass):
         self, ctx: commands.Context, name: BadgeEmoji, emoji: Union[int, discord.Emoji]
     ):
         """
-        Configure the default status emojis.
+        Configure the default badge emojis.
         
         **Arguments**:
         
-        `<name> :` Name of the default emoji. Available options - {}.
+        `<name> :` Name of the default emoji. Available options - staff, 
+        early_supporter, verified_bot_developer, active_developer, bug_hunter, 
+        bug_hunter_level_2, partner, verified_bot, hypesquad, hypesquad_balance, 
+        hypesquad_bravery, hypesquad_brilliance, nitro, 
+        discord_certified_moderator, or bot_http_interactions.
         `<emoji>:` The corresponding emoji.
-        """.format(
-            humanize_list(list(BadgeEmoji.__args__), style="or")
-        )
+        """
         emoji_id: int = emoji.id if isinstance(emoji, discord.Emoji) else emoji
         await self.cache.set_badge_emoji(name, emoji_id)
         await ctx.tick()
@@ -104,15 +105,14 @@ class SettingsCommands(MixinMeta, metaclass=CompositeMetaClass):
         self, ctx: commands.Context, name: SelectEmoji, emoji: Union[int, discord.Emoji]
     ):
         """
-        Configure the default status emojis.
+        Configure the default select emojis.
         
         **Arguments**:
         
-        `<name> :` Name of the default emoji. Available options - {}.
+        `<name> :` Name of the default emoji. Available options - roles, home, 
+        avatar, banner, or gavatar.
         `<emoji>:` The corresponding emoji.
-        """.format(
-            humanize_list(list(SelectEmoji.__args__), style="or")
-        )
+        """
         emoji_id: int = emoji.id if isinstance(emoji, discord.Emoji) else emoji
         await self.cache.set_select_emoji(name, emoji_id)
         await ctx.tick()
