@@ -2,7 +2,7 @@ import asyncio
 import contextlib
 import datetime
 import functools
-from typing import Any, Dict, List, Optional, Set, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Union, cast
 
 import discord
 from redbot.cogs.mod.mod import Mod
@@ -15,7 +15,8 @@ from .cache import Cache
 
 
 class UISelect(discord.ui.Select["UIView"]):
-    view: "UIView"
+    if TYPE_CHECKING:
+        view: "UIView"
 
     def __init__(self, callback: Any) -> None:
         self.options: List[discord.SelectOption] = [
