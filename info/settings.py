@@ -12,7 +12,9 @@ class SettingsCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.is_owner()
     @commands.group(name="infoset")
     async def _info_set(self, _: commands.Context):
-        """"""
+        """
+        Settings configuration.
+        """
 
     @_info_set.command(name="special")  # type: ignore
     async def _info_set_special(
@@ -39,7 +41,9 @@ class SettingsCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @_info_set.group(name="emoji", aliases=["e"])  # type: ignore
     async def _info_set_emoji(self, _: commands.Context):
-        """"""
+        """
+        Emoji settings configuration
+        """
 
     @_info_set_emoji.command(name="status", usage="<name> <emoji>")  # type: ignore
     async def _info_set_emoji_status(
