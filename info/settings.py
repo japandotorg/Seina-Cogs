@@ -29,9 +29,9 @@ class SettingsCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         **Arguments**:
 
-        `<guild> :` The server the corresponding role and emoji is from.
+        `<guild> :` The server the corresponding role is from.
         `<role>  :` The applied role for the badge.
-        `<emoji> :` The corresponding emoji.
+        `<emoji> :` The corresponding emoji (any emoji [botname] has access to).
         """
         guild_id: int = guild.id if isinstance(guild, discord.Guild) else guild
         role_id: int = role.id if isinstance(role, discord.Role) else role
