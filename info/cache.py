@@ -199,7 +199,7 @@ class Cache(CacheProtocol):
                     if str(r.id) in roles:  # type: ignore
                         special.append(
                             "{} {}".format(
-                                self.bot.get_emoji(cast(Dict[str, int], roles)[str(r.id)]), r.name
+                                self.bot.get_emoji(cast(Dict[str, int], roles)[str(r.id)]), r.name.title()
                             )
                         )
         return special
