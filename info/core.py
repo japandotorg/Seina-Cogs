@@ -2,18 +2,17 @@ import logging
 from typing import Dict, Final, List, Optional, Union, cast
 
 import discord
-from redbot.core.bot import Red
 from redbot.cogs.mod.mod import Mod
+from redbot.core import Config, app_commands, commands
+from redbot.core.bot import Red
 from redbot.core.errors import CogLoadError
-from redbot.core import app_commands, commands, Config
 from redbot.core.utils.chat_formatting import humanize_list
 
-from .cache import Cache
 from .abc import CompositeMetaClass
-from .views import UIView
-from .utils import guild_only_and_has_embed_links
+from .cache import Cache
 from .settings import SettingsCommands
-
+from .utils import guild_only_and_has_embed_links
+from .views import UIView
 
 log: logging.Logger = logging.getLogger("red.seina.info.core")
 
