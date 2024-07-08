@@ -226,7 +226,10 @@ class UIView(discord.ui.View):
             }
         )
         mod: Mod = self.bot.get_cog("Mod")  # type: ignore
-        names, _, nicks = await mod.get_names(user)
+        try:
+            names, _, nicks = await mod.get_names(user)
+        except AttributeError:
+            names, nicks = await mod.get_names_and_nicks(user) # type: ignore | specially for melon
         created_dt: float = (
             cast(datetime.datetime, user.created_at)
             .replace(tzinfo=datetime.timezone.utc)
