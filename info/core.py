@@ -17,7 +17,7 @@ from .settings import SettingsCommands
 
 log: logging.Logger = logging.getLogger("red.seina.info.core")
 
-OLD_USERINFO_COMMAND: commands.Command = discord.utils.MISSING
+OLD_USERINFO_COMMAND = discord.utils.MISSING
 
 
 class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
@@ -157,5 +157,5 @@ async def setup(bot: Red) -> None:
     if Mod.__name__ not in bot.cogs:
         raise CogLoadError("The Mod cog is required to be loaded to use this cog.")
     global OLD_USERINFO_COMMAND
-    OLD_USERINFO_COMMAND: commands.Command = cast(commands.Command, bot.remove_command("userinfo"))
+    OLD_USERINFO_COMMAND = cast(commands.Command, bot.remove_command("userinfo"))
     await bot.add_cog(Info(bot))
