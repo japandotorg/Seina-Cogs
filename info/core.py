@@ -126,7 +126,8 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
     async def _callback(self, ctx: commands.GuildContext, member: discord.Member) -> None:
         await self.chunk(ctx.guild)
         async with ctx.typing():
-            view: UIView = UIView(ctx, member, self.cache)
+            fetched: discord.User = await self.bot.fetch_user(member.id)
+            view: UIView = UIView(ctx, member, self.cache, (fetched.banner, member.guild_avatar))
             embed: discord.Embed = await view._make_embed()
         _out: discord.Message = await ctx.send(
             embed=embed,

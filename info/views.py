@@ -1,8 +1,7 @@
-import asyncio
 import contextlib
 import datetime
 import functools
-from typing import TYPE_CHECKING, Any, List, Optional, Set, Union, cast
+from typing import TYPE_CHECKING, Any, List, Optional, Set, Tuple, Union, cast
 
 import discord
 from redbot.cogs.mod.mod import Mod
@@ -14,18 +13,25 @@ from redbot.core.utils.common_filters import filter_invites
 from .cache import Cache
 from .utils import get_roles
 
-if TYPE_CHECKING:
-    from .core import Info
-
 
 class UISelect(discord.ui.Select["UIView"]):
     if TYPE_CHECKING:
         view: "UIView"
 
-    def __init__(self, cog: "Info", user: discord.Member, callback: Any) -> None:
-        self.bot: Red = cog.bot
+    def __init__(
+        self,
+        cache: Cache,
+        user: discord.Member,
+        banner_and_gavatar: Tuple[Optional[discord.Asset], Optional[discord.Asset]],
+        callback: Any,
+    ) -> None:
         self.user: discord.Member = user
-        self.cache: Cache = cog.cache
+        self.cache: Cache = cache
+
+        banner, gavatar = banner_and_gavatar
+        self.banner: Optional[discord.Asset] = banner
+        self.gavatar: Optional[discord.Asset] = gavatar
+
         self.options: List[discord.SelectOption] = [
             discord.SelectOption(
                 label="Home",
@@ -41,7 +47,7 @@ class UISelect(discord.ui.Select["UIView"]):
                 description="View the user's global avatar...",
             ),
         ]
-        self._task: asyncio.Task[None] = asyncio.create_task(self.release())
+        self.release()
         if get_roles(self.user):
             self.options.append(
                 discord.SelectOption(
@@ -60,12 +66,8 @@ class UISelect(discord.ui.Select["UIView"]):
         )
         self.callback: functools.partial[Any] = functools.partial(callback, self)
 
-    def close(self) -> None:
-        if self._task:
-            self._task.cancel()
-
-    async def release(self):
-        if self.user.guild_avatar:
+    def release(self) -> None:
+        if self.gavatar:
             self.options.append(
                 discord.SelectOption(
                     label="Guid Avatar",
@@ -74,8 +76,7 @@ class UISelect(discord.ui.Select["UIView"]):
                     description="View the user's guild avatar...",
                 )
             )
-        fetched: discord.User = await self.bot.fetch_user(self.user.id)
-        if fetched.banner:
+        if self.banner:
             self.options.append(
                 discord.SelectOption(
                     label="Banner",
@@ -92,6 +93,7 @@ class UIView(discord.ui.View):
         ctx: commands.GuildContext,
         user: discord.Member,
         cache: Cache,
+        banner_and_gavatar: Tuple[Optional[discord.Asset], Optional[discord.Asset]],
         *,
         timeout: float = 60.0,
     ) -> None:
@@ -99,13 +101,18 @@ class UIView(discord.ui.View):
         self.ctx: commands.GuildContext = ctx
         self.bot: Red = ctx.bot
         self.cache: Cache = cache
+
         self.user: discord.Member = user
+        self.banner_and_gavatar: Tuple[Optional[discord.Asset], Optional[discord.Asset]] = (
+            banner_and_gavatar
+        )
 
         self.embed: discord.Embed = discord.utils.MISSING
         self._message: discord.Message = discord.utils.MISSING
 
-        cog: "Info" = cast("Info", ctx.cog)
-        self._select: UISelect = UISelect(cog, self.user, self._callback)
+        self._select: UISelect = UISelect(
+            self.cache, self.user, self.banner_and_gavatar, self._callback
+        )
         self.add_item(self._select)
 
     @staticmethod
@@ -128,7 +135,7 @@ class UIView(discord.ui.View):
                 color=self.user.color,
                 title="{}'s Guild Avatar".format(self.user.display_name),
             )
-            if gavatar := self.user.guild_avatar:
+            if gavatar := self.gavatar:
                 embed.set_image(url=gavatar.url)
             else:
                 embed.description = "{}  does not have a guild specific avatar.".format(
@@ -139,7 +146,7 @@ class UIView(discord.ui.View):
             embed: discord.Embed = discord.Embed(
                 color=self.user.color, title="{}'s Banner".format(self.user.display_name)
             )
-            if banner := (await self.bot.fetch_user(self.user.id)).banner:
+            if banner := self.banner:
                 embed.set_image(url=banner.url)
             else:
                 embed.description = "{} does not have a banner.".format(self.user.mention)
@@ -157,9 +164,15 @@ class UIView(discord.ui.View):
 
     @classmethod
     async def make_embed(
-        cls, ctx: commands.GuildContext, user: discord.Member, cache: Cache
+        cls,
+        ctx: commands.GuildContext,
+        user: discord.Member,
+        cache: Cache,
+        banner_and_gavatar: Tuple[Optional[discord.Asset], Optional[discord.Asset]],
     ) -> discord.Embed:
-        self: "UIView" = cls(ctx=ctx, user=user, cache=cache)
+        self: "UIView" = cls(
+            ctx=ctx, user=user, cache=cache, banner_and_gavatar=banner_and_gavatar
+        )
         return await self._make_embed()
 
     async def on_timeout(self) -> None:
@@ -170,14 +183,12 @@ class UIView(discord.ui.View):
         with contextlib.suppress(discord.HTTPException):
             if self._message is not discord.utils.MISSING:
                 await self._message.edit(view=self)
-        self._select.close()
 
     async def interaction_check(self, interaction: discord.Interaction[Red], /) -> bool:
         if self.ctx.author.id != interaction.user.id:
             await interaction.response.send_message(
                 content="You're not the author of this message.", ephemeral=True
             )
-            self._select.close()
             return False
         return True
 
