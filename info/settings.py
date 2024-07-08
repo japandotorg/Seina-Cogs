@@ -50,10 +50,10 @@ class SettingsCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """
         Configure the default status emojis.
-        
+
         **Arguments**:
-        
-        `<name> :` Name of the default emoji. Available options - online, away, 
+
+        `<name> :` Name of the default emoji. Available options - online, away,
         dnd, offline, or streaming.
         `<emoji>:` The corresponding emoji.
         """
@@ -67,11 +67,11 @@ class SettingsCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """
         Configure the default device emojis.
-        
+
         **Arguments**:
-        
-        `<name> :` Name of the default emoji. Available options - mobile_online, 
-        mobile_idle, mobile_dnd, mobile_offline, web_online, web_idle, web_dnd, 
+
+        `<name> :` Name of the default emoji. Available options - mobile_online,
+        mobile_idle, mobile_dnd, mobile_offline, web_online, web_idle, web_dnd,
         web_offline, desktop_online, desktop_idle, desktop_dnd, or desktop_offline.
         `<emoji>:` The corresponding emoji.
         """
@@ -85,13 +85,13 @@ class SettingsCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """
         Configure the default badge emojis.
-        
+
         **Arguments**:
-        
-        `<name> :` Name of the default emoji. Available options - staff, 
-        early_supporter, verified_bot_developer, active_developer, bug_hunter, 
-        bug_hunter_level_2, partner, verified_bot, hypesquad, hypesquad_balance, 
-        hypesquad_bravery, hypesquad_brilliance, nitro, 
+
+        `<name> :` Name of the default emoji. Available options - staff,
+        early_supporter, verified_bot_developer, active_developer, bug_hunter,
+        bug_hunter_level_2, partner, verified_bot, hypesquad, hypesquad_balance,
+        hypesquad_bravery, hypesquad_brilliance, nitro,
         discord_certified_moderator, or bot_http_interactions.
         `<emoji>:` The corresponding emoji.
         """
@@ -105,10 +105,10 @@ class SettingsCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """
         Configure the default select emojis.
-        
+
         **Arguments**:
-        
-        `<name> :` Name of the default emoji. Available options - roles, home, 
+
+        `<name> :` Name of the default emoji. Available options - roles, home,
         avatar, banner, or gavatar.
         `<emoji>:` The corresponding emoji.
         """
