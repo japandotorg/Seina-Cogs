@@ -1,0 +1,24 @@
+{
+    "name": "Info",
+    "short": "Extended info commands.",
+    "description": "Extended info commands such as userinfo.",
+    "install_msg": "Thanks for installing Info! Get started with `[p]help Info`.",
+    "author": [
+        "inthedark.org"
+    ],
+    "tags": [
+        "utility",
+        "userinfo",
+        "info",
+        "mod"
+    ],
+    "min_bot_version": "3.5.0",
+    "min_python_version": [
+        3,
+        10,
+        0
+    ],
+    "hidden": false,
+    "disabled": false,
+    "type": "COG"
+}
