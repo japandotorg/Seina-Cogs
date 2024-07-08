@@ -47,26 +47,6 @@ class UISelect(discord.ui.Select["UIView"]):
                 description="View the user's global avatar...",
             ),
         ]
-        self.release()
-        if get_roles(self.user):
-            self.options.append(
-                discord.SelectOption(
-                    label="Roles",
-                    emoji=self.cache.get_select_emoji("roles"),
-                    value="roles",
-                    description="View the user's roles..",
-                )
-            )
-        super().__init__(
-            custom_id="ui:select",
-            placeholder="Choose a page to view...",
-            min_values=1,
-            max_values=1,
-            options=self.options,
-        )
-        self.callback: functools.partial[Any] = functools.partial(callback, self)
-
-    def release(self) -> None:
         if self.gavatar:
             self.options.append(
                 discord.SelectOption(
@@ -85,6 +65,23 @@ class UISelect(discord.ui.Select["UIView"]):
                     description="View the user's banner...",
                 )
             )
+        if get_roles(self.user):
+            self.options.append(
+                discord.SelectOption(
+                    label="Roles",
+                    emoji=self.cache.get_select_emoji("roles"),
+                    value="roles",
+                    description="View the user's roles..",
+                )
+            )
+        super().__init__(
+            custom_id="ui:select",
+            placeholder="Choose a page to view...",
+            min_values=1,
+            max_values=1,
+            options=self.options,
+        )
+        self.callback: functools.partial[Any] = functools.partial(callback, self)
 
 
 class UIView(discord.ui.View):
