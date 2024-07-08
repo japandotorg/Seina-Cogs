@@ -8,3 +8,11 @@ line-length = 99
 [tool.isort]
 profile = "black"
 line_length = 99
+
+[tool.pyright]
+reportIncompatibleVariableOverride = false
+reportIncompatibleMethodOverride = false
+reportSelfClsParameterName = false
+reportArgumentType = false
+exclude = ["**/__pycache__", ".stubs", ".utils", ".github"]
+stubPath = ".stubs"
