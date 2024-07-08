@@ -276,10 +276,10 @@ class UIView(discord.ui.View):
         )
         embed.add_field(name="Joined Discord on:", value=created_on)
         embed.add_field(name="Joined this Server on:", value=joined_on)
-        if names is not discord.utils.MISSING:
+        if names:
             val = filter_invites(", ".join(names))
             embed.add_field(name="Previous Names:", value=val, inline=False)
-        if nicks is not discord.utils.MISSING:
+        if nicks:
             val = filter_invites(", ".join(nicks))
             embed.add_field(name="Previous Nicknames:", value=val, inline=False)
         if user.voice and user.voice.channel:
