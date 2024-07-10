@@ -23,23 +23,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import os
-import shutil
 import asyncio
 import contextlib
+import os
+import shutil
 from io import BytesIO
-from zipfile import ZipFile
 from typing import Any, AsyncGenerator, Dict, Final, List, Literal, Optional, Union, cast
-
-from PIL import Image
-from zipstream.aiozipstream import AioZipStream
+from zipfile import ZipFile
 
 import discord
-from redbot.core.bot import Red
+from PIL import Image
 from redbot.core import commands, data_manager
-from redbot.core.utils.views import ConfirmView
-from redbot.core.utils.mod import get_audit_reason
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box, humanize_list
+from redbot.core.utils.mod import get_audit_reason
+from redbot.core.utils.views import ConfirmView
+from zipstream.aiozipstream import AioZipStream
 
 
 class EmojiTools(commands.Cog):
