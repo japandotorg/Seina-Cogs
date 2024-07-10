@@ -118,15 +118,17 @@ class ExtendedMentionHelp(commands.Cog):
         ).id in [u.id for u in message.mentions]:
             return
         prefixes: List[str] = sorted(await self.bot.get_prefix(message), key=len)
+        invite: str = await self.bot.get_invite_url()
         kwargs: Dict[str, Any] = await process_tagscript(
             await self.config.message(),
             {
+                "random_prefix": tse.StringAdapter(random.choice(prefixes)),
                 "prefix": tse.StringAdapter(prefixes[0]),
                 "prefixes": tse.StringAdapter(humanize_list(prefixes)[:200]),
                 "color": tse.StringAdapter(str(await self.bot.get_embed_color(message.channel))),
+                "invite": tse.StringAdapter(invite),
             },
         )
-        invite: str = await self.bot.get_invite_url()
         if not kwargs:
             await self.config.message.clear()
             kwargs: Dict[str, Any] = await process_tagscript(
