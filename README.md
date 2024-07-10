@@ -12,8 +12,9 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 | Info        | 0.1.0            | <details>Extended info commands.</details><summary>Extended info commands such as userinfo.</summary>                            |
 | Tags        | 2.7.8            | <details>Create and use Tags<summary>Create and use custom commands with tagscript</summary></details>                           |
 | SeinaTools  | 0.1.4            | <details><summary>My tools for Red-DiscordBot</summary>Some cool utility tools for Red-DiscordBot</details>                      |
-| BattleRoyale| 0.1.2            | <details><summary>Play battle royale</summary>Play battle royale with your friends or join automated matches                     |
-| PersonalChannels| 0.1.1            | <details><summary>Personal channel for members</summary>Personal channel for members                                         |
+| BattleRoyale| 0.1.2            | <details><summary>Play battle royale</summary>Play battle royale with your friends or join automated matches  </details>         |
+| PersonalChannels| 0.1.1            | <details><summary>Personal channel for members</summary>Personal channel for members        </details>                       |
+| EmojiTools  | 2.0.0            | <details><summary>Various tools for managing custom emojis in servers</summary>Tools for Managing Custom Emojis</details>        |
 | FirstMessage| 0.1.0            | <details><summary>First Message</summary>A simple cog for jump to first message of a channel.</details>                          |
 | Animals     | 0.1.2            | <details><summary>Random animals!</summary>Random animal images & facts</details>                                                |
 | MassUnban   | 0.1.1            | <details><summary>Mass unban users.</summary>Mass unban users by the ban reason used</details>                                   |
