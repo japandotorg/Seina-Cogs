@@ -24,21 +24,20 @@ SOFTWARE.
 
 # The inspiration of this cog was taken from the now archived https://github.com/Obi-Wan3/OB13-Cogs/tree/main/mentionhelp
 
-import re
 import random
+import re
 from datetime import timedelta
 from typing import Any, Dict, Final, List, Optional, Tuple, Union, cast
 
-import TagScriptEngine as tse
-
 import discord
-from redbot.core.bot import Red
+import TagScriptEngine as tse
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.config import Config, Group
 from redbot.core.utils.antispam import AntiSpam
-from redbot.core.utils.chat_formatting import humanize_list, box
+from redbot.core.utils.chat_formatting import box, humanize_list
 
-from ._tagscript import message, process_tagscript, TagScriptConverter
+from ._tagscript import TagScriptConverter, message, process_tagscript
 
 
 class ExtendedMentionHelp(commands.Cog):
