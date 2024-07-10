@@ -24,12 +24,10 @@ SOFTWARE.
 
 from typing import Dict, Final, List, Union, final
 
-import TagScriptEngine as tse
-
 import discord
+import TagScriptEngine as tse
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import humanize_number
-
 
 message: Final[
     str
