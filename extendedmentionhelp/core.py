@@ -112,7 +112,9 @@ class ExtendedMentionHelp(commands.Cog):
         pattern: re.Pattern[str] = re.compile(
             rf"^<@!?{cast(discord.ClientUser, self.bot.user).id}>$"
         )
-        if not pattern.fullmatch(message.content.strip()):
+        if not pattern.fullmatch(message.content.strip()) and cast(
+            discord.ClientUser, self.bot.user
+        ).id in [u.id for u in message.mentions]:
             return
         prefixes: List[str] = sorted(await self.bot.get_prefix(message), key=len)
         invite: str = await self.bot.get_invite_url()
@@ -148,7 +150,7 @@ class ExtendedMentionHelp(commands.Cog):
             return
         kwargs["reference"] = message.to_reference(fail_if_not_exists=False)
         kwargs["allowed_mentions"] = discord.AllowedMentions(
-            everyone=False, roles=False, users=[message.author.id], replied_user=False
+            everyone=False, roles=False, users=False, replied_user=False
         )
         if await cast(Group, self.config.antispam).toggle():
             self.spam[message.author.id].stamp()
