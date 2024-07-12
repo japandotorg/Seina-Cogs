@@ -34,7 +34,7 @@ from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.config import Config, Group, Value
 from redbot.core.utils.views import SimpleMenu
-from redbot.core.utils.chat_formatting import box, pagify
+from redbot.core.utils.chat_formatting import box, pagify, humanize_list
 
 from .utils import ordinal
 from ._tagscript import (
@@ -81,7 +81,7 @@ class DiscordPolls(commands.Cog):
         n = "\n" if "\n\n" not in pre_processed else ""
         text = [
             f"{pre_processed}{n}",
-            f"Author: **{self.__author__}**",
+            f"Author: **{humanize_list(self.__author__)}**",
             f"Cog Version: **{self.__version__}**",
         ]
         return "\n".join(text)
