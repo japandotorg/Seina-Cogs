@@ -90,11 +90,11 @@ class PollAnswerButton(discord.ui.Button):
             url=self.answer.poll.message.jump_url if self.answer.poll.message else None,
             description=(
                 """
-                `Question :` {}\n
-                `Answer   :` {}\n
-                `Emoji    :` {}\n
-                `Votes    :` {}\n
-                `Voted    :` {}\n
+                `Question :` {}
+                `Answer   :` {}
+                `Emoji    :` {}
+                `Votes    :` {}
+                `Voted    :` {}
                 """.format(
                     self.answer.poll.question,
                     self.answer.text.strip(),

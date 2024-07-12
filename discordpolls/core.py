@@ -310,11 +310,11 @@ class DiscordPolls(commands.Cog):
                 url=poll.message.jump_url if poll.message else None,
                 description=(
                     """
-                `Question :` {}\n
-                `Answer   :` {}\n
-                `Emoji    :` {}\n
-                `Votes    :` {}\n
-                `Voted    :` {}\n
+                `Question :` {}
+                `Answer   :` {}
+                `Emoji    :` {}
+                `Votes    :` {}
+                `Voted    :` {}
                 """.format(
                         poll.question,
                         answer.text.strip(),
@@ -354,11 +354,11 @@ class DiscordPolls(commands.Cog):
             url=poll.message.jump_url if poll.message else None,
             description=(
                 """
-                `Question :` {}\n
-                `Answer   :` {}\n
-                `Emoji    :` {}\n
-                `Votes    :` {}\n
-                `Voted    :` {}\n
+                `Question :` {}
+                `Answer   :` {}
+                `Emoji    :` {}
+                `Votes    :` {}
+                `Voted    :` {}
                 """.format(
                     poll.question,
                     answers[0].text.strip(),
@@ -536,8 +536,8 @@ class DiscordPolls(commands.Cog):
             color=await ctx.embed_color(),
             description=(
                 """
-                **Toggle** : {}\n
-                **Channel**: {}\n 
+                **Toggle** : {}
+                **Channel**: {} 
                 """.format(
                     config.get("toggle", False),
                     (
