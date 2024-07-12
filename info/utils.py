@@ -28,8 +28,8 @@ import discord
 from redbot.core import app_commands
 from redbot.core.bot import Red
 
-MELON: Final[int] = 808706062013825036 # MELON's ID (i'm lazy)
-MELON_BADGES: Dict[str, Dict[str, int]] = { # MELON specific badges (i'm lazy)
+MELON: Final[int] = 808706062013825036  # MELON's ID (i'm lazy)
+MELON_BADGES: Dict[str, Dict[str, int]] = {  # MELON specific badges (i'm lazy)
     "926230917641560114": {  # Melon's Lounge
         "926231002752356372": 945342314497335356,  # Development
         "954636730110210048": 947520903850385428,  # Admin
