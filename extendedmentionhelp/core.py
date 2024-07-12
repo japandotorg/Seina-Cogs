@@ -143,7 +143,7 @@ class ExtendedMentionHelp(commands.Cog):
                 },
             )
         if (
-            kwargs["embed"]
+            kwargs.get("embed", None)
             and message.guild
             and not message.channel.permissions_for(message.guild.me).embed_links
         ):
