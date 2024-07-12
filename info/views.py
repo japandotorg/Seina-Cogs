@@ -304,7 +304,7 @@ class UIView(discord.ui.View):
             premium_since: int = int(premium.replace(tzinfo=datetime.timezone.utc).timestamp())
             embed.add_field(
                 name="Boosting Since:",
-                value="<t:{0}:R> ( <t:{0}> )".format(premium_since),
+                value="<t:{0}> ( <t:{0}:R> )".format(premium_since),
                 inline=False,
             )
         if names:
