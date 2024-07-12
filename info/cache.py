@@ -238,6 +238,8 @@ class Cache(CacheProtocol):
             special[str(guild)][str(role)] = emoji
         if str(guild) not in self.emojis["special"]:
             self.emojis["special"] = {str(guild): {}}
+        if str(role) not in cast(Dict[str, Dict[str, int]], self.emojis["special"][str(guild)]):
+            self.emojis[str(guild)] = {str(role): None}
         cast(Dict[str, int], self.emojis["special"][str(guild)])[str(role)] = emoji
 
     async def initialize(self) -> None:
