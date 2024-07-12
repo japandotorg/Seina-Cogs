@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+# flake8: noqa
+
 # the implementation idea of this cog has been taken from the now archived <https://github.com/japandotorg/OB13-Cogs/tree/dpy2/nodms>
 
 import asyncio
