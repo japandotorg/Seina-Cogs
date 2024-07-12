@@ -353,6 +353,16 @@ class NoDMs(commands.Cog):
     ):
         """
         Toggle whether to ignore DM messages and/or commands.
+        
+        Enabling the `<type>` argument `all` and `messages` 
+        will cause botname] to delete messages everytime someone 
+        DMs [botname]. Unwanted behaviour may occur if 
+        people try to spam the bot's DMs while these types 
+        are enabled.
+        
+        Message triggers are enabled by default, to disable 
+        them use the `[p]nodms message toggle <true_or_false>` 
+        command.
 
         **Arguments**:
         - `<true_or_false>` - enable/disable nodms for [botname].
