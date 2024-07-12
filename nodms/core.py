@@ -25,31 +25,29 @@ SOFTWARE.
 # the implementation idea of this cog has been taken from the now archived <https://github.com/japandotorg/OB13-Cogs/tree/dpy2/nodms>
 
 import asyncio
-import logging
 import contextlib
+import logging
 from typing import Any, Dict, Final, List, Literal, Optional, Union, cast
 
 import diot
-import TagScriptEngine as tse
-
 import discord
-from redbot.core.bot import Red
+import TagScriptEngine as tse
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.config import Config, Group
+from redbot.core.utils.chat_formatting import box, humanize_list, pagify
 from redbot.core.utils.views import SimpleMenu
-from redbot.core.utils.chat_formatting import box, pagify, humanize_list
 
 from ._tagscript import (
     BotAdapter,
     CommandAdapter,
     DMChannelAdapter,
+    TagScriptConverter,
     UserAdapter,
     command_message,
     message,
     process_tagscript,
-    TagScriptConverter,
 )
-
 
 log: logging.Logger = logging.getLogger("red.seina.nodms.core")
 
@@ -432,7 +430,7 @@ class NoDMs(commands.Cog):
             - parameters: `name`, `cog_name`, `description`, `aliases` or
             `qualified_name` (if no parameter is used, defaults to `qualified_name`).
             - usage: `{command(<parameter>)}`
-            
+
         **Examples**:
         - `[p]nodms message set commands {embed(description):You're not allowed to use the {command(name)} command in {bot(name)}'s dms.}`
         - `[p]nodms message set message {embed(description):You're not allowed to send messages in {bot(name)}'s dms.}`

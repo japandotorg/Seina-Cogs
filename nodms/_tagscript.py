@@ -25,13 +25,11 @@ SOFTWARE.
 import datetime
 from typing import Any, Dict, Final, List, Union, cast, final
 
-import TagScriptEngine as tse
-
 import discord
-from redbot.core.bot import Red
+import TagScriptEngine as tse
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import humanize_number, humanize_list
-
+from redbot.core.bot import Red
+from redbot.core.utils.chat_formatting import humanize_list, humanize_number
 
 message: Final[
     str
