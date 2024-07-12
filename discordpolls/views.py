@@ -80,6 +80,7 @@ class PollAnswerButton(discord.ui.Button[DisableOnTimeoutView]):
         self.answer: discord.PollAnswer = answer
 
     async def callback(self, interaction: discord.Interaction[Red]) -> None:
+        await interaction.response.defer()
         users: List[Union[discord.User, discord.Member]] = [
             voter async for voter in self.answer.voters()
         ]
@@ -121,4 +122,4 @@ class PollAnswerButton(discord.ui.Button[DisableOnTimeoutView]):
         )
         embed.set_footer(text="Page: {}/{}".format(self.answer.id, len(self.answer.poll.answers)))
         with contextlib.suppress(discord.HTTPException):
-            await interaction.edit_original_response(embed=embed)
+            await interaction.followup.send(embed=embed)
