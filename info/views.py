@@ -212,7 +212,7 @@ class UIView(discord.ui.View):
             return False
         return True
 
-    async def _format_roles(self) -> Union[str, discord.utils.MISSING]:
+    async def _format_roles(self) -> Union[str, Any]:
         roles: Optional[List[str]] = get_roles(self.user)
         if roles:
             string: str = ", ".join(roles)
