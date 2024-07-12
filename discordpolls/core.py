@@ -233,9 +233,9 @@ class DiscordPolls(commands.Cog):
     async def _poll_create(
         self,
         ctx: commands.GuildContext,
+        *,
         question: QuestionConverter,
         options: commands.Greedy[OptionConverter],
-        *,
         duration: commands.Range[int, 1, 3] = 12,
         multiple: bool = False,
     ):
