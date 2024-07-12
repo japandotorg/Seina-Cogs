@@ -112,9 +112,7 @@ class ExtendedMentionHelp(commands.Cog):
         pattern: re.Pattern[str] = re.compile(
             rf"^<@!?{cast(discord.ClientUser, self.bot.user).id}>$"
         )
-        if not pattern.fullmatch(message.content.strip()) and cast(
-            discord.ClientUser, self.bot.user
-        ).id in [u.id for u in message.mentions]:
+        if not pattern.fullmatch(message.content.strip()):
             return
         prefixes: List[str] = sorted(await self.bot.get_prefix(message), key=len)
         invite: str = await self.bot.get_invite_url()
