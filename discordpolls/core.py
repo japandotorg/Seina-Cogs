@@ -382,7 +382,7 @@ class DiscordPolls(commands.Cog):
                 continue
             embed.add_field(name="Voters:", value=page, inline=False)
         embed.set_footer(text="Page: {}/{}.".format(answers[0].id, len(answers)))
-        await ctx.send(
+        view._message = await ctx.send(
             embed=embed,
             view=view,
             reference=ctx.message.to_reference(fail_if_not_exists=False),
