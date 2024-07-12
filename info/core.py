@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import Any, Dict, Final, List, Optional, cast
+from typing import Dict, Final, List, Optional, Union, cast
 
 import discord
 from redbot.cogs.mod.mod import Mod
@@ -35,7 +35,7 @@ from redbot.core.utils.chat_formatting import humanize_list
 from .abc import CompositeMetaClass
 from .cache import Cache
 from .settings import SettingsCommands
-from .utils import MELON, MELON_BADGES, guild_only_and_has_embed_links
+from .utils import MELON, guild_only_and_has_embed_links
 from .views import UIView
 
 log: logging.Logger = logging.getLogger("red.seina.info.core")
@@ -60,8 +60,11 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
         )
         bot_user: discord.ClientUser = cast(discord.ClientUser, bot.user)
 
-        _defaults: Dict[str, Dict[str, Any]] = {
-            "special": MELON_BADGES if bot_user.id == MELON else {},
+        _defaults: Dict[
+            str,
+            Dict[str, Union[Optional[int], Dict[str, Optional[int]], Dict[str, Dict[str, int]]]],
+        ] = {
+            "special": {},
             "status": {
                 "device": {
                     "mobile_online": None,
