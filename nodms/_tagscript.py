@@ -31,17 +31,18 @@ from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list, humanize_number
 
+
 message: Final[
     str
 ] = """
-{embed(description):You're not allowed to send messages in {bot(name)}'s dms.}
+{embed(description):You're not allowed to send messages in {bot(mention)}'s dms.}
 {embed(color):{color}}
 """
 
 command_message: Final[
     str
 ] = """
-{embed(description):You're not allowed to use the {command(name)} command in {bot(name)}'s dms.}
+{embed(description):You're not allowed to use the {command(name)} command in {bot(mention)}'s dms.}
 {embed(color):{color}}
 """
 
