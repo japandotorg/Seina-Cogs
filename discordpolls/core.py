@@ -32,8 +32,8 @@ import TagScriptEngine as tse
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.config import Config, Group, Value
+from redbot.core.utils.chat_formatting import box, humanize_list, pagify
 from redbot.core.utils.views import SimpleMenu
-from redbot.core.utils.chat_formatting import box, pagify, humanize_list
 
 from ._tagscript import (
     PollAdapter,
