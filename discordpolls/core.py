@@ -380,7 +380,8 @@ class DiscordPolls(commands.Cog):
         for idx, page in enumerate(list(pagify(string, page_length=1024))):
             if idx > 24:
                 continue
-            embed.add_field(name="Voters:", value=page, inline=False)
+            if page:
+                embed.add_field(name="Voters:", value=page, inline=False)
         embed.set_footer(text="Page: {}/{}.".format(answers[0].id, len(answers)))
         view._message = await ctx.send(
             embed=embed,
