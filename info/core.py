@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Final, List, Optional, Union, cast
+from typing import Any, Dict, Final, List, Optional, cast
 
 import discord
 from redbot.cogs.mod.mod import Mod
@@ -11,7 +11,7 @@ from redbot.core.utils.chat_formatting import humanize_list
 from .abc import CompositeMetaClass
 from .cache import Cache
 from .settings import SettingsCommands
-from .utils import guild_only_and_has_embed_links
+from .utils import MELON, MELON_BADGES, guild_only_and_has_embed_links
 from .views import UIView
 
 log: logging.Logger = logging.getLogger("red.seina.info.core")
@@ -34,11 +34,10 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
             identifier=69_666_420,
             force_registration=True,
         )
-        _defaults: Dict[
-            str,
-            Dict[str, Union[Optional[int], Dict[str, Optional[int]], Dict[str, Dict[str, int]]]],
-        ] = {
-            "special": {},
+        bot_user: discord.ClientUser = cast(discord.ClientUser, bot.user)
+
+        _defaults: Dict[str, Dict[str, Any]] = {
+            "special": MELON_BADGES if bot_user.id == MELON else {},
             "status": {
                 "device": {
                     "mobile_online": None,
@@ -54,36 +53,38 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
                     "desktop_dnd": None,
                     "desktop_offline": None,
                 },
-                "online": None,
-                "away": None,
-                "dnd": None,
-                "offline": None,
-                "streaming": None,
+                "online": 859980175588589587 if bot_user.id == MELON else None,
+                "away": 859980300977045534 if bot_user.id == MELON else None,
+                "dnd": 859980375882858516 if bot_user.id == MELON else None,
+                "offline": 859981174007791616 if bot_user.id == MELON else None,
+                "streaming": 933084283197870140 if bot_user.id == MELON else None,
             },
             "badge": {
-                "staff": None,
-                "early_supporter": None,
-                "verified_bot_developer": None,
-                "active_developer": None,
-                "bug_hunter": None,
-                "bug_hunter_level_2": None,
-                "partner": None,
-                "verified_bot": None,
-                "hypesquad": None,
-                "hypesquad_balance": None,
-                "hypesquad_bravery": None,
-                "hypesquad_brilliance": None,
-                "nitro": None,
-                "discord_certified_moderator": None,
-                "bot_http_interactions": None,
+                "staff": 934503593678094457 if bot_user.id == MELON else None,
+                "early_supporter": 934504215500423209 if bot_user.id == MELON else None,
+                "verified_bot_developer": 894188093647781958 if bot_user.id == MELON else None,
+                "active_developer": 1101083614587912293 if bot_user.id == MELON else None,
+                "bug_hunter": 872500602108788828 if bot_user.id == MELON else None,
+                "bug_hunter_level_2": 872500552481792000 if bot_user.id == MELON else None,
+                "partner": 934504341858029658 if bot_user.id == MELON else None,
+                "verified_bot": 934504704619196456 if bot_user.id == MELON else None,
+                "hypesquad": 934504003230892102 if bot_user.id == MELON else None,
+                "hypesquad_balance": 934503920552800256 if bot_user.id == MELON else None,
+                "hypesquad_bravery": 934503780031021076 if bot_user.id == MELON else None,
+                "hypesquad_brilliance": 934503837841121320 if bot_user.id == MELON else None,
+                "nitro": 263382460224634880 if bot_user.id == MELON else None,
+                "discord_certified_moderator": (
+                    907486308006510673 if bot_user.id == MELON else None
+                ),
+                "bot_http_interactions": 1135879666251595817 if bot_user.id == MELON else None,
             },
             "settings": {
                 "select": {
-                    "roles": None,
-                    "home": None,
-                    "avatar": None,
-                    "banner": None,
-                    "gavatar": None,
+                    "roles": 1261166986050932758 if bot_user.id == MELON else None,
+                    "home": 1047886542376538143 if bot_user.id == MELON else None,
+                    "avatar": 934507937228017745 if bot_user.id == MELON else None,
+                    "banner": 934508352971603998 if bot_user.id == MELON else None,
+                    "gavatar": 1261167779957047337 if bot_user.id == MELON else None,
                 }
             },
         }
