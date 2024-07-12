@@ -215,12 +215,12 @@ class Cache(CacheProtocol):
 
     def get_special_badges(self, user: discord.Member) -> List[str]:
         special: List[str] = []
-        for guild_id, roles in self.emojis["special"].items():
+        for guild_id, roles in cast(Dict[str, Dict[str, int]], self.emojis["special"]).items():
             if (guild := self.bot.get_guild(int(guild_id))) and (
                 member := guild.get_member(user.id)
             ):
                 for r in reversed(member.roles):
-                    if str(r.id) in roles:  # type: ignore
+                    if str(r.id) in roles.keys():  # type: ignore
                         special.append(
                             "{} {}".format(
                                 self.bot.get_emoji(cast(Dict[str, int], roles)[str(r.id)]),
