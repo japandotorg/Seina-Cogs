@@ -80,7 +80,6 @@ class PollAnswerButton(discord.ui.Button):
         self.answer: discord.PollAnswer = answer
 
     async def callback(self, interaction: discord.Interaction[Red]) -> None:
-        await interaction.response.defer(thinking=True)
         users: List[Union[discord.User, discord.Member]] = [
             voter async for voter in self.answer.voters()
         ]
