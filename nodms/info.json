@@ -22,5 +22,9 @@
         "commands",
         "DMs"
     ],
+    "requirements": [
+        "AdvancedTagScriptEngine",
+        "diot"
+    ],
     "type": "COG"
 }
