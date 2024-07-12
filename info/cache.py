@@ -232,8 +232,10 @@ class Cache(CacheProtocol):
     async def set_special_badge(self, guild: int, role: int, emoji: int) -> None:
         async with self.config.special() as special:
             if str(guild) not in special:
-                special[guild] = {}
-            special[guild][role] = emoji
+                special: Dict[str, Dict[str, int]] = {str(guild): {}}
+            if str(role) not in special[str(guild)]:
+                special[str(guild)] = {str(role): None}
+            special[str(guild)][str(role)] = emoji
         if str(guild) not in self.emojis["special"]:
             self.emojis["special"] = {str(guild): {}}
         cast(Dict[str, int], self.emojis["special"][str(guild)])[str(role)] = emoji
