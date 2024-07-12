@@ -22,21 +22,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import logging
-import datetime
 import contextlib
+import datetime
+import logging
 from typing import Any, Dict, Final, List, Literal, Optional, Tuple, Union, cast
 
-import TagScriptEngine as tse
-
 import discord
+import TagScriptEngine as tse
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.config import Config, Group, Value
-from redbot.core.utils.views import SimpleMenu
 from redbot.core.utils.chat_formatting import box, pagify
+from redbot.core.utils.views import SimpleMenu
 
-from .utils import ordinal
 from ._tagscript import (
     PollAdapter,
     PollAnswerAdapter,
@@ -45,8 +43,9 @@ from ._tagscript import (
     _default_remove,
     process_tagscript,
 )
-from .views import PollAnswerButton, DisableOnTimeoutView
-from .converters import PollConverter, QuestionConverter, OptionConverter
+from .converters import OptionConverter, PollConverter, QuestionConverter
+from .utils import ordinal
+from .views import DisableOnTimeoutView, PollAnswerButton
 
 log: logging.Logger = logging.getLogger("red.seina.discordpolls.core")
 
@@ -75,7 +74,7 @@ class DiscordPolls(commands.Cog):
             )
         )
         self.config.register_guild(**_default)
-        
+
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
         n = "\n" if "\n\n" not in pre_processed else ""
@@ -478,7 +477,7 @@ class DiscordPolls(commands.Cog):
     ):
         """
         Configure the poll logging message.
-        
+
         [Docs WIP]
         """
         if type.lower() == "add":
