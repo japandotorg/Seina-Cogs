@@ -1,0 +1,31 @@
+{
+    "author": [
+        "inthedark.org"
+    ],
+    "install_msg": "Thanks for installing the discordpolls cog, use `[p]help DiscordPolls` to get started.",
+    "name": "DiscordPolls",
+    "disabled": false,
+    "short": "Manage And Log Builtin Discord Polls.",
+    "description": "Manage and also configure logging for the builtin Discord Polls.",
+    "tags": [
+        "poll",
+        "polls",
+        "polling",
+        "vote",
+        "voting",
+        "discordpoll",
+        "discordpolls",
+        "discord"
+    ],
+    "required_cogs": {},
+    "min_bot_version": "3.5.10",
+    "min_python_version": [
+        3,
+        10,
+        0
+    ],
+    "requirements": [
+        "AdvancedTagScriptEngine==3.1.4"
+    ],
+    "type": "COG"
+}
