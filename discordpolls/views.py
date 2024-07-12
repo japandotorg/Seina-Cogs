@@ -122,4 +122,4 @@ class PollAnswerButton(discord.ui.Button[DisableOnTimeoutView]):
         )
         embed.set_footer(text="Page: {}/{}".format(self.answer.id, len(self.answer.poll.answers)))
         with contextlib.suppress(discord.HTTPException):
-            await interaction.followup.send(embed=embed)
+            await interaction.edit_original_response(embed=embed)
