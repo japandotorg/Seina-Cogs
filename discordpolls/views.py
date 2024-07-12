@@ -67,7 +67,7 @@ class DisableOnTimeoutView(discord.ui.View):
                 await self._message.edit(view=self)
 
 
-class PollAnswerButton(discord.ui.Button):
+class PollAnswerButton(discord.ui.Button[DisableOnTimeoutView]):
     def __init__(self, ctx: commands.Context, answer: discord.PollAnswer, **kwargs: Any) -> None:
         super().__init__(
             style=discord.ButtonStyle.green,
@@ -78,6 +78,10 @@ class PollAnswerButton(discord.ui.Button):
         self.ctx: commands.Context = ctx
         self.bot: Red = cast(Red, ctx.bot)
         self.answer: discord.PollAnswer = answer
+        if (
+            message := cast(DisableOnTimeoutView, self.view)._message
+        ) is not discord.utils.MISSING:
+            self._message: discord.Message = message
 
     async def callback(self, interaction: discord.Interaction[Red]) -> None:
         users: List[Union[discord.User, discord.Member]] = [
@@ -120,4 +124,5 @@ class PollAnswerButton(discord.ui.Button):
             )[:1024],
         )
         embed.set_footer(text="Page: {}/{}".format(self.answer.id, len(self.answer.poll.answers)))
-        await interaction.edit_original_response(embed=embed)
+        with contextlib.suppress(discord.HTTPException):
+            await self._message.edit(embed=embed)
