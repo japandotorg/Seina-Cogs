@@ -300,6 +300,13 @@ class UIView(discord.ui.View):
         )
         embed.add_field(name="Joined Discord on:", value=created_on)
         embed.add_field(name="Joined this Server on:", value=joined_on)
+        if premium := self.user.premium_since:
+            premium_since: int = int(premium.replace(tzinfo=datetime.timezone.utc).timestamp())
+            embed.add_field(
+                name="Boosting Since:",
+                value="<t:{0}:R> ( <t:{0}> )".format(premium_since),
+                inline=False,
+            )
         if names:
             val = filter_invites(", ".join(names))
             embed.add_field(name="Previous Names:", value=val, inline=False)
