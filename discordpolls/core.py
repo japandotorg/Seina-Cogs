@@ -258,7 +258,7 @@ class DiscordPolls(commands.Cog):
     ):
         """
         Create a poll.
-        
+
         Answers containing spaces must be enclosed in "double quotes".
 
         **Argument**:
