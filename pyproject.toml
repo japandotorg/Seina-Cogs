@@ -13,6 +13,7 @@ line_length = 99
 reportIncompatibleVariableOverride = false
 reportIncompatibleMethodOverride = false
 reportSelfClsParameterName = false
+reportRedeclaration = false
 reportArgumentType = false
 exclude = ["**/__pycache__", ".stubs", ".utils", ".github"]
 stubPath = ".stubs"
