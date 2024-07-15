@@ -270,7 +270,7 @@ class DiscordPolls(commands.Cog):
         defaults to false.
 
         **Examples**:
-        - `[p]dpoll create "New Poll" `
+        - `[p]dpoll create "New Poll" "Answer 1"|<:cogsred:594238096934043658> "Answer 2" 10 true`
         """
         if length := len(question):
             raise commands.BadArgument(
