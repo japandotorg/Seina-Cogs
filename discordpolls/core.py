@@ -247,7 +247,7 @@ class DiscordPolls(commands.Cog):
     async def _poll_create(
         self,
         ctx: commands.GuildContext,
-        question: str,
+        question: commands.Range[str, 1, 300],
         answers: Annotated[
             List[Dict[str, Union[str, discord.PartialEmoji, None]]],
             commands.Greedy[PollAnswerConverter],
@@ -280,8 +280,6 @@ class DiscordPolls(commands.Cog):
         poll: discord.Poll = discord.Poll(
             question, dt, multiple=multiple, layout_type=discord.PollLayoutType.default
         )
-        if len(answers) > 10:
-            raise commands.BadArgument("Cannot have more than 10 answers in a poll.")
         for answer in answers:
             poll.add_answer(**answer)
         await ctx.send(poll=poll)
