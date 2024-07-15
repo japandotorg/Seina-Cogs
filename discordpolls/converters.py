@@ -22,10 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import TYPE_CHECKING, List, Optional, Tuple
+import re
+from emoji import EMOJI_DATA
+from typing import TYPE_CHECKING, Dict, Optional, Union, cast
 
 import discord
 from redbot.core import commands
+
 
 if TYPE_CHECKING:
     PollConverter = discord.Poll
@@ -43,43 +46,33 @@ else:
             return poll
 
 
-class QuestionConverter(commands.Converter[Tuple[str, Optional[discord.PartialEmoji]]]):
+class UnicodeOrPartialEmojiConverter(commands.Converter[Union[str, discord.PartialEmoji]]):
     async def convert(
         self, ctx: commands.Context, argument: str
-    ) -> Tuple[str, Optional[discord.PartialEmoji]]:
-        split: List[str] = argument.split(";")
-        if (sl := len(split)) < 1 or not split[0] or sl > 2:
-            raise commands.BadArgument("Invalid argument: `{}`.".format(str))
-        question: str = split[0]
-        if (length := len(question)) > 300:
-            raise commands.BadArgument(
-                "Question can only be of 300 characters, recieved {}.".format(length)
-            )
-        if emoji_id := split[1]:
-            emoji: Optional[discord.PartialEmoji] = await commands.PartialEmojiConverter().convert(
-                ctx, emoji_id
-            )
-        else:
-            emoji: Optional[discord.PartialEmoji] = None
-        return question, emoji
+    ) -> Union[str, discord.PartialEmoji]:
+        argument: str = argument.strip()
+        return (
+            argument
+            if argument in EMOJI_DATA.keys()
+            else await commands.PartialEmojiConverter().convert(ctx, argument)
+        )
 
 
-class OptionConverter(commands.Converter[Tuple[str, Optional[discord.PartialEmoji]]]):
+class PollAnswerConverter(commands.Converter[Dict[str, Union[str, discord.PartialEmoji, None]]]):
     async def convert(
         self, ctx: commands.Context, argument: str
-    ) -> Tuple[str, Optional[discord.PartialEmoji]]:
-        split: List[str] = argument.split("|")
-        if (sl := len(split)) < 1 or not split[0] or sl > 2:
-            raise commands.BadArgument("Invalid argument: `{}`.".format(str))
-        question: str = split[0]
-        if (length := len(question)) > 55:
+    ) -> Dict[str, Union[str, discord.PartialEmoji, None]]:
+        split = re.split(r";|\||-", argument)
+        try:
+            answer, emoji = split
+        except ValueError:
+            answer, emoji = split[0], None
+        if not 1 <= (length := len(answer)) <= 300:
             raise commands.BadArgument(
-                "Option answer text can only be of 55 characters, recieved {}.".format(length)
+                "Question can only be of 300 characters, recieved {} instead.".format(length)
             )
-        if emoji_id := split[1]:
-            emoji: Optional[discord.PartialEmoji] = await commands.PartialEmojiConverter().convert(
-                ctx, emoji_id
+        if emoji is not None:
+            emoji: Optional[Union[str, discord.PartialEmoji]] = (
+                await UnicodeOrPartialEmojiConverter().convert(ctx, cast(str, emoji).strip())
             )
-        else:
-            emoji: Optional[discord.PartialEmoji] = None
-        return question, emoji
+        return {"text": answer, "emoji": emoji}

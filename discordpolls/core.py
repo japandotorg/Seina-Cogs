@@ -25,7 +25,7 @@ SOFTWARE.
 import contextlib
 import datetime
 import logging
-from typing import Any, Dict, Final, List, Literal, Optional, Tuple, Union, cast
+from typing import Annotated, Any, Dict, Final, List, Literal, Optional, Union, cast
 
 import discord
 import TagScriptEngine as tse
@@ -43,8 +43,8 @@ from ._tagscript import (
     _default_remove,
     process_tagscript,
 )
-from .converters import OptionConverter, PollConverter, QuestionConverter
 from .utils import ordinal
+from .converters import PollAnswerConverter, PollConverter
 from .views import DisableOnTimeoutView, PollAnswerButton
 
 log: logging.Logger = logging.getLogger("red.seina.discordpolls.core")
@@ -166,6 +166,13 @@ class DiscordPolls(commands.Cog):
             return
         if not (log_chan := await self.get_or_fetch_guild_channel(guild, log_chan_id)):
             return
+        if not log_chan.permissions_for(me).send_messages:
+            log.exception(
+                "I do not have permissions to send messages in the voting log channel: {0.name} {0.id}.".format(
+                    channel
+                )
+            )
+            return
         if not (
             (message := await channel.fetch_message(payload.message_id)) and (poll := message.poll)
         ):
@@ -206,6 +213,13 @@ class DiscordPolls(commands.Cog):
             return
         if not (log_chan := await self.get_or_fetch_guild_channel(guild, log_chan_id)):
             return
+        if not log_chan.permissions_for(me).send_messages:
+            log.exception(
+                "I do not have permissions to send messages in the voting log channel: {0.name} {0.id}.".format(
+                    channel
+                )
+            )
+            return
         if not (
             (message := await channel.fetch_message(payload.message_id)) and (poll := message.poll)
         ):
@@ -227,37 +241,43 @@ class DiscordPolls(commands.Cog):
         """Base command to manage polls."""
 
     @_poll.command(name="create")
-    @commands.cooldown(1, 30, commands.BucketType.channel)
     @commands.has_permissions(send_polls=True)
     @commands.bot_has_permissions(send_polls=True)
+    @commands.cooldown(1, 30, commands.BucketType.channel)
     async def _poll_create(
         self,
         ctx: commands.GuildContext,
-        question: QuestionConverter,
+        question: str,
+        answers: Annotated[
+            List[Dict[str, Union[str, discord.PartialEmoji, None]]],
+            commands.Greedy[PollAnswerConverter],
+        ],
         *,
-        options: commands.Greedy[OptionConverter],
-        duration: commands.Range[int, 1, 3] = 12,
+        duration: commands.Range[int, 1, 200] = 12,
         multiple: bool = False,
     ):
         """
         Create a poll.
 
-        **Arguments**:
-        - `question :` may be separated by a `;` and have no space.
-        - `options  :` may be separated by a `|` and have no space.
-        - `duration :` duration of the poll, can only be hours (default: 12).
-        - `multiple :` allow/deny multiple selection (default: False).
+        **Argument**:
+        - `question :` question for the poll.
+        - `answers  :` poll answers, text and emoji must be split using `|`, `;` or `-`.
+        - `duration :` duration for the poll in hours, if not provided defaults to 12.
+        - `multiple :` whether users are allowed to select more than one answer,
+        defaults to false.
         """
-        if len(options) > 10:
-            raise commands.BadArgument("Discord polls only support 10 or lesser arguments.")
+        if length := len(question):
+            raise commands.BadArgument(
+                "Question cannot be longer than 300 characters, recived {} instead.".format(length)
+            )
         dt: datetime.timedelta = datetime.timedelta(hours=duration)
-        q, q_emoji = cast(Tuple[str, Optional[discord.PartialEmoji]], question)
-        media: discord.PollMedia = discord.PollMedia(text=q, emoji=q_emoji)
         poll: discord.Poll = discord.Poll(
-            media, dt, multiple=multiple, layout_type=discord.PollLayoutType.default
+            question, dt, multiple=multiple, layout_type=discord.PollLayoutType.default
         )
-        for string, emoji in cast(List[Tuple[str, Optional[discord.PartialEmoji]]], options):
-            poll.add_answer(text=string, emoji=emoji)
+        if len(answers) > 10:
+            raise commands.BadArgument("Cannot have more than 10 answers in a poll.")
+        for answer in answers:
+            poll.add_answer(**answer)
         await ctx.send(poll=poll)
 
     @_poll.command(name="end", aliases=["stop"])
@@ -305,7 +325,7 @@ class DiscordPolls(commands.Cog):
         embeds: List[discord.Embed] = []
         for idx, page in enumerate(pages):
             embed: discord.Embed = discord.Embed(
-                title="{} Answer!".format(ordinal(number).upper()),
+                title="{} Answer!".format(ordinal(number)),
                 color=await ctx.embed_color(),
                 url=poll.message.jump_url if poll.message else None,
                 description=(
@@ -349,7 +369,7 @@ class DiscordPolls(commands.Cog):
             voter async for voter in answers[0].voters()
         ]
         embed: discord.Embed = discord.Embed(
-            title="{} Answer!".format(ordinal(answers[0].id).upper()),
+            title="{} Answer!".format(ordinal(answers[0].id)),
             color=await ctx.embed_color(),
             url=poll.message.jump_url if poll.message else None,
             description=(
