@@ -258,13 +258,19 @@ class DiscordPolls(commands.Cog):
     ):
         """
         Create a poll.
+        
+        Answers containing spaces must be enclosed in "double quotes".
 
         **Argument**:
         - `question :` question for the poll.
-        - `answers  :` poll answers, text and emoji must be split using `|`, `;` or `-`.
+        - `answers  :` poll answers, separated by spaces, text and emoji must be
+        split using `|`, `;` or `-`.
         - `duration :` duration for the poll in hours, if not provided defaults to 12.
         - `multiple :` whether users are allowed to select more than one answer,
         defaults to false.
+
+        **Examples**:
+        - `[p]dpoll create "New Poll" `
         """
         if length := len(question):
             raise commands.BadArgument(
