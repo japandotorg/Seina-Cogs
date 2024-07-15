@@ -245,7 +245,7 @@ def has_hybrid_permissions(**perms: bool) -> Callable[[T], T]:
         return await _check_permissions(ctx, perms)
 
     def decorator(func: T) -> T:
-        commands.check(predicate)(func)
+        commands.permissions_check(predicate)(func)
         discord.app_commands.default_permissions(**perms)(func)
         return func
 
