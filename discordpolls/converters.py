@@ -23,12 +23,11 @@ SOFTWARE.
 """
 
 import re
-from emoji import EMOJI_DATA
 from typing import TYPE_CHECKING, Dict, Optional, Union, cast
 
 import discord
+from emoji import EMOJI_DATA
 from redbot.core import commands
-
 
 if TYPE_CHECKING:
     PollConverter = discord.Poll

@@ -43,8 +43,8 @@ from ._tagscript import (
     _default_remove,
     process_tagscript,
 )
-from .utils import ordinal
 from .converters import PollAnswerConverter, PollConverter
+from .utils import ordinal
 from .views import DisableOnTimeoutView, PollAnswerButton
 
 log: logging.Logger = logging.getLogger("red.seina.discordpolls.core")
