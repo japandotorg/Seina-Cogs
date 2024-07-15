@@ -274,14 +274,12 @@ class DiscordPolls(commands.Cog):
         **Examples**:
         - `[p]dpoll create "New Poll" "Answer 1"|<:cogsred:594238096934043658> "Answer 2" 10 true`
         """
-        if length := len(question):
-            raise commands.BadArgument(
-                "Question cannot be longer than 300 characters, recived {} instead.".format(length)
-            )
         dt: datetime.timedelta = datetime.timedelta(hours=duration)
         poll: discord.Poll = discord.Poll(
             question, dt, multiple=multiple, layout_type=discord.PollLayoutType.default
         )
+        if len(answers) > 10:
+            raise commands.BadArgument("Cannot add more than 10 answers in a poll.")
         for answer in answers:
             poll.add_answer(**answer)
         await ctx.send(poll=poll)
