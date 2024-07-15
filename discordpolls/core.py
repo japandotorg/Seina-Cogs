@@ -255,8 +255,7 @@ class DiscordPolls(commands.Cog):
                 List[Dict[str, Union[str, discord.PartialEmoji, None]]],
                 commands.Greedy[PollAnswerConverter],
             ]
-        ],
-        *,
+        ] = None,
         duration: commands.Range[int, 1, 200] = 12,
         multiple: bool = False,
     ):
