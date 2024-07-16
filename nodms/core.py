@@ -268,7 +268,8 @@ class NoDMs(commands.Cog):
     async def _before_invoke_hook(self, ctx: commands.Context) -> None:
         await self.wait_until_cache_ready()
         if (
-            self.cache.toggle
+            not ctx.author.bot
+            and self.cache.toggle
             and self.cache.type.lower() in ["all", "commands"]
             and (
                 ctx.channel == ctx.author.dm_channel
@@ -314,7 +315,8 @@ class NoDMs(commands.Cog):
         await self.wait_until_cache_ready()
         ctx: commands.Context = cast(commands.Context, await self.bot.get_context(message))
         if (
-            self.cache.toggle
+            not message.author.bot
+            and self.cache.toggle
             and self.cache.type.lower() in ["all", "messages"]
             and (
                 message.channel == message.author.dm_channel
