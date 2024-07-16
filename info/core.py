@@ -50,7 +50,7 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
     """
 
     __author__: Final[List[str]] = ["inthedark.org"]
-    __version__: Final[str] = "0.1.1"
+    __version__: Final[str] = "0.1.2"
 
     def __init__(self, bot: Red) -> None:
         self.bot: Red = bot

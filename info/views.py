@@ -455,7 +455,16 @@ class CommandView(discord.ui.View):
         ctx: commands.Context = self.ctx
         embed: discord.Embed = discord.Embed(
             title=truncate("Command Info For {}.".format(command.name), max=250),
-            description="{}".format(truncate(help, max=4090)) if (help := command.help) else None,
+            description=(
+                "{}".format(
+                    truncate(
+                        command.format_text_for_context(self.ctx, truncate(help, max=4090)),
+                        max=4090,
+                    )
+                )
+                if (help := command.help)
+                else None
+            ),
             color=await ctx.embed_color(),
         )
         embed.set_author(
