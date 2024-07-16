@@ -313,7 +313,7 @@ class NoDMs(commands.Cog):
     async def on_message_without_command(self, message: discord.Message):
         await self.wait_until_cache_ready()
         ctx: commands.Context = cast(commands.Context, await self.bot.get_context(message))
-        if (message.author.id == ctx.me.id):
+        if message.author.id == ctx.me.id:
             return
         if (
             self.cache.toggle
