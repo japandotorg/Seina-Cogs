@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import contextlib
 import logging
 from typing import Dict, Final, List, Optional, Union, cast
 
@@ -154,8 +153,7 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
                 log.exception(
                     "Something went wrong removing the `userinfo` command.", exc_info=error
                 )
-            with contextlib.suppress(TypeError):
-                self.bot.add_command(OLD_USERINFO_COMMAND)
+            self.bot.add_command(OLD_USERINFO_COMMAND)
         if (command := OLD_CINFO_COMMAND) is not discord.utils.MISSING:
             if not ("cinfo" in (aliases := list(command.aliases)) and "cinfo" == command.name):
                 aliases.append("cinfo")
@@ -214,9 +212,9 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
 async def setup(bot: Red) -> None:
     if Mod.__name__ not in bot.cogs:
         raise CogLoadError("The Mod cog is required to be loaded to use this cog.")
-    global OLD_USERINFO_COMMAND
-    with contextlib.suppress(TypeError):
-        OLD_USERINFO_COMMAND = cast(commands.Command, bot.remove_command("userinfo"))
+    if userinfo := bot.get_command("userinfo"):
+        global OLD_USERINFO_COMMAND
+        OLD_USERINFO_COMMAND = cast(commands.Command, bot.remove_command(userinfo.qualified_name))
     if command := bot.get_command("cinfo"):
         global OLD_CINFO_COMMAND
         OLD_CINFO_COMMAND = cast(commands.Command, command)
