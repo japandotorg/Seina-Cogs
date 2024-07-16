@@ -194,9 +194,9 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
         async with ctx.typing():
             view: CommandView = CommandView(ctx, command)
             embeds: List[discord.Embed] = []
+            embeds.append(await view._make_embed())
             if (embed := await view._get_downloader_info()) and self.cache.get_downloader_info():
                 embeds.append(embed)
-            embeds.append(await view._make_embed())
         _out: discord.Message = await ctx.send(
             embeds=embeds,
             view=view,
