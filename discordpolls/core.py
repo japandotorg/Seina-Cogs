@@ -574,7 +574,9 @@ class DiscordPolls(commands.Cog):
                 )
             ),
         )
-        embed.set_author(name="Poll Logging Settings!", icon_url=getattr(ctx.guild.icon, "url", None))
+        embed.set_author(
+            name="Poll Logging Settings!", icon_url=getattr(ctx.guild.icon, "url", None)
+        )
         embed.add_field(
             name="On Vote Add:",
             value=box(cast(Dict[str, str], config["message"]).get("add", _default_add)),
