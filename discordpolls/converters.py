@@ -26,9 +26,9 @@ import re
 from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 
 import discord
+from discord.ext.commands import converter
 from emoji import EMOJI_DATA
 from redbot.core import commands
-from discord.ext.commands import converter
 
 if TYPE_CHECKING:
     PollConverter = discord.Poll
