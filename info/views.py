@@ -43,9 +43,7 @@ from .utils import get_roles, truncate
 
 
 class InteractionSimpleMenu(views.SimpleMenu):
-    async def inter(
-        self, interaction: discord.Interaction[Red], *, ephemeral: bool = False
-    ) -> None:
+    async def inter(self, interaction: discord.Interaction[Red]) -> None:
         self._fallback_author_to_ctx = False
         self.author: discord.abc.User = interaction.user
         kwargs: Dict[str, Any] = await self.get_page(self.current_page)
