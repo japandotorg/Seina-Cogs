@@ -154,7 +154,8 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
                 log.exception(
                     "Something went wrong removing the `userinfo` command.", exc_info=error
                 )
-            self.bot.add_command(OLD_USERINFO_COMMAND)
+            with contextlib.suppress(TypeError):
+                self.bot.add_command(OLD_USERINFO_COMMAND)
         if (command := OLD_CINFO_COMMAND) is not discord.utils.MISSING:
             if not ("cinfo" in (aliases := list(command.aliases)) and "cinfo" == command.name):
                 aliases.append("cinfo")
