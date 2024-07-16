@@ -22,22 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import inspect
+import contextlib
 import datetime
 import functools
-import contextlib
+import inspect
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple, Union, cast
 
 import discord
+from redbot.cogs.downloader.downloader import Downloader
 from redbot.cogs.mod.mod import Mod
 from redbot.core import commands
 from redbot.core.bot import Red
-from redbot.core.utils import views
 from redbot.core.tree import RedTree
-from redbot.core.utils import AsyncIter
-from redbot.cogs.downloader.downloader import Downloader
+from redbot.core.utils import AsyncIter, views
+from redbot.core.utils.chat_formatting import box, humanize_list, pagify
 from redbot.core.utils.common_filters import filter_invites
-from redbot.core.utils.chat_formatting import box, pagify, humanize_list
 
 from .cache import Cache
 from .utils import get_roles, truncate
