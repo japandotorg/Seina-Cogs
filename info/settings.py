@@ -45,6 +45,7 @@ class SettingsCommands(MixinMeta, metaclass=CompositeMetaClass):
         Toggle downloader cog info in `[p]commandinfo`.
         """
         await self.cache.set_downloader_info(true_or_false)
+        await ctx.tick()
 
     @_info_set.command(name="special")  # type: ignore
     async def _info_set_special(
