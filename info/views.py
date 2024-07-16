@@ -404,7 +404,7 @@ class CommandView(discord.ui.View):
 
     async def _get_downloader_info(self) -> Optional[discord.Embed]:
         command: commands.Command = self.command
-        if not (downloader := cast(Optional[Downloader], self.bot.get_cog("downloader"))):
+        if not (downloader := cast(Optional[Downloader], self.bot.get_cog("Downloader"))):
             return None
         if not (cog := cast(commands.Cog, command.cog)):
             return None
