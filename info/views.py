@@ -504,4 +504,4 @@ class CommandView(discord.ui.View):
         pages: List[str] = []
         for page in pagify(source, escape_mass_mentions=True, page_length=1900):
             pages.append(box(page, lang="py"))
-        await InteractionSimpleMenu(pages, timeout=200.0).inter(interaction, ephemeral=True)
+        await InteractionSimpleMenu(pages, timeout=200.0).inter(interaction)
