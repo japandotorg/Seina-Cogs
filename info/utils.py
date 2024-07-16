@@ -54,3 +54,10 @@ def get_roles(member: discord.Member) -> Optional[List[str]]:
     roles: List[discord.Role] = list(reversed(member.roles))[:-1]
     if roles:
         return [x.mention for x in roles]
+
+
+def truncate(text: str, *, max: int = 2000):
+    if len(text) <= max:
+        return text
+    truncated: str = text[: max - 3]
+    return truncated + "..."

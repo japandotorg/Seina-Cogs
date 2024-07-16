@@ -22,20 +22,51 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import contextlib
+import inspect
 import datetime
 import functools
-from typing import TYPE_CHECKING, Any, List, Optional, Set, Tuple, Union, cast
+import contextlib
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple, Union, cast
 
 import discord
 from redbot.cogs.mod.mod import Mod
 from redbot.core import commands
 from redbot.core.bot import Red
+from redbot.core.utils import views
+from redbot.core.tree import RedTree
 from redbot.core.utils import AsyncIter
+from redbot.cogs.downloader.downloader import Downloader
 from redbot.core.utils.common_filters import filter_invites
+from redbot.core.utils.chat_formatting import box, pagify, humanize_list
 
 from .cache import Cache
-from .utils import get_roles
+from .utils import get_roles, truncate
+
+
+class InteractionSimpleMenu(views.SimpleMenu):
+    async def inter(
+        self, interaction: discord.Interaction[Red], *, ephemeral: bool = False
+    ) -> None:
+        await interaction.response.defer()
+        self._fallback_author_to_ctx = False
+        self.author: discord.abc.User = interaction.user
+        kwargs: Dict[str, Any] = await self.get_page(self.current_page)
+        self.message: discord.Message = await interaction.followup.send(
+            **kwargs, ephemeral=ephemeral
+        )
+
+
+class ViewSourceCodeButton(discord.ui.Button["CommandView"]):
+    if TYPE_CHECKING:
+        view: "CommandView"
+
+    def __init__(self, callback: Any) -> None:
+        super().__init__(
+            style=discord.ButtonStyle.grey,
+            label="View Source Code",
+            emoji="<:commands:1262591040343248907>",
+        )
+        self.callback: functools.partial[Any] = functools.partial(callback, self)
 
 
 class UISelect(discord.ui.Select["UIView"]):
@@ -337,3 +368,135 @@ class UIView(discord.ui.View):
             )
         self.embed: discord.Embed = embed
         return embed
+
+
+class CommandView(discord.ui.View):
+    def __init__(
+        self, ctx: commands.Context, command: commands.Command, *, timeout: float = 120.0
+    ) -> None:
+        super().__init__(timeout=timeout)
+        self.ctx: commands.Context = ctx
+        self.bot: Red = cast(Red, ctx.bot)
+        self.command: commands.Command = command
+
+        self._message: discord.Message = discord.utils.MISSING
+
+        self.add_item(ViewSourceCodeButton(self._callback))
+
+    @staticmethod
+    async def _callback(self: ViewSourceCodeButton, interaction: discord.Interaction[Red]) -> None:
+        await self.view._get_and_send_source(interaction)
+
+    async def on_timeout(self) -> None:
+        for child in self.children:
+            child: discord.ui.Item["CommandView"]
+            if hasattr(child, "disabled"):
+                child.disabled = True  # type: ignore
+        with contextlib.suppress(discord.HTTPException):
+            if self._message is not discord.utils.MISSING:
+                await self._message.edit(view=self)
+
+    async def interaction_check(self, interaction: discord.Interaction[Red], /) -> bool:
+        if self.ctx.author.id != interaction.user.id:
+            await interaction.response.send_message(
+                content="You're not the author of this message.", ephemeral=True
+            )
+            return False
+        return True
+
+    async def _get_downloader_info(self) -> Optional[discord.Embed]:
+        command = commands.Command = self.command
+        if not (downloader := cast(Optional[Downloader], self.bot.get_cog("downloader"))):
+            return None
+        if not (cog := cast(commands.Cog, command.cog)):
+            return None
+        pkg: str = downloader.cog_name_from_instance(cog)
+        installed, installable = await downloader.is_installed(pkg)
+        if installed and installable:
+            made_by: Optional[str] = (
+                humanize_list(installable.author) if installable.author else None
+            )
+            repo_url: Optional[str] = installable.repo.clean_url if installable.repo else None
+            repo_name: Optional[str] = installable.repo.name if installable.repo else None
+            pkg: str = installable.name
+        elif cog.__module__.startswith("redbot."):
+            made_by: Optional[str] = "Cog Creators"
+            repo_url: Optional[str] = "https://github.com/Cog-Creators/Red-DiscordBot"
+            fragments: List[str] = cog.__module__.split(".")
+            if fragments[1] == "core":
+                pkg: str = "N/A - Built-in commands."
+            else:
+                pkg: str = fragments[2]
+            repo_name: Optional[str] = "Red-DiscordBot"
+        else:
+            made_by: Optional[str] = "Unknown"
+            repo_url: Optional[str] = "None - this cog wasn't installed via downloader."
+            repo_name: Optional[str] = "Unknown"
+        name: str = cog.__class__.__name__
+        embed: discord.Embed = discord.Embed(color=await self.ctx.embed_color())
+        embed.add_field(name="Cog package name:", value=pkg, inline=True)
+        embed.add_field(name="Cog name:", value=name, inline=True)
+        embed.add_field(name="Made by:", value=made_by, inline=False)
+        embed.add_field(name="Repo name:", value=repo_name, inline=False)
+        embed.add_field(name="Repo URL:", value=repo_url, inline=False)
+        if (
+            installed
+            and installable
+            and installable.repo is not None
+            and (branch := installable.repo.branch)
+        ):
+            embed.add_field(name="Repo branch:", value=branch, inline=False)
+        return embed
+
+    @classmethod
+    async def make_embed(cls, ctx: commands.Context, command: commands.Command) -> discord.Embed:
+        return await cls(ctx, command)._make_embed()
+
+    async def _make_embed(self):
+        command: commands.Command = self.command
+        ctx: commands.Context = self.ctx
+        embed: discord.Embed = discord.Embed(
+            title=truncate("Command Info For {}.".format(command.name), max=250),
+            description="{}".format(truncate(help, max=4090)) if (help := command.help) else None,
+            color=await ctx.embed_color(),
+        )
+        embed.set_author(
+            name="Command Info For {}!".format(truncate(command.name, max=230)),
+            icon_url="https://cdn.discordapp.com/emojis/1262591040343248907.png",
+        )
+        if usage := command.usage:
+            embed.add_field(name="Usage:", value="{}".format(usage.strip()), inline=True)
+        if aliases := list(command.aliases):
+            embed.add_field(
+                name="Aliases:", value=truncate(humanize_list(aliases), max=1020), inline=True
+            )
+        parents: List[str] = ["{}".format(parent.name) for parent in command.parents]
+        embed.add_field(
+            name="Extra Info:",
+            value=(
+                """
+                **Hidden**: {}
+                **Enabled Globally**: {}
+                {}
+                """.format(
+                    command.hidden,
+                    command.is_enabled(),
+                    "**Parent**: {}".format(humanize_list(parents) if len(parents) > 1 else ""),
+                )
+            ),
+            inline=False,
+        )
+        return embed
+
+    async def _get_and_send_source(self, interaction: discord.Interaction[Red]):
+        try:
+            source: str = inspect.getsource(self.command.callback)
+        except OSError:
+            await cast(RedTree, interaction.client.tree)._send_from_interaction(
+                interaction, "No source code found for that command."
+            )
+            return
+        pages: List[str] = []
+        for page in pagify(source, escape_mass_mentions=True, page_length=1900):
+            pages.append(box(page, lang="py"))
+        await InteractionSimpleMenu(pages, timeout=200.0).inter(interaction, ephemeral=True)

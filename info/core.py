@@ -36,11 +36,12 @@ from .abc import CompositeMetaClass
 from .cache import Cache
 from .settings import SettingsCommands
 from .utils import MELON, guild_only_and_has_embed_links
-from .views import UIView
+from .views import CommandView, UIView
 
 log: logging.Logger = logging.getLogger("red.seina.info.core")
 
 OLD_USERINFO_COMMAND = discord.utils.MISSING
+OLD_CINFO_COMMAND = discord.utils.MISSING
 
 
 class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
@@ -49,7 +50,7 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
     """
 
     __author__: Final[List[str]] = ["inthedark.org"]
-    __version__: Final[str] = "0.1.0"
+    __version__: Final[str] = "0.1.1"
 
     def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
@@ -62,7 +63,10 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
 
         _defaults: Dict[
             str,
-            Dict[str, Union[Optional[int], Dict[str, Optional[int]], Dict[str, Dict[str, int]]]],
+            Dict[
+                str,
+                Union[bool, Optional[int], Dict[str, Optional[int]], Dict[str, Dict[str, int]]],
+            ],
         ] = {
             "special": {},
             "status": {
@@ -112,7 +116,8 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
                     "avatar": 934507937228017745 if bot_user.id == MELON else None,
                     "banner": 934508352971603998 if bot_user.id == MELON else None,
                     "gavatar": 1261167779957047337 if bot_user.id == MELON else None,
-                }
+                },
+                "downloader": False,
             },
         }
         self.config.register_global(**_defaults)
@@ -149,6 +154,9 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
                     "Something went wrong removing the `userinfo` command.", exc_info=error
                 )
             self.bot.add_command(OLD_USERINFO_COMMAND)
+        if (command := OLD_CINFO_COMMAND) is not discord.utils.MISSING:
+            if not ("cinfo" in (aliases := list(command.aliases)) and "cinfo" == command.name):
+                aliases.append("cinfo")
         self.bot.tree.remove_command("Get User's Info!", type=discord.AppCommandType.user)
 
     async def _callback(self, ctx: commands.GuildContext, member: discord.Member) -> None:
@@ -175,9 +183,28 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
         """Check user's info, defaults to author."""
         await self._callback(ctx, member if member else ctx.author)
 
+    @commands.is_owner()
+    @commands.has_permissions(embed_links=True)
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.command(name="commandinfo", aliases=["cinfo"])
+    async def _command_info(self, ctx: commands.Context, command: commands.CommandConverter):
+        async with ctx.typing():
+            view: CommandView = CommandView(ctx, command)
+            embeds: List[discord.Embed] = []
+            if (embed := await view._get_downloader_info()) and self.cache.get_downloader_info():
+                embeds.append(embed)
+            embeds.append(await view._make_embed())
+        _out: discord.Message = await ctx.send(
+            embeds=embeds,
+            view=view,
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
+            allowed_mentions=discord.AllowedMentions(replied_user=False),
+        )
+        view._message = _out
+
     async def _user_info_context(
         self, interaction: discord.Interaction[Red], member: discord.Member
-    ):
+    ) -> None:
         ctx: commands.Context = await commands.Context.from_interaction(interaction)
         await self._callback(ctx, member)
 
@@ -187,4 +214,13 @@ async def setup(bot: Red) -> None:
         raise CogLoadError("The Mod cog is required to be loaded to use this cog.")
     global OLD_USERINFO_COMMAND
     OLD_USERINFO_COMMAND = cast(commands.Command, bot.remove_command("userinfo"))
+    if command := bot.get_command("cinfo"):
+        global OLD_CINFO_COMMAND
+        OLD_CINFO_COMMAND = cast(commands.Command, command)
+        if "cinfo" in (aliases := list(command.aliases)):
+            aliases.remove("cinfo")
+        elif command.name == "cinfo":
+            if "channelinfo" in (a := list(command.aliases)):
+                a.remove("channelinfo")
+            command.name = "channelinfo"
     await bot.add_cog(Info(bot))

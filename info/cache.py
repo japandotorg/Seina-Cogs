@@ -37,8 +37,8 @@ from typing import (
 )
 
 import discord
-from redbot.core import Config
 from redbot.core.bot import Red
+from redbot.core.config import Config, Group
 
 if TYPE_CHECKING:
     from .core import Info
@@ -160,6 +160,9 @@ class Cache(CacheProtocol):
         )
         return str(emoji) if emoji else DEFAULT
 
+    def get_downloader_info(self) -> bool:
+        return cast(bool, self.emojis["settings"]["downloader"])
+
     async def set_status_emoji(self, name: StatusEmoji, emoji: int) -> None:
         if name not in StatusEmoji.__args__:
             raise ValueError
@@ -241,6 +244,10 @@ class Cache(CacheProtocol):
         if str(role) not in cast(Dict[str, Dict[str, int]], self.emojis["special"][str(guild)]):
             self.emojis[str(guild)] = {str(role): None}
         cast(Dict[str, int], self.emojis["special"][str(guild)])[str(role)] = emoji
+
+    async def set_downloader_info(self, toggle: bool) -> None:
+        await cast(Group, self.config.settings).downloader.set(toggle)
+        self.emojis["settings"].update(downloader=toggle)
 
     async def initialize(self) -> None:
         self.emojis["status"] = await self.config.status()
