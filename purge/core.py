@@ -35,7 +35,7 @@ class Purge(commands.Cog):
     __doc__ = CleanupCog.__doc__
 
     __author__: Final[List[str]] = ["inthedark.org"]
-    __version__: Final[str] = "0.1.2"
+    __version__: Final[str] = "0.1.3"
 
     def __init__(self, bot: Red) -> None:
         super().__init__()
@@ -114,7 +114,7 @@ class Purge(commands.Cog):
 
         **Example:**
         - `[p]purge 10`
-        - `[p] purge 2000`
+        - `[p]purge 2000`
         """
         if ctx.invoked_subcommand is None:
 
@@ -123,6 +123,8 @@ class Purge(commands.Cog):
 
             await _cleanup(ctx, number, check, channel=channel)
 
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="embeds", aliases=["embed"])  # type: ignore
     async def _embeds(
         self,
@@ -145,6 +147,8 @@ class Purge(commands.Cog):
         """
         await _cleanup(ctx, number, lambda e: len(e.embeds), channel=channel)
 
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="regex")  # type: ignore
     async def _regex(
         self,
@@ -177,6 +181,8 @@ class Purge(commands.Cog):
 
         await _cleanup(ctx, number, check, channel=channel)
 
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="files", aliases=["file"])  # type: ignore
     async def _files(
         self,
@@ -199,6 +205,8 @@ class Purge(commands.Cog):
         """
         await _cleanup(ctx, number, lambda e: len(e.attachments), channel=channel)
 
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="images", aliases=["image"])  # type: ignore
     async def _images(
         self,
@@ -221,6 +229,8 @@ class Purge(commands.Cog):
         """
         await _cleanup(ctx, number, lambda e: len(e.embeds) or len(e.attachments), channel=channel)
 
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="user", aliases=["member"])  # type: ignore
     async def _user(
         self,
@@ -245,6 +255,8 @@ class Purge(commands.Cog):
         """
         await _cleanup(ctx, number, lambda e: e.author == member, channel=channel)
 
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="contains", aliases=["contain"])  # type: ignore
     async def _contains(
         self,
@@ -276,6 +288,8 @@ class Purge(commands.Cog):
         else:
             await _cleanup(ctx, 100, lambda e: text in e.content, channel=channel)
 
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="bot", aliases=["bots"])  # type: ignore
     async def _bot(
         self,
@@ -307,6 +321,8 @@ class Purge(commands.Cog):
 
         await _cleanup(ctx, number, predicate, channel=channel)
 
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="emoji", aliases=["emojis"])  # type: ignore
     async def _emoji(
         self,
@@ -337,6 +353,8 @@ class Purge(commands.Cog):
         await _cleanup(ctx, number, predicate, channel=channel)
 
     # https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/mod.py#L1829
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="reactions", aliases=["reaction"])  # type: ignore
     async def _reactions(
         self,
@@ -372,6 +390,8 @@ class Purge(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="self")  # type: ignore
     async def _self(
         self,
@@ -394,6 +414,8 @@ class Purge(commands.Cog):
         """
         await _cleanup(ctx, number, lambda e: e.author == ctx.author, channel=channel)
 
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="mine")  # type: ignore
     async def _mine(
         self,
@@ -416,6 +438,8 @@ class Purge(commands.Cog):
         """
         await _cleanup(ctx, number, lambda e: e.author == ctx.guild.me, channel=channel)
 
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="links", aliases=["link"])  # type: ignore
     async def _links(
         self,
@@ -438,6 +462,8 @@ class Purge(commands.Cog):
         """
         await _cleanup(ctx, number, lambda m: LINKS_RE.search(m.content), channel=channel)
 
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="after")  # type: ignore
     async def _after(
         self,
@@ -476,7 +502,7 @@ class Purge(commands.Cog):
 
         if after is None:
             await ctx.send(
-                f"Could not find any messages to delete.",
+                "Could not find any messages to delete.",
                 reference=ctx.message.to_reference(fail_if_not_exists=False),
                 allowed_mentions=discord.AllowedMentions(replied_user=False),
             )
@@ -508,6 +534,8 @@ class Purge(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="before")  # type: ignore
     async def _before(
         self,
@@ -548,7 +576,7 @@ class Purge(commands.Cog):
 
         if before is None:
             await ctx.send(
-                f"Could not find any messages to delete.",
+                "Could not find any messages to delete.",
                 reference=ctx.message.to_reference(fail_if_not_exists=False),
                 allowed_mentions=discord.AllowedMentions(replied_user=False),
             )
@@ -581,6 +609,8 @@ class Purge(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="between")  # type: ignore
     async def _between(
         self,
@@ -646,6 +676,8 @@ class Purge(commands.Cog):
             allowed_mentions=discord.AllowedMentions(replied_user=False),
         )
 
+    @commands.bot_has_permissions(manage_messages=True)
+    @has_hybrid_permissions(manage_messages=True, read_message_history=True)
     @_purge.command(name="duplicates", aliases=["duplicate", "spam"])  # type: ignore
     async def _duplicates(self, ctx: commands.GuildContext, number: commands.Range[int, 1, 2000]):
         """
@@ -694,6 +726,8 @@ class Purge(commands.Cog):
         )
 
     # https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/mod.py#L1704
+    @has_hybrid_permissions(administrator=True)
+    @commands.bot_has_permissions(manage_messages=True)
     @_purge.command(name="custom")  # type: ignore
     async def _custom(
         self,

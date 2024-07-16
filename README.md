@@ -27,7 +27,7 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 | RoleUtils   | 1.4.0            | <details><summary>Reaction roles, massroling, & role targeting</summary>Reaction roles, massrolin & role targeting</details>     |
 | Lock        | 1.1.5            | <details><summary>Lock channels</summary>Lock channels or the whole server</details>                                             |
 | DisboardReminder | 1.3.7       | <details><summary>Set a reminder to bump on disboard</summary>Set a reminder to bump on disboard</details>                  |
-| Purge       | 0.1.2            | <details><summary>Advanced Purge/Cleanup.</summary>Purge (deleted) messages that meet a criteria.</details>                      |
+| Purge       | 0.1.3            | <details><summary>Advanced Purge/Cleanup.</summary>Purge (deleted) messages that meet a criteria.</details>                      |
 | FreeloaderMode | 0.1.0         | <details><summary>Ban users that leave your server right after an event or something.</summary>Ban freeloaders who leave your server right after an event or something.</details> |
 | ErrorHandler | 0.1.0           | <details><summary>Allow custom error message.</summary>Adds ability to replace the output of the bots error handler when CommandInvokeError is raised, all other errors get handled by the old handler.</details> |
 | VoiceNoteLog | 0.1.0           | <details><summary>Log the voice note sent by your server members.</summary>Log voice notes sent by your server members.</details> | 

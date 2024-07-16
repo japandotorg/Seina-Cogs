@@ -28,7 +28,7 @@ __all__: Tuple[str, ...] = (
 )
 
 CUSTOM_EMOJI_RE: Pattern[str] = re.compile(r"<a?:[a-zA-Z0-9\_]+:([0-9]+)>")
-LINKS_RE = re.compile(
+LINKS_RE: Pattern[str] = re.compile(
     r"((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*",
     flags=re.IGNORECASE,
 )
@@ -70,7 +70,7 @@ async def _cleanup(
     channel: Optional[  # type: ignore
         Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
     ] = None,
-):
+) -> None:
     channel: Union[
         discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel
     ] = (channel if channel else ctx.channel)
