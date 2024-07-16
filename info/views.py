@@ -46,13 +46,12 @@ class InteractionSimpleMenu(views.SimpleMenu):
     async def inter(
         self, interaction: discord.Interaction[Red], *, ephemeral: bool = False
     ) -> None:
-        await interaction.response.defer()
         self._fallback_author_to_ctx = False
         self.author: discord.abc.User = interaction.user
         kwargs: Dict[str, Any] = await self.get_page(self.current_page)
-        self.message: discord.Message = await interaction.followup.send(
-            **kwargs, ephemeral=ephemeral
-        )
+        self.message: discord.Message = await cast(
+            RedTree, interaction.client.tree
+        )._send_from_interaction(**kwargs, ephemeral=True)
 
 
 class ViewSourceCodeButton(discord.ui.Button["CommandView"]):
