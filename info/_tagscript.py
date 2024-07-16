@@ -25,9 +25,8 @@ SOFTWARE.
 import datetime
 from typing import Any, Dict, Final, List, Union, cast, final
 
-import TagScriptEngine as tse
-
 import discord
+import TagScriptEngine as tse
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_number
