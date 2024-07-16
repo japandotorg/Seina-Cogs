@@ -1,9 +1,41 @@
+[![Red-DiscordBot](https://img.shields.io/badge/Red--DiscordBot-V3-red.svg)](https://github.com/Cog-Creators/Red-DiscordBot) [![Discord.py](https://img.shields.io/badge/Discord.py-rewrite-blue.svg)](https://github.com/Rapptz/discord.py/tree/rewrite) [![License](https://img.shields.io/badge/License-MIT-blue)](https://github.com/japandotorg/Seina-Cogs/blob/main/LICENSE)
+
+[![Read The Docs](https://img.shields.io/readthedocs/seina-cogs)](https://seina-cogs.readthedocs.io/en/latest/) [![CodeQL](https://github.com/japandotorg/Seina-Cogs/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/japandotorg/Seina-Cogs/blob/main/.github/workflows/codeql-analysis.yml) [![Linting](https://github.com/japandotorg/Seina-Cogs/actions/workflows/tests.yml/badge.svg)](https://github.com/japandotorg/Seina-Cogs/blob/main/.github/workflows/tests.yml) 
+
+![GitHub repo file or directory count](https://img.shields.io/github/directory-file-count/japandotorg/Seina-Cogs) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/japandotorg/Seina-Cogs) ![GitHub repo size](https://img.shields.io/github/repo-size/japandotorg/Seina-Cogs)
+
+[![GitHub Repo stars](https://img.shields.io/github/stars/japandotorg/Seina-Cogs?style=plastic&color=%23696969)](https://github.com/japandotorg/Seina-Cogs/stargazers) [![GitHub forks](https://img.shields.io/github/forks/japandotorg/Seina-Cogs?style=plastic&color=%23696969)](https://github.com/japandotorg/Seina-Cogs/forks)
+
 # Seina-Cogs V3
-[![Red-DiscordBot](https://img.shields.io/badge/Red--DiscordBot-V3-red.svg)](https://github.com/Cog-Creators/Red-DiscordBot) [![Discord.py](https://img.shields.io/badge/Discord.py-rewrite-blue.svg)](https://github.com/Rapptz/discord.py/tree/rewrite)
 
-Lemon's Approved Cogs for [Red-DiscordBot](https://github.com/Cog-Creators/Red-DiscordBot/tree/V3/develop).
+Lemon's [Approved Cogs](https://cogboard.discord.red/t/approved-seina-cogs/1199) for [Red-DiscordBot](https://github.com/Cog-Creators/Red-DiscordBot/).
 
-To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://github.com/japandotorg/Seina-Cogs/`
+
+## Installation
+
+> Ensure you have downloader loaded.
+```py
+[p]load downloader
+```
+
+> Add `Seina-Cogs` to your Red instance.
+```py
+[p]repo add Seina-Cogs https://github.com/japandotorg/Seina-Cogs
+```
+
+> Install cog(s) from `Seina-Cogs` in your Red instance
+```py
+[p]cog install Seina-Cogs <CogName>
+```
+
+> Load the cog(s).
+```py
+[p]load CogName
+```
+
+> [!NOTE]
+> `[p]` is your prefix.
+
 
 ## About Cogs
 | Name        | Status/Version   | Description (Click to see full status)                                                                                           |
@@ -38,8 +70,8 @@ To add the cogs to your instance please do: `[p]repo add Seina-Cogs https://gith
 | BoostUtils  | 0.1.0 | <details><summary>Booster Utilities. (WIP)</summary>Various nitro boosting utilities. (WORK IN PROGRESS)</details>                          |
 | AutoReact   | 0.1.0 | <details><summary>Create automatic reactions for specific triggers or events.</summary>Create automatic reactions for specific triggers or events.</details>  |
 
-
-Any questions you can find [Melon](https://discord.com/oauth2/authorize?client_id=808706062013825036&scope=bot&permissions=1099511627767%20applications.commands) and myself over on [the support server](https://discord.gg/mXfYuMy92r)
+> [!TIP]
+> For support, join [`Red - Cog Support`](https://discord.gg/GET4DVk) server, and find me [`@inthedark.org`](https://discordapp.com/users/759180080328081450) in my support channel [`#support_seina-cogs`](https://discord.com/channels/240154543684321280/1166073721056931890).
 
 ## Credits
 Thank you to everyone in the official [red server](https://discord.gg/red) for always being nice and helpful
