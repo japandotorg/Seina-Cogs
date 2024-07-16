@@ -559,7 +559,6 @@ class DiscordPolls(commands.Cog):
             await self.config.guild(ctx.guild).log()
         )
         embed: discord.Embed = discord.Embed(
-            title="Poll Logging Settings!",
             color=await ctx.embed_color(),
             description=(
                 """
@@ -575,6 +574,7 @@ class DiscordPolls(commands.Cog):
                 )
             ),
         )
+        embed.set_author(name="Poll Logging Settings!", icon_url=getattr(ctx.guild.icon, "url", None))
         embed.add_field(
             name="On Vote Add:",
             value=box(cast(Dict[str, str], config["message"]).get("add", _default_add)),
@@ -585,7 +585,6 @@ class DiscordPolls(commands.Cog):
             value=box(cast(Dict[str, str], config["message"]).get("remove", _default_remove)),
             inline=False,
         )
-        embed.set_thumbnail(url=icon.url if (icon := ctx.guild.icon) else None)
         await ctx.send(
             embed=embed,
             reference=ctx.message.to_reference(fail_if_not_exists=False),
