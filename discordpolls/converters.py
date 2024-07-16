@@ -23,11 +23,12 @@ SOFTWARE.
 """
 
 import re
-from typing import TYPE_CHECKING, Dict, Optional, Union, cast
+from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 
 import discord
 from emoji import EMOJI_DATA
 from redbot.core import commands
+from discord.ext.commands import converter
 
 if TYPE_CHECKING:
     PollConverter = discord.Poll
@@ -61,7 +62,15 @@ class PollAnswerConverter(commands.Converter[Dict[str, Union[str, discord.Partia
     async def convert(
         self, ctx: commands.Context, argument: str
     ) -> Dict[str, Union[str, discord.PartialEmoji, None]]:
-        split = re.split(r";|\||-", argument)
+        if argument.isdigit():
+            raise commands.BadArgument()
+        try:
+            converter._convert_to_bool(argument)
+        except commands.BadArgument:
+            pass
+        else:
+            raise commands.BadArgument()
+        split: List[str] = re.split(r";|\||-", argument)
         try:
             answer, emoji = split
         except ValueError:
