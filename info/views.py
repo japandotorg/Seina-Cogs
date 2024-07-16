@@ -51,7 +51,7 @@ class InteractionSimpleMenu(views.SimpleMenu):
         kwargs: Dict[str, Any] = await self.get_page(self.current_page)
         self.message: discord.Message = await cast(
             RedTree, interaction.client.tree
-        )._send_from_interaction(**kwargs, ephemeral=True)
+        )._send_from_interaction(interaction, **kwargs, ephemeral=True)
 
 
 class ViewSourceCodeButton(discord.ui.Button["CommandView"]):
