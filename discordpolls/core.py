@@ -250,9 +250,8 @@ class DiscordPolls(commands.Cog):
         self,
         ctx: commands.GuildContext,
         question: commands.Range[str, 1, 300],
-        answers: Annotated[
-            List[Dict[str, Union[str, discord.PartialEmoji, None]]],
-            commands.Greedy[PollAnswerConverter],
+        *answers: Annotated[
+            Dict[str, Union[str, discord.PartialEmoji, None]], PollAnswerConverter
         ],
         duration: commands.Range[int, 1, 200] = 12,
         multiple: bool = False,
