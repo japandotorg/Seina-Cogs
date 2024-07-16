@@ -188,6 +188,9 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="commandinfo", aliases=["cinfo"])
     async def _command_info(self, ctx: commands.Context, command: commands.CommandConverter):
+        """
+        View detailed information about a command.
+        """
         async with ctx.typing():
             view: CommandView = CommandView(ctx, command)
             embeds: List[discord.Embed] = []

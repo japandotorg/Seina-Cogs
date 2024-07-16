@@ -480,7 +480,7 @@ class CommandView(discord.ui.View):
                 """.format(
                     command.hidden,
                     command.enabled,
-                    "**Parent**: {}".format(humanize_list(parents) if len(parents) > 1 else ""),
+                    "**Parent**: {}".format(humanize_list(parents)) if len(parents) > 1 else "",
                 )
             ),
             inline=False,
