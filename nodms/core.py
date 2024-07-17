@@ -270,7 +270,7 @@ class NoDMs(commands.Cog):
         if (
             self.cache.toggle
             and self.cache.type.lower() in ["all", "commands"]
-            and ctx.channel == ctx.author.dm_channel
+            and isinstance(ctx.channel, discord.DMChannel)
             and not await cast(Red, ctx.bot).is_owner(ctx.author)
             and not isinstance(ctx.command, commands.commands._AlwaysAvailableMixin)
         ):
@@ -313,7 +313,7 @@ class NoDMs(commands.Cog):
         if (
             self.cache.toggle
             and self.cache.type.lower() in ["all", "messages"]
-            and message.channel == message.author.dm_channel
+            and isinstance(message.channel, discord.DMChannel)
             and not await cast(Red, ctx.bot).is_owner(message.author)
         ):
             if ctx.command:
