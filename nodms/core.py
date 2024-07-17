@@ -330,6 +330,12 @@ class NoDMs(commands.Cog):
                         await message.delete()
                     if self.cache.message.toggle:
                         await self._send_response(ctx, "message")
+            else:
+                with contextlib.suppress(discord.HTTPException):
+                    await message.delete()
+                if self.cache.message.toggle:
+                    await self._send_response(ctx, "message")
+                raise commands.CheckFailure()
 
     @commands.is_owner()
     @commands.group(name="nodms")
