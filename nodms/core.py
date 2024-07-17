@@ -257,9 +257,7 @@ class NoDMs(commands.Cog):
             if type.lower() == "command" and (command := ctx.command):
                 kwargs.update(command=CommandAdapter(command))
         kwargs["reference"] = ctx.message.to_reference(fail_if_not_exists=False)
-        kwargs["allowed_mentions"] = discord.AllowedMentions(
-            everyone=False, roles=False, users=[ctx.author.id], replied_user=False
-        )
+        kwargs["allowed_mentions"] = discord.AllowedMentions(replied_user=False)
         try:
             await ctx.send(**kwargs)
         except (discord.Forbidden, discord.HTTPException) as error:
