@@ -7,8 +7,9 @@
 
 Lemon's [Approved Cogs](https://cogboard.discord.red/t/approved-seina-cogs/1199) for [Red-DiscordBot](https://github.com/Cog-Creators/Red-DiscordBot/).
 
+
 > [!TIP]
-> For support, join [`Red - Cog Support`](https://discord.gg/GET4DVk) server, and find me [`@inthedark.org`](https://discordapp.com/users/759180080328081450) in my support channel [`#support_seina-cogs`](https://discord.com/channels/240154543684321280/1166073721056931890).
+> For support, join the Official [`Red - Cog Support`](https://discord.gg/GET4DVk) server, and find me [`@inthedark.org`](https://discordapp.com/users/759180080328081450) in my support channel [`#support_seina-cogs`](https://discord.com/channels/240154543684321280/1166073721056931890).
 
 
 ## Installation
