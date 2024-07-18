@@ -40,6 +40,9 @@ class DisableOnTimeoutView(discord.ui.View):
         self.ctx: commands.Context = ctx
         self.tree: RedTree = ctx.bot.tree
 
+    async def interaction_check(self, interaction: discord.Interaction[Red], /) -> bool:
+        return await self._check(interaction)
+
     async def _check(self, interaction: discord.Interaction[Red]) -> bool:
         if self.ctx.author.id != interaction.user.id:
             await self.tree._send_from_interaction(
