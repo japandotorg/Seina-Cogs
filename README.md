@@ -7,6 +7,9 @@
 
 Lemon's [Approved Cogs](https://cogboard.discord.red/t/approved-seina-cogs/1199) for [Red-DiscordBot](https://github.com/Cog-Creators/Red-DiscordBot/).
 
+> [!TIP]
+> For support, join [`Red - Cog Support`](https://discord.gg/GET4DVk) server, and find me [`@inthedark.org`](https://discordapp.com/users/759180080328081450) in my support channel [`#support_seina-cogs`](https://discord.com/channels/240154543684321280/1166073721056931890).
+
 
 ## Installation
 
@@ -67,8 +70,6 @@ Lemon's [Approved Cogs](https://cogboard.discord.red/t/approved-seina-cogs/1199)
 | BoostUtils  | 0.1.0 | <details><summary>Booster Utilities. (WIP)</summary>Various nitro boosting utilities. (WORK IN PROGRESS)</details>                          |
 | AutoReact   | 0.1.0 | <details><summary>Create automatic reactions for specific triggers or events.</summary>Create automatic reactions for specific triggers or events.</details>  |
 
-> [!TIP]
-> For support, join [`Red - Cog Support`](https://discord.gg/GET4DVk) server, and find me [`@inthedark.org`](https://discordapp.com/users/759180080328081450) in my support channel [`#support_seina-cogs`](https://discord.com/channels/240154543684321280/1166073721056931890).
 
 ## Credits
 Thank you to everyone in the official [red server](https://discord.gg/red) for always being nice and helpful
