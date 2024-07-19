@@ -199,7 +199,7 @@ class BattleRoyale(commands.Cog):
         buffer.seek(0)
         return discord.File(buffer, filename="image.png")
 
-    async def _get_content_from_url(self, url: str) -> bytes:
+    async def _get_content_from_url(self, url: str) -> Image.Image:
         if url in self.cache:
             return self.cache[url]
         async with aiohttp.ClientSession() as session:
@@ -532,6 +532,7 @@ class BattleRoyale(commands.Cog):
         leaderboard = sorted(data.items(), key=lambda x: x[1][sort_by], reverse=True)
         leaderboard = leaderboard[:10]
         table = pt.PrettyTable()
+        table.title = "Battle Royale Leaderboard"
         table.field_names = ["#", "User", "Wins", "Games", "Kills", "Deaths"]
         for index, (user_id, user_data) in enumerate(leaderboard, start=1):
             if (user := ctx.bot.get_user(int(user_id))) is None:
@@ -547,11 +548,9 @@ class BattleRoyale(commands.Cog):
                 ]
             )
         description = box(table.get_string(), lang="sml")
-        pages: List[discord.Embed] = []
-        for page in pagify(description, page_length=4000):
-            embed = discord.Embed(title="BattleRoyale Leaderboard", color=await ctx.embed_color())
-            embed.description = page
-            pages.append(embed)
+        pages: List[str] = []
+        for page in pagify(description, page_length=2000):
+            pages.append(page)
         await SimpleMenu(
             pages=pages,
             disable_after_timeout=True,
