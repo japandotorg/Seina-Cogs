@@ -548,10 +548,10 @@ class BattleRoyale(commands.Cog):
                     truncate(user.display_name, max=15),
                 ]
             )
-        description = box(table.get_string(), lang="sml")
+        string: str = table.get_string()
         pages: List[str] = []
-        for page in pagify(description, page_length=2000):
-            pages.append(page)
+        for page in pagify(string, page_length=2000):
+            pages.append(box(page, lang="sml"))
         await SimpleMenu(
             pages=pages,
             disable_after_timeout=True,
