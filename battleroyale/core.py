@@ -545,7 +545,7 @@ class BattleRoyale(commands.Cog):
                         user_data["kills"],
                         user_data["deaths"],
                     ),
-                    truncate(user.display_name, max=10),
+                    truncate(user.display_name, max=15),
                 ]
             )
         description = box(table.get_string(), lang="sml")
