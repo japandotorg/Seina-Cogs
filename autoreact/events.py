@@ -36,6 +36,8 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
     async def on_message(self, message: discord.Message) -> None:
         if message.guild is None:
             return
+        if not isinstance(message.author, discord.Member):
+            return
         if not message.channel.permissions_for(message.guild.me).add_reactions:
             return
         if await self.bot.cog_disabled_in_guild(self, message.guild):
