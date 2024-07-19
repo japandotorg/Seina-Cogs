@@ -47,7 +47,7 @@ from redbot.core.utils.views import SimpleMenu
 from .constants import SWORDS
 from .converters import EmojiConverter
 from .game import Game
-from .utils import _cooldown, _get_attachments, exceptions, guild_roughly_chunked
+from .utils import _cooldown, _get_attachments, exceptions, guild_roughly_chunked, truncate
 from .views import JoinGameView
 
 log: logging.Logger = logging.getLogger("red.seina.battleroyale")
@@ -533,18 +533,20 @@ class BattleRoyale(commands.Cog):
         leaderboard = leaderboard[:10]
         table = pt.PrettyTable()
         table.title = "Battle Royale Leaderboard"
-        table.field_names = ["#", "User", "Wins", "Games", "Kills", "Deaths"]
+        table.field_names = ["#", "Games / Wins / Kills / Deaths", "User"]
         for index, (user_id, user_data) in enumerate(leaderboard, start=1):
             if (user := ctx.bot.get_user(int(user_id))) is None:
                 continue
             table.add_row(
                 row=[
                     index,
-                    user.display_name,
-                    user_data["wins"],
-                    user_data["games"],
-                    user_data["kills"],
-                    user_data["deaths"],
+                    "{} / {} / {} / {}".format(
+                        user_data["games"],
+                        user_data["wins"],
+                        user_data["kills"],
+                        user_data["deaths"],
+                    ),
+                    truncate(user.display_name, max=10),
                 ]
             )
         description = box(table.get_string(), lang="sml")

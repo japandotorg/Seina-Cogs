@@ -98,3 +98,10 @@ def _cooldown(ctx: commands.Context) -> Optional[commands.Cooldown]:
 
 def guild_roughly_chunked(guild: discord.Guild) -> bool:
     return len(guild.members) / guild.member_count > 0.9
+
+
+def truncate(text: str, *, max: int) -> str:
+    if len(text) <= max:
+        return text
+    truncated: str = text[: max - 3]
+    return truncated + "..."
