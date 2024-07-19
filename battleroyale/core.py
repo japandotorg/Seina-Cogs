@@ -530,7 +530,6 @@ class BattleRoyale(commands.Cog):
         if not data:
             return await ctx.send("No one has played yet.")
         leaderboard = sorted(data.items(), key=lambda x: x[1][sort_by], reverse=True)
-        leaderboard = leaderboard[:10]
         table = pt.PrettyTable()
         table.title = "Battle Royale Leaderboard"
         table.field_names = ["#", "Games / Wins / Kills / Deaths", "User"]
