@@ -32,7 +32,7 @@ from contextlib import suppress
 from io import BytesIO
 from pathlib import Path
 from types import ModuleType
-from typing import Any, Dict, Final, List, Literal, Optional, Union
+from typing import Any, Dict, Final, List, Literal, Optional, Union, cast
 
 import aiohttp
 import discord
@@ -534,7 +534,7 @@ class BattleRoyale(commands.Cog):
         table.title = "Battle Royale Leaderboard"
         table.field_names = ["#", "Games / Wins / Kills / Deaths", "User"]
         for index, (user_id, user_data) in enumerate(leaderboard, start=1):
-            if (user := ctx.bot.get_user(int(user_id))) is None:
+            if (user := cast(discord.User, ctx.bot.get_user(int(user_id)))) is None:
                 continue
             table.add_row(
                 row=[
@@ -545,7 +545,7 @@ class BattleRoyale(commands.Cog):
                         user_data["kills"],
                         user_data["deaths"],
                     ),
-                    truncate(user.display_name, max=15),
+                    truncate(user.global_name, max=15),
                 ]
             )
         string: str = table.get_string()
