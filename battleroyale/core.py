@@ -44,7 +44,7 @@ from redbot.core.data_manager import bundled_data_path, cog_data_path
 from redbot.core.utils.chat_formatting import box, humanize_list, pagify
 from redbot.core.utils.views import SimpleMenu
 
-from .constants import EXP_MULTIPLIER, MAX_EXP, MIN_EXP, SWORDS
+from .constants import EXP_MULTIPLIER, MAX_EXP, MAX_LEVEL, MIN_EXP, SWORDS
 from .converters import EmojiConverter
 from .game import Game
 from .models._pillow import Canvas, Editor, Font
@@ -143,6 +143,8 @@ class BattleRoyale(commands.Cog):
         config: Dict[str, Union[int, str]] = await self.config.user(user).all()
         _exp: int = cast(int, config["exp"])
         level: int = cast(int, config["level"])
+        if level >= MAX_LEVEL:
+            return
         random_exp: int = random.randint(MIN_EXP, MAX_EXP)
         await self.config.user(user).exp.set(_exp + random_exp)
         max_exp_for_level: int = generate_max_exp_for_level(level, EXP_MULTIPLIER)

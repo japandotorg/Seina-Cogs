@@ -30,7 +30,7 @@ import discord
 from redbot.core import commands
 from typing_extensions import ParamSpec
 
-from .constants import STARTING_EXP
+from .constants import MAX_LEVEL, STARTING_EXP
 
 P = ParamSpec("P")
 
@@ -54,6 +54,8 @@ def generate_max_exp_for_level(level: int, increase: int, start: int = STARTING_
 
 
 def maybe_update_level(exp: int, max_exp: int, level: int) -> int:
+    if level >= MAX_LEVEL:
+        return level
     if exp >= max_exp:
         level += 1
     return level

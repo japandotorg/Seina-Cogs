@@ -27,12 +27,18 @@ from typing import Final, List, Tuple
 import discord
 
 __all__: Tuple[str, ...] = (
+    "MAX_LEVEL",
+    "MIN_EXP",
+    "MAX_EXP",
     "EXP_MULTIPLIER",
     "STARTING_EXP",
     "SWORDS",
     "PROMPTS",
     "WINNER_PROMPTS",
 )
+
+
+MAX_LEVEL: Final[int] = 100
 
 
 MIN_EXP: Final[int] = 10
