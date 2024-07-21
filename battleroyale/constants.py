@@ -40,7 +40,7 @@ MAX_EXP: Final[int] = 100
 
 
 EXP_MULTIPLIER: Final[int] = 30
-STARTING_EXP: Final[int] = 10_000
+STARTING_EXP: Final[int] = 10_00
 
 
 SWORDS: Final[str] = "https://cdn.discordapp.com/emojis/1123588896136106074.webp"
