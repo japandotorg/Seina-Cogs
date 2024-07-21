@@ -227,6 +227,7 @@ class BattleRoyale(commands.Cog):
     async def generate_profile(
         self, user: discord.Member, *, to_file: bool = True
     ) -> Union[Editor, discord.File]:
+        await self.add_exp_and_maybe_update_level(user)
         config: Dict[str, Union[str, int]] = await self.config.user(user).all()
         background: Editor = Editor(Canvas((800, 240), color="#2F3136"))
         profile: Editor = Editor(BytesIO(await user.display_avatar.read())).resize((200, 200))
