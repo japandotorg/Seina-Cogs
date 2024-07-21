@@ -24,13 +24,12 @@ SOFTWARE.
 
 # much of this code has been taken from https://github.com/shahriyardx/easy-pil/tree/master
 
+import io
 from io import BytesIO
 from pathlib import Path
-import io
 from typing import Any, Dict, Literal, Optional, Tuple, Union
 
-from PIL import Image, ImageFont, ImageDraw, _typing
-
+from PIL import Image, ImageDraw, ImageFont, _typing
 
 Color = Union[int, str, Tuple[int, int, int], Tuple[int, int, int, int]]
 

@@ -44,21 +44,21 @@ from redbot.core.data_manager import bundled_data_path, cog_data_path
 from redbot.core.utils.chat_formatting import box, humanize_list, humanize_number, pagify
 from redbot.core.utils.views import SimpleMenu
 
-from .game import Game
-from .views import JoinGameView
+from .constants import EXP_MULTIPLIER, MAX_EXP, MIN_EXP, SWORDS
 from .converters import EmojiConverter
-from .constants import SWORDS, EXP_MULTIPLIER, MIN_EXP, MAX_EXP
+from .game import Game
 from .models._pillow import Canvas, Editor, Font
 from .utils import (
     _cooldown,
     _get_attachments,
-    get_exp_percentage,
     exceptions,
-    guild_roughly_chunked,
-    truncate,
     generate_max_exp_for_level,
+    get_exp_percentage,
+    guild_roughly_chunked,
     maybe_update_level,
+    truncate,
 )
+from .views import JoinGameView
 
 log: logging.Logger = logging.getLogger("red.seina.battleroyale")
 
