@@ -39,7 +39,7 @@ MIN_EXP: Final[int] = 10
 MAX_EXP: Final[int] = 100
 
 
-EXP_MULTIPLIER: Final[int] = 30
+EXP_MULTIPLIER: Final[int] = 15
 STARTING_EXP: Final[int] = 10_00
 
 
