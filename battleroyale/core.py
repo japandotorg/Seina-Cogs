@@ -148,6 +148,7 @@ class BattleRoyale(commands.Cog):
         max_exp_for_level: int = generate_max_exp_for_level(level, EXP_MULTIPLIER)
         if (new_level := maybe_update_level(_exp + random_exp, max_exp_for_level, level)) > level:
             await self.config.user(user).level.set(new_level)
+            await self.config.user(user).exp.clear()
 
     async def cog_load(self) -> None:
         self._cooldown: int = await self.config.cooldown()
