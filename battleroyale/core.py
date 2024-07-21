@@ -238,14 +238,14 @@ class BattleRoyale(commands.Cog):
         background.text((240, 20), user.global_name, font=f40, color="white")
         background.text((240, 80), config["bio"], font=f20, color="white")
         background.text((250, 170), "Wins", font=f25, color="white")
-        background.text((310, 155), config["wins"], font=f40, color="white")
+        background.text((310, 155), str(config["wins"]), font=f40, color="white")
         background.rectangle((390, 170), 360, 25, outline="white", stroke_width=2)
         max_exp: int = generate_max_exp_for_level(config["level"], EXP_MULTIPLIER)
         background.bar(
             (394, 174),
             352,
             17,
-            percentage=get_exp_percentage(config["exp"], max_exp),
+            percentage=str(get_exp_percentage(config["exp"], max_exp)),
             fill="white",
             stroke_width=2,
         )
@@ -575,15 +575,16 @@ class BattleRoyale(commands.Cog):
         - Use the `[p]br profile bio <message>` command to change the bio.
         """
         if not ctx.invoked_subcommand:
-            user = user or cast(discord.Member, ctx.author)
-            file: Coroutine[Any, Any, discord.File] = await asyncio.to_thread(
-                self.generate_profile, user=user
-            )
-            await ctx.send(
-                files=[await file],
-                reference=ctx.message.to_reference(fail_if_not_exists=False),
-                allowed_mentions=discord.AllowedMentions(replied_user=False),
-            )
+            async with ctx.typing():
+                user = user or cast(discord.Member, ctx.author)
+                file: Coroutine[Any, Any, discord.File] = await asyncio.to_thread(
+                    self.generate_profile, user=user
+                )
+                await ctx.send(
+                    files=[await file],
+                    reference=ctx.message.to_reference(fail_if_not_exists=False),
+                    allowed_mentions=discord.AllowedMentions(replied_user=False),
+                )
 
     @profile.command(name="bio", aliases=["setbio", "bioset"])
     async def bio(self, ctx: commands.GuildContext, *, message: commands.Range[str, 1, 25]):
