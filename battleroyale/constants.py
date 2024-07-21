@@ -22,11 +22,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Final, List
+from typing import Final, List, Tuple
 
 import discord
 
-__all__ = ("SWORDS", "PROMPTS", "WINNER_PROMPTS")
+__all__: Tuple[str, ...] = (
+    "EXP_MULTIPLIER",
+    "STARTING_EXP",
+    "SWORDS",
+    "PROMPTS",
+    "WINNER_PROMPTS",
+)
+
+
+MIN_EXP: Final[int] = 10
+MAX_EXP: Final[int] = 100
+
+
+EXP_MULTIPLIER: Final[int] = 30
+STARTING_EXP: Final[int] = 10_000
 
 
 SWORDS: Final[str] = "https://cdn.discordapp.com/emojis/1123588896136106074.webp"
@@ -102,7 +116,7 @@ PROMPTS: List[str] = [
     "{emoji} | {killer} brought about the demise of {killed} with precision.",
     "{emoji} | {killer} enacted a deadly scheme that ended {killed}'s life.",
     "{emoji} | {killed}'s life was claimed by the cold grip of {killer}",
-    "{emoji} | {killer} sent {killer} to their eternal rest.",
+    "{emoji} | {killer} sent {killed} to their eternal rest.",
     "{emoji} | {killer} left no trace of {killed}'s existence.",
     "{emoji} | {killed} met a horrifying end at the hands of {killer}.",
     "{emoji} | {killer} unleashed unspeakable terror upon {killed}.",

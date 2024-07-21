@@ -32,7 +32,7 @@ from contextlib import suppress
 from io import BytesIO
 from pathlib import Path
 from types import ModuleType
-from typing import Any, Dict, Final, List, Literal, Optional, Union, cast
+from typing import Any, Coroutine, Dict, Final, List, Literal, Optional, Tuple, Union, cast
 
 import aiohttp
 import discord
@@ -41,14 +41,24 @@ from PIL import Image, UnidentifiedImageError
 from redbot.core import Config, bank, commands
 from redbot.core.bot import Red
 from redbot.core.data_manager import bundled_data_path, cog_data_path
-from redbot.core.utils.chat_formatting import box, humanize_list, pagify
+from redbot.core.utils.chat_formatting import box, humanize_list, humanize_number, pagify
 from redbot.core.utils.views import SimpleMenu
 
-from .constants import SWORDS
-from .converters import EmojiConverter
 from .game import Game
-from .utils import _cooldown, _get_attachments, exceptions, guild_roughly_chunked, truncate
 from .views import JoinGameView
+from .converters import EmojiConverter
+from .constants import SWORDS, EXP_MULTIPLIER, MIN_EXP, MAX_EXP
+from .models._pillow import Canvas, Editor, Font
+from .utils import (
+    _cooldown,
+    _get_attachments,
+    get_exp_percentage,
+    exceptions,
+    guild_roughly_chunked,
+    truncate,
+    generate_max_exp_for_level,
+    maybe_update_level,
+)
 
 log: logging.Logger = logging.getLogger("red.seina.battleroyale")
 
@@ -70,52 +80,53 @@ class BattleRoyale(commands.Cog):
 
         self.games: Dict[discord.Message, Game] = {}
 
+        self.font_path: Path = bundled_data_path(self) / "fonts" / "ACME.ttf"
         self.backgrounds_path: Path = bundled_data_path(self) / "backgrounds"
         self.custom_backgrounds_path: Path = cog_data_path(self) / "backgrounds"
-        self.config: Config = Config.get_conf(self, identifier=14, force_registration=True)
 
         self.log: logging.LoggerAdapter[logging.Logger] = logging.LoggerAdapter(
             log, {"version": self.__version__}
         )
 
-        default_user: Dict[str, int] = {
+        self.config: Config = Config.get_conf(self, identifier=14, force_registration=True)
+        default_user: Dict[str, Union[int, str]] = {
             "games": 0,
             "wins": 0,
             "kills": 0,
             "deaths": 0,
+            "exp": 0,
+            "level": 1,
+            "bio": "I'm just a plain human.",
         }
-        default_guild: Dict[str, int] = {
-            "prize": 100,
-        }
+        default_guild: Dict[str, int] = {"prize": 100}
         default_global: Dict[str, Union[int, str, Dict[str, int]]] = {
             "wait": 120,
             "battle_emoji": "⚔️",
             "cooldown": 60,
         }
-
         self.config.register_user(**default_user)
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
 
         self.cache: Dict[str, Image.Image] = {}
 
-        self._cooldown: Optional[int] = None
+        self._cooldown: Optional[int] = None  # type: ignore
 
         for k, v in {"br": (lambda x: self), "brgame": game_tool}.items():
             with suppress(RuntimeError):
                 self.bot.add_dev_env_value(k, v)
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
-        pre_processed = super().format_help_for_context(ctx) or ""
-        n = "\n" if "\n\n" not in pre_processed else ""
-        text = [
+        pre_processed: str = super().format_help_for_context(ctx) or ""
+        n: str = "\n" if "\n\n" not in pre_processed else ""
+        text: List[str] = [
             f"{pre_processed}{n}",
             f"Cog Version: **{self.__version__}**",
             f"Author: **{self.__author__}**",
         ]
         return "\n".join(text)
 
-    async def red_delete_data_for_user(self, **kwargs: Any):
+    async def red_delete_data_for_user(self, **kwargs: Any) -> None:
         """Nothing to delete."""
         return
 
@@ -126,7 +137,17 @@ class BattleRoyale(commands.Cog):
     ) -> None:
         for user in users:
             count = await self.config.user(user).get_raw(_type)
-            await self.config.user(user).set_raw(_type, value=count + 1)
+            await self.config.user(user).set_raw(_type, value=int(count) + 1)
+
+    async def add_exp_and_maybe_update_level(self, user: discord.User) -> None:
+        config: Dict[str, Union[int, str]] = await self.config.user(user).all()
+        _exp: int = cast(int, config["exp"])
+        level: int = cast(int, config["level"])
+        random_exp: int = random.randint(MIN_EXP, MAX_EXP)
+        await self.config.user(user).exp.set(_exp + random_exp)
+        max_exp_for_level: int = generate_max_exp_for_level(level, EXP_MULTIPLIER)
+        if (new_level := maybe_update_level(_exp + random_exp, max_exp_for_level, level)) > level:
+            await self.config.user(user).level.set(new_level)
 
     async def cog_load(self) -> None:
         self._cooldown: int = await self.config.cooldown()
@@ -135,7 +156,7 @@ class BattleRoyale(commands.Cog):
     async def generate_image(
         self, user_1: discord.Member, user_2: discord.Member, to_file: bool = True
     ) -> Union[discord.File, Image.Image]:
-        backgrounds = [
+        backgrounds: List[Path] = [
             self.backgrounds_path / background for background in os.listdir(self.backgrounds_path)
         ]
         if self.custom_backgrounds_path.exists():
@@ -146,24 +167,26 @@ class BattleRoyale(commands.Cog):
                 ]
             )
         while True:
-            background = random.choice(backgrounds)
+            background: Path = random.choice(backgrounds)
             with open(background, mode="rb") as f:
                 background_bytes = f.read()
             try:
-                img = Image.open(BytesIO(background_bytes))
+                img: Image.Image = Image.open(BytesIO(background_bytes))
             except UnidentifiedImageError:
                 continue
             else:
                 break
-        img = img.convert("RGBA")
-        avatar_1 = Image.open(BytesIO(await user_1.display_avatar.read()))
-        avatar_1 = avatar_1.resize((400, 400))
+        img: Image.Image = img.convert("RGBA")
+        avatar_1: Image.Image = Image.open(BytesIO(await user_1.display_avatar.read()))
+        avatar_1: Image.Image = avatar_1.resize((400, 400))
         img.paste(
             avatar_1,
             ((0 + 30), (int(img.height / 2) - 200), (0 + 30 + 400), (int(img.height / 2) + 200)),
         )
-        avatar_2 = Image.open(BytesIO(await user_2.display_avatar.read()))
-        avatar_2 = avatar_2.resize((400, 400))
+        avatar_2: Image.Image = Image.open(BytesIO(await user_2.display_avatar.read())).convert(
+            "L"
+        )
+        avatar_2: Image.Image = avatar_2.resize((400, 400))
         img.paste(
             avatar_2,
             (
@@ -173,15 +196,15 @@ class BattleRoyale(commands.Cog):
                 (int(img.height / 2) + 200),
             ),
         )
-        swords_bytes = await self._get_content_from_url(SWORDS)
-        swords = Image.open(BytesIO(swords_bytes))
-        swords = swords.convert("RGBA")
+        swords_bytes: Image.Image = await self._get_content_from_url(SWORDS)
+        swords: Image.Image = Image.open(BytesIO(swords_bytes))
+        swords: Image.Image = swords.convert("RGBA")
         for i in range(swords.width):
             for j in range(swords.height):
-                r, g, b, a = swords.getpixel((i, j))
+                r, g, b, a = cast(Tuple[float, ...], swords.getpixel((i, j)))
                 if r == 0 and g == 0 and b == 0:
                     swords.putpixel((i, j), (r, g, b, 0))
-        swords = swords.resize((300, 300))
+        swords: Image.Image = swords.resize((300, 300))
         img.paste(
             swords,
             (
@@ -194,10 +217,56 @@ class BattleRoyale(commands.Cog):
         )
         if not to_file:
             return img
-        buffer = BytesIO()
+        buffer: BytesIO = BytesIO()
         img.save(buffer, format="PNG", optimize=True)
         buffer.seek(0)
         return discord.File(buffer, filename="image.png")
+
+    @exceptions
+    async def generate_profile(
+        self, user: discord.Member, *, to_file: bool = True
+    ) -> Union[Editor, discord.File]:
+        config: Dict[str, Union[str, int]] = await self.config.user(user).all()
+        background: Editor = Editor(Canvas((800, 240), color="#2F3136"))
+        profile: Editor = Editor(BytesIO(await user.display_avatar.read())).resize((200, 200))
+        f40, f25, f20 = (
+            Font(self.font_path, size=40),
+            Font(self.font_path, size=25),
+            Font(self.font_path, size=20),
+        )
+        background.paste(profile, (20, 20))
+        background.text((240, 20), user.global_name, font=f40, color="white")
+        background.text((240, 80), config["bio"], font=f20, color="white")
+        background.text((250, 170), "Wins", font=f25, color="white")
+        background.text((310, 155), config["wins"], font=f40, color="white")
+        background.rectangle((390, 170), 360, 25, outline="white", stroke_width=2)
+        max_exp: int = generate_max_exp_for_level(config["level"], EXP_MULTIPLIER)
+        background.bar(
+            (394, 174),
+            352,
+            17,
+            percentage=get_exp_percentage(config["exp"], max_exp),
+            fill="white",
+            stroke_width=2,
+        )
+        background.text(
+            (390, 135),
+            "Level: {}".format(humanize_number(cast(int, config["level"]))),
+            font=f25,
+            color="white",
+        )
+        background.text(
+            (750, 135),
+            "XP: {} / {}".format(
+                humanize_number(cast(int, config["exp"])), humanize_number(max_exp)
+            ),
+            font=f25,
+            color="white",
+            align="right",
+        )
+        if not to_file:
+            return background
+        return discord.File(background.image_bytes, filename="profile.png")
 
     async def _get_content_from_url(self, url: str) -> Image.Image:
         if url in self.cache:
@@ -368,7 +437,10 @@ class BattleRoyale(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     @commands.group(aliases=["br"], invoke_without_command=True)
     async def battleroyale(
-        self, ctx: commands.Context, delay: commands.Range[int, 10, 20] = 10, skip: bool = False
+        self,
+        ctx: commands.GuildContext,
+        delay: commands.Range[int, 10, 20] = 10,
+        skip: bool = False,
     ):
         """
         Battle Royale with other members!
@@ -398,7 +470,7 @@ class BattleRoyale(commands.Cog):
             embed.description = (
                 f"Not enough players to start. (need at least 3, {len(players)} found)."
             )
-            self.battleroyale.reset_cooldown(ctx)
+            cast(commands.Command, self.battleroyale).reset_cooldown(ctx)
             with contextlib.suppress(discord.NotFound, discord.HTTPException):
                 return await join_view._message.edit(embed=embed, view=None)
 
@@ -406,10 +478,10 @@ class BattleRoyale(commands.Cog):
         self.games[join_view._message] = game
         await game.start(ctx, players=players, original_message=join_view._message)
 
-    @battleroyale.command()
+    @cast(commands.Group, battleroyale).command()
     async def auto(
         self,
-        ctx: commands.Context,
+        ctx: commands.GuildContext,
         players: commands.Range[int, 10, 100] = 30,
         delay: commands.Range[int, 10, 20] = 10,
         skip: bool = False,
@@ -442,10 +514,10 @@ class BattleRoyale(commands.Cog):
         self.games[message] = game
         await game.start(ctx, players=players, original_message=message)
 
-    @battleroyale.command()
+    @cast(commands.Group, battleroyale).command()
     async def role(
         self,
-        ctx: commands.Context,
+        ctx: commands.GuildContext,
         role: discord.Role,
         delay: commands.Range[int, 10, 20] = 10,
         skip: bool = False,
@@ -493,33 +565,37 @@ class BattleRoyale(commands.Cog):
         self.games[message] = game
         await game.start(ctx, players=players, original_message=message)
 
-    @battleroyale.command(name="profile", aliases=["stats"])
-    async def profile(self, ctx: commands.Context, *, user: Optional[discord.Member] = None):
+    @cast(commands.Group, battleroyale).group(
+        name="profile", aliases=["stats"], invoke_without_command=True
+    )
+    async def profile(self, ctx: commands.GuildContext, *, user: Optional[discord.Member] = None):
         """
         Show your battle royale profile.
-        """
-        user = user or ctx.author
-        data = await self.config.user(user).all()
-        embed: discord.Embed = discord.Embed(
-            title=f"{user.display_name}'s Profile",
-            description=(
-                box(
-                    (
-                        f"Games  : {data['games']} \n"
-                        f"Wins   : {data['wins']} \n"
-                        f"Kills  : {data['kills']} \n"
-                        f"Deaths : {data['deaths']} \n"
-                    ),
-                    lang="prolog",
-                )
-            ),
-            color=await ctx.embed_color(),
-        )
-        await ctx.send(embed=embed)
 
-    @battleroyale.command(name="leaderboard", aliases=["lb"])
+        - Use the `[p]br profile bio <message>` command to change the bio.
+        """
+        if not ctx.invoked_subcommand:
+            user = user or cast(discord.Member, ctx.author)
+            file: Coroutine[Any, Any, discord.File] = await asyncio.to_thread(
+                self.generate_profile, user=user
+            )
+            await ctx.send(
+                files=[await file],
+                reference=ctx.message.to_reference(fail_if_not_exists=False),
+                allowed_mentions=discord.AllowedMentions(replied_user=False),
+            )
+
+    @profile.command(name="bio", aliases=["setbio", "bioset"])
+    async def bio(self, ctx: commands.GuildContext, *, message: commands.Range[str, 1, 25]):
+        """
+        Change your default bio.
+        """
+        await self.config.user(ctx.author).bio.set(message)
+        await ctx.send("Bio changed to '{}'.".format(message))
+
+    @cast(commands.Group, battleroyale).command(name="leaderboard", aliases=["lb"])
     async def _leaderboard(
-        self, ctx: commands.Context, sort_by: Literal["wins", "games", "kills"] = "wins"
+        self, ctx: commands.GuildContext, sort_by: Literal["wins", "games", "kills"] = "wins"
     ):
         """Show the leaderboard.
 

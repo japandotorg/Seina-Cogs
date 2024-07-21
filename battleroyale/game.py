@@ -26,7 +26,7 @@ import asyncio
 import random
 import time
 from collections import Counter
-from typing import List, Optional, Protocol, TypeVar
+from typing import TYPE_CHECKING, Any, Coroutine, List, Optional, Protocol, TypeVar
 
 import discord
 from redbot.core import bank, commands
@@ -36,6 +36,10 @@ from redbot.core.utils.chat_formatting import humanize_list, pagify
 from .constants import EMOJIS, PROMPTS, WINNER_PROMPTS
 from .utils import exceptions
 from .views import RemainingPlayerView
+
+if TYPE_CHECKING:
+    from .core import BattleRoyale
+
 
 T = TypeVar("T", covariant=True)
 
@@ -57,16 +61,16 @@ class GameBase(Protocol[T]):
 
 
 class Game(GameBase):
-    def __init__(self, cog: commands.Cog, delay: int = 10, skip: bool = False) -> None:
-        self.cog: commands.Cog = cog
-        self.ctx: commands.Context = None
+    def __init__(self, cog: "BattleRoyale", delay: int = 10, skip: bool = False) -> None:
+        self.cog: "BattleRoyale" = cog
+        self.ctx: commands.Context = None  # type: ignore
 
         self.delay: int = delay
         self.skip: bool = skip
 
         self.players: List[discord.Member] = []
         self.messages: List[discord.Message] = []
-        self.original_message: discord.Message = None
+        self.original_message: discord.Message = None  # type: ignore
 
     @exceptions
     async def start(
@@ -106,7 +110,6 @@ class Game(GameBase):
             self.messages.append(original_message)
             self.original_message: discord.Message = await self.ctx.send(embed=embed)
         await self.cog.add_stats_to_leaderboard("games", users=self.players)
-
         places: List[discord.Member] = []
         kills: Counter = Counter()
         prompts = ""
@@ -120,7 +123,6 @@ class Game(GameBase):
                 places.insert(0, killed)
                 await self.cog.add_stats_to_leaderboard("kills", users=[killer])
                 await self.cog.add_stats_to_leaderboard("deaths", users=[killed])
-
                 if not self.skip:
                     custom_emoji: Optional[discord.Emoji] = self.ctx.bot.get_emoji(
                         1163151336024588368
@@ -133,8 +135,8 @@ class Game(GameBase):
                     )
                     if len(self.players) <= 30 or len(self.remaining_players) <= 2 or i >= 2:
                         start = time.time()
-                        image: discord.File = await self.cog.generate_image(
-                            user_1=killer, user_2=killed, to_file=True
+                        image: Coroutine[Any, Any, discord.File] = await asyncio.to_thread(
+                            self.cog.generate_image, user_1=killer, user_2=killed, to_file=True
                         )
                         end = time.time()
                         delay = self.delay - (end - start)
@@ -153,12 +155,14 @@ class Game(GameBase):
                         )
                         if EDIT_ORIGINAL_MESSAGE:
                             _message = await self.original_message.edit(
-                                embed=embed, attachments=[image], view=_view
+                                embed=embed, attachments=[await image], view=_view
                             )
                             _view._message = _message
 
                         else:
-                            _message = await self.ctx.send(embed=embed, files=[image], view=_view)
+                            _message = await self.ctx.send(
+                                embed=embed, files=[await image], view=_view
+                            )
                             _view._message = _message
                         prompts = ""
                         i = 0
@@ -193,4 +197,5 @@ class Game(GameBase):
         else:
             await self.ctx.send(embed=embed)
         await self.cog.add_stats_to_leaderboard("wins", users=[winner])
+        await self.cog.add_exp_and_maybe_update_level(winner)
         return winner
