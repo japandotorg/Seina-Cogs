@@ -245,7 +245,7 @@ class BattleRoyale(commands.Cog):
             (394, 174),
             352,
             17,
-            percentage=str(get_exp_percentage(config["exp"], max_exp)),
+            percentage=get_exp_percentage(config["exp"], max_exp),
             fill="white",
             stroke_width=2,
         )
