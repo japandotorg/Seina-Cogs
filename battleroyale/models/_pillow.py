@@ -112,9 +112,7 @@ class Editor:
     def show(self) -> None:
         self.image.show()
 
-    def save(
-        self, fp: StrOrBytesPath, file_format: Optional[str] = None, **params: Any
-    ) -> None:
+    def save(self, fp: StrOrBytesPath, file_format: Optional[str] = None, **params: Any) -> None:
         self.image.save(fp, file_format, **params)
 
     def resize(self, size: Tuple[int, int], crop: bool = False) -> "Editor":
