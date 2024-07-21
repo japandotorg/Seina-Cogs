@@ -24,14 +24,16 @@ SOFTWARE.
 
 # much of this code has been taken from https://github.com/shahriyardx/easy-pil/tree/master
 
-import io
 from io import BytesIO
+from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Literal, Optional, Tuple, Union
 
-from PIL import Image, ImageDraw, ImageFont, _typing
+from PIL import Image, ImageDraw, ImageFont
 
 Color = Union[int, str, Tuple[int, int, int], Tuple[int, int, int, int]]
+
+StrOrBytesPath = Union[str, bytes, PathLike[str], PathLike[bytes]]
 
 
 class Font:
@@ -101,8 +103,8 @@ class Editor:
         self.image: Image.Image = self.image.convert("RGBA")
 
     @property
-    def image_bytes(self) -> io.BytesIO:
-        _bytes: io.BytesIO = io.BytesIO()
+    def image_bytes(self) -> BytesIO:
+        _bytes: BytesIO = BytesIO()
         self.image.save(_bytes, "png", optimize=True)
         _bytes.seek(0)
         return _bytes
@@ -111,7 +113,7 @@ class Editor:
         self.image.show()
 
     def save(
-        self, fp: _typing.StrOrBytesPath, file_format: Optional[str] = None, **params: Any
+        self, fp: StrOrBytesPath, file_format: Optional[str] = None, **params: Any
     ) -> None:
         self.image.save(fp, file_format, **params)
 
