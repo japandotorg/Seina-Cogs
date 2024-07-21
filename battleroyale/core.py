@@ -258,7 +258,7 @@ class BattleRoyale(commands.Cog):
         )
         background.text(
             (750, 135),
-            "XP: {:,} / {}".format(config["exp"], max_exp),
+            "XP: {:,} / {:,}".format(config["exp"], max_exp),
             font=f25,
             color="white",
             align="right",
