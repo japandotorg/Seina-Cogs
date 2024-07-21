@@ -41,7 +41,7 @@ from PIL import Image, UnidentifiedImageError
 from redbot.core import Config, bank, commands
 from redbot.core.bot import Red
 from redbot.core.data_manager import bundled_data_path, cog_data_path
-from redbot.core.utils.chat_formatting import box, humanize_list, humanize_number, pagify
+from redbot.core.utils.chat_formatting import box, humanize_list, pagify
 from redbot.core.utils.views import SimpleMenu
 
 from .constants import EXP_MULTIPLIER, MAX_EXP, MIN_EXP, SWORDS
@@ -252,15 +252,13 @@ class BattleRoyale(commands.Cog):
         )
         background.text(
             (390, 135),
-            "Level: {}".format(humanize_number(cast(int, config["level"]))),
+            "Level: {:,}".format(config["level"]),
             font=f25,
             color="white",
         )
         background.text(
             (750, 135),
-            "XP: {} / {}".format(
-                humanize_number(cast(int, config["exp"])), humanize_number(max_exp)
-            ),
+            "XP: {:,} / {}".format(config["exp"], max_exp),
             font=f25,
             color="white",
             align="right",
