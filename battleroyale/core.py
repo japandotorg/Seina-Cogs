@@ -480,7 +480,7 @@ class BattleRoyale(commands.Cog):
         self.games[join_view._message] = game
         await game.start(ctx, players=players, original_message=join_view._message)
 
-    @cast(commands.Group, battleroyale).command()  # noqa: E501
+    @cast(commands.Group, battleroyale).command()  # noqa: E999
     async def auto(
         self,
         ctx: commands.GuildContext,
@@ -516,7 +516,7 @@ class BattleRoyale(commands.Cog):
         self.games[message] = game
         await game.start(ctx, players=players, original_message=message)
 
-    @cast(commands.Group, battleroyale).command()  # noqa: E501
+    @cast(commands.Group, battleroyale).command()  # noqa: E999
     async def role(
         self,
         ctx: commands.GuildContext,
@@ -567,7 +567,7 @@ class BattleRoyale(commands.Cog):
         self.games[message] = game
         await game.start(ctx, players=players, original_message=message)
 
-    @cast(commands.Group, battleroyale).group(  # noqa: E501
+    @cast(commands.Group, battleroyale).group(  # noqa: E999
         name="profile", aliases=["stats"], invoke_without_command=True
     )
     async def profile(self, ctx: commands.GuildContext, *, user: Optional[discord.Member] = None):
