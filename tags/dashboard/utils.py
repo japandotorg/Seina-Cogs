@@ -9,13 +9,9 @@ from ..objects import Tag
 
 
 def dashboard_page(*args: Any, **kwargs: Any) -> Callable[[Any], Any]:
-    def decorator(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
-        @functools.wraps(func)
-        def wrapper(*f_args: Any, **f_Kwargs: Any) -> Any:
-            return func(*f_args, **f_Kwargs)
-
-        wrapper.__dashboard_decorator_params__ = (args, kwargs)
-        return wrapper
+    def decorator(func: Callable) -> Callable[[Any], Any]:
+        func.__dashboard_decorator_params__ = (args, kwargs)
+        return func
 
     return decorator
 
