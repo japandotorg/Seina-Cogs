@@ -55,7 +55,7 @@ class DashboardMixin(MixinMeta):
             )
 
         class TagsForm(kwargs["Form"]):
-            tags: wtforms.FieldList[wtforms.FormField[TagForm]] = wtforms.FieldList(
+            tags: wtforms.FieldList = wtforms.FieldList(
                 wtforms.FormField(TagForm)
             )
             submit: wtforms.SubmitField = wtforms.SubmitField("Save Modifications")
