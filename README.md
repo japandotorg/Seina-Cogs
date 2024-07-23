@@ -43,7 +43,7 @@ Lemon's [Approved Cogs](https://cogboard.discord.red/t/approved-seina-cogs/1199)
 |-------------|------------------|----------------------------------------------------------------------------------------------------------------------------------|
 | AFK         | 0.1.1            | <details>Away From Keyboard<summary>A cog for being afk and responding when idiots ping you</summary></details>                  |
 | Info        | 0.1.0            | <details>Extended info commands.</details><summary>Extended info commands such as userinfo.</summary>                            |
-| Tags        | 2.7.8            | <details>Create and use Tags<summary>Create and use custom commands with tagscript</summary></details>                           |
+| Tags        | 2.7.9            | <details>Create and use Tags<summary>Create and use custom commands with tagscript</summary></details>                           |
 | SeinaTools  | 0.1.4            | <details><summary>My tools for Red-DiscordBot</summary>Some cool utility tools for Red-DiscordBot</details>                      |
 | BattleRoyale| 0.1.2            | <details><summary>Play battle royale</summary>Play battle royale with your friends or join automated matches</details>           |
 | PersonalChannels | 0.1.1       | <details><summary>Personal channel for members</summary>Personal channel for members</details>                                   |
