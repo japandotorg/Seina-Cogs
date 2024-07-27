@@ -384,9 +384,10 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         embed: discord.Embed = discord.Embed(
             title="ThreadOpener Settings",
             description=(
-                f"ThreadOpener is currently "
-                f"**{'enabled' if data['toggle'] else 'disabled'}**.\n"
-                f"Threads created using ThreadOpener - {data['counter']}."
+                f"**ThreadOpener** is currently "
+                f"**{'enabled' if data['toggle'] else 'disabled'}**.\n\n"
+                f"**{data['counter']}** {'thread' if len(data['counter']) == 1 else 'threads'} "
+                "created using **ThreadOpener**."
             ),
             color=await ctx.embed_color(),
         )
