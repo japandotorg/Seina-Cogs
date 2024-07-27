@@ -27,10 +27,9 @@ from typing import Any, Dict, Final, List, Optional, final
 import discord
 import TagScriptEngine as tse
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import humanize_number, humanize_list
+from redbot.core.utils.chat_formatting import humanize_list, humanize_number
 
 from .utils import check_for_restricted_attributes
-
 
 default_thread_name: str = "{author(name)}:{counter}"
 thread_message: str = """
