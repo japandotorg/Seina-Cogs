@@ -194,11 +194,11 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             description: str = "\n".join(
                 [
                     (
-                        f"\t- [{idx + 1}] {u.name} (`{u.id}`)"
+                        f"\t- {u.name} (`{u.id}`)"
                         if (u := self.bot.get_user(user))
                         else f"\t- Unknown/Deleted User (`{user}`)"
                     )
-                    for idx, user in enumerate(users)
+                    for user in users
                 ]
             )
             pages: List[str] = list(pagify(description))
@@ -218,11 +218,11 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             description: str = "\n".join(
                 [
                     (
-                        f"\t - [{idx + 1}] {r.name} (`{r.id}`)"
+                        f"\t- {r.name} (`{r.id}`)"
                         if (r := ctx.guild.get_role(role))
                         else f"\t- Unknown/Deleted Role (`{role}`)"
                     )
-                    for idx, role in enumerate(roles)
+                    for role in roles
                 ]
             )
             pages: List[str] = list(pagify(description))
