@@ -386,7 +386,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             description=(
                 f"**ThreadOpener** is currently "
                 f"**{'enabled' if data['toggle'] else 'disabled'}**.\n\n"
-                f"**{data['counter']}** {'thread' if len(data['counter']) == 1 else 'threads'} "
+                f"**{data['counter']}** {'thread' if data['counter'] == 1 else 'threads'} "
                 "created using **ThreadOpener**."
             ),
             color=await ctx.embed_color(),
