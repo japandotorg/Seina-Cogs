@@ -84,6 +84,7 @@ class ThreadOpener(
                 "roles": [],
             },
             "toggle": False,
+            "allow_bots": False,
             "slowmode_delay": None,
             "message_toggle": False,
             "message": thread_message,
@@ -156,10 +157,6 @@ class ThreadOpener(
             return
         if not isinstance(message.author, discord.Member):
             return
-        if message.is_system():
-            return
-        if message.author.bot:
-            return
         if await self.bot.cog_disabled_in_guild(self, message.guild):
             return
         if not isinstance(message.channel, discord.TextChannel):
@@ -172,6 +169,10 @@ class ThreadOpener(
         if self.check_for_role_or_user_blacklist(
             message.author, roles=blacklist["roles"], users=blacklist["users"]
         ):
+            return
+        if config["allow_bots"] and message.is_system():
+            return
+        if config["allow_bots"] and message.author.bot:
             return
         if not cast(bool, config["toggle"]):
             return

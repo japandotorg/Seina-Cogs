@@ -52,6 +52,19 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         await self.config.guild(ctx.guild).toggle.set(true_or_false)
         await ctx.send(f"Thread opener is now {'enabled' if true_or_false else 'disabled'}.")
 
+    @_thread_opener.command(name="allowbots")
+    async def _allow_bots(self, ctx: commands.GuildContext, true_or_false: bool):
+        """
+        Allow/Disallow bots from auto-creating threads using Thread Opener.
+        """
+        await self.config.guild(ctx.guild).allow_bots.set(true_or_false)
+        await ctx.send(
+            f"Thread opener will {'allow' if true_or_false else 'deny'} "
+            "bots from creating threads from now.\n"
+            f"If you wish to ignore certain bots only, you could use the "
+            "blacklist `{ctx.clean_prefix}help threadopener blacklist` instead."
+        )
+
     @_thread_opener.command(name="channels", aliases=["channel"])
     async def _channels(
         self,
