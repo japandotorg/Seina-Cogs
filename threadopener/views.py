@@ -66,7 +66,11 @@ class EditTitleModal(discord.ui.Modal):
 
 class EditThreadTitleButton(discord.ui.Button[ThreadView]):
     def __init__(self) -> None:
-        super().__init__(label="Edit Title", style=discord.ButtonStyle.blurple)
+        super().__init__(
+            label="Edit Title",
+            style=discord.ButtonStyle.blurple,
+            custom_id="threadopener:button:{}".format(self.__class__.__name__),
+        )
 
     async def callback(self, interaction: discord.Interaction[Red]):
         modal: EditTitleModal = EditTitleModal()
@@ -75,7 +79,11 @@ class EditThreadTitleButton(discord.ui.Button[ThreadView]):
 
 class ArchiveThreadButton(discord.ui.Button[ThreadView]):
     def __init__(self) -> None:
-        super().__init__(label="Archive", style=discord.ButtonStyle.green)
+        super().__init__(
+            label="Archive",
+            style=discord.ButtonStyle.green,
+            custom_id="threadopener:button:{}".format(self.__class__.__name__),
+        )
 
     async def callback(self, interaction: discord.Interaction[Red]):
         channel: discord.Thread = cast(discord.Thread, interaction.channel)
@@ -92,7 +100,11 @@ class ArchiveThreadButton(discord.ui.Button[ThreadView]):
 
 class DeleteThreadButton(discord.ui.Button[ThreadView]):
     def __init__(self) -> None:
-        super().__init__(label="Delete", style=discord.ButtonStyle.red)
+        super().__init__(
+            label="Delete",
+            style=discord.ButtonStyle.red,
+            custom_id="threadopener:button:{}".format(self.__class__.__name__),
+        )
 
     async def callback(self, interaction: discord.Interaction[Red]):
         channel: discord.Thread = cast(discord.Thread, interaction.channel)
