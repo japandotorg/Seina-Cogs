@@ -138,7 +138,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             f"{users} {'user' if users == 1 else 'users'}."
         )
 
-    @_thread_opener.command(name="roles", aliases=["role"])
+    @_blacklist.command(name="roles", aliases=["role"])
     async def _blacklist_roles(
         self,
         ctx: commands.GuildContext,
@@ -176,7 +176,7 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
             f"{roles} {'role' if roles == 1 else 'roles'}."
         )
 
-    @_thread_opener.command(name="list")
+    @_blacklist.command(name="list")
     async def _blacklist_list(
         self, ctx: commands.GuildContext, users_or_roles: Literal["users", "roles"] = "users"
     ):
