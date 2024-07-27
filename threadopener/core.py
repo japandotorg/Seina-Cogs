@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import logging
 import contextlib
+import logging
 from typing import Any, Dict, Final, List, Optional, Tuple, Union, cast
 
 import discord
@@ -35,14 +35,14 @@ from redbot.core.utils.chat_formatting import humanize_list, warning
 from ._tagscript import (
     TAGSCRIPT_LIMIT,
     TagCharacterLimitReached,
+    default_thread_name,
     process_tagscript,
     thread_message,
-    default_thread_name,
 )
-from .views import ThreadView
 from .abc import CompositeMetaClass
 from .commands import Commands
 from .cooldown import ThreadCooldown
+from .views import ThreadView
 
 log: logging.Logger = logging.getLogger("red.seina.threadopener")
 
