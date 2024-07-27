@@ -22,14 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Any, Dict, Final, List, final
+from typing import Any, Dict, Final, List, Optional, final
 
 import discord
 import TagScriptEngine as tse
 from redbot.core import commands
-from redbot.core.bot import Red
-from redbot.core.utils.chat_formatting import humanize_number
+from redbot.core.utils.chat_formatting import humanize_number, humanize_list
 
+from .utils import check_for_restricted_attributes
+
+
+default_thread_name: str = "{author(name)}:{counter}"
 thread_message: str = """
 {embed(description):Welcome to the thread.}
 {embed(thumbnail):{member(avatar)}}
@@ -76,10 +79,27 @@ class TagCharacterLimitReached(TagError):
 
 
 @final
-class TagscriptConverter(commands.Converter[str]):
+class TagScriptConverter(commands.Converter[str]):
     async def convert(self, ctx: commands.Context, argument: str) -> str:
         try:
             await ctx.cog.validate_tagscript(argument)  # type: ignore
         except TagError as e:
             raise commands.BadArgument(str(e))
+        return argument
+
+
+class DefaultNameConverter(commands.Converter[str]):
+    async def convert(self, ctx: commands.Context, argument: str) -> str:
+        argument: str = await TagScriptConverter().convert(ctx, argument)
+        if len(argument) <= 0 and len(argument) > 40:
+            raise commands.BadArgument(
+                "Argument must be between 0 and 40 characters long, recieved {} instead.".format(
+                    len(argument)
+                )
+            )
+        denied: Optional[List[str]] = check_for_restricted_attributes(argument)
+        if denied and len(denied) > 0:
+            raise commands.BadArgument(
+                "Using {} is not allowed in this context.".format(humanize_list(denied))
+            )
         return argument

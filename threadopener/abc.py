@@ -25,6 +25,7 @@ SOFTWARE.
 from abc import ABC, ABCMeta, abstractmethod
 from typing import Any
 
+import discord
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 
@@ -39,17 +40,18 @@ class MixinMeta(ABC):
     def __init__(self, *_args: Any) -> None:
         super().__init__()
 
+    @staticmethod
     @abstractmethod
-    def format_help_for_context(self, ctx: commands.Context) -> str:
-        raise NotImplementedError()
+    def format_thread_name(member: discord.Member, *, formatting: str, counter: int) -> str: ...
 
     @abstractmethod
-    async def red_delete_data_for_user(self, **kwargs: Any) -> None:
-        raise NotImplementedError()
+    def format_help_for_context(self, ctx: commands.Context) -> str: ...
 
     @abstractmethod
-    async def validate_tagscript(self, tagscript: str) -> bool:
-        raise NotImplementedError()
+    async def red_delete_data_for_user(self, **kwargs: Any) -> None: ...
+
+    @abstractmethod
+    async def validate_tagscript(self, tagscript: str) -> bool: ...
 
 
 class CompositeMetaClass(commands.CogMeta, ABCMeta):

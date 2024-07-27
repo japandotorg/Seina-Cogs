@@ -23,12 +23,54 @@ SOFTWARE.
 """
 
 from importlib import reload
-from typing import Final
+from typing import Final, List, Optional
 
 from redbot.core.bot import Red
 from redbot.core.errors import CogLoadError
 
 PIP: Final[str] = "pip(3)"
+
+
+RESTRICTED_ATTRIBUTES: Final[List[str]] = [
+    "{member(roleids)}",
+    "{author(roleids)}",
+    "{member(banner)}",
+    "{author(banner)}",
+    "{member(avatar)}",
+    "{author(avatar)}",
+    "{member(boost)}",
+    "{author(boost)}",
+    "{member(color)}",
+    "{author(color)}",
+    "{member(mention)}",
+    "{author(mention)}",
+    "{member(timed_out)}",
+    "{author(timed_out)}",
+    "{member(created_at)}",
+    "{author(created_at)}",
+    "{member(timestamp)}",
+    "{author(timestamp)}",
+    "{member(joined_at)}",
+    "{author(joined_at)}",
+    "{member(joinstamp)}",
+    "{author(joinstamp)}",
+    "{guild(icon)}",
+    "{server(icon)}",
+    "{guild(created_at)}",
+    "{server(created_at)}",
+    "{guild(timestamp)}",
+    "{server(timestamp)}",
+    "{guild(owner_id)}",
+    "{server(owner_id)}",
+    "{guild(description)}",
+    "{server(description)}",
+    "{guild(random)}",
+    "{server(random)}",
+]
+
+
+def check_for_restricted_attributes(string: str) -> Optional[List[str]]:
+    return [attribute for attribute in RESTRICTED_ATTRIBUTES if attribute in string] or None
 
 
 async def validate_tagscriptengine(bot: Red, tse_version: str, *, reloaded: bool = False) -> None:
