@@ -25,7 +25,7 @@
         0
     ],
     "requirements": [
-        "AdvancedTagScriptEngine==3.2.0"
+        "AdvancedTagScriptEngine==3.2.1"
     ],
     "type": "COG"
 }
