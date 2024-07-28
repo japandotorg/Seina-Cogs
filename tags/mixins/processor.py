@@ -352,7 +352,7 @@ class Processor(MixinMeta):
         if blacklist := actions.get("blacklist"):
             to_gather.append(self.validate_blacklist(ctx, blacklist))
         if to_gather:
-            await asyncio.gather(*to_gather)
+            await tse.SequentialGather(*command_tasks)
 
     async def validate_requires(self, ctx: commands.Context, requires: Dict[str, Any]) -> None:
         for argument in requires["items"]:
