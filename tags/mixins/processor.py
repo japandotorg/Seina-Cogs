@@ -207,7 +207,7 @@ class Processor(MixinMeta):
             to_gather.append(self.process_commands(command_messages, silent, reply, overrides))
 
         if to_gather:
-            await tse.SequentialGather(*command_tasks)
+            await tse.SequentialGather(*to_gather)
 
     @staticmethod
     async def send_quietly(
@@ -281,7 +281,7 @@ class Processor(MixinMeta):
             )
             command_tasks.append(command_task)
             await asyncio.sleep(0.1)
-        await asyncio.gather(*command_tasks)
+        await tse.SequentialGather(*command_tasks)
 
     async def process_command(
         self,
@@ -352,7 +352,7 @@ class Processor(MixinMeta):
         if blacklist := actions.get("blacklist"):
             to_gather.append(self.validate_blacklist(ctx, blacklist))
         if to_gather:
-            await tse.SequentialGather(*command_tasks)
+            await tse.SequentialGather(*to_gather)
 
     async def validate_requires(self, ctx: commands.Context, requires: Dict[str, Any]) -> None:
         for argument in requires["items"]:
