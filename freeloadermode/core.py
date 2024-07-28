@@ -304,7 +304,9 @@ class FreeloaderMode(
         audit_reason: str = get_audit_reason(author, reason, shorten=True)  # type: ignore
 
         try:
-            await guild.ban(member, reason=audit_reason)
+            await guild.ban(
+                member, reason=audit_reason, delete_message_days=0, delete_message_seconds=0
+            )
         except (discord.NotFound, discord.Forbidden, discord.HTTPException):
             return
         else:
@@ -372,7 +374,12 @@ class FreeloaderMode(
 
         if action.lower() == "ban":
             try:
-                await guild.ban(member, reason="Member left while freeloader mode was toggled.")
+                await guild.ban(
+                    member,
+                    reason="Member left while freeloader mode was toggled.",
+                    delete_message_days=0,
+                    delete_message_seconds=0,
+                )
             except discord.NotFound:
                 return
             else:
