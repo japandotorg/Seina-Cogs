@@ -13,7 +13,7 @@
     "required_cogs": {},
     "min_python_version": [3, 10, 0],
     "requirements": [
-        "AdvancedTagScriptEngine==3.1.4"
+        "AdvancedTagScriptEngine==3.2.0"
     ],
     "type": "COG"
 }
