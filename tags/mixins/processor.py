@@ -207,7 +207,7 @@ class Processor(MixinMeta):
             to_gather.append(self.process_commands(command_messages, silent, reply, overrides))
 
         if to_gather:
-            await asyncio.gather(*to_gather)
+            await tse.SequentialGather(*command_tasks)
 
     @staticmethod
     async def send_quietly(
