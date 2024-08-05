@@ -23,19 +23,23 @@ SOFTWARE.
 """
 
 import logging
-from collections.abc import Collection
-from typing import Dict, Final, List, Optional, Union, cast
+import datetime
+from collections import abc
+from typing import Dict, Final, List, Optional, Tuple, Union, cast
 
 import discord
-from redbot.core import Config, app_commands, commands
+from redbot.core import commands
 from redbot.core.bot import Red
+from redbot.core.config import Config
+from redbot.core.app_commands import ContextMenu
+from redbot.core.utils.antispam import AntiSpam
 from redbot.core.utils.chat_formatting import humanize_list
 
 from .abc import CompositeMetaClass
 from .cache import Cache
 from .settings import SettingsCommands
 from .utils import SEINA, guild_only_and_has_embed_links
-from .views import CommandView, UIView
+from .views import CommandView, UserInfoView
 
 log: logging.Logger = logging.getLogger("red.seina.info.core")
 
@@ -47,6 +51,11 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
     """
     Custom info commands.
     """
+
+    __INTERVALS: Final[List[Tuple[datetime.timedelta, int]]] = [
+        (datetime.timedelta(seconds=60), 1),
+        (datetime.timedelta(seconds=600), 5),
+    ]
 
     __author__: Final[List[str]] = ["inthedark.org"]
     __version__: Final[str] = "0.1.2"
@@ -61,7 +70,7 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
 
         seina: bool = (
             self.bot.owner_ids is not None
-            and isinstance(self.bot.owner_ids, Collection)
+            and isinstance(self.bot.owner_ids, abc.Collection)
             and SEINA in list(self.bot.owner_ids)
         )
         _defaults: Dict[
@@ -125,8 +134,9 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
         self.config.register_global(**_defaults)
 
         self.cache: Cache = Cache(self)
+        self.__spam: Dict[int, AntiSpam] = {}
 
-        self.user_info_context: app_commands.ContextMenu = app_commands.ContextMenu(
+        self.user_info_context: ContextMenu = ContextMenu(
             name="Get User's Info!", callback=self._user_info_context
         )
         self.user_info_context.add_check(guild_only_and_has_embed_links)
@@ -165,7 +175,9 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
         await self.chunk(ctx.guild)
         async with ctx.typing():
             fetched: discord.User = await self.bot.fetch_user(member.id)
-            view: UIView = UIView(ctx, member, self.cache, (fetched.banner, member.guild_avatar))
+            view: UserInfoView = UserInfoView(
+                ctx, member, self.cache, (fetched.banner, member.guild_avatar)
+            )
             embed: discord.Embed = await view._make_embed()
         _out: discord.Message = await ctx.send(
             embed=embed,
@@ -179,6 +191,7 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
     @commands.has_permissions(embed_links=True)
     @commands.bot_has_permissions(embed_links=True)
     @commands.command(name="userinfo", aliases=["ui"])
+    @commands.cooldown(1, 60, commands.BucketType.user)
     async def _user_info(
         self, ctx: commands.GuildContext, *, member: Optional[discord.Member] = None
     ):
@@ -211,6 +224,14 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
         self, interaction: discord.Interaction[Red], member: discord.Member
     ) -> None:
         ctx: commands.Context = await commands.Context.from_interaction(interaction)
+        if (user := ctx.author.id) not in self.__spam:
+            self.__spam[user] = AntiSpam(self.__INTERVALS)
+        if self.__spam[user].spammy:
+            await ctx.send(
+                "This interaction is on cooldown, please try again later!", ephemeral=True
+            )
+            return
+        self.__spam[user].stamp()
         await self._callback(ctx, member)
 
 

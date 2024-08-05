@@ -64,9 +64,9 @@ class ViewSourceCodeButton(discord.ui.Button["CommandView"]):
         self.callback: functools.partial[Any] = functools.partial(callback, self)
 
 
-class UISelect(discord.ui.Select["UIView"]):
+class UserInfoSelect(discord.ui.Select["UserInfoView"]):
     if TYPE_CHECKING:
-        view: "UIView"
+        view: "UserInfoView"
 
     def __init__(
         self,
@@ -142,7 +142,7 @@ class UISelect(discord.ui.Select["UIView"]):
         self.callback: functools.partial[Any] = functools.partial(callback, self)
 
 
-class UIView(discord.ui.View):
+class UserInfoView(discord.ui.View):
     def __init__(
         self,
         ctx: commands.GuildContext,
@@ -167,13 +167,13 @@ class UIView(discord.ui.View):
         self.embed: discord.Embed = discord.utils.MISSING
         self._message: discord.Message = discord.utils.MISSING
 
-        self._select: UISelect = UISelect(
+        self._select: UserInfoSelect = UserInfoSelect(
             self.cache, self.user, self.banner_and_gavatar, self._callback
         )
         self.add_item(self._select)
 
     @staticmethod
-    async def _callback(self: UISelect, interaction: discord.Interaction[Red]) -> None:
+    async def _callback(self: UserInfoSelect, interaction: discord.Interaction[Red]) -> None:
         await interaction.response.defer()
         value: str = self.values[0]
         if value.lower() == "home":
@@ -274,14 +274,14 @@ class UIView(discord.ui.View):
         cache: Cache,
         banner_and_gavatar: Tuple[Optional[discord.Asset], Optional[discord.Asset]],
     ) -> discord.Embed:
-        self: "UIView" = cls(
+        self: "UserInfoView" = cls(
             ctx=ctx, user=user, cache=cache, banner_and_gavatar=banner_and_gavatar
         )
         return await self._make_embed()
 
     async def on_timeout(self) -> None:
         for child in self.children:
-            child: discord.ui.Item["UIView"]
+            child: discord.ui.Item["UserInfoView"]
             if hasattr(child, "disabled"):
                 child.disabled = True  # type: ignore
         with contextlib.suppress(discord.HTTPException):
@@ -339,14 +339,14 @@ class UIView(discord.ui.View):
         created_on: str = "{}\n( {} )\n".format(user_created, since_created)
         joined_on: str = "{}\n( {} )\n".format(user_joined, since_joined)
         if self.bot.intents.presences:
-            mobile, web, desktop = self.cache.get_member_device_status(user)
             status: str = mod.get_status_string(user)
+            mobile, web, desktop = self.cache.get_member_device_status(user)
             if status:
                 description: str = "{}\n**Devices:** {} {} {}\n\n".format(
                     status, mobile, web, desktop
                 )
             else:
-                description: str = "{} {} {}\n\n".format(mobile, web, desktop)
+                description: str = "**Devices:** {} {} {}\n\n".format(mobile, web, desktop)
         else:
             description: str = ""
         embed: discord.Embed = discord.Embed(
