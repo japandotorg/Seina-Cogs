@@ -29,11 +29,11 @@ import inspect
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple, Union, cast
 
 import discord
+from redbot.cogs.downloader.downloader import Downloader
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.tree import RedTree
 from redbot.core.utils import AsyncIter, views
-from redbot.cogs.downloader.downloader import Downloader
 from redbot.core.utils.chat_formatting import box, humanize_list, pagify
 from redbot.core.utils.common_filters import filter_invites
 
