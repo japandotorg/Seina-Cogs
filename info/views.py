@@ -29,11 +29,11 @@ import inspect
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple, Union, cast
 
 import discord
-from redbot.cogs.downloader.downloader import Downloader
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.tree import RedTree
 from redbot.core.utils import AsyncIter, views
+from redbot.cogs.downloader.downloader import Downloader
 from redbot.core.utils.chat_formatting import box, humanize_list, pagify
 from redbot.core.utils.common_filters import filter_invites
 
@@ -176,10 +176,10 @@ class UIView(discord.ui.View):
     async def _callback(self: UISelect, interaction: discord.Interaction[Red]) -> None:
         await interaction.response.defer()
         value: str = self.values[0]
-        if value == "home":
+        if value.lower() == "home":
             embed: discord.Embed = await self.view._make_embed()
             await interaction.edit_original_response(embed=embed)
-        elif value == "avatar":
+        elif value.lower() == "avatar":
             embed: discord.Embed = discord.Embed(
                 color=self.user.color, title="{}'s Avatar".format(self.user.display_name)
             )
@@ -187,7 +187,7 @@ class UIView(discord.ui.View):
                 url=(self.user.avatar.url if self.user.avatar else self.user.default_avatar.url)
             )
             await interaction.edit_original_response(embed=embed)
-        elif value == "gavatar":
+        elif value.lower() == "gavatar":
             embed: discord.Embed = discord.Embed(
                 color=self.user.color,
                 title="{}'s Guild Avatar".format(self.user.display_name),
@@ -199,7 +199,7 @@ class UIView(discord.ui.View):
                     self.user.mention
                 )
             await interaction.edit_original_response(embed=embed)
-        elif value == "banner":
+        elif value.lower() == "banner":
             embed: discord.Embed = discord.Embed(
                 color=self.user.color, title="{}'s Banner".format(self.user.display_name)
             )
@@ -208,7 +208,7 @@ class UIView(discord.ui.View):
             else:
                 embed.description = "{} does not have a banner.".format(self.user.mention)
             await interaction.edit_original_response(embed=embed)
-        elif value == "roles":
+        elif value.lower() == "roles":
             embed: discord.Embed = discord.Embed(
                 color=self.user.color, title="{}'s Roles".format(self.user.display_name)
             )
@@ -218,7 +218,7 @@ class UIView(discord.ui.View):
                 else "{} does not have any roles in this server.".format(self.user.mention)
             )
             await interaction.edit_original_response(embed=embed)
-        elif value == "perms":
+        elif value.lower() == "perms":
             embed: discord.Embed = discord.Embed(
                 color=self.user.color, title="{}'s Permissions".format(self.user.display_name)
             )
@@ -230,6 +230,10 @@ class UIView(discord.ui.View):
                 )
             )
             await interaction.edit_original_response(embed=embed)
+        else:
+            await interaction.followup.send(
+                "I have no idea how this even happened.", ephemeral=True
+            )
 
     def _format_roles(self) -> Union[str, Any]:
         roles: Optional[List[str]] = get_roles(self.user)
