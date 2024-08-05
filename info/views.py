@@ -223,7 +223,7 @@ class UIView(discord.ui.View):
                 color=self.user.color, title="{}'s Permissions".format(self.user.display_name)
             )
             embed.description = (
-                self.view._format_perms()
+                truncate(self.view._format_perms(), max=4000)
                 if get_perms(self.user.guild_permissions)
                 else "{} does not have any permissions in this server.".format(
                     self.user.display_name
