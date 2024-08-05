@@ -23,19 +23,18 @@ SOFTWARE.
 """
 
 import logging
+from collections.abc import Collection
 from typing import Dict, Final, List, Optional, Union, cast
 
 import discord
-from redbot.cogs.mod.mod import Mod
 from redbot.core import Config, app_commands, commands
 from redbot.core.bot import Red
-from redbot.core.errors import CogLoadError
 from redbot.core.utils.chat_formatting import humanize_list
 
 from .abc import CompositeMetaClass
 from .cache import Cache
 from .settings import SettingsCommands
-from .utils import MELON, guild_only_and_has_embed_links
+from .utils import SEINA, guild_only_and_has_embed_links
 from .views import CommandView, UIView
 
 log: logging.Logger = logging.getLogger("red.seina.info.core")
@@ -59,8 +58,12 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
             identifier=69_666_420,
             force_registration=True,
         )
-        bot_user: discord.ClientUser = cast(discord.ClientUser, bot.user)
 
+        seina: bool = (
+            self.bot.owner_ids is not None
+            and isinstance(self.bot.owner_ids, Collection)
+            and SEINA in list(self.bot.owner_ids)
+        )
         _defaults: Dict[
             str,
             Dict[
@@ -84,38 +87,37 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
                     "desktop_dnd": None,
                     "desktop_offline": None,
                 },
-                "online": 859980175588589587 if bot_user.id == MELON else None,
-                "away": 859980300977045534 if bot_user.id == MELON else None,
-                "dnd": 859980375882858516 if bot_user.id == MELON else None,
-                "offline": 859981174007791616 if bot_user.id == MELON else None,
-                "streaming": 933084283197870140 if bot_user.id == MELON else None,
+                "online": 859980175588589587 if seina else None,
+                "away": 859980300977045534 if seina else None,
+                "dnd": 859980375882858516 if seina else None,
+                "offline": 859981174007791616 if seina else None,
+                "streaming": 933084283197870140 if seina else None,
             },
             "badge": {
-                "staff": 934503593678094457 if bot_user.id == MELON else None,
-                "early_supporter": 934504215500423209 if bot_user.id == MELON else None,
-                "verified_bot_developer": 894188093647781958 if bot_user.id == MELON else None,
-                "active_developer": 1101083614587912293 if bot_user.id == MELON else None,
-                "bug_hunter": 872500602108788828 if bot_user.id == MELON else None,
-                "bug_hunter_level_2": 872500552481792000 if bot_user.id == MELON else None,
-                "partner": 934504341858029658 if bot_user.id == MELON else None,
-                "verified_bot": 934504704619196456 if bot_user.id == MELON else None,
-                "hypesquad": 934504003230892102 if bot_user.id == MELON else None,
-                "hypesquad_balance": 934503920552800256 if bot_user.id == MELON else None,
-                "hypesquad_bravery": 934503780031021076 if bot_user.id == MELON else None,
-                "hypesquad_brilliance": 934503837841121320 if bot_user.id == MELON else None,
-                "nitro": 263382460224634880 if bot_user.id == MELON else None,
-                "discord_certified_moderator": (
-                    907486308006510673 if bot_user.id == MELON else None
-                ),
-                "bot_http_interactions": 1135879666251595817 if bot_user.id == MELON else None,
+                "staff": 934503593678094457 if seina else None,
+                "early_supporter": 934504215500423209 if seina else None,
+                "verified_bot_developer": 894188093647781958 if seina else None,
+                "active_developer": 1101083614587912293 if seina else None,
+                "bug_hunter": 872500602108788828 if seina else None,
+                "bug_hunter_level_2": 872500552481792000 if seina else None,
+                "partner": 934504341858029658 if seina else None,
+                "verified_bot": 934504704619196456 if seina else None,
+                "hypesquad": 934504003230892102 if seina else None,
+                "hypesquad_balance": 934503920552800256 if seina else None,
+                "hypesquad_bravery": 934503780031021076 if seina else None,
+                "hypesquad_brilliance": 934503837841121320 if seina else None,
+                "nitro": 263382460224634880 if seina else None,
+                "discord_certified_moderator": (907486308006510673 if seina else None),
+                "bot_http_interactions": 1135879666251595817 if seina else None,
             },
             "settings": {
                 "select": {
-                    "roles": 1261166986050932758 if bot_user.id == MELON else None,
-                    "home": 1047886542376538143 if bot_user.id == MELON else None,
-                    "avatar": 934507937228017745 if bot_user.id == MELON else None,
-                    "banner": 934508352971603998 if bot_user.id == MELON else None,
-                    "gavatar": 1261167779957047337 if bot_user.id == MELON else None,
+                    "roles": 1261166986050932758 if seina else None,
+                    "home": 1047886542376538143 if seina else None,
+                    "avatar": 934507937228017745 if seina else None,
+                    "banner": 934508352971603998 if seina else None,
+                    "gavatar": 1261167779957047337 if seina else None,
+                    "perms": 934503593678094457 if seina else None,
                 },
                 "downloader": False,
             },
@@ -195,7 +197,7 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
             view: CommandView = CommandView(ctx, command)
             embeds: List[discord.Embed] = []
             embeds.append(await view._make_embed())
-            if (embed := await view._get_downloader_info()) and self.cache.get_downloader_info():
+            if self.cache.get_downloader_info() and (embed := await view._get_downloader_info()):
                 embeds.append(embed)
         _out: discord.Message = await ctx.send(
             embeds=embeds,
@@ -213,8 +215,6 @@ class Info(commands.Cog, SettingsCommands, metaclass=CompositeMetaClass):
 
 
 async def setup(bot: Red) -> None:
-    if Mod.__name__ not in bot.cogs:
-        raise CogLoadError("The Mod cog is required to be loaded to use this cog.")
     if userinfo := bot.get_command("userinfo"):
         global OLD_USERINFO_COMMAND
         OLD_USERINFO_COMMAND = cast(commands.Command, bot.remove_command(userinfo.qualified_name))

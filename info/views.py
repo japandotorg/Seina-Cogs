@@ -29,27 +29,26 @@ import inspect
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple, Union, cast
 
 import discord
-from redbot.cogs.downloader.downloader import Downloader
-from redbot.cogs.mod.mod import Mod
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.tree import RedTree
 from redbot.core.utils import AsyncIter, views
+from redbot.cogs.downloader.downloader import Downloader
 from redbot.core.utils.chat_formatting import box, humanize_list, pagify
 from redbot.core.utils.common_filters import filter_invites
 
 from .cache import Cache
-from .utils import get_roles, truncate
+from .mod import ModUtils
+from .utils import get_perms, get_roles, truncate
 
 
 class InteractionSimpleMenu(views.SimpleMenu):
     async def inter(self, interaction: discord.Interaction[Red]) -> None:
+        await interaction.response.defer()
         self._fallback_author_to_ctx = False
         self.author: discord.abc.User = interaction.user
         kwargs: Dict[str, Any] = await self.get_page(self.current_page)
-        self.message: discord.Message = await cast(
-            RedTree, interaction.client.tree
-        )._send_from_interaction(interaction, **kwargs)
+        self.message: discord.Message = await interaction.followup.send(**kwargs)
 
 
 class ViewSourceCodeButton(discord.ui.Button["CommandView"]):
@@ -121,7 +120,16 @@ class UISelect(discord.ui.Select["UIView"]):
                     label="Roles",
                     emoji=self.cache.get_select_emoji("roles"),
                     value="roles",
-                    description="View the user's roles..",
+                    description="View the user's roles...",
+                )
+            )
+        if get_perms(self.user.guild_permissions):
+            options.append(
+                discord.SelectOption(
+                    label="Permissions",
+                    emoji=self.cache.get_select_emoji("perms"),
+                    value="perms",
+                    description="View the user's permissions...",
                 )
             )
         super().__init__(
@@ -148,6 +156,8 @@ class UIView(discord.ui.View):
         self.ctx: commands.GuildContext = ctx
         self.bot: Red = ctx.bot
         self.cache: Cache = cache
+
+        self.mod: ModUtils = ModUtils(self.bot)
 
         self.user: discord.Member = user
         self.banner_and_gavatar: Tuple[Optional[discord.Asset], Optional[discord.Asset]] = (
@@ -203,11 +213,54 @@ class UIView(discord.ui.View):
                 color=self.user.color, title="{}'s Roles".format(self.user.display_name)
             )
             embed.description = (
-                await self.view._format_roles()
+                self.view._format_roles()
                 if get_roles(self.user)
                 else "{} does not have any roles in this server.".format(self.user.mention)
             )
             await interaction.edit_original_response(embed=embed)
+        elif value == "perms":
+            embed: discord.Embed = discord.Embed(
+                color=self.user.color, title="{}'s Permissions".format(self.user.display_name)
+            )
+            embed.description = (
+                self.view._format_perms()
+                if get_perms(self.user.guild_permissions)
+                else "{} does not have any permissions in this server.".format(
+                    self.user.display_name
+                )
+            )
+            await interaction.edit_original_response(embed=embed)
+
+    def _format_roles(self) -> Union[str, Any]:
+        roles: Optional[List[str]] = get_roles(self.user)
+        if roles:
+            string: str = ", ".join(roles)
+            if len(string) > 4000:
+                formatted: str = "and {number} more roles not displayed due to embed limits."
+                available_length: int = 4000 - len(formatted)
+                chunks = []
+                remaining = 0
+                for r in roles:
+                    chunk = "{}\n".format(r)
+                    size = len(chunk)
+                    if size < available_length:
+                        available_length -= size
+                        chunks.append(chunk)
+                    else:
+                        remaining += 1
+                chunks.append(formatted.format(number=remaining))
+                string: str = "".join(chunks)
+        else:
+            string: str = discord.utils.MISSING
+        return string
+
+    def _format_perms(self):
+        perms: List[str] = get_perms(self.user.guild_permissions)
+        if perms:
+            string = "\n".join(["- {}".format(perm) for perm in perms])
+        else:
+            string: str = discord.utils.MISSING
+        return string
 
     @classmethod
     async def make_embed(
@@ -239,29 +292,6 @@ class UIView(discord.ui.View):
             return False
         return True
 
-    async def _format_roles(self) -> Union[str, Any]:
-        roles: Optional[List[str]] = get_roles(self.user)
-        if roles:
-            string: str = ", ".join(roles)
-            if len(string) > 4000:
-                formatted: str = "and {number} more roles not displayed due to embed limits."
-                available_length: int = 4000 - len(formatted)
-                chunks = []
-                remaining = 0
-                for r in roles:
-                    chunk = "{}\n".format(r)
-                    size = len(chunk)
-                    if size < available_length:
-                        available_length -= size
-                        chunks.append(chunk)
-                    else:
-                        remaining += 1
-                chunks.append(formatted.format(number=remaining))
-                string: str = "".join(chunks)
-        else:
-            string: str = discord.utils.MISSING
-        return string
-
     async def _make_embed(self) -> discord.Embed:
         if self.embed is not discord.utils.MISSING:
             return self.embed
@@ -275,11 +305,9 @@ class UIView(discord.ui.View):
                 if user in guild.members
             }
         )
-        mod: Mod = self.bot.get_cog("Mod")  # type: ignore
-        try:
-            names, _, nicks = await mod.get_names(user)
-        except AttributeError:
-            names, nicks = await mod.get_names_and_nicks(user)  # type: ignore | specially for melon
+
+        mod: ModUtils = self.mod
+        names, nicks = await mod.get_names(user)
         created_dt: float = (
             cast(datetime.datetime, user.created_at)
             .replace(tzinfo=datetime.timezone.utc)

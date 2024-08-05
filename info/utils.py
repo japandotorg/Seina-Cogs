@@ -28,7 +28,7 @@ import discord
 from redbot.core import app_commands
 from redbot.core.bot import Red
 
-MELON: Final[int] = 808706062013825036  # MELON's ID (i'm lazy)
+SEINA: Final[int] = 759180080328081450 # to auto add emojis to my bot(s)
 
 
 def guild_only_and_has_embed_links(interaction: discord.Interaction[Red]) -> bool:
