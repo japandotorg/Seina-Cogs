@@ -16,7 +16,7 @@ copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER**
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
@@ -45,11 +45,11 @@ class ModUtils:
         if not a.name and not a.emoji:  # type: ignore
             return None, discord.ActivityType.custom
         elif a.name and a.emoji:  # type: ignore
-            c_status = "Custom: {emoji} {name}".format(emoji=a.emoji, name=a.name)  # type: ignore
+            c_status = "**Custom:** {emoji} {name}".format(emoji=a.emoji, name=a.name)  # type: ignore
         elif a.emoji:  # type: ignore
-            c_status = "Custom: {emoji}".format(emoji=a.emoji)  # type: ignore
+            c_status = "**Custom:** {emoji}".format(emoji=a.emoji)  # type: ignore
         elif a.name:
-            c_status = "Custom: {name}".format(name=a.name)
+            c_status = "**Custom:** {name}".format(name=a.name)
         return c_status, discord.ActivityType.custom
 
     def handle_playing(self, user: discord.Member) -> Tuple[Optional[str], discord.ActivityType]:
@@ -57,7 +57,7 @@ class ModUtils:
         if not p_acts:
             return None, discord.ActivityType.playing
         p_act = p_acts[0]
-        act = "Playing: {name}".format(name=p_act.name)
+        act = "**Playing:** {name}".format(name=p_act.name)
         return act, discord.ActivityType.playing
 
     def handle_streaming(self, user: discord.Member) -> Tuple[Optional[str], discord.ActivityType]:
@@ -66,14 +66,14 @@ class ModUtils:
             return None, discord.ActivityType.streaming
         s_act = s_acts[0]
         if isinstance(s_act, discord.Streaming):
-            act = "Streaming: [{name}{sep}{game}]({url})".format(
+            act = "**Streaming:** [{name}{sep}{game}]({url})".format(
                 name=discord.utils.escape_markdown(s_act.name),
                 sep=" | " if s_act.game else "",
                 game=discord.utils.escape_markdown(s_act.game) if s_act.game else "",
                 url=s_act.url,
             )  # type: ignore
         else:
-            act = "Streaming: {name}".format(name=s_act.name)
+            act = "**Streaming:** {name}".format(name=s_act.name)
         return act, discord.ActivityType.streaming
 
     def handle_listening(self, user: discord.Member) -> Tuple[Optional[str], discord.ActivityType]:
@@ -82,7 +82,7 @@ class ModUtils:
             return None, discord.ActivityType.listening
         l_act = l_acts[0]
         if isinstance(l_act, discord.Spotify):
-            act = "Listening: [{title}{sep}{artist}]({url})".format(
+            act = "**Listening:** [{title}{sep}{artist}]({url})".format(
                 title=discord.utils.escape_markdown(l_act.title),
                 sep=" | " if l_act.artist else "",
                 artist=discord.utils.escape_markdown(l_act.artist) if l_act.artist else "",
@@ -97,7 +97,7 @@ class ModUtils:
         if not w_acts:
             return None, discord.ActivityType.watching
         w_act = w_acts[0]
-        act = "Watching: {name}".format(name=w_act.name)
+        act = "**Watching:** {name}".format(name=w_act.name)
         return act, discord.ActivityType.watching
 
     def handle_competing(self, user: discord.Member) -> Tuple[Optional[str], discord.ActivityType]:
@@ -105,7 +105,7 @@ class ModUtils:
         if not w_acts:
             return None, discord.ActivityType.competing
         w_act = w_acts[0]
-        act = "Competing in: {competing}".format(competing=w_act.name)
+        act = "**Competing in:** {competing}".format(competing=w_act.name)
         return act, discord.ActivityType.competing
 
     def get_status_string(self, user: discord.Member) -> str:

@@ -375,7 +375,7 @@ class UserInfoView(discord.ui.View):
         if user.voice and user.voice.channel:
             embed.add_field(
                 name="Current Voice Channel:",
-                value="{0.mention} ID: {0.id}".format(user.voice.channel),
+                value="{0.mention} (`{0.id}`)".format(user.voice.channel),
                 inline=False,
             )
         embed.set_footer(text="Member #{} | User ID: {}".format(position, user.id))
