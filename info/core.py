@@ -22,16 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import logging
 import datetime
+import logging
 from collections import abc
 from typing import Dict, Final, List, Optional, Tuple, Union, cast
 
 import discord
 from redbot.core import commands
+from redbot.core.app_commands import ContextMenu
 from redbot.core.bot import Red
 from redbot.core.config import Config
-from redbot.core.app_commands import ContextMenu
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.utils.chat_formatting import humanize_list
 
