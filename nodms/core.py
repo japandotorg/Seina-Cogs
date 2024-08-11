@@ -210,6 +210,7 @@ class NoDMs(commands.Cog):
     async def wait_until_cache_ready(self) -> None:
         await self._cache_ready.wait()
 
+    # TODO: shorten this
     async def _send_response(
         self, ctx: commands.Context, type: Literal["message", "command"]
     ) -> None:
@@ -230,7 +231,25 @@ class NoDMs(commands.Cog):
             },
         )
         if type.lower() == "command" and (command := ctx.command):
-            kwargs.update(command=CommandAdapter(command))
+            kwargs: Dict[str, Any] = await process_tagscript(
+                (
+                    self.cache.message.message
+                    if type.lower() == "message"
+                    else self.cache.message.command
+                ),
+                {
+                    "user": UserAdapter(ctx.author),
+                    "author": UserAdapter(ctx.author),
+                    "dm": DMChannelAdapter(ctx.channel),
+                    "channel": DMChannelAdapter(ctx.channel),
+                    "bot": BotAdapter(self.bot),
+                    "{}".format(cast(discord.ClientUser, self.bot.user).name): BotAdapter(
+                        self.bot
+                    ),
+                    "color": tse.StringAdapter(str(await ctx.embed_color())),
+                    "command": CommandAdapter(command),
+                },
+            )
         if not kwargs:
             if type.lower() == "message":
                 await cast(Group, self.config.message).message.clear()
@@ -255,7 +274,21 @@ class NoDMs(commands.Cog):
                 },
             )
             if type.lower() == "command" and (command := ctx.command):
-                kwargs.update(command=CommandAdapter(command))
+                kwargs = await process_tagscript(
+                    message if type.lower() == "message" else command_message,
+                    {
+                        "user": UserAdapter(ctx.author),
+                        "author": UserAdapter(ctx.author),
+                        "dm": DMChannelAdapter(ctx.channel),
+                        "channel": DMChannelAdapter(ctx.channel),
+                        "bot": BotAdapter(self.bot),
+                        "{}".format(cast(discord.ClientUser, self.bot.user).name): BotAdapter(
+                            self.bot
+                        ),
+                        "color": tse.StringAdapter(str(await ctx.embed_color())),
+                        "command": CommandAdapter(command),
+                    },
+                )
         kwargs["reference"] = ctx.message.to_reference(fail_if_not_exists=False)
         kwargs["allowed_mentions"] = discord.AllowedMentions(replied_user=False)
         try:
