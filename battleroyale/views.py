@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import copy
 import random
 from functools import partial
 from typing import Any, List, Optional
@@ -126,7 +125,7 @@ class RemainingPlayerView(discord.ui.View):
     async def _callback(
         self: RemainingPlayerButton, interaction: discord.Interaction[Red]
     ) -> None:
-        copied: List[discord.Member] = copy.copy(self.view.remaining)
+        copied: List[discord.Member] = list(self.view.remaining).copy()
         random.shuffle(copied)
         remaining_player_str = humanize_list(
             [
