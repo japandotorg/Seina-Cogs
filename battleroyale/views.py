@@ -125,17 +125,17 @@ class RemainingPlayerView(discord.ui.View):
     async def _callback(
         self: RemainingPlayerButton, interaction: discord.Interaction[Red]
     ) -> None:
-        copied: List[discord.Member] = list(self.view.remaining).copy()
-        random.shuffle(copied)
-        remaining_player_str = humanize_list(
+        remaining_players: List[str] = list(
             [
                 m.global_name if m.global_name else m.display_name
                 for m in sorted(
-                    copied,
+                    self.view.remaining,
                     key=lambda m: m.global_name if m.global_name else m.display_name,
                 )
             ]
         )
+        random.shuffle(remaining_players)
+        remaining_player_str: str = humanize_list(remaining_players)
         if not remaining_player_str:
             await interaction.response.send_message(
                 embed=discord.Embed(
