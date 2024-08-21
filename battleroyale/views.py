@@ -28,8 +28,8 @@ from typing import Any, Dict, List, Optional
 
 import discord
 from redbot.core.bot import Red
-from redbot.core.utils.views import SimpleMenu
 from redbot.core.utils.chat_formatting import pagify
+from redbot.core.utils.views import SimpleMenu
 
 __all__ = ("JoinGameView",)
 
