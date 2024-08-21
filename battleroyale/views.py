@@ -126,7 +126,7 @@ class RemainingPlayerView(discord.ui.View):
     async def _callback(
         self: RemainingPlayerButton, interaction: discord.Interaction[Red]
     ) -> None:
-        copied: List[discord.Member] = copy.deepcopy(self.view.remaining)
+        copied: List[discord.Member] = copy.copy(self.view.remaining)
         random.shuffle(copied)
         remaining_player_str = humanize_list(
             [
