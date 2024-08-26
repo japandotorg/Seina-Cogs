@@ -43,6 +43,7 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
             message.guild.system_channel
             and not message.guild.system_channel.permissions_for(message.guild.me).view_channel
         ):
+            self.SYSTEM_ENABLED: bool = False
             return
         if message.guild.system_channel_flags.premium_subscriptions and message.type in (
             discord.MessageType.premium_guild_subscription,
@@ -72,6 +73,8 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
     async def on_member_boost(
         self, member: discord.Member, type: Literal["system", "premium_subscriber_role"]
     ) -> None:
+        if self.SYSTEM_ENABLED and type.lower() == "premium_subscriber_role":
+            return
         guild: discord.Guild = member.guild
         channels: List[int] = await self.config.guild(guild).boost_message.channels()
         message: str = await self.config.guild(guild).boost_message.boosted()
@@ -100,8 +103,6 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
             channel: discord.TextChannel = guild.get_channel(channel_id)
             if channel:
                 if not channel.permissions_for(guild.me).send_messages:
-                    return
-                if self.SYSTEM_ENABLED and type.lower() == "premium_subscriber_role":
                     return
                 await channel.send(**kwargs)
 
