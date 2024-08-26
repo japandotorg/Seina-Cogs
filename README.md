@@ -68,7 +68,7 @@ Lemon's [Approved Cogs](https://cogboard.discord.red/t/approved-seina-cogs/1199)
 | StableDiffusion | 0.1.0        | <details><summary>Stable Diffusion using the Replicate API.</summary>Stable Diffusion using the Replicate API.</details>        |
 | ModManager  | 0.1.0 | <details><summary>Force ban/kick users.</summary>Force ban/kick users so that they stay in the ban/kick list even if someone tries to manually unban them.</details>  |
 | AutoDelete  | 0.1.0 | <details><summary>Auto delete messages in specific channels with fancy html logging.</summary>Auto delete messages in specific channels with fancy html logging.</details>  |
-| BoostUtils  | 0.1.0 | <details><summary>Booster Utilities. (WIP)</summary>Various nitro boosting utilities. (WORK IN PROGRESS)</details>                          |
+| BoostUtils  | 0.1.1 | <details><summary>Booster Utilities. (WIP)</summary>Various nitro boosting utilities. (WORK IN PROGRESS)</details>                          |
 | AutoReact   | 0.1.0 | <details><summary>Create automatic reactions for specific triggers or events.</summary>Create automatic reactions for specific triggers or events.</details>  |
 
 
