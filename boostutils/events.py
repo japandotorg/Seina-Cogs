@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Literal
 
 import discord
 import TagScriptEngine as tse
@@ -33,6 +33,8 @@ from .abc import CompositeMetaClass, MixinMeta
 
 
 class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
+    SYSTEM_ENABLED: bool = False
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
         if not message.guild or message.author.bot:
@@ -48,7 +50,8 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
             discord.MessageType.premium_guild_tier_2,
             discord.MessageType.premium_guild_tier_3,
         ):
-            self.bot.dispatch("member_boost", message.author)
+            self.SYSTEM_ENABLED: bool = True
+            self.bot.dispatch("member_boost", message.author, "system")
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
@@ -61,16 +64,18 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
             return
         if role := after.guild.premium_subscriber_role:
             if role in before.roles and role not in after.roles:
-                self.bot.dispatch("member_unboost", before)
+                self.bot.dispatch("member_unboost", before, "premium_subscriber_role")
             elif role not in before.roles and role in after.roles:
-                self.bot.dispatch("member_boost", after)
+                self.bot.dispatch("member_boost", after, "premium_subscriber_role")
 
     @commands.Cog.listener()
-    async def on_member_boost(self, member: discord.Member) -> None:
+    async def on_member_boost(
+        self, member: discord.Member, type: Literal["system", "premium_subscriber_role"]
+    ) -> None:
         guild: discord.Guild = member.guild
-        channels: List[int] = await self.config.guild(guild).boost_message.channels()  # type: ignore
-        message: str = await self.config.guild(guild).boost_message.boosted()  # type: ignore
-        toggle: bool = await self.config.guild(guild).boost_message.toggle()  # type: ignore
+        channels: List[int] = await self.config.guild(guild).boost_message.channels()
+        message: str = await self.config.guild(guild).boost_message.boosted()
+        toggle: bool = await self.config.guild(guild).boost_message.toggle()
         if not toggle:
             return
         if await self.bot.cog_disabled_in_guild(self, guild):
@@ -83,7 +88,7 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
             },
         )
         if not kwargs:
-            await self.config.guild(member.guild).boost_message.boosted.clear()  # type: ignore
+            await self.config.guild(member.guild).boost_message.boosted.clear()
             kwargs: Dict[str, Any] = process_tagscript(
                 boosted,
                 {
@@ -92,18 +97,22 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
                 },
             )
         for channel_id in channels:
-            channel: discord.TextChannel = guild.get_channel(channel_id)  # type: ignore
+            channel: discord.TextChannel = guild.get_channel(channel_id)
             if channel:
                 if not channel.permissions_for(guild.me).send_messages:
+                    return
+                if self.SYSTEM_ENABLED and type.lower() == "premium_subscriber_role":
                     return
                 await channel.send(**kwargs)
 
     @commands.Cog.listener()
-    async def on_member_unboost(self, member: discord.Member) -> None:
+    async def on_member_unboost(
+        self, member: discord.Member, type: Literal["premium_subscriber_role"]
+    ) -> None:
         guild: discord.Guild = member.guild
-        channels: List[int] = await self.config.guild(guild).boost_message.channels()  # type: ignore
-        message: str = await self.config.guild(guild).boost_message.unboosted()  # type: ignore
-        toggle: bool = await self.config.guild(guild).boost_message.toggle()  # type: ignore
+        channels: List[int] = await self.config.guild(guild).boost_message.channels()
+        message: str = await self.config.guild(guild).boost_message.unboosted()
+        toggle: bool = await self.config.guild(guild).boost_message.toggle()
         if not toggle:
             return
         if await self.bot.cog_disabled_in_guild(self, guild):
@@ -116,7 +125,7 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
             },
         )
         if not kwargs:
-            await self.config.guild(member.guild).boost_message.unboosted.clear()  # type: ignore
+            await self.config.guild(member.guild).boost_message.unboosted.clear()
             kwargs: Dict[str, Any] = process_tagscript(
                 unboosted,
                 {
@@ -125,7 +134,7 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
                 },
             )
         for channel_id in channels:
-            channel: discord.TextChannel = guild.get_channel(channel_id)  # type: ignore
+            channel: discord.TextChannel = guild.get_channel(channel_id)
             if channel:
                 if not channel.permissions_for(guild.me).send_messages:
                     return
