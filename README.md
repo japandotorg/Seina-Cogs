@@ -70,6 +70,7 @@ Lemon's [Approved Cogs](https://cogboard.discord.red/t/approved-seina-cogs/1199)
 | AutoDelete  | 0.1.0 | <details><summary>Auto delete messages in specific channels with fancy html logging.</summary>Auto delete messages in specific channels with fancy html logging.</details>  |
 | BoostUtils  | 0.1.1 | <details><summary>Booster Utilities. (WIP)</summary>Various nitro boosting utilities. (WORK IN PROGRESS)</details>                          |
 | AutoReact   | 0.1.0 | <details><summary>Create automatic reactions for specific triggers or events.</summary>Create automatic reactions for specific triggers or events.</details>  |
+| Screenshot  | 0.1.0 | <details><summary>Take web page screenshots with your bot without compromising privacy of your machine.</summary>Take web page screenshots with your bot without compromising privacy of your machine. This ia a high level cog with higher usage than usual do not install it if you don't have sufficient ram and storage.</details> |
 
 
 ## Credits
