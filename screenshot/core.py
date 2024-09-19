@@ -59,7 +59,7 @@ class Screenshot(commands.Cog):
     __author__: Final[List[str]] = ["inthedark.org"]
 
     CACHE: Dict[str, Union[bool, int, Optional[str]]] = {
-        "toggle": True,
+        "toggle": False,
         "port": 9050,
         "updated": False,
     }
@@ -108,6 +108,7 @@ class Screenshot(commands.Cog):
                     self.__class__.__name__.lower()
                 )
             )
+            await self.config.updated.set(True)
 
     @tasks.loop(minutes=5.0, reconnect=True, name="red:seina:screenshot")
     async def bg_task(self) -> None:
@@ -116,6 +117,37 @@ class Screenshot(commands.Cog):
     @bg_task.before_loop  # type: ignore
     async def bg_task_before_loop(self) -> None:
         await self.manager.wait_until_driver_downloaded()
+
+    @commands.is_owner()
+    @commands.group(name="screenshotset", aliases=["screenset"])
+    async def screenshot_set(self, _: commands.Context):
+        """Configuration commands for screenshot."""
+
+    @screenshot_set.group(name="tor", invoke_without_command=True)  # type: ignore
+    async def screenshot_set_tor(self, ctx: commands.Context, toggle: bool):
+        """
+        Enable or disable tor proxy when taking screenshots.
+        """
+        if not ctx.invoked_subcommand:
+            await self.config.toggle.set(toggle)
+            await ctx.tick()
+
+    @screenshot_set_tor.command(name="port")  # type: ignore
+    async def screenshot_set_tor_port(
+        self, ctx: commands.Context, port: commands.Range[int, 1, 5]
+    ):
+        """
+        Change the default port of the tor protocol.
+        """
+        if port > 65535:
+            await ctx.send(
+                "The maximum supported port is '65535' got '{}' instead.".format(port),
+                reference=ctx.message.to_reference(fail_if_not_exists=False),
+                allowed_mentions=discord.AllowedMentions(replied_user=False),
+            )
+            raise commands.CheckFailure()
+        await self.config.port(port)
+        await ctx.tick()
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)

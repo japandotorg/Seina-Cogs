@@ -50,8 +50,8 @@ async def send_notification(cog: "Screenshot") -> None:
             "If you already have a tor browser install and wish to use a separate instance of the tor protocol "
             "you can do so by leveraging the docker file given below.\n\n"
             "Finally to activate the tor protocol within the cog run the following commands if needed -\n"
-            "- `[p]screenshot tor <true_or_false>` to make the cog actually use the tor protocol.\n"
-            "- `[p]screenshot tor port <YOUR-PORT>` to change the default port to use the one configured by you.\n\n"
+            "- `[p]screenset tor <true_or_false>` to make the cog actually use the tor protocol.\n"
+            "- `[p]screenset tor port <YOUR-PORT>` to change the default port to use the one configured by you.\n\n"
             "-# *You'll keep receiving this message everytime you load/reload the cog if you don't configure tor.*"
         ).format(
             (
