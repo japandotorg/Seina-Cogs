@@ -113,7 +113,11 @@ class DriverManager:
         async with self.__session.get(self.RELEASE_TAG_URL.format(version=version)) as response:
             json = await response.json()
         assets = json["assets"]
-        name: str = "{}-{}-{}.".format("geckodriver", version, self.get_os())
+        name: str = "{}-{}-{}.".format(
+            "geckodriver",
+            version,
+            "linux-aarch64" if platform.machine() == "aarch64" else self.get_os(),
+        )
         output_dict = [asset for asset in assets if asset["name"].startswith(name)]
         url: str = output_dict[0]["browser_download_url"]
         log.debug("Downloading driver (%s) for [%s]" % (url, self.get_os()))
@@ -140,7 +144,9 @@ class DriverManager:
             raise DriverDownloadFailed("Failed to download the driver.")
         path: pathlib.Path = list(self.data_directory.glob("geckodriver*"))[0]
         idx: int = path.name.rfind(".")
-        name: str = path.name[:idx] + "-{}".format(self.get_os())
+        name: str = path.name[:idx] + "-{}".format(
+            "linux-aarch64" if platform.machine() == "aarch64" else self.get_os()
+        )
         os.rename(
             path,
             (
