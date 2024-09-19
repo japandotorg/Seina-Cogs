@@ -31,7 +31,8 @@
         "torch",
         "tensorflow",
         "tf-keras",
-        "protobuf==4.25.3"
+        "google",
+        "protobuf"
     ],
     "type": "COG",
     "end_user_data_statement": "This cog does not store End User Data."
