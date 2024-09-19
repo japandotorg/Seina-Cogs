@@ -30,7 +30,8 @@
         "transformers",
         "torch",
         "tensorflow",
-        "tf-keras"
+        "tf-keras",
+        "protobuf==4.25.3"
     ],
     "type": "COG",
     "end_user_data_statement": "This cog does not store End User Data."
