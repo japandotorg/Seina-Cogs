@@ -25,11 +25,10 @@ SOFTWARE.
 import asyncio
 import io
 import logging
-from typing import Any, Dict, Literal, Optional, cast
+from typing import Any, Dict, Optional, cast
 
 import transformers
 from PIL import Image
-from tensorflow import config as conf
 
 try:
     import regex as re
@@ -41,11 +40,9 @@ log: logging.Logger = logging.getLogger("red.seina.screenshot.filter")
 
 
 class Filter:
-    DEVICE: Literal["cpu", "cuda"] = "cuda" if conf.list_physical_devices("GPU") else "cpu"
-
     def __init__(self) -> None:
         self.model: transformers.Pipeline = transformers.pipeline(
-            "image-classification", model="Falconsai/nsfw_image_detection", device=self.DEVICE
+            "image-classification", model="Falconsai/nsfw_image_detection"
         )
 
     @staticmethod
