@@ -22,13 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import io
 import asyncio
+import io
 import logging
-from PIL import Image
 from typing import Any, Dict, Literal, Optional, cast
 
 import transformers
+from PIL import Image
 from tensorflow import config as conf
 
 try:

@@ -22,23 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import logging
 import asyncio
 import contextlib
+import logging
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING, AsyncGenerator, Dict, Literal, TypeVar
 
 from redbot.core import commands
-
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.service import Service
+from selenium.common.exceptions import ScreenshotException, TimeoutException, WebDriverException
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
-from selenium.common.exceptions import TimeoutException, WebDriverException, ScreenshotException
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
 
-from .firefox import Firefox
 from .exceptions import ProxyConnectFailedError
+from .firefox import Firefox
 
 if TYPE_CHECKING:
     from ..core import Screenshot
