@@ -22,28 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import io
-import aiohttp
-import logging
-import contextlib
 import asyncio.sslproto
+import contextlib
+import io
+import logging
 from typing import Dict, Final, List, Literal, Optional, Union
 
+import aiohttp
 import discord
 from discord.ext import tasks
-from redbot.core.bot import Red
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.config import Config
 from redbot.core.utils.chat_formatting import humanize_list
-
 from selenium.common.exceptions import NoSuchDriverException
 
-from .common.filter import Filter
 from .common import FirefoxManager
 from .common.downloader import DriverManager
 from .common.exceptions import ProxyConnectFailedError
-from .common.utils import send_notification, URLConverter
-
+from .common.filter import Filter
+from .common.utils import URLConverter, send_notification
 
 log: logging.Logger = logging.getLogger("red.seina.screenshot.core")
 

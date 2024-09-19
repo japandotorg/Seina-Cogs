@@ -26,10 +26,10 @@ import atexit
 import weakref
 from typing import Any
 
-from selenium.webdriver.common.service import Service
 from selenium.webdriver.common.options import BaseOptions
-from selenium.webdriver.remote.webdriver import WebDriver as _Driver
+from selenium.webdriver.common.service import Service
 from selenium.webdriver.firefox.webdriver import WebDriver as _Firefox
+from selenium.webdriver.remote.webdriver import WebDriver as _Driver
 
 
 class Driver(_Driver):

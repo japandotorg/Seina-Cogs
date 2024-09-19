@@ -22,24 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import io
-import os
 import asyncio
-import logging
-import platform
 import concurrent.futures
+import io
+import logging
+import os
+import pathlib
+import platform
+import tarfile
+import zipfile
 from typing import ClassVar, Dict, Final, Optional
 
-import pathlib
-import zipfile
 import aiohttp
-import tarfile
 from mozdownload.factory import FactoryScraper
-
 from redbot.core import data_manager
 
 from .exceptions import DriverDownloadFailed
-
 
 log: logging.Logger = logging.getLogger("red.seina.screenshot.downloader")
 
