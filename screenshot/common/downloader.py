@@ -75,8 +75,24 @@ class DriverManager:
         return (
             loc[0]
             if (
-                loc := list(self.data_directory.glob("geckodriver-{}*".format(self.get_os())))
-                or (loc := list(self.data_directory.glob("geckodrive-{}*".format(self.get_os()))))
+                loc := list(
+                    self.data_directory.glob(
+                        "geckodriver-{}*".format(
+                            "linux-aarch64" if platform.machine() == "aarch64" else self.get_os()
+                        )
+                    )
+                )
+                or (
+                    loc := list(
+                        self.data_directory.glob(
+                            "geckodrive-{}*".format(
+                                "linux-aarch64"
+                                if platform.machine() == "aarch64"
+                                else self.get_os()
+                            )
+                        )
+                    )
+                )
             )
             else None
         )
