@@ -128,6 +128,7 @@ class Screenshot(commands.Cog):
         """
         if not ctx.invoked_subcommand:
             await self.config.toggle.set(toggle)
+            self.CACHE["toggle"] = toggle
             await ctx.tick()
 
     @screenshot_set_tor.command(name="port")  # type: ignore
@@ -145,6 +146,7 @@ class Screenshot(commands.Cog):
             )
             raise commands.CheckFailure()
         await self.config.port(port)
+        self.CACHE["port"] = port
         await ctx.tick()
 
     @commands.command()
