@@ -22,8 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import functools
+import hashlib
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 import discord
 from redbot.core import commands
@@ -39,6 +41,15 @@ except ModuleNotFoundError:
 
 
 log: logging.Logger = logging.getLogger("red.seina.screenshot.core")
+
+
+def counter(func: Callable[["Screenshot"], str]) -> Callable[["Screenshot"], str]:
+    @functools.wraps(func)
+    def wrapper(self: "Screenshot") -> str:
+        string: str = func(self)
+        return hashlib.sha1(string.encode("utf-8")).hexdigest()
+
+    return wrapper
 
 
 async def send_notification(cog: "Screenshot") -> None:

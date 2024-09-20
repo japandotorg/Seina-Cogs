@@ -41,7 +41,7 @@ from .common import FirefoxManager
 from .common.downloader import DriverManager
 from .common.exceptions import ProxyConnectFailedError
 from .common.filter import Filter
-from .common.utils import URLConverter, send_notification
+from .common.utils import URLConverter, send_notification, counter as counter_api
 
 log: logging.Logger = logging.getLogger("red.seina.screenshot.core")
 
@@ -82,6 +82,8 @@ class Screenshot(commands.Cog):
         self.driver: FirefoxManager = FirefoxManager(self)
         self.filter: Filter = Filter()
 
+        self.__task: asyncio.Task[None] = asyncio.create_task(self.update_counter_api())
+
     async def cog_load(self) -> None:
         if self.manager.firefox is None:
             await self.manager.download_firefox()
@@ -94,17 +96,21 @@ class Screenshot(commands.Cog):
         self.bg_task.start()  # type: ignore
 
     async def cog_unload(self) -> None:
+        self.__task.cancel()
         self.bg_task.cancel()  # type: ignore
         await self.session.close()
         with contextlib.suppress(BaseException):
             self.driver.clear_all_drivers()
 
+    @counter_api
+    def counter(self) -> str:
+        return self.__class__.__name__.lower()
+
     async def update_counter_api(self) -> None:
+        await self.bot.wait_until_red_ready()
         if not await self.config.updated():
             await self.session.get(
-                "https://api.counterapi.dev/v1/japandotorg/{}/up".format(
-                    self.__class__.__name__.lower()
-                )
+                "https://api.counterapi.dev/v1/japandotorg/{}/up".format(self.counter())
             )
             await self.config.updated.set(True)
 

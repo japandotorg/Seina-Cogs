@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import asyncio
 import platform
 
 from redbot.core.bot import Red
@@ -32,8 +31,7 @@ from .core import Screenshot
 
 
 async def setup(bot: Red) -> None:
-    cog: Screenshot = Screenshot(bot)
-    asyncio.create_task(cog.update_counter_api())
     if platform.system().lower() not in ["windows", "linux"]:
         raise CogLoadError("This cog is only available for linux and windows devices right now.")
+    cog: Screenshot = Screenshot(bot)
     await bot.add_cog(cog)
