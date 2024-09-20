@@ -22,28 +22,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import asyncio
-import concurrent.futures
 import io
-import logging
 import os
-import pathlib
+import asyncio
+import logging
 import platform
-import tarfile
-import zipfile
+import concurrent.futures
 from typing import ClassVar, Dict, Final, Optional
 
+import pathlib
+import zipfile
 import aiohttp
+import tarfile
 from mozdownload.factory import FactoryScraper
+
 from redbot.core import data_manager
 
 from .exceptions import DriverDownloadFailed
+
 
 log: logging.Logger = logging.getLogger("red.seina.screenshot.downloader")
 
 
 class DriverManager:
-    SYSTEM: Final[Dict[str, str]] = {"linux": "linux", "windows": "win"}
+    SYSTEM: Final[Dict[str, str]] = {"linux": "linux", "windows": "win", "arm": "linux-aarch"}
     DOWNLOAD_URL: Final[str] = "https://github.com/mozilla/geckodriver/releases/download"
     LATEST_RELEASE_URL: Final[str] = (
         "https://api.github.com/repos/mozilla/geckodriver/releases/latest"
@@ -75,24 +77,8 @@ class DriverManager:
         return (
             loc[0]
             if (
-                loc := list(
-                    self.data_directory.glob(
-                        "geckodriver-{}*".format(
-                            "linux-aarch64" if platform.machine() == "aarch64" else self.get_os()
-                        )
-                    )
-                )
-                or (
-                    loc := list(
-                        self.data_directory.glob(
-                            "geckodrive-{}*".format(
-                                "linux-aarch64"
-                                if platform.machine() == "aarch64"
-                                else self.get_os()
-                            )
-                        )
-                    )
-                )
+                loc := list(self.data_directory.glob("geckodriver-{}*".format(self.get_os())))
+                or (loc := list(self.data_directory.glob("geckodrive-{}*".format(self.get_os()))))
             )
             else None
         )
@@ -102,6 +88,8 @@ class DriverManager:
         return loc[0] if (loc := list(self.data_directory.glob("firefox/firefox*"))) else None
 
     def get_os_name(self) -> str:
+        if platform.machine().lower() == "aarch64":
+            return self.SYSTEM["arm"]
         if platform.system().lower() == "linux":
             return self.SYSTEM["linux"]
         elif platform.system().lower() == "windows":
@@ -129,11 +117,7 @@ class DriverManager:
         async with self.__session.get(self.RELEASE_TAG_URL.format(version=version)) as response:
             json = await response.json()
         assets = json["assets"]
-        name: str = "{}-{}-{}.".format(
-            "geckodriver",
-            version,
-            "linux-aarch64" if platform.machine() == "aarch64" else self.get_os(),
-        )
+        name: str = "{}-{}-{}.".format("geckodriver", version, self.get_os())
         output_dict = [asset for asset in assets if asset["name"].startswith(name)]
         url: str = output_dict[0]["browser_download_url"]
         log.debug("Downloading driver (%s) for [%s]" % (url, self.get_os()))
@@ -177,7 +161,10 @@ class DriverManager:
         log.info("Downloading firefox in {}".format(self.data_directory))
         with concurrent.futures.ThreadPoolExecutor() as executor:
             scraper: FactoryScraper = FactoryScraper(
-                scraper_type="release", version="130.0", destination=str(self.data_directory)
+                scraper_type="release",
+                version="130.0",
+                platform="linux-arm64" if platform.machine() == "aarch64" else None,
+                destination=str(self.data_directory),
             )
             res: str = await asyncio.get_running_loop().run_in_executor(
                 executor=executor, func=scraper.download
