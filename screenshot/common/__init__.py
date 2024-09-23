@@ -67,7 +67,7 @@ class FirefoxManager:
         return Service(
             executable_path=str(self.cog.manager.driver_location),
             service_args=["--log", "debug"],
-            log_output=str(self.cog.manager.logs_directory  / "gecko.log"),
+            log_output=str(self.cog.manager.logs_directory / "gecko.log"),
         )
 
     def get_options(self) -> Options:
