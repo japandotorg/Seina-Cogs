@@ -60,7 +60,7 @@ class DriverManager:
         "https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/firefox-{version}.en-US.{system}.{ext}"
     )
     TOR_EXPERT_BUNDLE_URL: ClassVar[str] = (
-        "https://archive.org/download/seina-tor-ext/tor-expert-bundle-{system}.{ext}"
+        "https://archive.org/download/seina-ext-tor/tor-expert-bundle-{system}.{ext}"
     )
 
     def __init__(self, session: Optional[aiohttp.ClientSession] = None) -> None:
@@ -71,7 +71,7 @@ class DriverManager:
     @property
     def __environ(self) -> Dict[str, str]:
         environ: Dict[str, str] = os.environ.copy()
-        if self.tor_location and self.get_os() != "linux-aarch64":
+        if self.tor_location:
             environ["LD_LIBRARY_PATH"] = (
                 os.getenv("LD_LIBRARY_PATH", "") + ":" + str(self.tor_location / "tor")
             )
