@@ -355,7 +355,7 @@ class DriverManager:
                     Log debug file {}
                     DataDirectory {}
                     """.format(
-                        self.logs_directory, self.tor_location / "teb-data"
+                        self.logs_directory / "tor.log", self.tor_location / "teb-data"
                     )
                 )
         log.info("Downloaded tor successfully with location: {}".format(self.tor_location))
