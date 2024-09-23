@@ -60,7 +60,7 @@ class DriverManager:
         "https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/firefox-{version}.en-US.{system}.{ext}"
     )
     TOR_EXPERT_BUNDLE_URL: ClassVar[str] = (
-        "https://archive.org/download/seina-ext-tor/tor-expert-bundle-{system}.{ext}"
+        "https://archive.org/download/seina-ext-tor/tor-{system}.{ext}"
     )
 
     def __init__(self, session: Optional[aiohttp.ClientSession] = None) -> None:
@@ -153,7 +153,7 @@ class DriverManager:
 
     def get_tor_download_url(self) -> str:
         return self.TOR_EXPERT_BUNDLE_URL.format(
-            system=self.get_os(),
+            system="expert-bundle-{}".format(os) if (os := self.get_os()) != "linux-aarch64" else "tor-linux-aarch64",
             ext="tar.bz2" if self.get_os().startswith("linux-aarch64") else "tar.gz",
         )
 
