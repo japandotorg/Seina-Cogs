@@ -153,7 +153,7 @@ class DriverManager:
 
     def get_tor_download_url(self) -> str:
         return self.TOR_EXPERT_BUNDLE_URL.format(
-            system="expert-bundle-{}".format(os) if (os := self.get_os()) != "linux-aarch64" else "tor-linux-aarch64",
+            system="expert-bundle-{}".format(os) if (os := self.get_os()) != "linux-aarch64" else "linux-aarch64",
             ext="tar.bz2" if self.get_os().startswith("linux-aarch64") else "tar.gz",
         )
 
