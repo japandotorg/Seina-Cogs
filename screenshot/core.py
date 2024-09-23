@@ -43,9 +43,16 @@ from .common.filter import Filter
 from .common import FirefoxManager
 from .common.downloader import DriverManager
 from .common.exceptions import ProxyConnectFailedError
+<<<<<<< HEAD
 from .common.utils import counter as counter_api, URLConverter
 # isort: on
 
+=======
+from .common.filter import Filter
+from .common.utils import URLConverter
+from .common.utils import counter as counter_api
+from .common.utils import send_notification
+>>>>>>> d11052e8a63960e403357be82630b4441c9fef87
 
 log: logging.Logger = logging.getLogger("red.seina.screenshot.core")
 
