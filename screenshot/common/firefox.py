@@ -31,6 +31,7 @@ from selenium.webdriver.common.service import Service
 from selenium.webdriver.common.options import BaseOptions
 from selenium.webdriver.remote.webdriver import WebDriver as _Driver
 from selenium.webdriver.firefox.webdriver import WebDriver as _Firefox
+
 # isort: on
 
 

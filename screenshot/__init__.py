@@ -33,6 +33,7 @@ from redbot.core.errors import CogLoadError
 from selenium.webdriver.remote.remote_connection import LOGGER as selenium_logger
 
 from .core import Screenshot
+
 # isort: on
 
 
