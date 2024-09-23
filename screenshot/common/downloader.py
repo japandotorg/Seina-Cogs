@@ -192,7 +192,6 @@ class DriverManager:
         name: str = "{}-{}-{}.".format("geckodriver", version, self.get_os())
         output_dict = [asset for asset in assets if asset["name"].startswith(name)]
         url: str = output_dict[0]["browser_download_url"]
-        log.debug("Downloading driver - %s" % url)
         return url
 
     async def get_firefox_archive(self) -> Tuple[str, bytes]:
