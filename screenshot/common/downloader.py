@@ -72,18 +72,12 @@ class DriverManager:
     def __environ(self) -> Dict[str, str]:
         environ: Dict[str, str] = os.environ.copy()
         if self.tor_location:
-            environ["LD_LIBRARY_PATH"] = (
-                os.getenv("LD_LIBRARY_PATH", "") + ":" + str(self.tor_location / "tor")
-            )
+            environ["LD_LIBRARY_PATH"] = str(self.tor_location / "tor")
         return environ
 
     @property
     def data_directory(self) -> pathlib.Path:
         return data_manager.cog_data_path(raw_name="Screenshot") / "data"
-
-    @property
-    def logs_directory(self) -> pathlib.Path:
-        return self.data_directory / "logs"
 
     @property
     def driver_location(self) -> Optional[pathlib.Path]:
@@ -359,7 +353,7 @@ class DriverManager:
                     Log debug file {}
                     DataDirectory {}
                     """.format(
-                        self.logs_directory / "tor.log", self.tor_location / "teb-data"
+                        self.data_directory / "tor.log", self.tor_location / "teb-data"
                     )
                 )
         log.info("Downloaded tor successfully with location: {}".format(self.tor_location))
