@@ -44,6 +44,7 @@ from .common import FirefoxManager
 from .common.downloader import DriverManager
 from .common.exceptions import ProxyConnectFailedError
 from .common.utils import counter as counter_api, URLConverter
+
 # isort: on
 
 
