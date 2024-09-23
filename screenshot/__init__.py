@@ -22,15 +22,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+# isort: off
+import logging
 import platform
+from urllib3.connectionpool import log as urllib_logger
 
 from redbot.core.bot import Red
 from redbot.core.errors import CogLoadError
 
+from selenium.webdriver.remote.remote_connection import LOGGER as selenium_logger
+
 from .core import Screenshot
+# isort: on
 
 
 async def setup(bot: Red) -> None:
+    urllib_logger.setLevel(logging.DEBUG)
+    selenium_logger.setLevel(logging.DEBUG)
     if platform.system().lower() not in ["windows", "linux"]:
         raise CogLoadError("This cog is only available for linux and windows devices right now.")
     cog: Screenshot = Screenshot(bot)

@@ -22,26 +22,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import asyncio.sslproto
-import contextlib
+# isort: off
 import io
-import logging
-from typing import Dict, Final, List, Literal, Optional, Union
-
 import aiohttp
+import logging
+import contextlib
+import asyncio.sslproto
+from typing import Final, List, Literal
+
 import discord
 from discord.ext import tasks
-from redbot.core import commands
 from redbot.core.bot import Red
+from redbot.core import commands
 from redbot.core.config import Config
 from redbot.core.utils.chat_formatting import humanize_list
+
 from selenium.common.exceptions import NoSuchDriverException
 
+from .common.filter import Filter
 from .common import FirefoxManager
 from .common.downloader import DriverManager
 from .common.exceptions import ProxyConnectFailedError
-from .common.filter import Filter
-from .common.utils import URLConverter, send_notification, counter as counter_api
+from .common.utils import counter as counter_api, URLConverter
+# isort: on
+
 
 log: logging.Logger = logging.getLogger("red.seina.screenshot.core")
 
@@ -53,14 +57,8 @@ class Screenshot(commands.Cog):
 
     setattr(asyncio.sslproto._SSLProtocolTransport, "_start_tls_compatible", True)
 
-    __version__: Final[str] = "0.1.0"
+    __version__: Final[str] = "0.1.1"
     __author__: Final[List[str]] = ["inthedark.org"]
-
-    CACHE: Dict[str, Union[bool, int, Optional[str]]] = {
-        "toggle": False,
-        "port": 9050,
-        "updated": False,
-    }
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
@@ -75,30 +73,34 @@ class Screenshot(commands.Cog):
     def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
         self.config: Config = Config.get_conf(self, identifier=69_420_666, force_registration=True)
-        self.config.register_global(**self.CACHE)
+        self.config.register_global(**{"updated": False, "nsfw": "normal"})
 
         self.session: aiohttp.ClientSession = aiohttp.ClientSession(trust_env=True)
         self.manager: DriverManager = DriverManager(session=self.session)
         self.driver: FirefoxManager = FirefoxManager(self)
-        self.filter: Filter = Filter()
+        self.filter: Filter = Filter(self)
 
         self.__task: asyncio.Task[None] = asyncio.create_task(self.update_counter_api())
 
     async def cog_load(self) -> None:
-        if self.manager.firefox is None:
-            await self.manager.download_firefox()
-        if self.manager.location is None:
+        if self.manager.tor_location is None:
+            await self.manager.download_and_extract_tor()
+        await self.manager.execute_tor_binary()
+        if self.manager.firefox_location is None:
+            await self.manager.download_and_extract_firefox()
+        if self.manager.driver_location is None:
             await self.manager.download_and_extract_driver()
-        self.CACHE: Dict[str, Union[bool, int, Optional[str]]] = await self.config.all()
-        if not self.CACHE["toggle"]:
-            await send_notification(self)
         self.manager.set_driver_downloaded()
-        self.bg_task.start()  # type: ignore
+        self.bg_task.start()
 
     async def cog_unload(self) -> None:
+        self.filter.close()
         self.__task.cancel()
-        self.bg_task.cancel()  # type: ignore
+        self.bg_task.cancel()
         await self.session.close()
+        if self.manager._tor_process is not discord.utils.MISSING:
+            self.manager._tor_process.terminate()
+            self.manager._tor_process.kill()
         with contextlib.suppress(BaseException):
             self.driver.clear_all_drivers()
 
@@ -116,9 +118,10 @@ class Screenshot(commands.Cog):
 
     @tasks.loop(minutes=5.0, reconnect=True, name="red:seina:screenshot")
     async def bg_task(self) -> None:
-        self.driver.remove_drivers_if_time_has_passed(minutes=10.0)
+        with contextlib.suppress(RuntimeError):
+            self.driver.remove_drivers_if_time_has_passed(minutes=10.0)
 
-    @bg_task.before_loop  # type: ignore
+    @bg_task.before_loop
     async def bg_task_before_loop(self) -> None:
         await self.manager.wait_until_driver_downloaded()
 
@@ -126,34 +129,6 @@ class Screenshot(commands.Cog):
     @commands.group(name="screenshotset", aliases=["screenset"])
     async def screenshot_set(self, _: commands.Context):
         """Configuration commands for screenshot."""
-
-    @screenshot_set.group(name="tor", invoke_without_command=True)  # type: ignore
-    async def screenshot_set_tor(self, ctx: commands.Context, toggle: bool):
-        """
-        Enable or disable tor proxy when taking screenshots.
-        """
-        if not ctx.invoked_subcommand:
-            await self.config.toggle.set(toggle)
-            self.CACHE["toggle"] = toggle
-            await ctx.tick()
-
-    @screenshot_set_tor.command(name="port")  # type: ignore
-    async def screenshot_set_tor_port(
-        self, ctx: commands.Context, port: commands.Range[int, 1, 5]
-    ):
-        """
-        Change the default port of the tor protocol.
-        """
-        if port > 65535:
-            await ctx.send(
-                "The maximum supported port is '65535' got '{}' instead.".format(port),
-                reference=ctx.message.to_reference(fail_if_not_exists=False),
-                allowed_mentions=discord.AllowedMentions(replied_user=False),
-            )
-            raise commands.CheckFailure()
-        await self.config.port(port)
-        self.CACHE["port"] = port
-        await ctx.tick()
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
@@ -195,20 +170,13 @@ class Screenshot(commands.Cog):
                     else "try again later."
                 )
                 raise commands.CheckFailure()
-            except ProxyConnectFailedError:
-                if self.CACHE["toggle"]:
-                    log.info(
-                        "Failed connecting to the proxy, disabling proxy config...",
-                    )
-                    await self.config.toggle.set(False)
-                    self.CACHE["toggle"] = False
+            except ProxyConnectFailedError as error:
+                log.exception(
+                    "Failed connecting to the proxy.",
+                    exc_info=error,
+                )
                 await self.bot.send_to_owners(
                     "Something went wrong with the screenshot cog, check logs for more details."
-                )
-                await ctx.send(
-                    "Something went wrong with the screenshot cog, try again later.",
-                    reference=ctx.message.to_reference(fail_if_not_exists=False),
-                    allowed_mentions=discord.AllowedMentions(replied_user=False),
                 )
                 raise commands.CheckFailure()
             except commands.UserFeedbackCheckFailure as error:
@@ -230,7 +198,7 @@ class Screenshot(commands.Cog):
                     ),
                 )
                 and not ctx.channel.is_nsfw()
-                and await self.filter.read(image)
+                and await self.filter.read(image=image, model="small")
             ):
                 await ctx.send(
                     "This image contains nsfw content, and cannot be sent on this channel.",

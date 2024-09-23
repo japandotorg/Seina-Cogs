@@ -22,28 +22,54 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import asyncio
+# isort: off
+import os
 import io
+import asyncio
 import logging
-from typing import Any, Dict, Optional, cast
-
-import transformers
 from PIL import Image
+from typing import TYPE_CHECKING, Dict, Literal, Optional
+
+import discord
+
+import torch
+import transformers
+
+if TYPE_CHECKING:
+    from ..core import Screenshot
 
 try:
     import regex as re
 except ModuleNotFoundError:
     import re as re
+# isort: on
 
 
 log: logging.Logger = logging.getLogger("red.seina.screenshot.filter")
 
 
 class Filter:
-    def __init__(self) -> None:
-        self.model: transformers.Pipeline = transformers.pipeline(
-            "image-classification", model="Falconsai/nsfw_image_detection"
-        )
+    def __init__(self, cog: "Screenshot") -> None:
+        self.cog: "Screenshot" = cog
+        self.models: Dict[Literal["small", "large"], transformers.Pipeline] = discord.utils.MISSING
+        self.__task: asyncio.Task[None] = asyncio.create_task(self.__models())
+
+    async def __models(self) -> None:
+        os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+        await self.cog.manager.wait_until_driver_downloaded()
+        if self.models is discord.utils.MISSING:
+            self.models: Dict[Literal["small", "large"], transformers.Pipeline] = {
+                "small": transformers.pipeline(
+                    "image-classification",
+                    model="Falconsai/nsfw_image_detection",
+                    device=torch.device("cpu"),
+                ),
+                "large": transformers.pipeline(
+                    "image-classification",
+                    model="MichalMlodawski/nsfw-image-detection-large",
+                    device=torch.device("cpu"),
+                ),
+            }
 
     @staticmethod
     def is_valid_url(url: str) -> bool:
@@ -59,10 +85,25 @@ class Filter:
         match: Optional[re.Match[str]] = regex.search(url)
         return match is not None
 
-    async def read(self, image: bytes) -> bool:
+    def close(self) -> None:
+        self.__task.cancel()
+
+    async def read(self, image: bytes, model: Literal["small", "large"]) -> bool:
+        if model.lower() == "small":
+            return await asyncio.to_thread(lambda: self.small(image))
+        elif model.lower() == "large":
+            return await asyncio.to_thread(lambda: self.large(image))
+        else:
+            raise RuntimeError("No model named '{}' found.".format(model.lower()))
+
+    def small(self, image: bytes) -> bool:
         img: Image.ImageFile.ImageFile = Image.open(io.BytesIO(image))
-        response: Dict[str, Any] = cast(
-            Dict[str, Any], await asyncio.to_thread(lambda: self.model(img))
-        )
+        response: Dict[str, float] = self.models["small"](img)  # type: ignore
         pred: str = max(response, key=lambda x: x["score"])
         return pred["label"] == "nsfw"
+
+    def large(self, image: bytes) -> bool:
+        img: Image.ImageFile.ImageFile = Image.open(io.BytesIO(image))
+        response: Dict[str, float] = self.models["large"](img)  # type: ignore
+        pred: str = max(response, key=lambda x: x["score"])
+        return pred["label"].lower() != "safe"

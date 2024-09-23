@@ -22,9 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import functools
+# isort: off
 import hashlib
 import logging
+import functools
 from typing import TYPE_CHECKING, Callable
 
 import discord
@@ -38,6 +39,7 @@ try:
     import regex as re
 except ModuleNotFoundError:
     import re as re
+# isort: on
 
 
 log: logging.Logger = logging.getLogger("red.seina.screenshot.core")

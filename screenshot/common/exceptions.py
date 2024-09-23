@@ -29,7 +29,7 @@ class DownloaderError(Exception):
     """Base exception for web-driver downloader."""
 
 
-class DriverDownloadFailed(DownloaderError):
+class DownloadFailed(DownloaderError):
     """Downloading the web driver failed."""
 
     def __init__(

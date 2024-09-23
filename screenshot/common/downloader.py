@@ -22,56 +22,71 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import asyncio
-import concurrent.futures
+# isort: off
 import io
-import logging
 import os
-import pathlib
+import sys
+import asyncio
+import logging
 import platform
-import tarfile
-import zipfile
-from typing import ClassVar, Dict, Final, Optional
+from typing import ClassVar, Dict, Final, Optional, Tuple
 
+import discord
 import aiohttp
-from mozdownload.factory import FactoryScraper
+
+import pathlib
+import zipfile
+import tarfile
+import rich.progress
+
 from redbot.core import data_manager
 
-from .exceptions import DriverDownloadFailed
+from .exceptions import DownloadFailed
+
+# isort: on
+
 
 log: logging.Logger = logging.getLogger("red.seina.screenshot.downloader")
 
 
 class DriverManager:
-    SYSTEM: Final[Dict[str, str]] = {"linux": "linux", "windows": "win", "arm": "linux-aarch"}
-    DOWNLOAD_URL: Final[str] = "https://github.com/mozilla/geckodriver/releases/download"
-    LATEST_RELEASE_URL: Final[str] = (
+    DRIVER_LATEST_RELEASE_URL: Final[str] = (
         "https://api.github.com/repos/mozilla/geckodriver/releases/latest"
     )
-    RELEASE_TAG_URL: ClassVar[str] = (
+    DRIVER_RELEASE_TAG_URL: ClassVar[str] = (
         "https://api.github.com/repos/mozilla/geckodriver/releases/tags/{version}"
     )
-    EXTRAS: Final[str] = (
-        "/DesktopShortcut=false /StartMenuShortcut=false /PrivateBrowsingShortcut=false"
+    FIREFOX_DOWNLOAD_URL: ClassVar[str] = (
+        "https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/firefox-{version}.en-US.{system}.{ext}"
+    )
+    TOR_EXPERT_BUNDLE_URL: ClassVar[str] = (
+        "https://archive.org/download/seina-tor-ext/tor-expert-bundle-{system}.{ext}"
     )
 
     def __init__(self, session: Optional[aiohttp.ClientSession] = None) -> None:
+        self._tor_process: asyncio.subprocess.Process = discord.utils.MISSING
         self.__session: aiohttp.ClientSession = session or aiohttp.ClientSession()
         self.__event: asyncio.Event = asyncio.Event()
 
-    @staticmethod
-    def get_os_architecture() -> int:
-        if platform.machine().endswith("64"):
-            return 64
-        else:
-            return 32
+    @property
+    def __environ(self) -> Dict[str, str]:
+        environ: Dict[str, str] = os.environ.copy()
+        if self.tor_location and self.get_os() != "linux-aarch64":
+            environ["LD_LIBRARY_PATH"] = (
+                os.getenv("LD_LIBRARY_PATH", "") + ":" + str(self.tor_location / "tor")
+            )
+        return environ
 
     @property
     def data_directory(self) -> pathlib.Path:
-        return data_manager.cog_data_path(raw_name="Screenshot")
+        return data_manager.cog_data_path(raw_name="Screenshot") / "data"
 
     @property
-    def location(self) -> Optional[pathlib.Path]:
+    def logs_directory(self) -> pathlib.Path:
+        return self.data_directory / "logs"
+
+    @property
+    def driver_location(self) -> Optional[pathlib.Path]:
         return (
             loc[0]
             if (
@@ -82,104 +97,266 @@ class DriverManager:
         )
 
     @property
-    def firefox(self) -> Optional[pathlib.Path]:
-        return loc[0] if (loc := list(self.data_directory.glob("firefox/firefox*"))) else None
+    def firefox_location(self) -> Optional[pathlib.Path]:
+        return (
+            loc[0]
+            if (loc := list(self.data_directory.glob("firefox-{}/firefox*".format(self.get_os()))))
+            else None
+        )
 
-    def get_os_name(self) -> str:
-        if platform.machine().lower() == "aarch64":
-            return self.SYSTEM["arm"]
+    @property
+    def tor_location(self) -> Optional[pathlib.Path]:
+        return (
+            loc[0]
+            if (loc := list(self.data_directory.glob("tor-{}*".format(self.get_os()))))
+            else None
+        )
+
+    @staticmethod
+    def get_os_name() -> str:
+        if platform.machine().lower().startswith("aarch"):
+            return "linux-aarch"
         if platform.system().lower() == "linux":
-            return self.SYSTEM["linux"]
+            return "linux"
         elif platform.system().lower() == "windows":
-            return self.SYSTEM["windows"]
-        else:
-            raise RuntimeError()
+            return "win"
+        raise RuntimeError()
+
+    @staticmethod
+    def get_firefox_system() -> str:
+        if platform.machine().lower() == "aarch64":
+            return "linux-aarch64"
+        elif platform.system().lower() == "linux":
+            if platform.machine().endswith("64"):
+                return "linux-x86_64"
+            else:
+                return "linux-i686"
+        elif platform.system().lower() == "machine":
+            if platform.machine().endswith("64"):
+                return "win64"
+            else:
+                return "win32"
+        raise RuntimeError("Not a supported device.")
 
     def get_os(self) -> str:
-        return "{}{}".format(self.get_os_name(), self.get_os_architecture())
+        return "{}{}".format(self.get_os_name(), 64 if platform.machine().endswith("64") else 32)
 
     def set_driver_downloaded(self) -> None:
         self.__event.set()
 
+    def get_firefox_download_url(self, version: str) -> str:
+        return self.FIREFOX_DOWNLOAD_URL.format(
+            version=version,
+            system=self.get_firefox_system(),
+            ext="zip" if self.get_os().startswith("win") else "tar.bz2",
+        )
+
+    def get_tor_download_url(self) -> str:
+        return self.TOR_EXPERT_BUNDLE_URL.format(
+            system=self.get_os(),
+            ext="tar.bz2" if self.get_os().startswith("linux-aarch64") else "tar.gz",
+        )
+
     async def wait_until_driver_downloaded(self) -> None:
         await self.__event.wait()
 
+    async def execute_tor_binary(self) -> Optional[asyncio.subprocess.Process]:
+        if self.tor_location is not None:
+            process: asyncio.subprocess.Process = await asyncio.subprocess.create_subprocess_shell(
+                (
+                    "{0}/tor/tor -f {0}/torrc"
+                    if not self.get_os().startswith("win")
+                    else "{0}/tor/tor.exe -f {0}/torrc"
+                ).format(self.tor_location),
+                env=self.__environ,
+                stdin=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+                stdout=asyncio.subprocess.PIPE,
+            )
+            self._tor_process: asyncio.subprocess.Process = process
+            log.info("Connected to tor successfully with ip:port 127.0.0.1:21666")
+
     async def get_latest_release_version(self) -> str:
-        async with self.__session.get(url=self.LATEST_RELEASE_URL) as response:
+        async with self.__session.get(url=self.DRIVER_LATEST_RELEASE_URL) as response:
             json: Dict[str, str] = await response.json()
         version: str = json.get("tag_name", "v0.35.0")
         return version
 
     async def get_driver_download_url(self) -> str:
         version: str = await self.get_latest_release_version()
-        async with self.__session.get(self.RELEASE_TAG_URL.format(version=version)) as response:
+        async with self.__session.get(
+            self.DRIVER_RELEASE_TAG_URL.format(version=version)
+        ) as response:
             json = await response.json()
         assets = json["assets"]
         name: str = "{}-{}-{}.".format("geckodriver", version, self.get_os())
         output_dict = [asset for asset in assets if asset["name"].startswith(name)]
         url: str = output_dict[0]["browser_download_url"]
-        log.debug("Downloading driver (%s) for [%s]" % (url, self.get_os()))
+        log.debug("Downloading driver - %s" % url)
         return url
 
-    async def download_and_extract_driver(self) -> None:
-        url: str = await self.get_driver_download_url()
-        async with self.__session.get(url=url, timeout=aiohttp.ClientTimeout(120)) as response:
+    async def get_firefox_archive(self) -> Tuple[str, bytes]:
+        url: str = self.get_firefox_download_url("132.0a1")
+        log.info("Downloading firefox - %s" % url)
+        async with self.__session.get(url=url) as response:
             if response.status == 404:
-                raise DriverDownloadFailed(
-                    "Could not find a driver with url: '%s" % url, retry=False
+                raise DownloadFailed("Could not find firefox with url: '%s'" % url, retry=False)
+            elif 400 <= response.status < 600:
+                raise DownloadFailed(retry=True)
+            response.raise_for_status()
+            byte: bytearray = bytearray()
+            byte_num: int = 0
+            with rich.progress.Progress(
+                rich.progress.SpinnerColumn(),
+                rich.progress.TextColumn("[progress.description]{task.description}"),
+                rich.progress.BarColumn(),
+                rich.progress.TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+                rich.progress.TimeRemainingColumn(),
+                rich.progress.TimeElapsedColumn(),
+            ) as progress:
+                task = progress.add_task(
+                    "[red.seina.screenshot.downloader] Downloading Firefox",
+                    total=response.content_length,
+                )
+                chunk: bytes = await response.content.read(1024)
+                while chunk:
+                    byte.extend(chunk)
+                    size: int = sys.getsizeof(chunk)
+                    byte_num += size
+                    progress.update(task, advance=size)
+                    chunk: bytes = await response.content.read(1024)
+        return url, bytes(byte)
+
+    async def get_driver_archive(self) -> Tuple[str, bytes]:
+        url: str = await self.get_driver_download_url()
+        log.info("Downloading driver - %s" % url)
+        async with self.__session.get(url=url) as response:
+            if response.status == 404:
+                raise DownloadFailed("Could not find a driver with url: '%s" % url, retry=False)
+            elif 400 <= response.status < 600:
+                raise DownloadFailed(retry=True)
+            response.raise_for_status()
+            byte: bytearray = bytearray()
+            byte_num: int = 0
+            with rich.progress.Progress(
+                rich.progress.SpinnerColumn(),
+                rich.progress.TextColumn("[progress.description]{task.description}"),
+                rich.progress.BarColumn(),
+                rich.progress.TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+                rich.progress.TimeRemainingColumn(),
+                rich.progress.TimeElapsedColumn(),
+            ) as progress:
+                task: rich.progress.TaskID = progress.add_task(
+                    "[red.seina.screenshot.downloader] Downloading driver",
+                    total=response.content_length,
+                )
+                chunk: bytes = await response.content.read(1024)
+                while chunk:
+                    byte.extend(chunk)
+                    size: int = sys.getsizeof(chunk)
+                    byte_num += size
+                    progress.update(task, advance=size)
+                    chunk: bytes = await response.content.read(1024)
+        return url, bytes(byte)
+
+    async def get_tor_archive(self) -> Tuple[str, bytes]:
+        url: str = self.get_tor_download_url()
+        log.info("Downloading tor - %s" % url)
+        async with self.__session.get(url=url) as response:
+            if response.status == 404:
+                raise DownloadFailed(
+                    "Could not find tor expert bundle with url: '%s'" % url, retry=False
                 )
             elif 400 <= response.status < 600:
-                raise DriverDownloadFailed(retry=True)
+                raise DownloadFailed(retry=True)
             response.raise_for_status()
-            byte: bytes = await response.read()
+            byte: bytearray = bytearray()
+            byte_num: int = 0
+            with rich.progress.Progress(
+                rich.progress.SpinnerColumn(),
+                rich.progress.TextColumn("[progress.description]{task.description}"),
+                rich.progress.BarColumn(),
+                rich.progress.TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+                rich.progress.TimeRemainingColumn(),
+                rich.progress.TimeElapsedColumn(),
+            ) as progress:
+                task = progress.add_task(
+                    "[red.seina.screenshot.downloader] Downloading Tor",
+                    total=response.content_length,
+                )
+                chunk: bytes = await response.content.read(1024)
+                while chunk:
+                    byte.extend(chunk)
+                    size: int = sys.getsizeof(chunk)
+                    byte_num += size
+                    progress.update(task, advance=size)
+                    chunk: bytes = await response.content.read(1024)
+        return url, bytes(byte)
+
+    async def download_and_extract_firefox(self) -> None:
+        url, byte = await self.get_firefox_archive()
+        if url.endswith(".zip"):
+            with zipfile.ZipFile(io.BytesIO(byte), mode="r") as zip:
+                await asyncio.to_thread(lambda: zip.extractall(path=self.data_directory))
+        elif url.endswith("tar.bz2"):
+            tar: tarfile.TarFile = tarfile.TarFile.open(fileobj=io.BytesIO(byte), mode="r:bz2")
+            await asyncio.to_thread(lambda: tar.extractall(path=self.data_directory))
+        else:
+            raise DownloadFailed("Failed to download firefox.")
+        path: pathlib.Path = list(self.data_directory.glob("firefox*"))[0]
+        name: str = path.name + "-{}".format(self.get_os())
+        os.rename(path, self.data_directory / name)
+        log.info("Downloaded firefox successfully with location: {}".format(self.firefox_location))
+
+    async def download_and_extract_driver(self) -> None:
+        url, byte = await self.get_driver_archive()
         if url.endswith(".zip"):
             with zipfile.ZipFile(file=io.BytesIO(byte), mode="r") as zip:
-                zip.extractall(path=self.data_directory)
+                await asyncio.to_thread(lambda: zip.extractall(path=self.data_directory))
         elif url.endswith(".tar.gz"):
             tar: tarfile.TarFile = tarfile.TarFile.open(fileobj=io.BytesIO(byte), mode="r:gz")
-            tar.extractall(path=self.data_directory)
+            await asyncio.to_thread(lambda: tar.extractall(path=self.data_directory))
         else:
-            raise DriverDownloadFailed("Failed to download the driver.")
+            raise DownloadFailed("Failed to download the driver.")
         path: pathlib.Path = list(self.data_directory.glob("geckodriver*"))[0]
         idx: int = path.name.rfind(".")
-        name: str = path.name[:idx] + "-{}".format(
-            "linux-aarch64" if platform.machine() == "aarch64" else self.get_os()
-        )
+        name: str = path.name[:idx] + "-{}".format(self.get_os())
         os.rename(
             path,
             (
                 self.data_directory / "{}.exe".format(name)
-                if self.get_os().startswith(self.SYSTEM["windows"])
+                if self.get_os().startswith("win")
                 else self.data_directory / name
             ),
         )
-        log.info("Downloaded driver successfully with location: {}".format(self.location))
+        log.info("Downloaded driver successfully with location: {}".format(self.driver_location))
 
-    async def download_firefox(self) -> str:
-        log.info("Downloading firefox in {}".format(self.data_directory))
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            scraper: FactoryScraper = FactoryScraper(
-                scraper_type="release",
-                version="130.0",
-                platform="linux-arm64" if platform.machine() == "aarch64" else None,
-                destination=str(self.data_directory),
+    async def download_and_extract_tor(self) -> None:
+        url, byte = await self.get_tor_archive()
+        if url.endswith("bz2"):
+            tar: tarfile.TarFile = tarfile.TarFile.open(fileobj=io.BytesIO(byte), mode="r:bz2")
+            await asyncio.to_thread(lambda: tar.extractall(path=self.data_directory))
+        elif url.endswith("gz"):
+            tar: tarfile.TarFile = tarfile.TarFile.open(fileobj=io.BytesIO(byte), mode="r:gz")
+            await asyncio.to_thread(
+                lambda: tar.extractall(path=self.data_directory / "tor-{}".format(self.get_os()))
             )
-            res: str = await asyncio.get_running_loop().run_in_executor(
-                executor=executor, func=scraper.download
-            )
-            if self.get_os() == self.SYSTEM["windows"]:
-                process: asyncio.subprocess.Process = await asyncio.create_subprocess_shell(
-                    "{} /InstallDirectoryPath={} {}".format(
-                        res, str(self.data_directory / "firefox"), self.EXTRAS
-                    ),
-                    shell=True,
+        else:
+            raise DownloadFailed("Failed to download tor.")
+        if self.tor_location is not None:
+            file: pathlib.Path = self.tor_location / "torrc"
+            with file.open("w", encoding="utf-8") as t:
+                t.write(
+                    """
+                    # Ports
+                    SOCKSPort 21666
+                    ControlPort 27666
+                    
+                    # Logs
+                    Log debug file {}
+                    DataDirectory {}
+                    """.format(
+                        self.logs_directory, self.tor_location / "teb-data"
+                    )
                 )
-                await process.wait()
-            elif res.endswith("tar.bz2"):
-                tar: tarfile.TarFile = tarfile.TarFile.open(name=res, mode="r:bz2")
-                tar.extractall(path=self.data_directory)
-            else:
-                raise RuntimeError()
-            os.remove(res)
-        log.info("Successfully downloaded firefox.")
-        return res
+        log.info("Downloaded tor successfully with location: {}".format(self.tor_location))

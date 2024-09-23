@@ -22,22 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+# isort: off
+import logging
 import asyncio
 import contextlib
-import logging
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING, AsyncGenerator, Dict, Literal, TypeVar
 
 from redbot.core import commands
-from selenium.common.exceptions import ScreenshotException, TimeoutException, WebDriverException
-from selenium.webdriver.common.proxy import Proxy, ProxyType
-from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
+
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.common.proxy import Proxy, ProxyType
+from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
+from selenium.common.exceptions import TimeoutException, WebDriverException, ScreenshotException
 
-from .exceptions import ProxyConnectFailedError
 from .firefox import Firefox
+from .exceptions import ProxyConnectFailedError
 
 if TYPE_CHECKING:
     from ..core import Screenshot
@@ -46,6 +48,7 @@ try:
     import regex as re
 except (ImportError, ModuleNotFoundError):
     import re as re
+# isort: on
 
 
 T = TypeVar("T")
@@ -62,9 +65,9 @@ class FirefoxManager:
 
     def get_service(self) -> Service:
         return Service(
-            executable_path=str(self.cog.manager.location),
+            executable_path=str(self.cog.manager.driver_location),
             service_args=["--log", "debug"],
-            log_output=str(self.cog.manager.data_directory / "gecko.log"),
+            log_output=str(self.cog.manager.logs_directory / "gecko.log"),
         )
 
     def get_options(self) -> Options:
@@ -72,15 +75,14 @@ class FirefoxManager:
         options: Options = Options()
         options.add_argument("--headless")
         options.page_load_strategy = "normal"
-        options.binary_location = str(cog.manager.firefox)
-        if cog.CACHE["toggle"]:
-            options.proxy = Proxy(
-                {
-                    "proxyType": ProxyType.MANUAL,
-                    "socksProxy": "127.0.0.1:{}".format(cog.CACHE["port"]),
-                    "socksVersion": 5,
-                }
-            )
+        options.binary_location = str(cog.manager.firefox_location)
+        options.proxy = Proxy(
+            {
+                "proxyType": ProxyType.MANUAL,
+                "socksProxy": "127.0.0.1:21666",
+                "socksVersion": 5,
+            }
+        )
         options.profile = FirefoxProfile()
         options.profile.set_preference("browser.cache.disk.enable", False)
         options.profile.set_preference("browser.cache.memory.enable", False)
@@ -119,7 +121,7 @@ class FirefoxManager:
         except TimeoutException:
             raise commands.UserFeedbackCheckFailure("Timed out opening the website.")
         except WebDriverException as error:
-            if re.search(pattern="neterror", string=str(error.msg), flags=re.IGNORECASE):
+            if re.search(pattern="about:neterror", string=str(error.msg), flags=re.IGNORECASE):
                 log.exception("Something went wrong connecting to the internet.", exc_info=error)
                 raise ProxyConnectFailedError()
             raise commands.UserFeedbackCheckFailure(

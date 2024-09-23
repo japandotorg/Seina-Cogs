@@ -22,14 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+# isort: off
 import atexit
 import weakref
 from typing import Any
 
-from selenium.webdriver.common.options import BaseOptions
 from selenium.webdriver.common.service import Service
-from selenium.webdriver.firefox.webdriver import WebDriver as _Firefox
+from selenium.webdriver.common.options import BaseOptions
 from selenium.webdriver.remote.webdriver import WebDriver as _Driver
+from selenium.webdriver.firefox.webdriver import WebDriver as _Firefox
+# isort: on
 
 
 class Driver(_Driver):
