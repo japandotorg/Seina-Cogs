@@ -38,8 +38,8 @@ from .core import Screenshot
 
 
 async def setup(bot: Red) -> None:
-    urllib_logger.setLevel(logging.DEBUG)
-    selenium_logger.setLevel(logging.DEBUG)
+    urllib_logger.setLevel(logging.WARNING)
+    selenium_logger.setLevel(logging.WARNING)
     if platform.system().lower() not in ["windows", "linux"]:
         raise CogLoadError("This cog is only available for linux and windows devices right now.")
     cog: Screenshot = Screenshot(bot)
