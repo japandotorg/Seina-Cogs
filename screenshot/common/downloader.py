@@ -125,7 +125,7 @@ class DriverManager:
                 return "linux-x86_64"
             else:
                 return "linux-i686"
-        elif platform.system().lower() == "machine":
+        elif platform.system().lower() == "windows":
             if platform.machine().endswith("64"):
                 return "win64"
             else:
