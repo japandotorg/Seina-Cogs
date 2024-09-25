@@ -152,8 +152,8 @@ class Screenshot(commands.Cog):
         **Arguments**:
         - ``<url>  ``: a well formatted url.
         - ``<flags>``:
-            - ``--full`` for a full screenshot of the page.
-            - ``--mode <mode>`` either ``light`` or ``dark``.
+          - ``--full`` for a full screenshot of the page.
+          - ``--mode <mode>`` either ``light`` or ``dark``.
 
         **Examples**:
         - ``[p]screenshot https://seina-cogs.readthedocs.io``

@@ -66,7 +66,6 @@ class DriverManager:
     )
     FIREFOX_ADDONS = {
         "dark": "https://addons.mozilla.org/firefox/downloads/file/4351387/darkreader-4.9.92.xpi",
-        "cookies": "https://addons.mozilla.org/firefox/downloads/file/3625855/ninja_cookie-0.2.7.xpi",
     }
 
     def __init__(self, session: Optional[aiohttp.ClientSession] = None) -> None:
@@ -193,7 +192,7 @@ class DriverManager:
         await self.__event.wait()
 
     async def execute_tor_binary(self) -> Optional[asyncio.subprocess.Process]:
-        if self.tor_location and self._tor_process is discord.utils.MISSING:
+        if self.tor_location:
             process: asyncio.subprocess.Process = await asyncio.subprocess.create_subprocess_shell(
                 (
                     "{0}/tor/tor -f {0}/torrc"

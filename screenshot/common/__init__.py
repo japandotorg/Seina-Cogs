@@ -132,7 +132,6 @@ class FirefoxManager:
             raise commands.UserFeedbackCheckFailure("Timed out opening the website.")
         except WebDriverException as error:
             if re.search(pattern="about:neterror", string=str(error.msg), flags=re.IGNORECASE):
-                log.exception("Something went wrong connecting to the internet.", exc_info=error)
                 raise ProxyConnectFailedError()
             raise commands.UserFeedbackCheckFailure(
                 "Could not get a screenshot of that website, try again later."
@@ -166,12 +165,7 @@ class FirefoxManager:
         now: datetime = datetime.now(timezone.utc)
         try:
             driver: Firefox = await self.launcher()
-            (
-                driver.install_addon(os.fspath(location), temporary=True)
-                if (location := self.cog.manager.get_extension_location("cookies"))
-                else None
-            )
-            driver.set_page_load_timeout(time_to_wait=230.0)
+            driver.set_page_load_timeout(time_to_wait=30.0)
             driver.fullscreen_window()
             try:
                 yield driver

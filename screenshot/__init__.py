@@ -37,9 +37,9 @@ from .core import Screenshot
 
 async def setup(bot: Red) -> None:
     urllib_logger.setLevel(logging.WARNING)
-    logging.getLogger("PIL").setLevel(logging.WARNING)
-    logging.getLogger("h5py").setLevel(logging.WARNING)
-    logging.getLogger("selenium").setLevel(logging.WARNING)
+    logging.getLogger("PIL").setLevel(logging.DEBUG)
+    logging.getLogger("h5py").setLevel(logging.DEBUG)
+    logging.getLogger("selenium").setLevel(logging.DEBUG)
     if platform.system().lower() not in ["windows", "linux"]:
         raise CogLoadError("This cog is only available for linux and windows devices right now.")
     cog: Screenshot = Screenshot(bot)
