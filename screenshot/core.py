@@ -193,6 +193,13 @@ class Screenshot(commands.Cog):
                     allowed_mentions=discord.AllowedMentions(replied_user=False),
                 )
                 raise commands.CheckFailure()
+            except asyncio.TimeoutError:
+                await ctx.send(
+                    "Timed out waiting for the website to load.",
+                    reference=ctx.message.to_reference(fail_if_not_exists=False),
+                    allowed_mentions=discord.AllowedMentions(replied_user=False),
+                )
+                raise commands.CheckFailure()
             except commands.UserFeedbackCheckFailure as error:
                 if message := error.message:
                     await ctx.send(

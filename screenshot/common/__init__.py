@@ -28,7 +28,7 @@ import logging
 import asyncio
 import contextlib
 from datetime import datetime, timedelta, timezone
-from typing import TYPE_CHECKING, AsyncGenerator, Dict, Literal, TypeVar
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Coroutine, Dict, Literal, TypeVar
 
 from redbot.core import commands
 
@@ -194,7 +194,7 @@ class FirefoxManager:
         wait: int = 10,
     ) -> bytes:
         async with self.driver() as driver:
-            return await asyncio.to_thread(
+            thread: Coroutine[Any, Any, bytes] = asyncio.to_thread(
                 lambda: self.take_screenshot_with_url(
                     driver,
                     url=url,
@@ -203,3 +203,4 @@ class FirefoxManager:
                     wait=wait,
                 )
             )
+            return await asyncio.wait_for(thread, timeout=30.0)
