@@ -26,12 +26,10 @@ SOFTWARE.
 import io
 import aiohttp
 import logging
-import contextlib
 import asyncio.sslproto
 from typing import Any, Final, List, Literal
 
 import discord
-from discord.ext import tasks
 from redbot.core.bot import Red
 from redbot.core import commands
 from redbot.core.config import Config
@@ -86,18 +84,14 @@ class Screenshot(commands.Cog):
     async def cog_load(self) -> None:
         self.tasks.append(asyncio.create_task(self.update_counter_api()))
         self.tasks.append(asyncio.create_task(self.manager.initialize()))
-        self.bg_task.start()
 
     async def cog_unload(self) -> None:
         for task in self.tasks:
             if isinstance(task, asyncio.Task):
                 task.cancel()
-        self.bg_task.cancel()
         await self.session.close()
         if self.manager._tor_process is not discord.utils.MISSING:
             await self.manager.close()
-        with contextlib.suppress(BaseException):
-            self.driver.clear_all_drivers()
 
     @counter_api
     def counter(self) -> str:
@@ -110,15 +104,6 @@ class Screenshot(commands.Cog):
                 "https://api.counterapi.dev/v1/japandotorg/{}/up".format(self.counter())
             )
             await self.config.updated.set(True)
-
-    @tasks.loop(minutes=5.0, reconnect=True, name="red:seina:screenshot")
-    async def bg_task(self) -> None:
-        with contextlib.suppress(RuntimeError):
-            self.driver.remove_drivers_if_time_has_passed(minutes=10.0)
-
-    @bg_task.before_loop
-    async def bg_task_before_loop(self) -> None:
-        await self.manager.wait_until_driver_downloaded()
 
     @commands.is_owner()
     @commands.group(name="screenshotset", aliases=["screenset"])

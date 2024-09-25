@@ -27,8 +27,7 @@ import os
 import logging
 import asyncio
 import contextlib
-from datetime import datetime, timedelta, timezone
-from typing import TYPE_CHECKING, Any, AsyncGenerator, Coroutine, Dict, Literal, TypeVar
+from typing import TYPE_CHECKING, AsyncGenerator, Literal, TypeVar
 
 from redbot.core import commands
 
@@ -60,7 +59,6 @@ log: logging.Logger = logging.getLogger("red.seina.screenshot.core")
 class FirefoxManager:
     def __init__(self, cog: "Screenshot") -> None:
         self.cog: "Screenshot" = cog
-        self.drivers: Dict[datetime, Firefox] = {}
         self.lock: asyncio.Lock = asyncio.Lock()
 
     def get_service(self) -> Service:
@@ -89,29 +87,6 @@ class FirefoxManager:
         options.profile.set_preference("browser.cache.offline.enable", False)
         options.profile.set_preference("network.http.use-cache", False)
         return options
-
-    def clear_all_drivers(self) -> None:
-        for date, driver in self.drivers.items():
-            if isinstance(driver, Firefox):
-                with contextlib.suppress(BaseException):
-                    driver.delete_all_cookies()
-                    driver.quit()
-                with contextlib.suppress(KeyError):
-                    del self.drivers[date]
-
-    def remove_drivers_if_time_has_passed(self, minutes: float = 10.0) -> None:
-        def has_time_passed(started: datetime, minutes: float) -> bool:
-            now: datetime = datetime.now(timezone.utc)
-            return now - started > timedelta(minutes=minutes) or now.minute != started.minute
-
-        for date, driver in self.drivers.items():
-            if has_time_passed(date, minutes):
-                if isinstance(driver, Firefox):
-                    with contextlib.suppress(BaseException):
-                        driver.delete_all_cookies()
-                        driver.quit()
-                with contextlib.suppress(KeyError):
-                    del self.drivers[date]
 
     def take_screenshot_with_url(
         self,
@@ -156,29 +131,25 @@ class FirefoxManager:
             raise commands.UserFeedbackCheckFailure(
                 "Failed to take a screenshot of the website, please try again later or check the url."
             )
+        with contextlib.suppress(BaseException):
+            driver.delete_all_cookies()
+            driver.quit()
         return byte
 
     @contextlib.asynccontextmanager
     async def driver(self) -> AsyncGenerator[Firefox, None]:
         await self.cog.manager.wait_until_driver_downloaded()
-        await self.lock.acquire()
-        now: datetime = datetime.now(timezone.utc)
+        driver: Firefox = await self.launcher()
+        driver.set_page_load_timeout(time_to_wait=230.0)
+        driver.fullscreen_window()
         try:
-            driver: Firefox = await self.launcher()
-            driver.set_page_load_timeout(time_to_wait=30.0)
-            driver.fullscreen_window()
-            try:
-                yield driver
-                self.drivers[now] = driver
-            except BaseException as error:
-                with contextlib.suppress(BaseException):
-                    if isinstance(driver, Firefox):
-                        driver.delete_all_cookies()
-                        driver.quit()
-                    del self.drivers[now]
-                raise error
-        finally:
-            self.lock.release()
+            yield driver
+        except BaseException as error:
+            with contextlib.suppress(BaseException):
+                if isinstance(driver, Firefox):
+                    driver.delete_all_cookies()
+                    driver.quit()
+            raise error
 
     async def launcher(self) -> Firefox:
         return await asyncio.to_thread(
@@ -193,14 +164,17 @@ class FirefoxManager:
         mode: Literal["light", "dark"],
         wait: int = 10,
     ) -> bytes:
-        async with self.driver() as driver:
-            thread: Coroutine[Any, Any, bytes] = asyncio.to_thread(
-                lambda: self.take_screenshot_with_url(
-                    driver,
-                    url=url,
-                    size=size,
-                    mode=mode,
-                    wait=wait,
+        await self.lock.acquire()
+        try:
+            async with self.driver() as driver:
+                return await asyncio.to_thread(
+                    lambda: self.take_screenshot_with_url(
+                        driver,
+                        url=url,
+                        size=size,
+                        mode=mode,
+                        wait=wait,
+                    )
                 )
-            )
-            return await asyncio.wait_for(thread, timeout=30.0)
+        finally:
+            self.lock.release()
