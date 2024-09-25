@@ -120,7 +120,7 @@ class Animals(commands.Cog):
                     embeds=[
                         discord.Embed(
                             description=(
-                                "Invalid breed, use the `{ctx.clean_prefix}cat breeds` "
+                                "Invalid breed, use the `cat breeds` "
                                 "command for the valid breeds."
                             ),
                             color=await ctx.embed_color(),
@@ -209,7 +209,7 @@ class Animals(commands.Cog):
                     embeds=[
                         discord.Embed(
                             description=(
-                                "Invalid breed, use the `{ctx.clean_prefix}dog breeds` "
+                                "Invalid breed, use the `dog breeds` "
                                 "command for the valid breeds."
                             ),
                             color=await ctx.embed_color(),
