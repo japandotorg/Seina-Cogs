@@ -28,7 +28,7 @@ import aiohttp
 import logging
 import contextlib
 import asyncio.sslproto
-from typing import Final, List, Literal
+from typing import Any, Final, List, Literal
 
 import discord
 from discord.ext import tasks
@@ -43,7 +43,7 @@ from .common.filter import Filter
 from .common import FirefoxManager
 from .common.downloader import DriverManager
 from .common.exceptions import ProxyConnectFailedError
-from .common.utils import counter as counter_api, URLConverter
+from .common.utils import counter as counter_api, URLConverter, ScreenshotView, Flags
 
 # isort: on
 
@@ -81,27 +81,21 @@ class Screenshot(commands.Cog):
         self.driver: FirefoxManager = FirefoxManager(self)
         self.filter: Filter = Filter(self)
 
-        self.__task: asyncio.Task[None] = asyncio.create_task(self.update_counter_api())
+        self.tasks: List[asyncio.Task[Any]] = []
 
     async def cog_load(self) -> None:
-        if self.manager.tor_location is None:
-            await self.manager.download_and_extract_tor()
-        await self.manager.execute_tor_binary()
-        if self.manager.firefox_location is None:
-            await self.manager.download_and_extract_firefox()
-        if self.manager.driver_location is None:
-            await self.manager.download_and_extract_driver()
-        self.manager.set_driver_downloaded()
+        self.tasks.append(asyncio.create_task(self.update_counter_api()))
+        self.tasks.append(asyncio.create_task(self.manager.initialize()))
         self.bg_task.start()
 
     async def cog_unload(self) -> None:
-        self.filter.close()
-        self.__task.cancel()
+        for task in self.tasks:
+            if isinstance(task, asyncio.Task):
+                task.cancel()
         self.bg_task.cancel()
         await self.session.close()
         if self.manager._tor_process is not discord.utils.MISSING:
-            self.manager._tor_process.terminate()
-            self.manager._tor_process.kill()
+            await self.manager.close()
         with contextlib.suppress(BaseException):
             self.driver.clear_all_drivers()
 
@@ -131,53 +125,72 @@ class Screenshot(commands.Cog):
     async def screenshot_set(self, _: commands.Context):
         """Configuration commands for screenshot."""
 
+    @screenshot_set.command(name="model")  # type: ignore
+    async def screenshot_set_model(
+        self, ctx: commands.Context, model: Literal["small", "normal", "large"]
+    ):
+        """
+        Change the AI model responsible for the nsfw detection.
+
+        Defaults to ``normal``.
+
+        - ``small``: faster but less accurate.
+        - ``normal``: faster but more accurate than ``small``.
+        - ``large``: slower but the most accurate one.
+        """
+        await self.config.nsfw.set(model.lower())
+        await ctx.tick()
+
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
     @commands.has_permissions(attach_files=True, embed_links=True)
     @commands.bot_has_permissions(attach_files=True, embed_links=True)
-    async def screenshot(
-        self, ctx: commands.Context, url: URLConverter, mode: Literal["normal", "full"] = "normal"
-    ):
+    async def screenshot(self, ctx: commands.Context, url: URLConverter, *, flags: str = ""):
         """
         Take screenshot of a web page.
 
         **Arguments**:
-        - ``<url>`` - a well formatted url.
-        - ``<mode>`` - weather to take a full screen window screenshot or a full web page screenshot. (defaults to "normal")
+        - ``<url>  ``: a well formatted url.
+        - ``<flags>``:
+            - ``--full`` for a full screenshot of the page.
+            - ``--mode <mode>`` either ``light`` or ``dark``.
 
         **Examples**:
         - ``[p]screenshot https://seina-cogs.readthedocs.io``
-        - ``[p]screenshot https://seina-cogs.readthedocs.io full``
+        - ``[p]screenshot https://seina-cogs.readthedocs.io --full``
+        - ``[p]screenshot https://seina-cogs.readthedocs.io --mode dark``
+        - ``[p]screenshot https://seina-cogs.readthedocs.io --full --mode dark``
         """
-        if not self.filter.is_valid_url(url):
-            await ctx.send(
-                "That is not a valid url.",
-                reference=ctx.message.to_reference(fail_if_not_exists=False),
-                allowed_mentions=discord.AllowedMentions(replied_user=False),
-            )
-            raise commands.CheckFailure()
         async with ctx.typing():
+            size, mode = await Flags().convert(ctx, flags)
             try:
-                image: bytes = await self.driver.get_screenshot_bytes_from_url(url=url, mode=mode)
+                image: bytes = await self.driver.get_screenshot_bytes_from_url(
+                    url=url, size=size, mode=mode
+                )
             except NoSuchDriverException:
-                await self.bot.send_to_owners(
-                    "Something went wrong with the screenshot cog, a cog reload should fix it."
-                )
-                await ctx.send(
-                    "Something went wrong with the screenshot cog, {}".format(
-                        "a cog reload should fix it."
+                if await self.bot.is_owner(ctx.author):
+                    await ctx.send(
+                        "Something went wrong with the screenshot cog, a cog reload should fix it.",
+                        reference=ctx.message.to_reference(fail_if_not_exists=False),
+                        allowed_mentions=discord.AllowedMentions(replied_user=False),
                     )
-                    if await self.bot.is_owner(ctx.author)
-                    else "try again later."
-                )
+                else:
+                    await self.bot.send_to_owners(
+                        "Something went wrong with the screenshot cog, a cog reload should fix it."
+                    )
+                    await ctx.send(
+                        "Something went wrong with the screenshot cog, try again later.",
+                        reference=ctx.message.to_reference(fail_if_not_exists=False),
+                        allowed_mentions=discord.AllowedMentions(replied_user=False),
+                    )
                 raise commands.CheckFailure()
-            except ProxyConnectFailedError as error:
-                log.exception(
-                    "Failed connecting to the proxy.",
-                    exc_info=error,
-                )
-                await self.bot.send_to_owners(
-                    "Something went wrong with the screenshot cog, check logs for more details."
+            except ProxyConnectFailedError:
+                await self.manager.close()
+                await self.manager.execute_tor_binary()
+                await ctx.send(
+                    "Something went wrong, try again later.",
+                    reference=ctx.message.to_reference(fail_if_not_exists=False),
+                    allowed_mentions=discord.AllowedMentions(replied_user=False),
                 )
                 raise commands.CheckFailure()
             except commands.UserFeedbackCheckFailure as error:
@@ -188,6 +201,7 @@ class Screenshot(commands.Cog):
                         allowed_mentions=discord.AllowedMentions(replied_user=False),
                     )
                 raise commands.CheckFailure()
+            self.filter.maybe_setup_models()
             if (
                 isinstance(
                     ctx.channel,
@@ -199,13 +213,19 @@ class Screenshot(commands.Cog):
                     ),
                 )
                 and not ctx.channel.is_nsfw()
-                and await self.filter.read(image=image, model="small")
+                and await self.filter.read(image=image)
             ):
-                await ctx.send(
+                file: discord.File = discord.File(
+                    io.BytesIO(image), "screenshot.png", spoiler=True
+                )
+                view: ScreenshotView = ScreenshotView(ctx, file=file)
+                view._message = await ctx.send(
                     "This image contains nsfw content, and cannot be sent on this channel.",
                     reference=ctx.message.to_reference(fail_if_not_exists=False),
                     allowed_mentions=discord.AllowedMentions(replied_user=False),
+                    view=view,
                 )
                 raise commands.CheckFailure()
+        view: ScreenshotView = ScreenshotView(ctx)
         file: discord.File = discord.File(io.BytesIO(image), "screenshot.png")
-        await ctx.send(file=file)
+        view._message = await ctx.send(file=file, view=view)

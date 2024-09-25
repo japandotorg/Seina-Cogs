@@ -23,10 +23,10 @@ SOFTWARE.
 """
 
 # isort: off
+import os
 import logging
 import asyncio
 import contextlib
-from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING, AsyncGenerator, Dict, Literal, TypeVar
 
@@ -114,8 +114,18 @@ class FirefoxManager:
                     del self.drivers[date]
 
     def take_screenshot_with_url(
-        self, driver: Firefox, *, url: str, mode: Literal["normal", "full"], wait: int = 10
+        self,
+        driver: Firefox,
+        *,
+        url: str,
+        size: Literal["normal", "full"],
+        mode: Literal["light", "dark"],
+        wait: int = 10,
     ) -> bytes:
+        if mode.lower() == "dark" and (
+            location := self.cog.manager.get_extension_location(mode.lower())
+        ):
+            driver.install_addon(os.fspath(location), temporary=True)
         try:
             driver.get(url)
         except TimeoutException:
@@ -133,9 +143,9 @@ class FirefoxManager:
             )
         driver.implicitly_wait(wait)
         try:
-            if mode.lower() == "normal":
+            if size.lower() == "normal":
                 byte: bytes = driver.get_screenshot_as_png()
-            elif mode.lower() == "full":
+            elif size.lower() == "full":
                 byte: bytes = driver.get_full_page_screenshot_as_png()
             else:
                 raise commands.UserFeedbackCheckFailure(
@@ -149,13 +159,18 @@ class FirefoxManager:
             )
         return byte
 
-    @asynccontextmanager
+    @contextlib.asynccontextmanager
     async def driver(self) -> AsyncGenerator[Firefox, None]:
         await self.cog.manager.wait_until_driver_downloaded()
         await self.lock.acquire()
         now: datetime = datetime.now(timezone.utc)
         try:
             driver: Firefox = await self.launcher()
+            (
+                driver.install_addon(os.fspath(location), temporary=True)
+                if (location := self.cog.manager.get_extension_location("cookies"))
+                else None
+            )
             driver.set_page_load_timeout(time_to_wait=230.0)
             driver.fullscreen_window()
             try:
@@ -177,13 +192,19 @@ class FirefoxManager:
         )
 
     async def get_screenshot_bytes_from_url(
-        self, *, url: str, mode: Literal["normal", "full"], wait: int = 10
+        self,
+        *,
+        url: str,
+        size: Literal["normal", "full"],
+        mode: Literal["light", "dark"],
+        wait: int = 10,
     ) -> bytes:
         async with self.driver() as driver:
             return await asyncio.to_thread(
                 lambda: self.take_screenshot_with_url(
                     driver,
                     url=url,
+                    size=size,
                     mode=mode,
                     wait=wait,
                 )

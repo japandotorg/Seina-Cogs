@@ -30,8 +30,6 @@ from urllib3.connectionpool import log as urllib_logger
 from redbot.core.bot import Red
 from redbot.core.errors import CogLoadError
 
-from selenium.webdriver.remote.remote_connection import LOGGER as selenium_logger
-
 from .core import Screenshot
 
 # isort: on
@@ -39,7 +37,9 @@ from .core import Screenshot
 
 async def setup(bot: Red) -> None:
     urllib_logger.setLevel(logging.WARNING)
-    selenium_logger.setLevel(logging.WARNING)
+    logging.getLogger("PIL").setLevel(logging.WARNING)
+    logging.getLogger("h5py").setLevel(logging.WARNING)
+    logging.getLogger("selenium").setLevel(logging.WARNING)
     if platform.system().lower() not in ["windows", "linux"]:
         raise CogLoadError("This cog is only available for linux and windows devices right now.")
     cog: Screenshot = Screenshot(bot)

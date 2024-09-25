@@ -28,7 +28,7 @@ import io
 import asyncio
 import logging
 from PIL import Image
-from typing import TYPE_CHECKING, Dict, Literal, Optional
+from typing import TYPE_CHECKING, Dict, List, Literal, Optional, Union, cast
 
 import discord
 
@@ -51,22 +51,27 @@ log: logging.Logger = logging.getLogger("red.seina.screenshot.filter")
 class Filter:
     def __init__(self, cog: "Screenshot") -> None:
         self.cog: "Screenshot" = cog
-        self.models: Dict[Literal["small", "large"], transformers.Pipeline] = discord.utils.MISSING
-        self.__task: asyncio.Task[None] = asyncio.create_task(self.__models())
+        self.models: Dict[Literal["small", "normal", "large"], transformers.Pipeline] = (
+            discord.utils.MISSING
+        )
 
-    async def __models(self) -> None:
-        os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-        await self.cog.manager.wait_until_driver_downloaded()
+    def maybe_setup_models(self) -> None:
+        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
         if self.models is discord.utils.MISSING:
-            self.models: Dict[Literal["small", "large"], transformers.Pipeline] = {
+            self.models: Dict[Literal["small", "normal", "large"], transformers.Pipeline] = {
                 "small": transformers.pipeline(
                     "image-classification",
-                    model="Falconsai/nsfw_image_detection",
+                    model="AdamCodd/vit-base-nsfw-detector",
+                    device=torch.device("cpu"),
+                ),
+                "normal": transformers.pipeline(
+                    "image-classification",
+                    model="MichalMlodawski/nsfw-image-detection-large",
                     device=torch.device("cpu"),
                 ),
                 "large": transformers.pipeline(
                     "image-classification",
-                    model="MichalMlodawski/nsfw-image-detection-large",
+                    model="Falconsai/nsfw_image_detection",
                     device=torch.device("cpu"),
                 ),
             }
@@ -85,25 +90,37 @@ class Filter:
         match: Optional[re.Match[str]] = regex.search(url)
         return match is not None
 
-    def close(self) -> None:
-        self.__task.cancel()
-
-    async def read(self, image: bytes, model: Literal["small", "large"]) -> bool:
+    async def read(self, image: bytes) -> bool:
+        model: Literal["small", "normal", "large"] = await self.cog.config.nsfw()
         if model.lower() == "small":
             return await asyncio.to_thread(lambda: self.small(image))
+        elif model.lower() == "normal":
+            return await asyncio.to_thread(lambda: self.normal(image))
         elif model.lower() == "large":
             return await asyncio.to_thread(lambda: self.large(image))
-        else:
-            raise RuntimeError("No model named '{}' found.".format(model.lower()))
+        raise RuntimeError("No model named '{}' found.".format(model.lower()))
 
     def small(self, image: bytes) -> bool:
         img: Image.ImageFile.ImageFile = Image.open(io.BytesIO(image))
-        response: Dict[str, float] = self.models["small"](img)  # type: ignore
-        pred: str = max(response, key=lambda x: x["score"])
-        return pred["label"] == "nsfw"
+        response: List[Dict[str, Union[str, float]]] = cast(
+            List[Dict[str, Union[str, float]]], self.models["small"](img)
+        )
+        pred: Dict[str, Union[str, float]] = max(response, key=lambda x: x["score"])
+        return cast(str, pred["label"]).lower() == "nsfw"
+
+    def normal(self, image: bytes) -> bool:
+        img: Image.ImageFile.ImageFile = Image.open(io.BytesIO(image))
+        response: List[Dict[str, Union[str, float]]] = cast(
+            List[Dict[str, Union[str, float]]], self.models["normal"](img)
+        )
+        pred: Dict[str, Union[str, float]] = max(response, key=lambda x: x["score"])
+        return cast(str, pred["label"]).lower() != "safe"
 
     def large(self, image: bytes) -> bool:
         img: Image.ImageFile.ImageFile = Image.open(io.BytesIO(image))
-        response: Dict[str, float] = self.models["large"](img)  # type: ignore
-        pred: str = max(response, key=lambda x: x["score"])
-        return pred["label"].lower() != "safe"
+        response: List[Dict[str, Union[str, float]]] = cast(
+            List[Dict[str, Union[str, float]]], self.models["large"](img)
+        )
+        log.debug(response)
+        pred: Dict[str, Union[str, float]] = max(response, key=lambda x: x["score"])
+        return cast(str, pred["label"]).lower() == "nsfw"
