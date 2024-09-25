@@ -121,6 +121,5 @@ class Filter:
         response: List[Dict[str, Union[str, float]]] = cast(
             List[Dict[str, Union[str, float]]], self.models["large"](img)
         )
-        log.debug(response)
         pred: Dict[str, Union[str, float]] = max(response, key=lambda x: x["score"])
         return cast(str, pred["label"]).lower() == "nsfw"
