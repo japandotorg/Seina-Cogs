@@ -150,7 +150,7 @@ class DriverManager:
             else None
         )
 
-    def get_os(self) -> str: 
+    def get_os(self) -> str:
         return "{}{}".format(self.get_os_name(), 64 if platform.machine().endswith("64") else 32)
 
     def set_driver_downloaded(self) -> None:
