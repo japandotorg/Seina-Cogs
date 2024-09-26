@@ -150,7 +150,7 @@ class DriverManager:
             else None
         )
 
-    def get_os(self) -> str:
+    def get_os(self) -> str: 
         return "{}{}".format(self.get_os_name(), 64 if platform.machine().endswith("64") else 32)
 
     def set_driver_downloaded(self) -> None:
@@ -169,7 +169,7 @@ class DriverManager:
             ext="tar.bz2" if self.get_os().startswith("linux-aarch64") else "tar.gz",
         )
 
-    async def initialize(self) -> None:
+    async def __initialize(self) -> None:
         if not self.tor_location:
             await self.download_and_extract_tor()
         if not self.driver_location:
@@ -182,6 +182,14 @@ class DriverManager:
         if not self._tor_process:
             await self.execute_tor_binary()
         self.set_driver_downloaded()
+
+    async def initialize(self) -> None:
+        try:
+            await self.__initialize()
+        except DownloadFailed as error:
+            if error.retry:
+                return await self.initialize()
+            log.exception(error.message, exc_info=error)
 
     async def close(self) -> None:
         await self.wait_until_driver_downloaded()

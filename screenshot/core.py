@@ -193,7 +193,7 @@ class Screenshot(commands.Cog):
                         allowed_mentions=discord.AllowedMentions(replied_user=False),
                     )
                 raise commands.CheckFailure()
-            self.filter.maybe_setup_models()
+            await asyncio.to_thread(lambda: self.filter.maybe_setup_models())
             if (
                 isinstance(
                     ctx.channel,

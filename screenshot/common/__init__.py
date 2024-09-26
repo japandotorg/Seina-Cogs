@@ -139,17 +139,21 @@ class FirefoxManager:
     @contextlib.asynccontextmanager
     async def driver(self) -> AsyncGenerator[Firefox, None]:
         await self.cog.manager.wait_until_driver_downloaded()
-        driver: Firefox = await self.launcher()
-        driver.set_page_load_timeout(time_to_wait=230.0)
-        driver.fullscreen_window()
+        await self.lock.acquire()
         try:
-            yield driver
-        except BaseException as error:
-            with contextlib.suppress(BaseException):
-                if isinstance(driver, Firefox):
-                    driver.delete_all_cookies()
-                    driver.quit()
-            raise error
+            driver: Firefox = await self.launcher()
+            driver.set_page_load_timeout(time_to_wait=230.0)
+            driver.fullscreen_window()
+            try:
+                yield driver
+            except BaseException as error:
+                with contextlib.suppress(BaseException):
+                    if isinstance(driver, Firefox):
+                        driver.delete_all_cookies()
+                        driver.quit()
+                raise error
+        finally:
+            self.lock.release()
 
     async def launcher(self) -> Firefox:
         return await asyncio.to_thread(
@@ -164,17 +168,13 @@ class FirefoxManager:
         mode: Literal["light", "dark"],
         wait: int = 10,
     ) -> bytes:
-        await self.lock.acquire()
-        try:
-            async with self.driver() as driver:
-                return await asyncio.to_thread(
-                    lambda: self.take_screenshot_with_url(
-                        driver,
-                        url=url,
-                        size=size,
-                        mode=mode,
-                        wait=wait,
-                    )
+        async with self.driver() as driver:
+            return await asyncio.to_thread(
+                lambda: self.take_screenshot_with_url(
+                    driver,
+                    url=url,
+                    size=size,
+                    mode=mode,
+                    wait=wait,
                 )
-        finally:
-            self.lock.release()
+            )
