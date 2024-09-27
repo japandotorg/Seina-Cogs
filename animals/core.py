@@ -111,7 +111,7 @@ class Animals(commands.Cog):
                 image, name, details = await CatAPI(ctx, self.session).image(breed)  # type: ignore
             except TypeError:
                 await ctx.send(
-                    f"The bot owner has not setup the random cats api key yet!",
+                    "The bot owner has not setup the random cats api key yet!",
                     reference=ctx.message.to_reference(fail_if_not_exists=False),
                 )
                 return
@@ -120,7 +120,7 @@ class Animals(commands.Cog):
                     embeds=[
                         discord.Embed(
                             description=(
-                                "Invalid breed, use the `{ctx.clean_prefix}cat breeds` "
+                                f"Invalid breed, use the `{ctx.clean_prefix}cat breeds` "
                                 "command for the valid breeds."
                             ),
                             color=await ctx.embed_color(),
@@ -151,7 +151,7 @@ class Animals(commands.Cog):
             pages, breed_count = await CatAPI(ctx, self.session).breeds()  # type: ignore
         except TypeError:
             await ctx.send(
-                f"The bot owner has not setup the random cats api key yet!",
+                "The bot owner has not setup the random cats api key yet!",
                 reference=ctx.message.to_reference(fail_if_not_exists=False),
             )
             return
@@ -200,7 +200,7 @@ class Animals(commands.Cog):
                 image, name, details = await DogAPI(ctx, self.session).image(breed)  # type: ignore
             except TypeError:
                 await ctx.send(
-                    f"The bot owner has not setup the random dogs api key yet!",
+                    "The bot owner has not setup the random dogs api key yet!",
                     reference=ctx.message.to_reference(fail_if_not_exists=False),
                 )
                 return
@@ -240,7 +240,7 @@ class Animals(commands.Cog):
             pages, breed_count = await DogAPI(ctx, self.session).breeds()  # type: ignore
         except TypeError:
             await ctx.send(
-                f"The bot owner has not setup the random dogs api key yet!",
+                "The bot owner has not setup the random dogs api key yet!",
                 reference=ctx.message.to_reference(fail_if_not_exists=False),
             )
             return
