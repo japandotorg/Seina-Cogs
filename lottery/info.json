@@ -1,0 +1,20 @@
+{
+    "author": [
+        "inthedark.org"
+    ],
+    "install_msg": "Thanks for installing the Lottery cog.",
+    "name": "Lottery",
+    "disabled": false,
+    "short": "Make and host lotteries in your server. (a re-creation of RaffleBot#8827)",
+    "description": "Make and host lotteries in your server. (this is a true re-creation of the `RaffleBot#8827` discord bot!)",
+    "tags": [
+        "lottery",
+        "lotteries",
+        "raffle",
+        "raffles"
+    ],
+    "required_cogs": {},
+    "requirements": [],
+    "type": "COG",
+    "end_user_data_statement": "This cog may or may not store usernames and user ids."
+}

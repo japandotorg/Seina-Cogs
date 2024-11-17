@@ -71,6 +71,7 @@ Lemon's [Approved Cogs](https://cogboard.discord.red/t/approved-seina-cogs/1199)
 | BoostUtils  | 0.1.1 | <details><summary>Booster Utilities. (WIP)</summary>Various nitro boosting utilities. (WORK IN PROGRESS)</details>                          |
 | AutoReact   | 0.1.0 | <details><summary>Create automatic reactions for specific triggers or events.</summary>Create automatic reactions for specific triggers or events.</details>  |
 | Screenshot  | 0.1.0 | <details><summary>Take web page screenshots with your bot without compromising privacy of your machine.</summary>Take web page screenshots with your bot without compromising privacy of your machine. This ia a high level cog with higher usage than usual do not install it if you don't have sufficient ram and storage.</details> |
+| Lottery     | 0.1.0 | <details><summary>Make and host lotteries in your server. (a re-creation of RaffleBot#8827)</summary>Make and host lotteries in your server. (this is a true re-creation of the `RaffleBot#8827` discord bot!)</details> |
 
 
 ## Credits
