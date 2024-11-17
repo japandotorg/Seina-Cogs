@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union, cast
 import discord
 from redbot.core.bot import Red
 from redbot.core.config import Config
-from redbot.core.utils.views import SimpleMenu
 from redbot.core.utils.embed import randomize_color
+from redbot.core.utils.views import SimpleMenu
 
 if TYPE_CHECKING:
     from .core import Lottery

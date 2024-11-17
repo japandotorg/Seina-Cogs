@@ -1,6 +1,6 @@
-import random
 import asyncio
 import contextlib
+import random
 from typing import TYPE_CHECKING, Dict, Iterable, List, Protocol, Tuple, Union, cast
 
 import discord
@@ -8,8 +8,8 @@ from redbot.core import commands
 from redbot.core.config import Config
 from redbot.core.utils.chat_formatting import pagify
 
-from .utils import truncate
 from .converters import RoleOrUserConverter
+from .utils import truncate
 
 if TYPE_CHECKING:
     from .core import Lottery
