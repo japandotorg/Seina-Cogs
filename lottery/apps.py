@@ -1,13 +1,13 @@
 from typing import Any, Dict, List, Optional, Union, cast
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import app_commands, commands
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import pagify
 
-from .models import LotteryManager
 from .converters import LotteryTransformer
-from .views import DeputyView, LotteryEditView, InteractionSimpleMenu
+from .models import LotteryManager
+from .views import DeputyView, InteractionSimpleMenu, LotteryEditView
 
 
 @app_commands.guild_only()

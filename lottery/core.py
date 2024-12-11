@@ -1,19 +1,19 @@
 from typing import Dict, Final, List, Union
 
-from redbot.core.bot import Red
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.config import Config
 from redbot.core.utils.chat_formatting import humanize_list
 
 from .abc import CompositeMetaClass
+from .apps import LotteryGroup
 from .commands import Commands
 from .models import LotteryManager
-from .apps import LotteryGroup
 
 
 class Lottery(commands.Cog, Commands, metaclass=CompositeMetaClass):
     """Make and host lotteries in your server."""
-    
+
     __author__: Final[List[str]] = ["inthedark.org"]
     __version__: Final[str] = "0.1.0"
 
@@ -28,7 +28,7 @@ class Lottery(commands.Cog, Commands, metaclass=CompositeMetaClass):
 
         self.manager: LotteryManager = LotteryManager(self)
         self.apps: LotteryGroup = LotteryGroup(self.manager)
-        
+
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed: str = super().format_help_for_context(ctx)
         n: str = "\n" if "\n\n" not in pre_processed else ""
