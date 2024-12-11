@@ -170,9 +170,9 @@ class ThreadOpener(
             message.author, roles=blacklist["roles"], users=blacklist["users"]
         ):
             return
-        if config["allow_bots"] and message.is_system():
-            return
-        if config["allow_bots"] and message.author.bot:
+        if not config["allow_bots"] and (
+            message.author.bot or message.is_system() or message.webhook_id
+        ):
             return
         if not cast(bool, config["toggle"]):
             return
