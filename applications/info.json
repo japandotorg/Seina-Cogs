@@ -1,0 +1,30 @@
+{
+    "author": [
+        "inthedark.org"
+    ],
+    "install_msg": "Thanks for installing the applications cog.\nThe cog itself is in **BETA** testing even tho most of the features may be available and working fine right now.\nPing @Seina in the #support_seina-cogs channel in the official Cog Support server if you're having any problem with the cog or have any suggestion.",
+    "name": "Applications",
+    "disabled": false,
+    "short": "Create custom applications for your server. [ BETA ]",
+    "description": "Create custom applications such as Staff Application, Event Manager Application, Trail Mod Application, etc...",
+    "tags": [
+        "apps",
+        "application",
+        "applications",
+        "mod",
+        "staff"
+    ],
+    "min_bot_version": "3.5.12",
+    "min_python_version": [
+        3,
+        10,
+        0
+    ],
+    "required_cogs": {},
+    "requirements": [
+        "pydantic",
+        "AdvancedTagScriptEngine==3.2.2"
+    ],
+    "type": "COG",
+    "end_user_data_statement": "This cog stores End User Data."
+}
