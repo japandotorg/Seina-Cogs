@@ -22,16 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import re
-import logging
 import contextlib
+import logging
+import re
 from typing import TYPE_CHECKING, Any, List, Optional, Union, cast
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import commands
-from redbot.core.utils.views import ConfirmView
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.views import ConfirmView
 
 from ..common.utils import GuildInteraction
 from .models import Application, ButtonSettings, Question, Styles

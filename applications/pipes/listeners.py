@@ -23,23 +23,20 @@ SOFTWARE.
 """
 
 import asyncio
-import logging
 import contextlib
+import logging
 from typing import Any, Dict, Optional
 
-import TagScriptEngine as tse
-
 import discord
+import TagScriptEngine as tse
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box
 
-from ..common.utils import GuildInteraction
-from ..common.models import Answer, Application, Response, Types
-from ..common.tagscript import SettingsAdapter, DEFAULT_SETTINGS_MESSAGE
-from ..common.views import ChoiceView, CancelView, CancelButton, SkipButton, PatchedConfirmView
-
 from ..abc import PipeMeta
-
+from ..common.models import Answer, Application, Response, Types
+from ..common.tagscript import DEFAULT_SETTINGS_MESSAGE, SettingsAdapter
+from ..common.utils import GuildInteraction
+from ..common.views import CancelButton, CancelView, ChoiceView, PatchedConfirmView, SkipButton
 
 log: logging.Logger = logging.getLogger("red.seina.applications.pipes.listeners")
 

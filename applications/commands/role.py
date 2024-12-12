@@ -25,16 +25,15 @@ SOFTWARE.
 from typing import Any, List, Literal, cast
 
 import discord
-from redbot.core import commands, app_commands
+from redbot.core import app_commands, commands
 from redbot.core.utils.chat_formatting import pagify
 
 from ..abc import PipeMeta
-from ..pipes.groups import Groups
+from ..common.exceptions import ApplicationError
 from ..common.menus import EmojiMenu
 from ..common.models import Application
 from ..common.utils import name_auto_complete
-from ..common.exceptions import ApplicationError
-
+from ..pipes.groups import Groups
 
 application_role: commands.HybridGroup[Any, ..., Any] = cast(
     commands.HybridGroup, Groups.application_role

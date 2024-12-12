@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .groups import Groups
 from ..abc import CompositeMetaClass
 from ..commands import base, config, question, role
+from .groups import Groups
 
 
 class Commands(

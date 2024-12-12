@@ -24,20 +24,18 @@ SOFTWARE.
 
 from typing import Any, Dict, cast
 
-import TagScriptEngine as tse
-
 import discord
-from redbot.core import commands, app_commands
+import TagScriptEngine as tse
+from redbot.core import app_commands, commands
 from redbot.core.utils.chat_formatting import box
 
 from ..abc import PipeMeta
-from ..pipes.groups import Groups
-from ..common.utils import name_auto_complete
 from ..common.exceptions import ApplicationError
-from ..common.views import ApplicationView, DynamicApplyButton
-from ..common.models import AppSettings, Application, ButtonSettings
+from ..common.models import Application, AppSettings, ButtonSettings
 from ..common.tagscript import DEFAULT_SETTINGS_MESSAGE, SettingsAdapter
-
+from ..common.utils import name_auto_complete
+from ..common.views import ApplicationView, DynamicApplyButton
+from ..pipes.groups import Groups
 
 application: commands.HybridGroup[Any, ..., Any] = cast(commands.HybridGroup, Groups.application)
 

@@ -25,12 +25,12 @@ SOFTWARE.
 import collections
 from typing import DefaultDict, Dict, Final, List
 
+from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core import commands, Config
 
 from .abc import CompositeMetaClass
+from .common import manager, models, utils, views
 from .pipes import Commands, Listeners
-from .common import utils, models, views, manager
 
 
 class Applications(

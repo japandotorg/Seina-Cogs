@@ -25,7 +25,6 @@ SOFTWARE.
 import warnings
 
 import TagScriptEngine as tse
-
 from redbot.core.bot import Red
 
 from .core import Applications

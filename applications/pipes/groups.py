@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from redbot.core import commands, app_commands
+from redbot.core import app_commands, commands
 
-from ..abc import PipeMeta, CompositeMetaClass
+from ..abc import CompositeMetaClass, PipeMeta
 from ..common.utils import has_guild_permissions
 
 

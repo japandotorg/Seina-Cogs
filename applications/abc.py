@@ -28,8 +28,8 @@ from typing import Any, DefaultDict, Dict
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 
-from .common.models import Application
 from .common.manager import ApplicationManager
+from .common.models import Application
 
 
 class CompositeMetaClass(commands.CogMeta, ABCMeta):

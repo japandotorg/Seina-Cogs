@@ -25,22 +25,20 @@ SOFTWARE.
 import asyncio
 from typing import TYPE_CHECKING, Any, DefaultDict, Dict, Literal, Tuple, Union
 
-import TagScriptEngine as tse
-
 import discord
+import TagScriptEngine as tse
 from redbot.core.config import Config
 from redbot.core.utils import AsyncIter
 
-from .tagscript import BLOCKS
-from .models import Application, Question, Styles
-from .utils import TypedConfig
 from .exceptions import (
-    DuplicateApplicationError,
     ApplicationDoesNotExist,
+    DuplicateApplicationError,
     NoQuestionsConfiguredError,
     TooManyQuestionsError,
 )
-
+from .models import Application, Question, Styles
+from .tagscript import BLOCKS
+from .utils import TypedConfig
 
 if TYPE_CHECKING:
     from ..core import Applications

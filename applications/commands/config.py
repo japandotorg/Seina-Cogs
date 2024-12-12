@@ -25,15 +25,14 @@ SOFTWARE.
 from typing import Any, Literal, cast
 
 import discord
-from redbot.core import commands, app_commands
+from redbot.core import app_commands, commands
 from redbot.core.utils.chat_formatting import box
 
 from ..abc import PipeMeta
-from ..pipes.groups import Groups
-from ..common.utils import name_auto_complete
 from ..common.exceptions import ApplicationError
-from ..common.models import AppSettings, Application
-
+from ..common.models import Application, AppSettings
+from ..common.utils import name_auto_complete
+from ..pipes.groups import Groups
 
 application_config: commands.HybridGroup[Any, ..., Any] = cast(
     commands.HybridGroup, Groups.application_config
