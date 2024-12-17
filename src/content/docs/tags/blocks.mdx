@@ -1,0 +1,261 @@
+---
+title: TagScriptEngine Blocks
+description: Introduction to tagscript blocks.
+sidebar:
+    order: 2
+---
+
+import { Badge, Code } from "@astrojs/starlight/components";
+import ExpressionOperatorsTable from "../../../components/tables/ExpressionOperatorsTable.astro";
+
+## Core Blocks
+
+Core pythonic **TagScriptEngine** blocks.
+
+### Assignment Block
+
+Variables are useful for choosing a value and referencing it later in a tag.
+Variables can be referenced using blackets as any other block.
+- **usage:** `{=(<name>):<value>}`
+- **aliases:** `assign`, `let` and `var`
+- **payload:** value
+- **parameter:** name
+
+<Code code="
+{=(prefix):!}
+The prefix here is `{prefix}`.
+# The prefix here is `!`.
+
+{assign(day):Monday}
+{if({day}==Wednesday):It's Wednesday my dudes!|The day is {day}.}
+# The day is Monday.
+" lang="py" title="example" />
+
+### Random Block
+
+Pick a random item from a list of strings, split by either `~` or `,`.
+An optional seed can be provided to the parameter to always choose the same item when
+using that seed.
+- **usage:** `{random([seed]):<list>}`
+- **aliases:** `#` and `rand`
+- **pyload:** list
+- **parameter:** seed, None
+
+<Code code="
+{random:Carl,Harold,Josh} attempts to pick the lock!
+# Possible Outputs:
+# Josh attempts to pick the lock!
+# Carl attempts to pick the lock!
+# Harold attempts to pick the lock!
+
+{=(insults):You're so ugly that you went to the salon and it took 3 hours just to get an estimate.~I'll never forget the first time we met, although I'll keep trying.~You look like a before picture.}
+{=(insult):{#:{insults}}}
+{insult}
+# Assigns a random insult to the insult variable
+" lang="py" title="example" />
+
+### Math Block <Badge text="Experimental" variant="caution" />
+
+Evaluate mathematical expressions using the Math Block.
+- **usage:** `{math:expression}`
+- **aliases:** `m`, `+` and `calc`
+- **payload:** math expression
+- **parameter:** None
+
+### Range Block
+
+The range block picks a random number from a range of numbers seperated by `-`.
+The number range is inclusive, so it can pick the starting/ending number as well.
+Using the rangef block will pick a number to the tenth decimal place.
+
+An optional seed can be provided to the parameter to always choose the same item
+when using that seed.
+- **usage:** `{range([seed]):<lowest-highest>}`
+- **aliases:** `rangef`
+- **payload:** number
+- **parameter:** seed, None
+
+<Code code="
+Your lucky number is {range:10-30}!
+# Your lucky number is 14!
+# Your lucky number is 25!
+
+{=(height):{rangef:5-7}}
+I am guessing your height is {height}ft.
+# I am guessing your height is 5.3ft.
+" lang="py" title="example" />
+
+## Control Blocks
+
+Control and do more with your tags using the control blocks.
+
+### If Block
+
+The if block returns a message based on the passed expression to the parameter.
+An expression is respresented by two values compare with an operator.
+
+The payload is a required message that must be split by `|`. If the expression
+evaluates true, then the message before the `|` is returned, else the message after
+is returned.
+- **usage:** `{if(<expression>):<message>}`
+- **payload:** message
+- **parameter:** expression
+- **operators:**
+
+<ExpressionOperatorsTable />
+
+<br />
+
+<Code code="
+{if({args}==63):You guessed it! The number I was thinking of was 63!|Too {if({args}<63):low|high}, try again.}
+# if args is 63
+# You guessed it! The number I was thinking of was 63!
+
+# if args is 73
+# Too low, try again.
+
+# if args is 14
+# Too high, try again.
+" lang="py" title="example" />
+
+### Break Block
+
+The break block will force the tag output to only be the payload of this block,
+if the passed expresssion evaluates true. If no message is provided to the payload,
+the tag output will be empty.
+
+This differs from the `StopBlock` as the stop block stops all tagscript processing
+and returns its message while the break block continues to process blocks.
+If command blocks exist after the break block, they will still execute.
+- **usage:** `{break(<expression>):[message]}`
+- **aliases:** `short` and `shortcircuit`
+- **payload:** message
+- **parameter:** expression
+
+<Code code="{break({args}==):You did not provide any input.}" lang="py" title="example" />
+
+### All Block
+
+The all block checks that all of the passed expressions are true. 
+Multiple expressions can be passed to the parameter by splitting them with `|`.
+
+The payload is a required message that must be split by `|`. If the expression evaluates
+true, then the message before the `|` is returned, else the message after is returned.
+- **usage:** `{all(<expression|expression|...>):<message>}`
+- **aliases:** `and`
+- **payload:** message
+- **parameter:** expression
+
+<Code code="
+{all({args}>=100|{args}<=1000):You picked {args}.|You must provide a number between 100 and 1000.}
+# if {args} is 52
+You must provide a number between 100 and 1000.
+
+# if {args} is 282
+You picked 282.
+" lang="py" title="example" />
+
+### Fifty-fifty Block
+
+The fifty-fifty block has a 50% change of returning the payload,
+and 50% chance of returning null.
+- **usage:**  `{50:<message>}`
+- **aliases:** `5050` and `?`
+- **payload:** message
+- **parameter:** None
+
+<Code code="
+I pick {if({5050:.}!=):heads|tails}
+# I pick heads
+" lang="py" title="example" />
+
+### Stop Block
+
+The stop block stops tag processing if the given parameter is true.
+If a message is passed to the payload it will return that message.
+- **usage:** `{stop(<bool>):[string]}`
+- **aliases:** `halt` and `error`
+- **payload:** string, None
+- **parameter:** bool
+
+<Code code="
+{stop({args}==):You must provide arguments for this tag.}
+# enforces providing arguments for a tag
+" lang="py" title="example" />
+
+## String Blocks
+
+Manipulate strings in tags using the string blocks.
+
+### Replace Block
+
+The replace block will replace specific characters in a string.
+The parameter should split by a `,`, containing the characters to find before the
+command and the replacements after.
+- **usage:** `{replace(<original,new>):<message>}`
+- **aliases:** None
+- **payload:** message
+- **parameter:** original, new
+
+<Code code="
+{replace(o,i):welcome to the server}
+# welcime ti the server
+
+{replace(1,6):{args}}
+# if {args} is 1637812
+# 6637862
+
+{replace(, ):Test}
+# T e s t
+" lang="py" title="example" />
+
+### URLEncode Block
+
+This block will encode a given string into a properly formatted url with non-url
+compliant characters replaced. Using `+` as the parameter will replace spaces
+with `+` rather than `%20`.
+- **usage:** `{urlencode(["+"]):<string>}`
+- **aliases:** None
+- **payload:** string
+- **parameter:** `+`, None
+
+<Code code="
+{urlencode:covid-19 sucks}
+# covid-19%20sucks
+
+{urlencode(+):im stuck at home writing docs}
+# im+stuck+at+home+writing+docs
+" lang="py" title="example" />
+
+## Miscellaneous Blocks
+
+Miscellaneous/Utility blocks for tags.
+
+### Strftime Block
+
+The strf block converts and formats timestamps based on
+[strftime formatting spec](https://strftime.org/). Two types of timestamps are supported:
+ISO and epoch. If a timestamp isn't passed, the current UTC time is used.
+
+Invoking this block with `unix` will return the current Unix timestamp.
+- **usage:** `{strf([timestamp]):<format>}`
+- **aliases:** `unix`
+- **payload:** format, None
+- **parameter:** timestamp
+
+<Code code="
+{strf:%Y-%m-%d}
+# 2021-07-11
+
+{strf({user(timestamp)}):%c}
+# Fri Jun 29 21:10:28 2018
+
+{strf(1420070400):%A %d, %B %Y}
+# Thursday 01, January 2015
+
+{strf(2019-10-09T01:45:00.805000):%H:%M %d-%B-%Y}
+# 01:45 09-October-2019
+
+{unix}
+# 1629182008
+" lang="py" title="example" />

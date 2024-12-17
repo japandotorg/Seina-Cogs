@@ -1,0 +1,112 @@
+---
+title: Default Variables
+description: Introduction to default variables in tagscript.
+sidebar:
+    order: 3
+---
+
+import { Code } from "@astrojs/starlight/components";
+
+import AuthorAttributes from "../../../components/tables/AuthorAttributes.astro";
+import ServerAttributes from "../../../components/tables/ServerAttributes.astro";
+import ChannelAttributes from "../../../components/tables/ChannelAttributes.astro";
+
+The following blocks will be present and accessable as defaults when running any tag.
+
+## Meta Variables
+
+Meta variables reference meta attributes about the tag invocation.
+
+### Args Block
+
+The `{args}` block represents the arguments passed after the tag name when invoking a tag.
+If no parameter is passed, it returns all the text after the invocation name.
+If an index is passed, it will split the arguments into a list by the given splitter,
+and return the word at that index. The default splitter is a `“ “`.
+- **usage:** `{args([index]):[splitter]>}`
+- **aliases:** None
+- **payload:** splitter
+- **parameter:** index
+
+In the following examples, assume the tag's name is `argstag` and the message content 
+is `[p]argstag My dog is cute! Would you like to see a photo?`.
+
+<Code code="
+{args}
+# My dog is cute! Would you like to see a photo?
+o0l
+{args(1)}
+# My
+
+{args(2):!}
+# Would you like to see a photo?
+" lang="py" title="example" />
+
+### Uses Block
+
+The `{uses}` block returns the number of times a tag has been used.
+- **usage:** `{uses}`
+- **aliases:** None
+- **payload:** None
+- **parameter:** None
+
+<Code code="
+{uses}
+# 1
+" lang="py" title="example" />
+
+## Discord Object Variables
+
+These blocks reference Discord objects from the tag invocation context.
+
+### Author Block
+
+The `{author}` block with no parameters returns the tag invoker's full username, 
+but passing the attributes listed below to the block payload will return that attribute
+instead.
+- **usage:** `{author([attribute])}`
+- **aliases:** `user`
+- **payload:** None
+- **parameter:** attribute, None
+
+**Attributes:**
+
+<AuthorAttributes />
+
+### Target Block
+
+The `{target}` block follows the same usage and has the same attributes as the Author Block,
+but it defaults to the mentioned user in the tag invocation message if any users are
+mentioned, or the tag author.
+- **usage:** `{target([attribute])}`
+- **aliases:** `member`
+- **payload:** None
+- **parameter:** attribute, None
+
+### Channel Block
+
+The `{channel}` block with no parameters returns the channel's full name
+but passing the attributes listed below to the block payload will return
+that attribute instead.
+- **usage:** `{channel([attribute])}`
+- **aliases:** None
+- **payload:** None
+- **parameter:** attribute, None
+
+**Attributes:**
+
+<ChannelAttributes />
+
+### Server Block
+
+The `{server}` block with no parameters returns the server's name but
+passing the attributes listed below to the block payload will return
+that attribute instead.
+- **usage:** `{server([attribute])}`
+- **aliases:** `guild`
+- **payload:** None
+- **parameter:** attribute, None
+
+**Attributes:**
+
+<ServerAttributes />

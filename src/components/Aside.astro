@@ -1,0 +1,62 @@
+---
+import { AstroError } from "astro/errors";
+import { Icon } from "astro-icon/components";
+
+const asideVariants = ["note", "tip", "caution", "danger"] as const;
+const icons = {
+    note: "clarity:help-info-line",
+    tip: "clarity:star-line",
+    caution: "clarity:warning-line",
+    danger: "clarity:no-access-line",
+} as const;
+
+interface Props {
+    type?: (typeof asideVariants)[number];
+    title?: string;
+}
+
+let { type = "note", title } = Astro.props;
+
+if (!asideVariants.includes(type)) {
+    throw new AstroError("Invalid type passed.");
+}
+
+if (!title) {
+    title = Astro.locals.t(`aside.${type}`);
+}
+---
+
+<style>
+    .custom-aside--note {
+        --sl-color-asides-text-accent: #070f2b;
+        --sl-color-asides-border: #535c91;
+        background-color: #9290c3;
+    }
+
+    .custom-aside--tip {
+        --sl-color-asides-text-accent: #1E201E;
+        --sl-color-asides-border: #3C3D37;
+        background-color: #697565;
+    }
+
+    .custom-aside--caution {
+        --sl-color-asides-text-accent: var(--sl-color-orange-high);
+        --sl-color-asides-border: var(--sl-color-orange);
+        background-color: var(--sl-color-orange-low);
+    }
+
+    .custom-aside--danger {
+        --sl-color-asides-text-accent: var(--sl-color-red-high);
+        --sl-color-asides-border: var(--sl-color-red);
+        background-color: var(--sl-color-red-low);
+    }
+</style>
+
+<aside aria-label={title} class={`starlight-aside custom-aside--${type}`}>
+    <p class="starlight-aside__title" aria-hidden="true">
+        <Icon name={icons[type]} class="starlight-aside__icon" />{title}
+    </p>
+    <div class="starlight-aside__content">
+        <slot />
+    </div>
+</aside>

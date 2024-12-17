@@ -1,0 +1,268 @@
+---
+title: Parsing Blocks
+description: Introduction to the parsing blocks in tagscript.
+sidebar:
+    order: 4
+---
+
+import { Code } from "@astrojs/starlight/components";
+
+Parsing blocks interact with the tag invocation and affect the tag's output in Discord.
+
+## Restriction Blocks
+
+The following blocks allow for restriction of tags behind roles or channels, or setting tag
+cooldowns.
+
+### Require Block
+
+The require block will attempt to convert the given parameter into a channel or role,
+using name or ID. If the user running the tag is not in the targeted channel or doesn't
+have the targeted role, the tag will stop processing and it will send the response if
+one is given. Multiple role or channel requirements can be given, and should be
+split by a `,`.
+- **usage:** `{require(<role,channel>):[response]}`
+- **aliases:** `whitelist`
+- **payload:** response, None
+- **parameter:** role, channel
+
+<Code code="
+{require(Moderator)}
+{require(#general, #bot-cmds):This tag can only be run in #general and #bot-cmds.}
+{require(757425366209134764, 668713062186090506, 737961895356792882):You aren't allowed to use this tag.}
+" lang="rust" title="example" />
+
+### Blacklist Block
+
+The blacklist block will attempt to convert the given parameter into a channel or role,
+using name or ID. If the user running the tag is in the targeted channel or has the targeted
+role, the tag will stop processing and it will send the response if one is given.
+Multiple role or channel requirements can be given, and should be split by a `,`.
+- **usage:** `{blacklist(<role,channel>):[response]}`
+- **aliases:** None
+- **payload:** response, None
+- **parameter:** role, channel
+
+<Code code="
+{blacklist(Muted)}
+{blacklist(#support):This tag is not allowed in #support.}
+{blacklist(Tag Blacklist, 668713062186090506):You are blacklisted from using tags.}
+" lang="rust" title="example" />
+
+### Cooldown Block
+
+The cooldown block implements cooldowns when running a tag. The parameter requires 2
+values to be passed: `rate` and `per` integers. The `rate` is the number of times
+the tag can be used every `per` seconds.
+
+The payload requires a `key` value, which is the key used to store the cooldown.
+A key should be any string that is unique. If a channel's ID is passed as a key,
+the tag's cooldown will be enforced on that channel. Running the tag in a separate
+channel would have a different cooldown with the same `rate` and `per` values.
+
+The payload also has an optional `message` value, which is the message to be sent
+when the cooldown is exceeded. If no message is passed, the default message will be
+sent instead. The cooldown message supports 2 blocks: `key` and `retry_after`.
+- **usage:** `{cooldown(<rate>|<per>):<key>|[message]}`
+- **aliases:** None
+- **payload:** key, message
+- **parameter:** rate, per
+
+<Code code="
+{cooldown(1|10):{author(id)}}
+# the tag author used the tag more than once in 10 seconds
+# The bucket for 741074175875088424 has reached its cooldown. Retry in 3.25 seconds.
+
+{cooldown(3|3):{channel(id)}|Slow down! This tag can only be used 3 times per 3 seconds per channel. Try again in **{retry_after}** seconds.}
+# the tag was used more than 3 times in 3 seconds in a channel
+# Slow down! This tag can only be used 3 times per 3 seconds per channel. Try again in **0.74** seconds.
+" lang="py" title="example" />
+
+## Message Block
+
+Message blocks modify the tag's output.
+
+### Embed Block
+
+An embed block will send an embed in the tag response. There are two ways to use
+the embed block, either by using properly formatted embed JSON from an embed generator
+or manually inputting the accepted embed attributes.
+
+- **JSON**
+
+> Using JSON to create an embed offers complete embed customization.
+Multiple embed generators are available online to visualize and generate embed JSON.
+> - **usage:** `{embed(<json>)}`
+> - **aliases:** None
+> - **payload:** None
+> - **parameter:** json
+
+<Code code='
+{embed({"title":"Hello!", "description":"This is a test embed."})}
+{embed({
+    "title":"Here is a random duck!",
+    "image":{"url":"https://random-d.uk/api/randomimg"},
+    "color":15194415
+})}
+' lang="json" title="example" />
+
+- **Manual**
+
+> The following embed attributes can be set manually -
+> - `title`
+> - `description`
+> - `color`
+> - `url`
+> - `thumbnail`
+> - `image`
+> - `footer`
+> - `field` - (see below)
+> Adding a field to an embed requires the payload to be split by `|`, `;` or `,`
+into either 2 or 3 parts. The first part is the name of the field, the second is
+the text of the field, and the third optionally specifies whether the field
+should be inline.
+> - **usage:** `{embed(<attribute>):<value>}`
+> - **aliases:** None
+> - **payload:** value
+> - **parameter:** attribute
+
+<Code code="
+{embed(color):#37b2cb}
+{embed(title):Rules}
+{embed(description):Follow these rules to ensure a good experience in our server!}
+{embed(field):Rule 1|Respect everyone you speak to.|false}
+{embed(footer):Thanks for reading!|{guild(icon)}}
+" lang="json" title="example" />
+
+Both methods can be combined to create an embed in a tag. The following
+tagscript uses **JSON** to create an embed with fields and later set the embed title.
+
+<Code code='
+{embed(title):my embed title}
+{embed({{
+    "fields": [
+        {
+            "name": "Field 1",
+            "value": "field description",
+            "inline": false
+        }
+    ]
+})}
+' lang="json" title="example" />
+
+### Redirect Block
+
+Redirects the tag response to either the given channel, the author's DMs, or
+uses a reply based on what is passed to the parameter.
+- **usage:** `{redirect(<"dm"|"reply"|channel>)}`
+- **aliases:** None
+- **payload:** None
+- **parameter:** `dm`, `reply` or channel
+
+<Code code="
+{redirect(dm)}
+{redirect(reply)}
+{redirect(#general)}
+{redirect(626861902521434160)}
+" lang="rust" title="example" />
+
+### Delete Block
+
+Delete blocks will delete the invocation message if the given parameter is true.
+If there is no parameter i.e. `{delete}` it will default to true.
+- **usage:** `{delete([bool])}`
+- **aliases:** None
+- **payload:** None
+- **parameter:** bool, None
+
+<Code code="
+{delete}
+{delete({args(1)}==delete)}
+" lang="rust" title="example" />
+
+### React Block
+
+The react block will react with up to 5 emoji to the tag response message.
+If the name used is `reactu`, it will react to the tag invocation instead.
+The given emoji can be custom or unicode emoji. Emojis can be split with `,`.
+
+The block accepts emojis being passed to the parameter or the payload, but not both.
+- **usage:** `{react(<emoji,emoji>):[emoji,emoji]}`
+- **aliases:** `reactu`
+- **payload:** emoji
+- **parameter:** emoji
+
+<Code code="
+{react(🅱️)}
+{react(🍎,🍏)}
+{react(<:kappa:754146174843355146>)}
+{reactu:🅱️}
+" lang="rust" title="example" />
+
+## Utility Blocks
+
+The following utility blocks extend the power of tags that interface with bot commands.
+
+### Command Block
+
+Run a command as if the tag invoker had ran it. Only 3 command blocks can be used in a tag.
+- **usage:** `{command:<command>}`
+- **aliases:** `c`, `com` and `command`
+- **payload:** command
+- **parameter:** None
+
+<Code code="
+{c:ping}
+# invokes ping command
+
+{c:ban {target(id)} Chatflood/spam}
+# invokes ban command on the pinged user with the reason as 'Chatflood/spam'
+" lang="py" title="example" />
+
+### Override Block
+
+Override a command's permission requirements. This can override mod, admin, or general user
+permission requirements when running commands with the [Command Block](#command-block).
+Passing no parameter will default to overriding all permissions.
+
+In order to add a tag with the override block, the tag author must have `Manage Server`
+permissions.
+
+This will not override bot owner commands or command checks.
+- **usage:** `{override(["admin"|"mod"|"permissions"]):[command]}`
+- **aliases:** None
+- **payload:** command
+- **parameter:** `admin`, `mod` or `permissions`
+
+<Code code="
+{override}
+# overrides all commands and permissions
+
+{override(admin)}
+# overrides commands that require the admin role
+
+{override(permissions)}
+{override(mod)}
+# overrides commands that require the mod role or have user permission requirements
+" lang="py" title="example" />
+
+### AllowedMentions Block
+
+The `allowedmentions` block attempts to enable mentioning of roles. Passing no parameter
+enables mentioning of all roles within the message content. However passing a role name or
+ID to the block parameter allows mentioning of that specific role only. Multiple role
+name or IDs can be included, separated by a comma `,`. By default, mentioning is only
+triggered if the execution author has `Manage Server` permissions. However, using
+the `override` keyword as a payload allows mentioning to be triggered by anyone.
+- **usage:** `{allowedmentions(<role, None>):["override", None]}`
+- **aliases:** `mentions`
+- **payload:** `override` or None
+- **parameter:** role, None
+
+<Code code="
+{allowedmentions}
+{allowedmentions:override}
+{allowedmentions(@Admin, Moderator):override}
+{allowedmentions(763522431151112265, 812949167190048769)}
+{mentions(763522431151112265, 812949167190048769):override}
+" lang="rust" title="example" />

@@ -1,0 +1,135 @@
+---
+import { Code } from "astro:components";
+---
+
+<div class="flex flex-col overflow-x-auto">
+    <div class="sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+            <div class="overflow-x-auto">
+                <table
+                    class="min-w-full text-start text-sm font-light text-surface dark:text-white"
+                >
+                    <thead
+                        class="border-b border-neutral-200 font-medium dark:border-white/10"
+                    >
+                        <tr>
+                            <th scope="col" class="px-6 py-4">Attribute</th>
+                            <th scope="col" class="px-6 py-4">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            class="border-b border-neutral-200 dark:border-white/10"
+                        >
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="id" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the channel's ID"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr
+                            class="border-b border-neutral-200 dark:border-white/10"
+                        >
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="name" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the channel's name"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code
+                                    code="created_at"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the channel's creation date"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="timestamp" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the channel's creation date as a UTC timestamp"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="nsfw" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="whether the channel is nsfw"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="mention" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="a formatted text that pings the channel"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="topic" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the channel's topic"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code
+                                    code="category_id"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the category the channel is associated with, if no category this will return empty"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="jump_url" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="a link to the channel"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
