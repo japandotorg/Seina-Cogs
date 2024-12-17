@@ -13,9 +13,10 @@ export default defineConfig({
         title: 'Seina Cogs',
         head: [
             {
-                tag: "script",
+                tag: "meta",
                 attrs: {
-                    src: `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-${AdsenseID}" crossorigin="anonymous">`
+                    name: "google-adsense-account",
+                    content: `ca-pub-${AdsenseID}`
                 },
             },
         ],
