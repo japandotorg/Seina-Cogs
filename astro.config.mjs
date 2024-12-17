@@ -8,7 +8,7 @@ import icon from "astro-icon";
 const AdsenseID = process.env.ADSENSE;
 const MoneTag = process.env.MONETAG;
 
-
+// <script src="https://alwingulla.com/88/tag.min.js" data-zone="120222" async data-cfasync="false"></script>
 export default defineConfig({
     integrations: [starlight({
         title: 'Seina Cogs',
@@ -25,6 +25,14 @@ export default defineConfig({
                 attrs: {
                     name: "monetag",
                     content: `${MoneTag}`
+                }
+            },
+            {
+                tag: "script",
+                attrs: {
+                    src: "https://alwingulla.com/88/tag.min.js",
+                    "data-zone": "120222",
+                    "async data-cfasync": "false",
                 }
             }
         ],
