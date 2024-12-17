@@ -5,9 +5,20 @@ import tailwind from "@astrojs/tailwind";
 import icon from "astro-icon";
 
 
+const AdsenseID = process.env.ADSENSE
+
+
 export default defineConfig({
     integrations: [starlight({
         title: 'Seina Cogs',
+        head: [
+            {
+                tag: "script",
+                attrs: {
+                    src: `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-${AdsenseID}" crossorigin="anonymous">`
+                },
+            },
+        ],
         logo: {
             src: "./src/assets/seina.svg",
         },
