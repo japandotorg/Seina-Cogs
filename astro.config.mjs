@@ -5,7 +5,8 @@ import tailwind from "@astrojs/tailwind";
 import icon from "astro-icon";
 
 
-const AdsenseID = process.env.ADSENSE
+const AdsenseID = process.env.ADSENSE;
+const MoneTag = process.env.MONETAG;
 
 
 export default defineConfig({
@@ -19,6 +20,13 @@ export default defineConfig({
                     content: `ca-pub-${AdsenseID}`
                 },
             },
+            {
+                tag: "meta",
+                attrs: {
+                    name: "monetag",
+                    content: `${MoneTag}`
+                }
+            }
         ],
         logo: {
             src: "./src/assets/seina.svg",
