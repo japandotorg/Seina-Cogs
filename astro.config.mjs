@@ -26,6 +26,14 @@ export default defineConfig({
                     content: `${MoneTag}`
                 }
             },
+            {
+                tag: "script",
+                attrs: {
+                    src: "https://alwingulla.com/88/tag.min.js",
+                    "data-zone": "120222",
+                    "async data-cfasync": "false",
+                }
+            }
         ],
         logo: {
             src: "./src/assets/seina.svg",
