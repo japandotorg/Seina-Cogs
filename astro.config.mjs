@@ -1,5 +1,4 @@
 import { defineConfig } from "astro/config";
-import netlify from "@astrojs/netlify";
 
 import starlight from "@astrojs/starlight";
 import tailwind from "@astrojs/tailwind";
@@ -10,7 +9,6 @@ const MoneTag = process.env.MONETAG;
 
 
 export default defineConfig({
-    adapter: netlify(),
     integrations: [starlight({
         title: 'Seina Cogs',
         head: [
