@@ -1,15 +1,17 @@
 import { defineConfig } from "astro/config";
+import netlify from "@astrojs/netlify";
 
 import starlight from "@astrojs/starlight";
 import tailwind from "@astrojs/tailwind";
 import icon from "astro-icon";
 
-
 const AdsenseID = process.env.ADSENSE;
 const MoneTag = process.env.MONETAG;
 
 
+// <script src="https://alwingulla.com/88/tag.min.js" data-zone="120222" async data-cfasync="false"></script>
 export default defineConfig({
+    adapter: netlify(),
     integrations: [starlight({
         title: 'Seina Cogs',
         head: [
