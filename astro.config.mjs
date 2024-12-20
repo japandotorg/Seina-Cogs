@@ -5,7 +5,7 @@ import tailwind from "@astrojs/tailwind";
 import icon from "astro-icon";
 
 const AdsenseID = process.env.ADSENSE;
-const MoneTag = process.env.MONETAG;
+// const MoneTag = process.env.MONETAG;
 
 
 export default defineConfig({
