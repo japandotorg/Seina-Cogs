@@ -19,21 +19,23 @@ export default defineConfig({
                     content: `ca-pub-${AdsenseID}`
                 },
             },
-            {
-                tag: "meta",
-                attrs: {
-                    name: "monetag",
-                    content: `${MoneTag}`
-                }
-            },
-            {
-                tag: "script",
-                attrs: {
-                    src: "https://alwingulla.com/88/tag.min.js",
-                    "data-zone": "120222",
-                    "async data-cfasync": "false",
-                }
-            }
+            /*
+             *  {
+             *      tag: "meta",
+             *      attrs: {
+             *          name: "monetag",
+             *          content: `${MoneTag}`
+             *      }
+             *  },
+             *  {
+             *      tag: "script",
+             *      attrs: {
+             *          src: "https://alwingulla.com/88/tag.min.js",
+             *          "data-zone": "120222",
+             *          "async data-cfasync": "false",
+             *      }
+             *  }
+             */
         ],
         logo: {
             src: "./src/assets/seina.svg",
