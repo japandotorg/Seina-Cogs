@@ -19,6 +19,13 @@ export default defineConfig({
                     content: `ca-pub-${AdsenseID}`
                 },
             },
+            {
+                tag: "script",
+                attrs: {
+                    "async src": `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-${AdsenseID}`,
+                    crossorigin: "anonymous"
+                },
+            }
             /*
              *  {
              *      tag: "meta",
