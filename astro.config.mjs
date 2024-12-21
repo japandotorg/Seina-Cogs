@@ -5,6 +5,7 @@ import tailwind from "@astrojs/tailwind";
 import icon from "astro-icon";
 
 const AdsenseID = process.env.ADSENSE;
+const EarnID = process.env.EARN;
 // const MoneTag = process.env.MONETAG;
 
 
@@ -25,6 +26,12 @@ export default defineConfig({
                     "async src": `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-${AdsenseID}`,
                     crossorigin: "anonymous"
                 },
+            },
+            {
+                tag: "script",
+                attrs: {
+                    "async src": `https://discovearn.com/js/script.js?key=${EarnID}`
+                }
             }
             /*
              *  {
