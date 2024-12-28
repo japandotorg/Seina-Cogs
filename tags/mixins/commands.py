@@ -47,11 +47,11 @@ from ..converters import (
     TagName,
     TagScriptConverter,
 )
+from ..docs import BLOCKS
 from ..errors import TagFeedbackError
 from ..objects import Tag
 from ..utils import chunks, menu
 from ..views import ConfirmationView
-from ..docs import BLOCKS
 
 TAG_RE: Pattern[str] = re.compile(r"(?i)(\[p\])?\btag'?s?\b")
 
@@ -479,7 +479,7 @@ class Commands(MixinMeta):
         await ctx.send(
             embed=discord.Embed(
                 **embed,
-                description="Searched for -\n- [`{} Block`]({})".format(keyword.lower(), block)
+                description="Searched for -\n- [`{} Block`]({})".format(keyword.lower(), block),
             )
         )
 

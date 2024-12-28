@@ -25,7 +25,6 @@ SOFTWARE.
 
 from typing import Dict
 
-
 BLOCKS: Dict[str, str] = {
     "assignment": "https://cogs.melonbot.io/tags/blocks/#assignment-block",
     "random": "https://cogs.melonbot.io/tags/blocks/#random-block",
