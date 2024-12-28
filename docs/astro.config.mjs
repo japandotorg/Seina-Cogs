@@ -20,6 +20,9 @@ export default defineConfig({
         starlight(
             {
                 title: 'Seina Cogs',
+                editLink: {
+                    baseUrl: "https://github.com/japandotorg/Seina-Cogs/edit/main/docs"
+                },
                 plugins: [
                     starWarp({ path: "/find", openSearch: { enabled: true, title: "Seina-Cogs" } }),
                 ],
