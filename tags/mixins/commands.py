@@ -481,7 +481,7 @@ class Commands(MixinMeta):
         await ctx.send(
             embed=discord.Embed(
                 **embed,
-                description="Searched for -\n- [`{} Block`]({})".format(keyword.lower(), block),
+                description="Searched for -\n- [`{} block`]({})".format(keyword.lower(), block),
             )
         )
 
