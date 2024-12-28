@@ -64,10 +64,10 @@ class Tags(
     """
     Create and use tags.
 
-    The TagScript documentation can be found [here](https://seina-cogs.readthedocs.io/en/latest/).
+    The TagScript documentation can be found [here](https://cogs.melonbot.io/tags/).
     """
 
-    __version__: Final[str] = "2.7.9"
+    __version__: Final[str] = "2.7.10"
     __author__: Final[List[str]] = ["inthedark.org", "PhenoM4n4n", "sravan", "npc203"]
 
     def __init__(self, bot: Red) -> None:
@@ -99,7 +99,6 @@ class Tags(
         self.initialize_task: asyncio.Task = self.create_task(self.initialize())
 
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
-        self.docs: Union[List[str], Dict[str, str]] = []
 
         if bot._cli_flags.logging_level == logging.DEBUG:
             logging.getLogger("TagScriptEngine").setLevel(logging.DEBUG)

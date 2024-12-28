@@ -56,7 +56,7 @@ class Screenshot(commands.Cog):
 
     setattr(asyncio.sslproto._SSLProtocolTransport, "_start_tls_compatible", True)
 
-    __version__: Final[str] = "0.1.1"
+    __version__: Final[str] = "0.1.2"
     __author__: Final[List[str]] = ["inthedark.org"]
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
@@ -141,10 +141,10 @@ class Screenshot(commands.Cog):
           - ``--mode <mode>`` either ``light`` or ``dark``.
 
         **Examples**:
-        - ``[p]screenshot https://seina-cogs.readthedocs.io``
-        - ``[p]screenshot https://seina-cogs.readthedocs.io --full``
-        - ``[p]screenshot https://seina-cogs.readthedocs.io --mode dark``
-        - ``[p]screenshot https://seina-cogs.readthedocs.io --full --mode dark``
+        - ``[p]screenshot https://cogs.melonbot.io``
+        - ``[p]screenshot https://cogs.melonbot.io --full``
+        - ``[p]screenshot https://cogs.melonbot.io --mode dark``
+        - ``[p]screenshot https://cogs.melonbot.io --full --mode dark``
         """
         async with ctx.typing():
             size, mode = await Flags().convert(ctx, flags)

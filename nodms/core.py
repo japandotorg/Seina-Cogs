@@ -445,7 +445,7 @@ class NoDMs(commands.Cog):
         privided the type is reset to default instead.
 
         **Blocks**:
-        `embed` - [Embed to be sent for the trigger message](https://seina-cogs.readthedocs.io/en/latest/tags/parsing_blocks.html#embed-block)
+        `embed` - [Embed to be sent for the trigger message](https://cogs.melonbot.io/tags/parsings/#embed-block)
 
         **Variables**:
         - `{color}  `: [botname]'s default embed color (no parameters).

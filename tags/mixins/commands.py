@@ -29,7 +29,6 @@ import time
 import types
 from collections import Counter
 from typing import Any, Dict, Final, List, Optional, Pattern, Union
-from urllib.parse import quote_plus
 
 import discord
 import orjson
@@ -48,15 +47,15 @@ from ..converters import (
     TagName,
     TagScriptConverter,
 )
-from ..doc_parser import SphinxObjectFileReader, parse_object_inv
 from ..errors import TagFeedbackError
 from ..objects import Tag
 from ..utils import chunks, menu
 from ..views import ConfirmationView
+from ..docs import BLOCKS
 
 TAG_RE: Pattern[str] = re.compile(r"(?i)(\[p\])?\btag'?s?\b")
 
-DOCS_URL: Final[str] = "https://seina-cogs.readthedocs.io/en/latest"
+DOCS_URL: Final[str] = "https://cogs.melonbot.io/tags/"
 
 log: logging.Logger = logging.getLogger("red.seina.tags.commands")
 
@@ -89,7 +88,6 @@ def copy_doc(original: Union[commands.Command, types.FunctionType]):
 
 class Commands(MixinMeta):
     def __init__(self):
-        self.docs = None
         super().__init__()
 
     @staticmethod
@@ -236,7 +234,7 @@ class Commands(MixinMeta):
         Tag management with TagScript.
 
         These commands use TagScriptEngine.
-        Read the [TagScript documentation](https://seina-cogs.readthedocs.io/en/latest/) to learn how to use TagScript blocks.
+        Read the [TagScript documentation](https://cogs.melonbot.io/tags/) to learn how to use TagScript blocks.
         """
 
     @commands.mod_or_permissions(manage_guild=True)
@@ -251,7 +249,7 @@ class Commands(MixinMeta):
         """
         Add a tag with TagScript.
 
-        [Tag usage guide](https://seina-cogs.readthedocs.io/en/latest/tags/blocks.html#usage)
+        [Tag usage guide](https://cogs.melonbot.io/tags/blocks/)
 
         **Example:**
         `[p]tag add lawsofmotion {embed(title):Newton's Laws of motion}
@@ -315,7 +313,7 @@ class Commands(MixinMeta):
         Edit a tag's TagScript.
 
         The passed tagscript will replace the tag's current tagscript.
-        View the [TagScript docs](https://seina-cogs.readthedocs.io/en/latest/blocks.html) to find information on how to write valid tagscript.
+        View the [TagScript docs](https://cogs.melonbot.io/tags/) to find information on how to write valid tagscript.
 
         **Example:**
         `[p]tag edit rickroll Never gonna give you up!`
@@ -404,24 +402,14 @@ class Commands(MixinMeta):
         data = self.generate_tag_list(tags)
         await self.show_tag_list(ctx, data, "Stored Tags", getattr(ctx.guild.icon, "url", None))
 
-    async def doc_fetch(self) -> None:
-        async with self.session.get(f"{DOCS_URL}/objects.inv") as response:
-            inv = SphinxObjectFileReader(await response.read())
-        self.docs = parse_object_inv(inv, DOCS_URL)
-
-    async def doc_search(self, keyword: str) -> Dict[str, str]:
-        keyword = keyword.lower()
-        if not self.docs:
-            await self.doc_fetch()
-        return {key: value for key, value in self.docs.items() if keyword in key.lower()}
-
     async def show_tag_usage(
         self, ctx: commands.Context, guild: Optional[discord.Guild] = None
     ) -> None:
         tags = self.get_unique_tags(guild)
         if not tags:
             message = "This server has no tags" if guild else "There are no global tags."
-            return await ctx.send(message)
+            await ctx.send(message)
+            return
         counter = Counter({tag.name: tag.uses for tag in tags})
         e = discord.Embed(title="Tag Stats", color=await ctx.embed_color())
         embeds = []
@@ -443,34 +431,57 @@ class Commands(MixinMeta):
         await self.show_tag_usage(ctx, ctx.guild)
 
     @tag.command("docs")
-    async def tag_docs(self, ctx: commands.Context, keyword: str = None):
+    async def tag_docs(self, ctx: commands.Context, keyword: str = None, exp: bool = False):
         """
         Search the TagScript documentation for a block.
 
-        https://seina-cogs.readthedocs.io/en/latest/
+        https://cogs.melonbot.io/tags/
 
         **Example:**
         `[p]tag docs embed`
         """
-        async with ctx.typing():
-            e = discord.Embed(color=await ctx.embed_color(), title="Tags Documentation")
-            if keyword:
-                matched_labels = await self.doc_search(keyword)
-                description = [f"Search for: `{keyword}`"]
-                for name, url in matched_labels.items():
-                    description.append(f"[`{name}`]({url})")
-                url = f"{DOCS_URL}/search.html?q={quote_plus(keyword)}&check_keywords=yes&area=default"
-                e.url = url
-                embeds = []
-                description = "\n".join(description)
-                for page in pagify(description):
-                    embed = e.copy()
-                    embed.description = page
-                    embeds.append(embed)
-                await menu(ctx, embeds)
-            else:
-                e.url = DOCS_URL
-                await ctx.send(embed=e)
+        embed: Dict[str, Union[str, discord.Color]] = {
+            "title": "Tags Documentation",
+            "url": DOCS_URL,
+            "color": await ctx.embed_color(),
+        }
+        if exp:
+            await ctx.send(
+                embed=discord.Embed(
+                    **embed,
+                    description="Searched for [`{0}`](https://cogs.melonbot.io/find?q={0})!".format(
+                        keyword
+                    ),
+                ).set_footer(
+                    text="This method is experimental and may not show the right documentation."
+                )
+            )
+            return
+        try:
+            block: str = BLOCKS[keyword.lower()]
+        except KeyError:
+            await ctx.send(
+                embed=discord.Embed(
+                    **embed,
+                    description=(
+                        "Could not find a block with that name `{keyword}`\n\n"
+                        "**Available Blocks**\n"
+                        "\n".join(
+                            [
+                                "- [{name}]({url})".format(name=name, url=url)
+                                for name, url in BLOCKS.items()
+                            ]
+                        )
+                    ).format(keyword=keyword.lower()),
+                )
+            )
+            return
+        await ctx.send(
+            embed=discord.Embed(
+                **embed,
+                description="Searched for -\n- [`{} Block`]({})".format(keyword.lower(), block)
+            )
+        )
 
     @commands.is_owner()
     @tag.command("run", aliases=["execute"])

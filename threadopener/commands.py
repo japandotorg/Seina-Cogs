@@ -289,8 +289,8 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         (Supports TagScript)
 
         **Attributes:**
-        - `{server}`: [Your guild/server.](https://seina-cogs.readthedocs.io/en/latest/tags/default_variables.html#server-block)
-        - `{author}`: [Author of the thread.](https://seina-cogs.readthedocs.io/en/latest/tags/default_variables.html#author-block)
+        - `{server}`: [Your guild/server.](https://cogs.melonbot.io/tags/variables/#server-block)
+        - `{author}`: [Author of the thread.](https://cogs.melonbot.io/tags/variables/#author-block)
         - `{created}`: Formatted time string of when the thread was created.
         - `{counter}`: Counter of how created thread. (Everytime a thread is created using ThreadOpener the counter goes up by 1.)
 
@@ -352,14 +352,14 @@ class Commands(MixinMeta, metaclass=CompositeMetaClass):
         (Supports Tagscript)
 
         **Blocks:**
-        - [Assugnment Block](https://seina-cogs.readthedocs.io/en/latest/tags/tse_blocks.html#assignment-block)
-        - [If Block](https://seina-cogs.readthedocs.io/en/latest/tags/tse_blocks.html#if-block)
-        - [Embed Block](https://seina-cogs.readthedocs.io/en/latest/tags/parsing_blocks.html#embed-block)
-        - [Command Block](https://seina-cogs.readthedocs.io/en/latest/tags/parsing_blocks.html#command-block)
+        - [Assugnment Block](https://cogs.melonbot.io/tags/blocks/#assignment-block)
+        - [If Block](https://cogs.melonbot.io/tags/blocks/#if-block)
+        - [Embed Block](https://cogs.melonbot.io/tags/parsings/#embed-block)
+        - [Command Block](https://cogs.melonbot.io/tags/parsings/#command-block)
 
         **Variable:**
-        - `{server}`: [Your guild/server.](https://seina-cogs.readthedocs.io/en/latest/tags/default_variables.html#server-block)
-        - `{author}`: [Author of the message.](https://seina-cogs.readthedocs.io/en/latest/tags/default_variables.html#author-block)
+        - `{server}`: [Your guild/server.](https://cogs.melonbot.io/tags/variables/#server-block)
+        - `{author}`: [Author of the message.](https://cogs.melonbot.io/tags/variables/#author-block)
         - `{color}`: [botname]'s default color.
 
         **Example:**
