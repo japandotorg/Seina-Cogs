@@ -465,14 +465,16 @@ class Commands(MixinMeta):
                     **embed,
                     description=(
                         "Could not find a block with that name `{keyword}`\n\n"
-                        "**Available Blocks**\n"
-                        "\n".join(
+                        "**Available Blocks**\n{blocks}"
+                    ).format(
+                        keyword=keyword.lower(),
+                        blocks="\n".join(
                             [
                                 "- [{name}]({url})".format(name=name, url=url)
                                 for name, url in BLOCKS.items()
                             ]
-                        )
-                    ).format(keyword=keyword.lower()),
+                        ),
+                    ),
                 )
             )
             return
