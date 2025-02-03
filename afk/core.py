@@ -51,7 +51,7 @@ class AFK(commands.Cog):
     """
 
     __author__: Final[str] = humanize_list(["inthedark.org"])
-    __version__: Final[str] = "0.1.1"
+    __version__: Final[str] = "0.1.2"
 
     def __init__(self, bot: Red) -> None:
         super().__init__()
@@ -289,13 +289,13 @@ class AFK(commands.Cog):
         (Supports Tagscript)
 
         **Blocks:**
-        - [Embed](https://seina-cogs.readthedocs.io/en/latest/tags/parsing_blocks.html#embed-block)
-        - [If](https://seina-cogs.readthedocs.io/en/latest/tags/tse_blocks.html#if-block)
-        - [Assignement](https://seina-cogs.readthedocs.io/en/latest/tags/tse_blocks.html#assignment-block)
+        - [Embed](https://cogs.melonbot.io/tags/parsings/#embed-block)
+        - [If](https://cogs.melonbot.io/tags/blocks/#if-block)
+        - [Assignement](https://cogs.melonbot.io/tags/blocks/#assignment-block)
 
         **Variable:**
-        - `{server}` - [The server you're afk in](https://seina-cogs.readthedocs.io/en/latest/tags/default_variables.html#server-block)
-        - `{author}` - [You (command author)](https://seina-cogs.readthedocs.io/en/latest/tags/default_variables.html#author-block)
+        - `{server}` - [The server you're afk in](https://cogs.melonbot.io/tags/variables/#server-block)
+        - `{author}` - [You (command author)](https://cogs.melonbot.io/tags/variables/#author-block)
         - `{time}` - The time you're afk from.
         - `{reason}` - The reason you're afk for.
         - `{color}` - Hoist color of people who ping you.

@@ -57,7 +57,7 @@ class ThreadOpener(
     """
 
     __author__: Final[List[str]] = ["inthedark.org"]
-    __version__: Final[str] = "0.1.0"
+    __version__: Final[str] = "0.1.1"
 
     def __init__(self, bot: Red) -> None:
         super().__init__()
@@ -170,9 +170,9 @@ class ThreadOpener(
             message.author, roles=blacklist["roles"], users=blacklist["users"]
         ):
             return
-        if config["allow_bots"] and message.is_system():
-            return
-        if config["allow_bots"] and message.author.bot:
+        if not config["allow_bots"] and (
+            message.author.bot or message.is_system() or message.webhook_id
+        ):
             return
         if not cast(bool, config["toggle"]):
             return

@@ -13,6 +13,11 @@
         "economy",
         "currency"
     ],
+    "min_python_version": [
+        3,
+        10,
+        0
+    ],
     "required_cogs": {},
     "requirements": [
         "pillow",

@@ -75,7 +75,7 @@ class DisboardReminder(commands.Cog):
     Set a reminder to bump on Disboard.
     """
 
-    __version__: Final[str] = "1.3.7"
+    __version__: Final[str] = "1.3.8"
     __author__: Final[List[str]] = ["inthedark.org", "Phenom4n4n"]
 
     def __init__(self, bot: Red) -> None:
@@ -475,14 +475,14 @@ class DisboardReminder(commands.Cog):
         Change the message used for 'Thank You' messages. Providing no message will reset to the default message.
 
         The thank you message supports TagScript blocks which can customize the message and even add an embed!
-        [View the TagScript documentation here.](https://seina-cogs.readthedocs.io/en/latest/index.html)
+        [View the TagScript documentation here.](https://cogs.melonbot.io/tags/)
 
         Variables:
-        `{member}` - [The user who bumped](https://seina-cogs.readthedocs.io/en/latest/tags/default_variables.html#author-block)
-        `{server}` - [This server](https://seina-cogs.readthedocs.io/en/latest/tags/default_variables.html#server-block)
+        `{member}` - [The user who bumped](https://cogs.melonbot.io/tags/variables/#author-block)
+        `{server}` - [This server](https://cogs.melonbot.io/tags/variables/#server-block)
 
         Blocks:
-        `embed` - [Embed to be sent in the thank you message](https://seina-cogs.readthedocs.io/en/latest/tags/parsing_blocks.html#embed-block)
+        `embed` - [Embed to be sent in the thank you message](https://cogs.melonbot.io/tags/parsings/#embed-block)
 
         **Examples:**
         > `[p]bprm ty Thanks {member} for bumping! You earned 10 brownie points from phen!`

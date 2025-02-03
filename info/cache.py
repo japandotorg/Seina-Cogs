@@ -45,7 +45,7 @@ if TYPE_CHECKING:
 
 DEFAULT: Final[str] = "❔"
 
-SelectEmoji = Literal["roles", "home", "avatar", "banner", "gavatar"]
+SelectEmoji = Literal["roles", "home", "avatar", "banner", "gavatar", "perms"]
 StatusEmoji = Literal["online", "away", "dnd", "offline", "streaming"]
 DeviceEmoji = Literal[
     "mobile_online",
@@ -263,5 +263,5 @@ class Cache(CacheProtocol):
             for badge in sorted(flags):
                 emoji: str = self.get_badge_emoji(cast(BadgeEmoji, badge))
                 badges += "{} {}\n".format(emoji, badge.replace("_", " ").title())
-            count += 1
+                count += 1
         return badges, count

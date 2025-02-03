@@ -30,7 +30,6 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple, Union, 
 
 import discord
 from redbot.cogs.downloader.downloader import Downloader
-from redbot.cogs.mod.mod import Mod
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.tree import RedTree
@@ -39,17 +38,17 @@ from redbot.core.utils.chat_formatting import box, humanize_list, pagify
 from redbot.core.utils.common_filters import filter_invites
 
 from .cache import Cache
-from .utils import get_roles, truncate
+from .mod import ModUtils
+from .utils import get_perms, get_roles, truncate
 
 
 class InteractionSimpleMenu(views.SimpleMenu):
     async def inter(self, interaction: discord.Interaction[Red]) -> None:
+        await interaction.response.defer()
         self._fallback_author_to_ctx = False
         self.author: discord.abc.User = interaction.user
         kwargs: Dict[str, Any] = await self.get_page(self.current_page)
-        self.message: discord.Message = await cast(
-            RedTree, interaction.client.tree
-        )._send_from_interaction(interaction, **kwargs)
+        self.message: discord.Message = await interaction.followup.send(**kwargs)
 
 
 class ViewSourceCodeButton(discord.ui.Button["CommandView"]):
@@ -65,9 +64,9 @@ class ViewSourceCodeButton(discord.ui.Button["CommandView"]):
         self.callback: functools.partial[Any] = functools.partial(callback, self)
 
 
-class UISelect(discord.ui.Select["UIView"]):
+class UserInfoSelect(discord.ui.Select["UserInfoView"]):
     if TYPE_CHECKING:
-        view: "UIView"
+        view: "UserInfoView"
 
     def __init__(
         self,
@@ -121,7 +120,16 @@ class UISelect(discord.ui.Select["UIView"]):
                     label="Roles",
                     emoji=self.cache.get_select_emoji("roles"),
                     value="roles",
-                    description="View the user's roles..",
+                    description="View the user's roles...",
+                )
+            )
+        if get_perms(self.user.guild_permissions):
+            options.append(
+                discord.SelectOption(
+                    label="Permissions",
+                    emoji=self.cache.get_select_emoji("perms"),
+                    value="perms",
+                    description="View the user's permissions...",
                 )
             )
         super().__init__(
@@ -134,7 +142,7 @@ class UISelect(discord.ui.Select["UIView"]):
         self.callback: functools.partial[Any] = functools.partial(callback, self)
 
 
-class UIView(discord.ui.View):
+class UserInfoView(discord.ui.View):
     def __init__(
         self,
         ctx: commands.GuildContext,
@@ -149,6 +157,8 @@ class UIView(discord.ui.View):
         self.bot: Red = ctx.bot
         self.cache: Cache = cache
 
+        self.mod: ModUtils = ModUtils(self.bot)
+
         self.user: discord.Member = user
         self.banner_and_gavatar: Tuple[Optional[discord.Asset], Optional[discord.Asset]] = (
             banner_and_gavatar
@@ -157,19 +167,19 @@ class UIView(discord.ui.View):
         self.embed: discord.Embed = discord.utils.MISSING
         self._message: discord.Message = discord.utils.MISSING
 
-        self._select: UISelect = UISelect(
+        self._select: UserInfoSelect = UserInfoSelect(
             self.cache, self.user, self.banner_and_gavatar, self._callback
         )
         self.add_item(self._select)
 
     @staticmethod
-    async def _callback(self: UISelect, interaction: discord.Interaction[Red]) -> None:
+    async def _callback(self: UserInfoSelect, interaction: discord.Interaction[Red]) -> None:
         await interaction.response.defer()
         value: str = self.values[0]
-        if value == "home":
+        if value.lower() == "home":
             embed: discord.Embed = await self.view._make_embed()
             await interaction.edit_original_response(embed=embed)
-        elif value == "avatar":
+        elif value.lower() == "avatar":
             embed: discord.Embed = discord.Embed(
                 color=self.user.color, title="{}'s Avatar".format(self.user.display_name)
             )
@@ -177,7 +187,7 @@ class UIView(discord.ui.View):
                 url=(self.user.avatar.url if self.user.avatar else self.user.default_avatar.url)
             )
             await interaction.edit_original_response(embed=embed)
-        elif value == "gavatar":
+        elif value.lower() == "gavatar":
             embed: discord.Embed = discord.Embed(
                 color=self.user.color,
                 title="{}'s Guild Avatar".format(self.user.display_name),
@@ -189,7 +199,7 @@ class UIView(discord.ui.View):
                     self.user.mention
                 )
             await interaction.edit_original_response(embed=embed)
-        elif value == "banner":
+        elif value.lower() == "banner":
             embed: discord.Embed = discord.Embed(
                 color=self.user.color, title="{}'s Banner".format(self.user.display_name)
             )
@@ -198,48 +208,34 @@ class UIView(discord.ui.View):
             else:
                 embed.description = "{} does not have a banner.".format(self.user.mention)
             await interaction.edit_original_response(embed=embed)
-        elif value == "roles":
+        elif value.lower() == "roles":
             embed: discord.Embed = discord.Embed(
                 color=self.user.color, title="{}'s Roles".format(self.user.display_name)
             )
             embed.description = (
-                await self.view._format_roles()
+                self.view._format_roles()
                 if get_roles(self.user)
                 else "{} does not have any roles in this server.".format(self.user.mention)
             )
             await interaction.edit_original_response(embed=embed)
-
-    @classmethod
-    async def make_embed(
-        cls,
-        ctx: commands.GuildContext,
-        user: discord.Member,
-        cache: Cache,
-        banner_and_gavatar: Tuple[Optional[discord.Asset], Optional[discord.Asset]],
-    ) -> discord.Embed:
-        self: "UIView" = cls(
-            ctx=ctx, user=user, cache=cache, banner_and_gavatar=banner_and_gavatar
-        )
-        return await self._make_embed()
-
-    async def on_timeout(self) -> None:
-        for child in self.children:
-            child: discord.ui.Item["UIView"]
-            if hasattr(child, "disabled"):
-                child.disabled = True  # type: ignore
-        with contextlib.suppress(discord.HTTPException):
-            if self._message is not discord.utils.MISSING:
-                await self._message.edit(view=self)
-
-    async def interaction_check(self, interaction: discord.Interaction[Red], /) -> bool:
-        if self.ctx.author.id != interaction.user.id:
-            await interaction.response.send_message(
-                content="You're not the author of this message.", ephemeral=True
+        elif value.lower() == "perms":
+            embed: discord.Embed = discord.Embed(
+                color=self.user.color, title="{}'s Permissions".format(self.user.display_name)
             )
-            return False
-        return True
+            embed.description = (
+                truncate(self.view._format_perms(), max=4000)
+                if get_perms(self.user.guild_permissions)
+                else "{} does not have any permissions in this server.".format(
+                    self.user.display_name
+                )
+            )
+            await interaction.edit_original_response(embed=embed)
+        else:
+            await interaction.followup.send(
+                "I have no idea how this even happened.", ephemeral=True
+            )
 
-    async def _format_roles(self) -> Union[str, Any]:
+    def _format_roles(self) -> Union[str, Any]:
         roles: Optional[List[str]] = get_roles(self.user)
         if roles:
             string: str = ", ".join(roles)
@@ -262,6 +258,44 @@ class UIView(discord.ui.View):
             string: str = discord.utils.MISSING
         return string
 
+    def _format_perms(self):
+        perms: List[str] = get_perms(self.user.guild_permissions)
+        if perms:
+            string = "\n".join(["- {}".format(perm) for perm in perms])
+        else:
+            string: str = discord.utils.MISSING
+        return string
+
+    @classmethod
+    async def make_embed(
+        cls,
+        ctx: commands.GuildContext,
+        user: discord.Member,
+        cache: Cache,
+        banner_and_gavatar: Tuple[Optional[discord.Asset], Optional[discord.Asset]],
+    ) -> discord.Embed:
+        self: "UserInfoView" = cls(
+            ctx=ctx, user=user, cache=cache, banner_and_gavatar=banner_and_gavatar
+        )
+        return await self._make_embed()
+
+    async def on_timeout(self) -> None:
+        for child in self.children:
+            child: discord.ui.Item["UserInfoView"]
+            if hasattr(child, "disabled"):
+                child.disabled = True  # type: ignore
+        with contextlib.suppress(discord.HTTPException):
+            if self._message is not discord.utils.MISSING:
+                await self._message.edit(view=self)
+
+    async def interaction_check(self, interaction: discord.Interaction[Red], /) -> bool:
+        if self.ctx.author.id != interaction.user.id:
+            await interaction.response.send_message(
+                content="You're not the author of this message.", ephemeral=True
+            )
+            return False
+        return True
+
     async def _make_embed(self) -> discord.Embed:
         if self.embed is not discord.utils.MISSING:
             return self.embed
@@ -275,11 +309,9 @@ class UIView(discord.ui.View):
                 if user in guild.members
             }
         )
-        mod: Mod = self.bot.get_cog("Mod")  # type: ignore
-        try:
-            names, _, nicks = await mod.get_names(user)
-        except AttributeError:
-            names, nicks = await mod.get_names_and_nicks(user)  # type: ignore | specially for melon
+
+        mod: ModUtils = self.mod
+        names, nicks = await mod.get_names(user)
         created_dt: float = (
             cast(datetime.datetime, user.created_at)
             .replace(tzinfo=datetime.timezone.utc)
@@ -307,14 +339,14 @@ class UIView(discord.ui.View):
         created_on: str = "{}\n( {} )\n".format(user_created, since_created)
         joined_on: str = "{}\n( {} )\n".format(user_joined, since_joined)
         if self.bot.intents.presences:
-            mobile, web, desktop = self.cache.get_member_device_status(user)
             status: str = mod.get_status_string(user)
+            mobile, web, desktop = self.cache.get_member_device_status(user)
             if status:
                 description: str = "{}\n**Devices:** {} {} {}\n\n".format(
                     status, mobile, web, desktop
                 )
             else:
-                description: str = "{} {} {}\n\n".format(mobile, web, desktop)
+                description: str = "**Devices:** {} {} {}\n\n".format(mobile, web, desktop)
         else:
             description: str = ""
         embed: discord.Embed = discord.Embed(
@@ -343,7 +375,7 @@ class UIView(discord.ui.View):
         if user.voice and user.voice.channel:
             embed.add_field(
                 name="Current Voice Channel:",
-                value="{0.mention} ID: {0.id}".format(user.voice.channel),
+                value="{0.mention} (`{0.id}`)".format(user.voice.channel),
                 inline=False,
             )
         embed.set_footer(text="Member #{} | User ID: {}".format(position, user.id))

@@ -294,8 +294,8 @@ class Purge(commands.Cog):
     async def _bot(
         self,
         ctx: commands.GuildContext,
-        prefix: Optional[str] = None,
         number: commands.Range[int, 1, 2000] = 100,
+        prefix: Optional[str] = None,
         channel: Optional[
             Union[discord.Thread, discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
         ] = None,

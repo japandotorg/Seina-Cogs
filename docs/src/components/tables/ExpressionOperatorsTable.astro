@@ -1,0 +1,146 @@
+---
+import { Code } from "astro:components";
+---
+
+<div class="flex flex-col overflow-x-auto">
+    <div class="sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+            <div class="overflow-x-auto">
+                <table
+                    class="min-w-full text-start text-sm font-light text-surface dark:text-white"
+                >
+                    <thead
+                        class="border-b border-neutral-200 font-medium dark:border-white/10"
+                    >
+                        <tr>
+                            <th scope="col" class="px-6 py-4">Operator</th>
+                            <th scope="col" class="px-6 py-4">Check</th>
+                            <th scope="col" class="px-6 py-4">Example</th>
+                            <th scope="col" class="px-6 py-4">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            class="border-b border-neutral-200 dark:border-white/10"
+                        >
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="==" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code code="equality" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code code="a==a" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="value 1 is equal to value 2"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr
+                            class="border-b border-neutral-200 dark:border-white/10"
+                        >
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="!=" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="inequality"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code code="a!=0" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="value 1 is not equal to value 2"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code=">" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="greater than"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code code="5>3" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="value 1 is greater than value 2"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="<" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code code="less than" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code code="4<8" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="value 1 is less than value 2"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code=">=" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="greater than or equality"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code code="10>=10" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="value 1 is greater than or equal to value 2"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="<=" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="less than or equality"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code code="5<=6" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="value 1 is less than or equal to value 2"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

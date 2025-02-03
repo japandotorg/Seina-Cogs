@@ -1,0 +1,37 @@
+{
+    "author": [
+        "inthedark.org"
+    ],
+    "install_msg": "Thanks for installing the screenshot cog, check your dms for more instructions. This cog may take some time to load for the first time depending on your internet.",
+    "name": "Screenshot",
+    "disabled": false,
+    "short": "Take web page screenshots with your bot without compromising privacy of your machine.",
+    "description": "Take web page screenshots with your bot without compromising privacy of your machine. Atleast 2GB RAM and 10GB storage disk is recommended to use this cog.",
+    "tags": [
+        "screenshot",
+        "scraping",
+        "scrape",
+        "scraper",
+        "screen",
+        "shot",
+        "tor"
+    ],
+    "min_bot_version": "3.5.12",
+    "min_python_version": [
+        3,
+        11,
+        0
+    ],
+    "required_cogs": {},
+    "requirements": [
+        "selenium",
+        "Pillow",
+        "transformers",
+        "torch",
+        "tensorflow",
+        "tf-keras",
+        "cloud-tpu-client"
+    ],
+    "type": "COG",
+    "end_user_data_statement": "This cog does not store End User Data."
+}

@@ -48,7 +48,7 @@ class ExtendedMentionHelp(commands.Cog):
     """
 
     __author__: Final[List[str]] = ["inthedark.org"]
-    __version__: Final[str] = "0.1.0"
+    __version__: Final[str] = "0.1.1"
 
     __intervals: Final[List[Tuple[timedelta, int]]] = [
         (timedelta(seconds=10), 2),
@@ -183,7 +183,7 @@ class ExtendedMentionHelp(commands.Cog):
 
         The Extended Mention Help message supports TagScript blocks which can
         customize the message and even add an embed!
-        [View the TagScript documentation here.](https://seina-cogs.readthedocs.io/en/latest/index.html)
+        [View the TagScript documentation here.](https://cogs.melonbot.io/tags/)
 
         **Variables**:
         `{prefix}` - Shortest available prefix of [botname].
@@ -193,7 +193,7 @@ class ExtendedMentionHelp(commands.Cog):
         `{invite}` - Invite link for [botname]. Can be configured via `[p]inviteset`.
 
         **Blocks**:
-        `embed` - [Embed to be sent for the Extended Mention Help message](https://seina-cogs.readthedocs.io/en/latest/tags/parsing_blocks.html#embed-block)
+        `embed` - [Embed to be sent for the Extended Mention Help message](https://cogs.melonbot.io/tags/parsings/#embed-block)
 
         **Examples:**
         > `[p]mentionhelp message My prefixes are {prefixes}!`

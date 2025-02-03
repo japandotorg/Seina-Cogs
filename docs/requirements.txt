@@ -1,8 +1,0 @@
-beautifulsoup4
-rapidfuzz
-recommonmark
-Red-DiscordBot
-Sphinx
-sphinx_rtd_theme
-tabulate
-AdvancedTagScriptEngine

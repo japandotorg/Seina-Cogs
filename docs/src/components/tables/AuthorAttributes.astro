@@ -1,0 +1,209 @@
+---
+import { Code } from "astro:components";
+---
+
+<div class="flex flex-col overflow-x-auto">
+    <div class="sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+            <div class="overflow-x-auto">
+                <table
+                    class="min-w-full text-start text-sm font-light text-surface dark:text-white"
+                >
+                    <thead
+                        class="border-b border-neutral-200 font-medium dark:border-white/10"
+                    >
+                        <tr>
+                            <th scope="col" class="px-6 py-4">Attribute</th>
+                            <th scope="col" class="px-6 py-4">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            class="border-b border-neutral-200 dark:border-white/10"
+                        >
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="id" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the author's Discord ID"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr
+                            class="border-b border-neutral-200 dark:border-white/10"
+                        >
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="name" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the author's username"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="nick" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the author's nickname, if they have one, else their username"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="avatar" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="a link to the author's avatar, which can be used in embeds"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code
+                                    code="created_at"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the author's creation date"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="timestamp" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the author's account creation date as a UTC timestamp"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="joined_at" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the date the author joined the server"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="joinstamp" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the author's join date as a UTC timestamp"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="mention" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="a formatted text that pings the author"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="bot" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="whether or not the author is a bot"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="color" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the author's top role's color as a hex code"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="top_role" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the author's top role"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="roleids" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="a list of the author's role IDs, split by spaces"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="boost" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="If the user has boosted, this will be the UTC timestamp of when they did, if not this will be empty"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="timed_out" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="If the user is timed out, this will be the UTC timestamp of when they'll be untimed-out, if not timed out this will be empty"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="banner" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the user's banner url"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,232 @@
+---
+import { Code } from "astro:components";
+---
+
+<div class="flex flex-col overflow-x-auto">
+    <div class="sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+            <div class="overflow-x-auto">
+                <table
+                    class="min-w-full text-start text-sm font-light text-surface dark:text-white"
+                >
+                    <thead
+                        class="border-b border-neutral-200 font-medium dark:border-white/10"
+                    >
+                        <tr>
+                            <th scope="col" class="px-6 py-4">Attribute</th>
+                            <th scope="col" class="px-6 py-4">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            class="border-b border-neutral-200 dark:border-white/10"
+                        >
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="id" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the server's ID"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr
+                            class="border-b border-neutral-200 dark:border-white/10"
+                        >
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="name" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the server's name"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="icon" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="a link to the server's icon, which can be used in embeds"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code
+                                    code="created_at"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the server's creation date"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="timestamp" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the author's account creation date as a UTC timestamp"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code
+                                    code="member_count"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the server's member count"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="bots" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the number of bots in the server"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="humans" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the number of humans in the server"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code
+                                    code="description"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the server's description if one is set or 'No description'"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="random" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="a random member from the server"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="vanity" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="if guild has a vanity, this returns the vanity else empty"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="owner_id" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the server owner's ID"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="mfa" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the server's mfa level"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="boosters" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the server's active booster count"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code
+                                    code="boost_level"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="the server's current boost level/tier"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code
+                                    code="discovery_splash"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="a link to the server's discovery splash"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                        <tr class="border-b">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium"
+                                ><Code code="banner" theme="dark-plus" /></td
+                            >
+                            <td class="whitespace-nowrap px-6 py-4"
+                                ><Code
+                                    code="a link to the server's banner"
+                                    theme="dark-plus"
+                                /></td
+                            >
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

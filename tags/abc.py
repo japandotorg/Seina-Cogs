@@ -48,6 +48,7 @@ class MixinMeta(ABC):
     config: Config
     bot: Red
     session: ClientSession
+    engine: Union[tse.AsyncInterpreter, tse.Interpreter]
 
     def __init__(self, *_args: Any) -> None:
         super().__init__(*_args)
@@ -55,7 +56,6 @@ class MixinMeta(ABC):
         self.global_tag_cache: Dict[str, Tag]
         self.dot_parameter: Optional[bool]
         self.async_enabled: Optional[bool]
-        self.docs: Union[List[str], Dict[str, str]]
 
     @staticmethod
     @abstractmethod
@@ -96,12 +96,6 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def cache_guild(self, guild_id: int, guild_data: Dict[str, Dict[str, Any]]) -> None: ...
-
-    @abstractmethod
-    async def doc_fetch(self) -> None: ...
-
-    @abstractmethod
-    async def doc_search(self, keyword: str) -> Dict[str, str]: ...
 
     @abstractmethod
     async def show_tag_usage(

@@ -22,14 +22,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import random
 from functools import partial
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 import discord
 from redbot.core.bot import Red
-from redbot.core.utils.chat_formatting import humanize_list
+from redbot.core.utils.chat_formatting import pagify
+from redbot.core.utils.views import SimpleMenu
 
 __all__ = ("JoinGameView",)
+
+
+class InteractionSimpleMenu(SimpleMenu):
+    async def inter(self, interaction: discord.Interaction[Red]) -> None:
+        await interaction.response.defer()
+        self._fallback_author_to_ctx = False
+        self.author: discord.abc.User = interaction.user
+        kwargs: Dict[str, Any] = await self.get_page(self.current_page)
+        self.message: discord.Message = await interaction.followup.send(**kwargs, ephemeral=True)
 
 
 class RemainingPlayerButton(discord.ui.Button):
@@ -124,16 +135,8 @@ class RemainingPlayerView(discord.ui.View):
     async def _callback(
         self: RemainingPlayerButton, interaction: discord.Interaction[Red]
     ) -> None:
-        remaining_player_str = humanize_list(
-            [
-                m.global_name if m.global_name else m.display_name
-                for m in sorted(
-                    self.view.remaining,
-                    key=lambda m: m.global_name if m.global_name else m.display_name,
-                )
-            ]
-        )
-        if not remaining_player_str:
+        players: List[discord.Member] = list(self.view.remaining).copy()
+        if not players:
             await interaction.response.send_message(
                 embed=discord.Embed(
                     description="There are not remaining players!",
@@ -141,15 +144,17 @@ class RemainingPlayerView(discord.ui.View):
                 )
             )
             return
-        remaining_players_str = (
-            f"{remaining_player_str[:4000]}..."
-            if len(remaining_player_str) > 4000
-            else remaining_player_str
+        random.shuffle(players)
+        remaining: str = "\n".join(
+            "{}. {} ( `{}` )".format(idx, player.mention, player.id)
+            for idx, player in enumerate(players)
         )
-        embed: discord.Embed = discord.Embed.from_dict(
-            {
-                "description": f"**Remaining Players:**\n{remaining_players_str}.",
-                "color": int(self.view.color),
-            }
-        )
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        embeds: List[discord.Embed] = []
+        for page in list(pagify(remaining)):
+            embed: discord.Embed = discord.Embed(
+                title="Remaining Players",
+                description=page,
+                color=self.view.color,
+            )
+            embeds.append(embed)
+        await InteractionSimpleMenu(pages=embeds).inter(interaction)
