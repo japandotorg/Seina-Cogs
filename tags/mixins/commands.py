@@ -445,18 +445,28 @@ class Commands(MixinMeta):
             "url": DOCS_URL,
             "color": await ctx.embed_color(),
         }
+
+        # If no keyword is provided, send the base documentation page.
+        if keyword is None:
+            await ctx.send(
+                embed=discord.Embed(
+                    **embed,
+                    description=f"- Here's the [`Tags Documentation`]({DOCS_URL}), browse as you prefer."
+                )
+            )
+            return
+
         if exp:
             await ctx.send(
                 embed=discord.Embed(
                     **embed,
-                    description="Searched for [`{0}`](https://cogs.melonbot.io/find?q={0})!".format(
-                        keyword
-                    ),
+                    description="Searched for [`{0}`](https://cogs.melonbot.io/find?q={0})!".format(keyword)
                 ).set_footer(
                     text="This method is experimental and may not show the right documentation."
                 )
             )
             return
+
         try:
             block: str = BLOCKS[keyword.lower()]
         except KeyError:
@@ -478,6 +488,7 @@ class Commands(MixinMeta):
                 )
             )
             return
+
         await ctx.send(
             embed=discord.Embed(
                 **embed,
