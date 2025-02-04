@@ -447,7 +447,7 @@ class Commands(MixinMeta):
         }
 
         # If no keyword is provided, send the base documentation page.
-        if keyword is None:
+        if not keyword:
             await ctx.send(
                 embed=discord.Embed(
                     **embed,
