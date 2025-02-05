@@ -195,7 +195,7 @@ class StatusRole(commands.Cog):
 
     @staticmethod
     async def _custom_activity(
-        activities: Tuple[discord.activity.ActivityTypes, ...]
+        activities: Tuple[discord.activity.ActivityTypes, ...],
     ) -> discord.CustomActivity | None:
         for act in activities:
             if isinstance(act, discord.CustomActivity):

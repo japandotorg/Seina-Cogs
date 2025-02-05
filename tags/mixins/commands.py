@@ -451,7 +451,7 @@ class Commands(MixinMeta):
             await ctx.send(
                 embed=discord.Embed(
                     **embed,
-                    description=f"- Here's the [`Tags Documentation`]({DOCS_URL}), browse as you prefer."
+                    description=f"- Here's the [`Tags Documentation`]({DOCS_URL}), browse as you prefer.",
                 )
             )
             return
@@ -460,7 +460,9 @@ class Commands(MixinMeta):
             await ctx.send(
                 embed=discord.Embed(
                     **embed,
-                    description="Searched for [`{0}`](https://cogs.melonbot.io/find?q={0})!".format(keyword)
+                    description="Searched for [`{0}`](https://cogs.melonbot.io/find?q={0})!".format(
+                        keyword
+                    ),
                 ).set_footer(
                     text="This method is experimental and may not show the right documentation."
                 )
