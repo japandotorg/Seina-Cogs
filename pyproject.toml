@@ -1,19 +1,86 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+[project]
+name = "Seina-Cogs"
+description = "My public cogs for Red-DiscordBot (https://github.com/Cog-Creators/Red-DiscordBot/)"
+dynamic = ["version"]
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
 
-[tool.black]
-line-length = 99
+[dependency-groups]
+dev = [
+    # for red (imp deps)
+    "pydantic>=2.10.6",
+    "Red-DiscordBot>=3.6.16",
+    "AdvancedTagScriptEngine>=3.2.2",
+    # for editor (Code - OSS)
+    "ruff>=0.9.5",
+]
 
-[tool.isort]
-profile = "black"
-line_length = 99
+[project.urls]
+"Homepage" = "https://github.com/japandotorg/Seina-Cogs"
+"Documentation" = "https://cogs.melonbot.io/"
+"Source Code" = "https://github.com/japandotorg/Seina-Cogs"
+"Issue Tracker" = "https://github.com/japandotorg/Seina-Cogs/issues"
+"Buy Me A Coffee" = "https://buymeacoffee.com/japandotorg"
 
-[tool.pyright]
-reportIncompatibleVariableOverride = false
-reportIncompatibleMethodOverride = false
-reportSelfClsParameterName = false
-reportRedeclaration = false
-reportArgumentType = false
-exclude = ["**/__pycache__", ".stubs", ".utils", ".github"]
-stubPath = ".stubs"
+[tool.uv]
+package = false
+default-groups = ["dev"]
+cache-dir = "./.cache/uv"
+cache-keys = [{ file = "pyproject.toml" }]
+
+[tool.ruff]
+cache-dir = "./.cache/ruff"
+exclude = [".venv", ".stubs"]
+line-length = 70
+target-version = "py38"
+
+[tool.ruff.analyze]
+exclude = [".venv", ".stubs"]
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 50
+exclude = [".venv", ".stubs"]
+line-ending = "lf"
+indent-style = "space"
+quote-style = "preserve"
+
+[tool.ruff.lint]
+ignore = ["F841"]
+task-tags = ["HACK", "TODO", "FIXME"]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"__init__.py" = ["E402"]
+
+[tool.ruff.lint.flake8-annotations]
+suppress-none-returning = true
+
+[tool.ruff.lint.flake8-builtins]
+builtins-ignorelist = ["id"]
+
+[tool.ruff.lint.flake8-copyright]
+author = "japandotorg"
+notice-rgx = "(?i)Copyright \\(C\\) \\d{4}"
+
+[tool.ruff.lint.flake8-quotes]
+multiline-quotes = "double"
+
+[tool.ruff.lint.flake8-type-checking]
+strict = true
+quote-annotations = true
+runtime-evaluated-base-classes = ["pydantic.BaseModel"]
+
+[tool.ruff.lint.isort]
+from-first = false
+length-sort = true
+lines-after-imports = 2
+
+[tool.ruff.lint.pep8-naming]
+classmethod-decorators = ["pydantic.validator"]
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 50
+
+[tool.pylint.FORMAT]
+max-line-length = 70

@@ -1,0 +1,56 @@
+{
+    "git.allowForcePush": true,
+    "git.autofetch": "all",
+    "git.rebaseWhenSync": true,
+    "git.suggestSmartCommit": true,
+    "git.supportCancellation": true,
+    "git.pullBeforeCheckout": true,
+    "git.blame.editorDecoration.enabled": true,
+    "git.blame.statusBarItem.enabled": true,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "files.eol": "\n",
+    "files.autoSave": "onFocusChange",
+    "files.readonlyInclude": {
+        ".venv/**/*": true,
+    },
+    "search.useIgnoreFiles": true,
+    "explorer.compactFolders": false,
+    "editor.tabSize": 4,
+    "editor.autoIndent": "advanced",
+    "editor.insertSpaces": true,
+    "editor.formatOnSave": true,
+    "editor.unicodeHighlight.nonBasicASCII": true,
+    "editor.inlayHints.enabled": "on",
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "terminal.integrated.persistentSessionReviveProcess": "never",
+    "[toml]": {
+        "editor.defaultFormatter": "tamasfe.even-better-toml",
+        "editor.formatOnSave": true,
+    },
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": "never",
+            "source.organizeImports": "never",
+            "source.organizeImports.ruff": "never",
+        }
+    },
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.experiments.enabled": true,
+    "basedpyright.analysis.inlayHints.callArgumentNames": true,
+    "basedpyright.analysis.inlayHints.functionReturnTypes": true,
+    "basedpyright.analysis.inlayHints.genericTypes": true,
+    "basedpyright.analysis.inlayHints.variableTypes": true,
+    "basedpyright.analysis.autoImportCompletions": true,
+    "basedpyright.analysis.autoSearchPaths": true,
+    "basedpyright.analysis.exclude": [
+        "**/__pycache__",
+        ".stubs",
+        ".github"
+    ],
+    "basedpyright.analysis.typeshedPaths": [
+        ".stubs"
+    ],
+    "basedpyright.analysis.logLevel": "Trace",
+    "basedpyright.analysis.typeCheckingMode": "strict",
+}

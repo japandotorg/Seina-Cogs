@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "EditorConfig.EditorConfig",
+        "ms-python.python",
+        "detachhead.basedpyright",
+        "charliermarsh.ruff",
+        "tamasfe.even-better-toml",
+    ]
+}

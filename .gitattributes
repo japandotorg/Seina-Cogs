@@ -1,0 +1,5 @@
+* text eol=lf
+*.png  binary
+*.json linguist-language=JSON-with-Comments
+.stubs linguist-vendored
+*.po   linguist-generated
