@@ -38,27 +38,45 @@ class EventMixin(MixinMeta, metaclass=CompositeMetaClass):
             return
         if not isinstance(message.author, discord.Member):
             return
-        if not message.channel.permissions_for(message.guild.me).add_reactions:
+        if not message.channel.permissions_for(
+            message.guild.me
+        ).add_reactions:
             return
         if await self.bot.cog_disabled_in_guild(self, message.guild):
             return
         if not await self.bot.ignored_channel_or_guild(message):
             return
-        if not await self.bot.allowed_by_whitelist_blacklist(message.author):
+        if not await self.bot.allowed_by_whitelist_blacklist(
+            message.author
+        ):
             return
         await self.wait_until_cog_ready()
         if message.guild.id in self.cache.autoreact:
             asyncio.ensure_future(self.do_autoreact(message))
         if message.guild.id in self.cache.event:
-            if "images" in self.cache.event[message.guild.id] and message.attachments:
-                asyncio.ensure_future(self.do_autoreact_event(message, "event"))
+            if (
+                "images" in self.cache.event[message.guild.id]
+                and message.attachments
+            ):
+                asyncio.ensure_future(
+                    self.do_autoreact_event(message, "event")
+                )
             if "spoilers" in self.cache.event[message.guild.id] and (
                 message.content.count("||") > 2
             ):
-                asyncio.ensure_future(self.do_autoreact_event(message, "spoilers"))
-            if "emojis" in self.cache.event[message.guild.id] and search_for_emojis(
-                message.content
+                asyncio.ensure_future(
+                    self.do_autoreact_event(message, "spoilers")
+                )
+            if "emojis" in self.cache.event[
+                message.guild.id
+            ] and search_for_emojis(message.content):
+                asyncio.ensure_future(
+                    self.do_autoreact_event(message, "emojis")
+                )
+            if (
+                "stickers" in self.cache.event[message.guild.id]
+                and message.stickers
             ):
-                asyncio.ensure_future(self.do_autoreact_event(message, "emojis"))
-            if "stickers" in self.cache.event[message.guild.id] and message.stickers:
-                asyncio.ensure_future(self.do_autoreact_event(message, "stickers"))
+                asyncio.ensure_future(
+                    self.do_autoreact_event(message, "stickers")
+                )
