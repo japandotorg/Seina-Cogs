@@ -30,7 +30,11 @@ from redbot.core import commands
 from redbot.core.utils.chat_formatting import box
 
 from .abc import CompositeMetaClass, MixinMeta
-from .converters import BanLengthConverter, TagScriptConverter, TimeConverter
+from .converters import (
+    BanLengthConverter,
+    TagScriptConverter,
+    TimeConverter,
+)
 from .utils import guild_roughly_chunked
 
 

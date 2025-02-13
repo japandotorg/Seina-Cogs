@@ -27,14 +27,28 @@ SOFTWARE.
 import contextlib
 import datetime
 import logging
-from typing import Annotated, Any, Dict, Final, List, Literal, Optional, Union, cast
+from typing import (
+    Annotated,
+    Any,
+    Dict,
+    Final,
+    List,
+    Literal,
+    Optional,
+    Union,
+    cast,
+)
 
 import discord
 import TagScriptEngine as tse
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.config import Config, Group, Value
-from redbot.core.utils.chat_formatting import box, humanize_list, pagify
+from redbot.core.utils.chat_formatting import (
+    box,
+    humanize_list,
+    pagify,
+)
 from redbot.core.utils.views import SimpleMenu
 
 from ._tagscript import (

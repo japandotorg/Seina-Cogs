@@ -1,7 +1,16 @@
 import asyncio
 import contextlib
 import random
-from typing import TYPE_CHECKING, Dict, Iterable, List, Protocol, Tuple, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Dict,
+    Iterable,
+    List,
+    Protocol,
+    Tuple,
+    Union,
+    cast,
+)
 
 import discord
 from redbot.core import commands

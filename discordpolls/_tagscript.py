@@ -23,12 +23,24 @@ SOFTWARE.
 """
 
 import datetime
-from typing import Any, Dict, Final, List, Optional, Tuple, Union, final
+from typing import (
+    Any,
+    Dict,
+    Final,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    final,
+)
 
 import discord
 import TagScriptEngine as tse
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import humanize_list, humanize_number
+from redbot.core.utils.chat_formatting import (
+    humanize_list,
+    humanize_number,
+)
 
 __all__: Tuple[str, ...] = (
     "_default_add",

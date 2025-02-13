@@ -35,7 +35,11 @@ from discord.ext.commands._types import Check
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import box, humanize_list, pagify
+from redbot.core.utils.chat_formatting import (
+    box,
+    humanize_list,
+    pagify,
+)
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.predicates import MessagePredicate

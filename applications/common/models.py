@@ -25,12 +25,24 @@ SOFTWARE.
 import asyncio
 import datetime
 import uuid
-from typing import TYPE_CHECKING, Annotated, Any, Dict, List, Literal, Optional, TypeAlias
+from typing import (
+    TYPE_CHECKING,
+    Annotated,
+    Any,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    TypeAlias,
+)
 
 from pydantic import BaseModel
 from pydantic.fields import Field
 
-from .tagscript import DEFAULT_SETTINGS_MESSAGE, DEFAULT_TICKET_MESSAGE
+from .tagscript import (
+    DEFAULT_SETTINGS_MESSAGE,
+    DEFAULT_TICKET_MESSAGE,
+)
 
 if TYPE_CHECKING:
     from .utils import TypedConfig

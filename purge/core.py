@@ -7,7 +7,17 @@ Copyright (c) 2023-present japandotorg
 import asyncio
 import logging
 import re
-from typing import Annotated, Any, Callable, Coroutine, Dict, Final, List, Optional, Union
+from typing import (
+    Annotated,
+    Any,
+    Callable,
+    Coroutine,
+    Dict,
+    Final,
+    List,
+    Optional,
+    Union,
+)
 
 import arrow
 import discord
@@ -15,7 +25,10 @@ from redbot.cogs.cleanup.cleanup import Cleanup as CleanupCog
 from redbot.core import app_commands, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.utils import mod
-from redbot.core.utils.chat_formatting import humanize_list, humanize_number
+from redbot.core.utils.chat_formatting import (
+    humanize_list,
+    humanize_number,
+)
 
 from .converters import PurgeFlags, RawMessageIdsConverter, Snowflake
 from .utils import (

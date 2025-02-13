@@ -34,10 +34,20 @@ from redbot.core.utils.chat_formatting import humanize_number as hn
 from redbot.core.utils.chat_formatting import pagify, text_to_file
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.views import SimpleMenu
-from TagScriptEngine import Interpreter, LooseVariableGetterBlock, MemberAdapter
+from TagScriptEngine import (
+    Interpreter,
+    LooseVariableGetterBlock,
+    MemberAdapter,
+)
 
 from .abc import CompositeMetaClass, MixinMeta
-from .converters import FuzzyRole, RoleArgumentConverter, StrictRole, TargeterArgs, TouchableMember
+from .converters import (
+    FuzzyRole,
+    RoleArgumentConverter,
+    StrictRole,
+    TargeterArgs,
+    TouchableMember,
+)
 from .utils import (
     can_run_command,
     guild_roughly_chunked,

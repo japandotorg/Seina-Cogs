@@ -29,7 +29,16 @@ SOFTWARE.
 import asyncio
 import contextlib
 import logging
-from typing import Any, Dict, Final, List, Literal, Optional, Union, cast
+from typing import (
+    Any,
+    Dict,
+    Final,
+    List,
+    Literal,
+    Optional,
+    Union,
+    cast,
+)
 
 import diot
 import discord
@@ -37,7 +46,11 @@ import TagScriptEngine as tse
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.config import Config, Group
-from redbot.core.utils.chat_formatting import box, humanize_list, pagify
+from redbot.core.utils.chat_formatting import (
+    box,
+    humanize_list,
+    pagify,
+)
 from redbot.core.utils.views import SimpleMenu
 
 from ._tagscript import (

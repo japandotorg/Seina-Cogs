@@ -1,6 +1,14 @@
 import asyncio
 import contextlib
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    List,
+    Optional,
+    Union,
+    cast,
+)
 
 import discord
 from redbot.core.bot import Red

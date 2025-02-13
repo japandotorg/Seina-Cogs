@@ -28,7 +28,11 @@ from typing import Any, Dict, List, Union
 import discord
 from redbot.core import commands
 from redbot.core.bot import Red
-from redbot.core.utils.views import _NavigateButton, _SimplePageSource, _StopButton
+from redbot.core.utils.views import (
+    _NavigateButton,
+    _SimplePageSource,
+    _StopButton,
+)
 
 from .constants import NavigationEmojis
 

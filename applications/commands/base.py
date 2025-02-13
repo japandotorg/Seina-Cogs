@@ -32,7 +32,10 @@ from redbot.core.utils.chat_formatting import box
 from ..abc import PipeMeta
 from ..common.exceptions import ApplicationError
 from ..common.models import Application, AppSettings, ButtonSettings
-from ..common.tagscript import DEFAULT_SETTINGS_MESSAGE, SettingsAdapter
+from ..common.tagscript import (
+    DEFAULT_SETTINGS_MESSAGE,
+    SettingsAdapter,
+)
 from ..common.utils import name_auto_complete
 from ..common.views import ApplicationView, DynamicApplyButton
 from ..pipes.groups import Groups

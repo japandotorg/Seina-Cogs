@@ -7,7 +7,17 @@ Copyright (c) 2023-present japandotorg
 import datetime
 import re
 from collections import Counter
-from typing import Any, Callable, Dict, List, Optional, Pattern, Tuple, TypeVar, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Pattern,
+    Tuple,
+    TypeVar,
+    Union,
+)
 
 import discord
 from redbot.core import commands, modlog

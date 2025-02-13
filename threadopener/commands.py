@@ -28,7 +28,11 @@ import discord
 import TagScriptEngine as tse
 from redbot.core import commands
 from redbot.core.config import Group
-from redbot.core.utils.chat_formatting import box, humanize_list, pagify
+from redbot.core.utils.chat_formatting import (
+    box,
+    humanize_list,
+    pagify,
+)
 from redbot.core.utils.views import SimpleMenu
 
 from ._tagscript import DefaultNameConverter, TagScriptConverter

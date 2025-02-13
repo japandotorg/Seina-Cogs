@@ -26,7 +26,17 @@ SOFTWARE.
 import asyncio
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, Final, List, Literal, NoReturn, Optional, Tuple, Union
+from typing import (
+    Any,
+    Dict,
+    Final,
+    List,
+    Literal,
+    NoReturn,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import discord
 from redbot.core import commands

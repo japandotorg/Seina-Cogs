@@ -29,7 +29,9 @@ from typing import List, Optional, Tuple, cast
 import discord
 from redbot.cogs.mod.mod import Mod
 from redbot.core.bot import Red
-from redbot.core.utils.common_filters import escape_spoilers_and_mass_mentions
+from redbot.core.utils.common_filters import (
+    escape_spoilers_and_mass_mentions,
+)
 
 
 class ModUtils:

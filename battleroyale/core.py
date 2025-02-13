@@ -32,7 +32,18 @@ from contextlib import suppress
 from io import BytesIO
 from pathlib import Path
 from types import ModuleType
-from typing import Any, Coroutine, Dict, Final, List, Literal, Optional, Tuple, Union, cast
+from typing import (
+    Any,
+    Coroutine,
+    Dict,
+    Final,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    Union,
+    cast,
+)
 
 import aiohttp
 import discord
@@ -41,10 +52,20 @@ from PIL import Image, UnidentifiedImageError
 from redbot.core import Config, bank, commands
 from redbot.core.bot import Red
 from redbot.core.data_manager import bundled_data_path, cog_data_path
-from redbot.core.utils.chat_formatting import box, humanize_list, pagify
+from redbot.core.utils.chat_formatting import (
+    box,
+    humanize_list,
+    pagify,
+)
 from redbot.core.utils.views import SimpleMenu
 
-from .constants import EXP_MULTIPLIER, MAX_EXP, MAX_LEVEL, MIN_EXP, SWORDS
+from .constants import (
+    EXP_MULTIPLIER,
+    MAX_EXP,
+    MAX_LEVEL,
+    MIN_EXP,
+    SWORDS,
+)
 from .converters import EmojiConverter
 from .game import Game
 from .models._pillow import Canvas, Editor, Font

@@ -25,7 +25,17 @@ SOFTWARE.
 
 import asyncio
 import logging
-from typing import Any, Coroutine, Dict, Final, List, Literal, Optional, TypeAlias, Union
+from typing import (
+    Any,
+    Coroutine,
+    Dict,
+    Final,
+    List,
+    Literal,
+    Optional,
+    TypeAlias,
+    Union,
+)
 
 from redbot.core import commands
 from redbot.core.bot import Red

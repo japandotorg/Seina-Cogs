@@ -24,7 +24,16 @@ SOFTWARE.
 """
 
 from copy import copy
-from typing import Any, Final, List, Literal, Optional, Tuple, TypeAlias, Union
+from typing import (
+    Any,
+    Final,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    TypeAlias,
+    Union,
+)
 
 import discord
 from redbot.core import commands

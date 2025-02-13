@@ -38,9 +38,15 @@ from redbot.core.bot import Red
 from redbot.core.data_manager import bundled_data_path
 
 from ._tagscript import TAGSCRIPT_LIMIT as TAGSCRIPT_LIMIT
-from ._tagscript import TagCharacterLimitReached as TagCharacterLimitReached
-from ._tagscript import message_after_captcha as message_after_captcha_string
-from ._tagscript import message_before_captcha as message_before_captcha_string
+from ._tagscript import (
+    TagCharacterLimitReached as TagCharacterLimitReached,
+)
+from ._tagscript import (
+    message_after_captcha as message_after_captcha_string,
+)
+from ._tagscript import (
+    message_before_captcha as message_before_captcha_string,
+)
 from ._tagscript import process_tagscript as process_tagscript
 from .abc import CompositeMetaClass
 from .commands import CaptchaCommands

@@ -28,7 +28,12 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
 
-from ._tagscript import TAGSCRIPT_LIMIT, TagCharacterLimitReached, boosted, unboosted
+from ._tagscript import (
+    TAGSCRIPT_LIMIT,
+    TagCharacterLimitReached,
+    boosted,
+    unboosted,
+)
 from .abc import CompositeMetaClass
 from .commands.message import MessageCommands
 from .events import EventMixin

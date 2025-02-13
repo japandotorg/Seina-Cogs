@@ -33,7 +33,18 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import MappingProxyType
-from typing import Any, Dict, Final, List, Mapping, Optional, Pattern, TextIO, Union, final
+from typing import (
+    Any,
+    Dict,
+    Final,
+    List,
+    Mapping,
+    Optional,
+    Pattern,
+    TextIO,
+    Union,
+    final,
+)
 
 import click
 import tabulate

@@ -28,7 +28,16 @@ import io
 import json
 import logging
 from datetime import datetime
-from typing import Any, Dict, Final, List, Literal, Mapping, Optional, Union
+from typing import (
+    Any,
+    Dict,
+    Final,
+    List,
+    Literal,
+    Mapping,
+    Optional,
+    Union,
+)
 
 import aiohttp
 import discord
@@ -36,14 +45,24 @@ from playwright.async_api import async_playwright
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, humanize_list, humanize_number
+from redbot.core.utils.chat_formatting import (
+    box,
+    humanize_list,
+    humanize_number,
+)
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from redbot.core.utils.views import SetApiView
 from tabulate import tabulate
 
 from .ansi import EightBitANSI
 from .api import APIClient
-from .utils import CRATES_IO_LOGO, NPM_LOGO, RUBY_GEMS_LOGO, Emoji, EmojiConverter
+from .utils import (
+    CRATES_IO_LOGO,
+    NPM_LOGO,
+    RUBY_GEMS_LOGO,
+    Emoji,
+    EmojiConverter,
+)
 from .views import SpotifyView
 
 BaseCog = getattr(commands, "Cog", object)

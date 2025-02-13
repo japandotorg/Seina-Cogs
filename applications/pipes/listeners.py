@@ -34,9 +34,18 @@ from redbot.core.utils.chat_formatting import box
 
 from ..abc import PipeMeta
 from ..common.models import Answer, Application, Response, Types
-from ..common.tagscript import DEFAULT_SETTINGS_MESSAGE, SettingsAdapter
+from ..common.tagscript import (
+    DEFAULT_SETTINGS_MESSAGE,
+    SettingsAdapter,
+)
 from ..common.utils import GuildInteraction
-from ..common.views import CancelButton, CancelView, ChoiceView, PatchedConfirmView, SkipButton
+from ..common.views import (
+    CancelButton,
+    CancelView,
+    ChoiceView,
+    PatchedConfirmView,
+    SkipButton,
+)
 
 log: logging.Logger = logging.getLogger("red.seina.applications.pipes.listeners")
 

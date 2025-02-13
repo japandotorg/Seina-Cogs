@@ -23,7 +23,15 @@ SOFTWARE.
 """
 
 import asyncio
-from typing import TYPE_CHECKING, Any, DefaultDict, Dict, Literal, Tuple, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    DefaultDict,
+    Dict,
+    Literal,
+    Tuple,
+    Union,
+)
 
 import discord
 import TagScriptEngine as tse

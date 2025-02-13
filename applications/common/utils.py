@@ -22,7 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import TYPE_CHECKING, Callable, Dict, List, Optional, TypedDict, TypeVar, cast
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    TypedDict,
+    TypeVar,
+    cast,
+)
 
 import discord
 from redbot.core import app_commands, commands

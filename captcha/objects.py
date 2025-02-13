@@ -26,7 +26,14 @@ SOFTWARE.
 
 import random
 from io import BytesIO
-from typing import TYPE_CHECKING, List, Optional, Tuple, TypeAlias, Union
+from typing import (
+    TYPE_CHECKING,
+    List,
+    Optional,
+    Tuple,
+    TypeAlias,
+    Union,
+)
 
 from PIL.Image import BILINEAR, QUAD, Image
 from PIL.Image import new as create

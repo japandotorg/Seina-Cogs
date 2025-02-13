@@ -27,7 +27,16 @@ SOFTWARE.
 import random
 import re
 from datetime import timedelta
-from typing import Any, Dict, Final, List, Optional, Tuple, Union, cast
+from typing import (
+    Any,
+    Dict,
+    Final,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    cast,
+)
 
 import discord
 import TagScriptEngine as tse

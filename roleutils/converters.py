@@ -31,7 +31,11 @@ from rapidfuzz import process
 from redbot.core import commands
 from unidecode import unidecode
 
-from .utils import NoExitParser, is_allowed_by_hierarchy, is_allowed_by_role_hierarchy
+from .utils import (
+    NoExitParser,
+    is_allowed_by_hierarchy,
+    is_allowed_by_role_hierarchy,
+)
 
 
 class RoleArgumentConverter(NamedTuple):

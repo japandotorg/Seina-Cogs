@@ -24,14 +24,29 @@ SOFTWARE.
 """
 
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Dict, Final, List, Optional, Tuple, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Final,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import discord
 import TagScriptEngine as tse
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.config import Group
-from redbot.core.utils.chat_formatting import box, humanize_list, humanize_number, inline, pagify
+from redbot.core.utils.chat_formatting import (
+    box,
+    humanize_list,
+    humanize_number,
+    inline,
+    pagify,
+)
 
 from .errors import TagAliasError
 

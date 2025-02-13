@@ -24,7 +24,15 @@ SOFTWARE.
 """
 
 from importlib import reload
-from typing import Final, Generator, List, Literal, Sequence, TypeAlias, Union
+from typing import (
+    Final,
+    Generator,
+    List,
+    Literal,
+    Sequence,
+    TypeAlias,
+    Union,
+)
 
 import discord
 from redbot.core import commands

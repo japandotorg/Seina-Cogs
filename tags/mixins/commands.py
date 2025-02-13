@@ -34,7 +34,13 @@ import discord
 import orjson
 import TagScriptEngine as tse
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import box, humanize_list, inline, pagify, text_to_file
+from redbot.core.utils.chat_formatting import (
+    box,
+    humanize_list,
+    inline,
+    pagify,
+    text_to_file,
+)
 from tabulate import tabulate
 
 from ..abc import MixinMeta

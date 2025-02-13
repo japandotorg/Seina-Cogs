@@ -35,8 +35,18 @@ from redbot.core import commands
 from redbot.core.utils.menus import start_adding_reactions
 
 from ..abc import MixinMeta
-from ..blocks import AllowedMentionsBlock, DeleteBlock, ReactBlock, ReplyBlock, SilentBlock
-from ..errors import BlacklistCheckFailure, RequireCheckFailure, WhitelistCheckFailure
+from ..blocks import (
+    AllowedMentionsBlock,
+    DeleteBlock,
+    ReactBlock,
+    ReplyBlock,
+    SilentBlock,
+)
+from ..errors import (
+    BlacklistCheckFailure,
+    RequireCheckFailure,
+    WhitelistCheckFailure,
+)
 from ..objects import ReplyContext, SilentContext, Tag
 
 log = logging.getLogger("red.seina.tags.processor")

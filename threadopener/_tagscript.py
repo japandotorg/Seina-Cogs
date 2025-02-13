@@ -27,7 +27,10 @@ from typing import Any, Dict, Final, List, Optional, final
 import discord
 import TagScriptEngine as tse
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import humanize_list, humanize_number
+from redbot.core.utils.chat_formatting import (
+    humanize_list,
+    humanize_number,
+)
 
 from .utils import check_for_restricted_attributes
 

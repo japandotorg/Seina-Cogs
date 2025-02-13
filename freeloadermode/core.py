@@ -26,7 +26,16 @@ import asyncio
 import contextlib
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Any, Coroutine, Dict, Final, List, Literal, Optional, Union
+from typing import (
+    Any,
+    Coroutine,
+    Dict,
+    Final,
+    List,
+    Literal,
+    Optional,
+    Union,
+)
 
 import discord
 import TagScriptEngine as tse

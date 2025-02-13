@@ -26,7 +26,15 @@ import asyncio
 import random
 import time
 from collections import Counter
-from typing import TYPE_CHECKING, Any, Coroutine, List, Optional, Protocol, TypeVar
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Coroutine,
+    List,
+    Optional,
+    Protocol,
+    TypeVar,
+)
 
 import discord
 from redbot.core import bank, commands

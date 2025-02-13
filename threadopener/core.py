@@ -24,7 +24,16 @@ SOFTWARE.
 
 import contextlib
 import logging
-from typing import Any, Dict, Final, List, Optional, Tuple, Union, cast
+from typing import (
+    Any,
+    Dict,
+    Final,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    cast,
+)
 
 import discord
 import TagScriptEngine as tse
