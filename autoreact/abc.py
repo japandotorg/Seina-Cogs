@@ -33,7 +33,6 @@ from .cache import Cache
 from redbot.core.bot import Red  # isort: skip
 
 
-
 class CompositeMetaClass(commands.CogMeta, ABCMeta):
     pass
 
