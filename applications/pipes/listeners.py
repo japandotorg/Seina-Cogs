@@ -99,7 +99,7 @@ class Listeners(PipeMeta):
                     message: discord.Message = await interaction.client.wait_for(
                         "message",
                         check=lambda m: m.channel.id == original.channel.id,
-                        timeout=60.0,
+                        timeout=300.0,
                     )
                 except asyncio.TimeoutError:
                     await view.on_timeout()
@@ -155,7 +155,7 @@ class Listeners(PipeMeta):
                     content: str = choice.answer
             elif type.lower() == "boolean":
                 confirm: PatchedConfirmView = PatchedConfirmView(
-                    interaction.user, timeout=60.0, disable_buttons=True
+                    interaction.user, timeout=120.0, disable_buttons=True
                 )
                 confirm.confirm_button.label = None
                 confirm.confirm_button.emoji = "✔️"
