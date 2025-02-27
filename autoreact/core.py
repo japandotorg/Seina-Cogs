@@ -27,14 +27,16 @@ import contextlib
 from typing import Dict, Final, List, Literal, Pattern
 
 import discord
-from redbot.core.bot import Red  # isort: skip
 from redbot.core import Config, commands
 from redbot.core.utils.chat_formatting import humanize_list
 
-from .cache import Cache
-from .events import EventMixin
-from .commands import Commands
 from .abc import CompositeMetaClass
+from .cache import Cache
+from .commands import Commands
+from .events import EventMixin
+
+from redbot.core.bot import Red  # isort: skip
+
 
 try:
     import regex as re  # pyright: ignore[reportMissingModuleSource]
@@ -73,7 +75,9 @@ class AutoReact(
         self._task: asyncio.Task[None] = discord.utils.MISSING
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
-        pre_processed: str = super().format_help_for_context(ctx)  # pyright: ignore[reportAbstractUsage]
+        pre_processed: str = super().format_help_for_context(
+            ctx
+        )  # pyright: ignore[reportAbstractUsage]
         n: str = "\n" if "\n\n" not in pre_processed else ""
         text: List[str] = [
             f"{pre_processed}{n}",
@@ -84,9 +88,7 @@ class AutoReact(
 
     async def cog_load(self) -> None:
         if self._task is discord.utils.MISSING:
-            self.task: asyncio.Task[None] = asyncio.create_task(
-                self.initialize()
-            )
+            self.task: asyncio.Task[None] = asyncio.create_task(self.initialize())
 
     async def cog_unload(self) -> None:
         if self._task is not discord.utils.MISSING:
@@ -103,35 +105,19 @@ class AutoReact(
     async def do_autoreact(self, message: discord.Message) -> None:
         if message.guild is None:
             return
-        for keyword, reactions in self.cache.autoreact[
-            message.guild.id
-        ].items():
+        for keyword, reactions in self.cache.autoreact[message.guild.id].items():
             pattern: Pattern[str] = re.compile(keyword)
             if pattern.search(message.content):
-                with contextlib.suppress(
-                    discord.HTTPException, TypeError
-                ):
-                    _: asyncio.futures.Future[List[None]] = (
-                        asyncio.gather(
-                            *(
-                                message.add_reaction(reaction)
-                                for reaction in reactions
-                            )
-                        )
+                with contextlib.suppress(discord.HTTPException, TypeError):
+                    _: asyncio.futures.Future[List[None]] = asyncio.gather(
+                        *(message.add_reaction(reaction) for reaction in reactions)
                     )
                 await asyncio.sleep(0.001)  # TODO: remove this
 
-    async def do_autoreact_event(
-        self, message: discord.Message, type: str
-    ) -> None:
+    async def do_autoreact_event(self, message: discord.Message, type: str) -> None:
         if message.guild is None:
             return
-        reactions: List[str] = self.cache.event[message.guild.id][
-            type
-        ]
+        reactions: List[str] = self.cache.event[message.guild.id][type]
         _: asyncio.futures.Future[List[None]] = asyncio.gather(
-            *(
-                message.add_reaction(reaction)
-                for reaction in reactions
-            )
+            *(message.add_reaction(reaction) for reaction in reactions)
         )

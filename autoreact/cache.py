@@ -41,9 +41,7 @@ class Cache(CacheProtocol):
         self.event: Dict[int, Dict[str, List[str]]] = {}
 
     async def initialize(self) -> None:
-        config: Dict[
-            int, Dict[str, Dict[str, List[str]]]
-        ] = await self.cog.config.all_guilds()
+        config: Dict[int, Dict[str, Dict[str, List[str]]]] = await self.cog.config.all_guilds()
         for _id, data in config.items():
             self.autoreact[_id] = data["reaction"]
             self.event[_id] = data["event"]
