@@ -26,7 +26,6 @@ from typing import Dict, Literal
 
 from shazamio.enums import GenreMusic
 
-
 Genre = Literal[
     "pop",
     "hiphop",
