@@ -1,12 +1,26 @@
 {
-    "author": ["inthedark.org"],
-    "install_msg": "Thanks for installing. Please read the help for the `shazam` command to get started, once you have loaded the cog.",
+    "author": [
+        "japan.org"
+    ],
+    "install_msg": "Thanks for installing. Please read the help for the `shazam` & `shazam top` commands to get started, once you have loaded the cog.",
     "name": "Shazam",
     "disabled": false,
     "short": "Search songs using Shazam.",
     "description": "Search songs using Shazam.",
-    "tags": ["songs", "audio", "shazam"],
+    "tags": [
+        "song",
+        "songs",
+        "audio",
+        "music",
+        "shazam",
+        "media",
+        "utility",
+        "tools",
+        "util"
+    ],
     "required_cogs": {},
-    "requirements": ["shazamio"],
+    "requirements": [
+        "shazamio==0.8.0"
+    ],
     "type": "COG"
 }

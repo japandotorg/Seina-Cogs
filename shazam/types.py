@@ -22,19 +22,50 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import logging
-from redbot.core.bot import Red
+from typing import Dict, Literal
 
-from .core import Shazam
-
-__red_end_user_data_statement__ = (
-    "This cog does not persistently store data or metadata about users."
-)
+from shazamio.enums import GenreMusic
 
 
-async def setup(bot: Red) -> None:
-    logging.getLogger(
-        "symphonia_bundle_mp3.demuxer",
-    ).setLevel(logging.ERROR)
-    cog = Shazam(bot)
-    await bot.add_cog(cog)
+Genre = Literal[
+    "pop",
+    "hiphop",
+    "dance",
+    "electronic",
+    "soul",
+    "alternative",
+    "rock",
+    "latin",
+    "film",
+    "country",
+    "afro",
+    "worldwide",
+    "reggae",
+    "house",
+    "kpop",
+    "french",
+    "singer",
+    "mexicano",
+]
+
+
+GENRE: Dict[str, GenreMusic] = {
+    "pop": GenreMusic.POP,
+    "hiphop": GenreMusic.HIP_HOP_RAP,
+    "dance": GenreMusic.DANCE,
+    "electronic": GenreMusic.ELECTRONIC,
+    "soul": GenreMusic.RNB_SOUL,
+    "alternative": GenreMusic.ALTERNATIVE,
+    "rock": GenreMusic.ROCK,
+    "latin": GenreMusic.LATIN,
+    "film": GenreMusic.FILM_TV_STAGE,
+    "country": GenreMusic.COUNTRY,
+    "afro": GenreMusic.AFRO_BEATS,
+    "worldwide": GenreMusic.WORLDWIDE,
+    "reggae": GenreMusic.REGGAE_DANCE_HALL,
+    "house": GenreMusic.HOUSE,
+    "kpop": GenreMusic.K_POP,
+    "french": GenreMusic.FRENCH_POP,
+    "singer": GenreMusic.SINGER_SONGWRITER,
+    "mexicano": GenreMusic.REGIONAL_MEXICANO,
+}
