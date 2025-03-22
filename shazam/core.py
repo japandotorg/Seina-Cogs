@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import asyncio
 import logging
-import aiohttp
 from typing import Final, List, Literal, Optional, TypeAlias
 
 import discord
@@ -33,7 +33,7 @@ from shazamio.serializers import PlayList
 from redbot.core.utils.views import SimpleMenu
 from redbot.core.utils.chat_formatting import humanize_list
 
-from .model import Shazam as Client, Shazamed
+from .client import Shazam as Client, Shazamed
 from .utils import TopFlags, is_valid_url, with_context_typing
 
 log: logging.Logger = logging.getLogger("red.seina.shazam")
@@ -47,17 +47,15 @@ class Shazam(commands.Cog):
     """
 
     __author__: Final[List[str]] = ["inthedark.org"]
-    __version__: Final[str] = "0.2.0"
+    __version__: Final[str] = "0.2.1"
 
     def __init__(self, bot: Red) -> None:
         super().__init__()
         self.bot: Red = bot
-        self.session: aiohttp.ClientSession = aiohttp.ClientSession()
         self.client: Client = Client(cog=self)
 
     async def cog_unload(self) -> None:
-        if hasattr(self, "session"):
-            self.bot.loop.create_task(self.session.close())
+        asyncio.create_task(self.client.session.close())
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx)
@@ -83,7 +81,7 @@ class Shazam(commands.Cog):
         Find a song name from video or audio using Shazam.
         """
         if url_or_attachment and is_valid_url(url_or_attachment):
-            song: Shazamed = await self.client.recognize_from_url(url_or_attachment)
+            song: Shazamed = await self.client.recognize(url_or_attachment)
         elif ctx.message.attachments:
             attachment: discord.File = await ctx.message.attachments[0].to_file()
             try:
@@ -143,17 +141,17 @@ class Shazam(commands.Cog):
         """
         Get top tracks from the shazam leaderboards.
 
-        **Flag Help**:
-        - `genre (aliases: g)`: search genre specific leaderboard.
-        - `country (aliases: cy, cr, co)`: search country specific leaderboard.
-        - `city (aliases: ct, ci)`: search city specific leaderboard.
-        - `limit (aliases: l)`: limit how many tracks should this command return.
+        **Flags**: (check usage for help)
+        - `genre  `: search genre specific leaderboard. (aliases: g)
+        - `country`: search country specific leaderboard. (aliases: cy, cr, co)
+        - `city   `: search city specific leaderboard. (aliases: ct, ci)
+        - `limit  `: limit how many tracks should this command return. (aliases: l)
 
-        **Flag Usage**:
-        - `genre`: pop, hiphop, dance, electronic, soul, alternative, rock, latin, film, country, afro,
+        **Usage**:
+        - `genre`  : pop, hiphop, dance, electronic, soul, alternative, rock, latin, film, country, afro,
         worldwide, reggae, house, kpop, french, singer, mexicano.
         - `country`: country must be an ISO 3166-3 alpha-2 code. (eg: RU,NL,UA)
-        - `city`: city name can be found [here](<https://github.com/dotX12/dotX12/blob/main/city.json>).
+        - `city   `: city name can be found [here](<https://github.com/dotX12/dotX12/blob/main/city.json>).
 
         **Examples**:
         - `[p]shazam top g:hiphop`

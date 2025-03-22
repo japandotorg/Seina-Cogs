@@ -23,17 +23,18 @@ SOFTWARE.
 """
 
 import asyncio
+import aiohttp
 import logging
 from pydantic import BaseModel, ConfigDict, Field
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, List, Union
 
 from redbot.core import commands
-from shazamio.exceptions import BadCityName, BadCountryName
 from shazamio.api import Shazam as AudioAlchemist
 from aiohttp_retry import ExponentialRetry as Pulse
+from shazamio.schemas.models import TrackInfo as Track
 from shazamio.schemas.playlist.playlist import PlayList
 from shazamio.serializers import Serialize as Shazamalize
-from shazamio.schemas.models import TrackInfo as Track
+from shazamio.exceptions import BadCityName, BadCountryName
 from shazamio.client import HTTPClient as SoundWaveNavigator
 from shazamio_core.shazamio_core import SearchParams as SonicBlueprint
 
@@ -65,8 +66,45 @@ class Shazam:
                 )
             ),
         )
+        self.session: aiohttp.ClientSession = aiohttp.ClientSession(
+            raise_for_status=True,
+            loop=self.cog.bot.loop,
+            cookie_jar=aiohttp.DummyCookieJar(loop=self.cog.bot.loop),
+            connector=aiohttp.TCPConnector(
+                verify_ssl=True,
+                loop=self.cog.bot.loop,
+            ),
+        )
 
-    async def recognize(self, file: bytes, *, duration: int = 10) -> Shazamed:
+    async def __aio_get(self, url: str) -> bytes:
+        try:
+            response: aiohttp.ClientResponse = await self.session.get(
+                url, timeout=120.0
+            )
+        except aiohttp.ContentTypeError:
+            raise commands.UserFeedbackCheckFailure("Cannot get media from this url.")
+        except (aiohttp.ClientConnectionError, aiohttp.ClientResponseError):
+            raise commands.UserFeedbackCheckFailure(
+                "Something went wrong, try again later or try with another url."
+            )
+        except asyncio.TimeoutError:
+            raise commands.UserFeedbackCheckFailure(
+                "Timedout getting media from the url, try again later."
+            )
+        except Exception as error:
+            log.exception(
+                "Something went wrong searching {}".format(url), exc_info=error
+            )
+            raise commands.CheckFailure()
+        return await response.read()
+
+    async def recognize(
+        self, media: Union[str, bytes], *, duration: int = 10
+    ) -> Shazamed:
+        if isinstance(media, str):
+            file: bytes = await self.__aio_get(media)
+        else:
+            file: bytes = media
         data: Dict[str, Any] = await self.alchemist.recognize(
             file, options=SonicBlueprint(segment_duration_seconds=duration)
         )
@@ -87,10 +125,6 @@ class Shazam:
             metadata=metadata,
             share=track["share"],
         )
-
-    async def recognize_from_url(self, url: str, duration: int = 10) -> Shazamed:
-        async with self.cog.session.get(url) as response:
-            return await self.recognize(await response.read(), duration=duration)
 
     async def top_world(self, limit: int = 10) -> List[PlayList]:
         tracks: Dict[str, Any] = await self.alchemist.top_world_tracks(limit=limit)
