@@ -29,7 +29,6 @@ from typing import TYPE_CHECKING, Any, Dict, List, Union
 import aiohttp
 from aiohttp_retry import ExponentialRetry as Pulse
 from pydantic import BaseModel, ConfigDict, Field
-
 from redbot.core import commands
 from shazamio.api import Shazam as AudioAlchemist
 from shazamio.client import HTTPClient as SoundWaveNavigator
