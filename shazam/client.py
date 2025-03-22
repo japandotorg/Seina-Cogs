@@ -23,19 +23,19 @@ SOFTWARE.
 """
 
 import asyncio
-import aiohttp
 import logging
-from pydantic import BaseModel, ConfigDict, Field
 from typing import TYPE_CHECKING, Any, Dict, List, Union
 
+import aiohttp
+from aiohttp_retry import ExponentialRetry as Pulse
+from pydantic import BaseModel, ConfigDict, Field
 from redbot.core import commands
 from shazamio.api import Shazam as AudioAlchemist
-from aiohttp_retry import ExponentialRetry as Pulse
+from shazamio.client import HTTPClient as SoundWaveNavigator
+from shazamio.exceptions import BadCityName, BadCountryName
 from shazamio.schemas.models import TrackInfo as Track
 from shazamio.schemas.playlist.playlist import PlayList
 from shazamio.serializers import Serialize as Shazamalize
-from shazamio.exceptions import BadCityName, BadCountryName
-from shazamio.client import HTTPClient as SoundWaveNavigator
 from shazamio_core.shazamio_core import SearchParams as SonicBlueprint
 
 from .types import GENRE, Genre
@@ -78,9 +78,7 @@ class Shazam:
 
     async def __aio_get(self, url: str) -> bytes:
         try:
-            response: aiohttp.ClientResponse = await self.session.get(
-                url, timeout=120.0
-            )
+            response: aiohttp.ClientResponse = await self.session.get(url, timeout=120.0)
         except aiohttp.ContentTypeError:
             raise commands.UserFeedbackCheckFailure("Cannot get media from this url.")
         except (aiohttp.ClientConnectionError, aiohttp.ClientResponseError):
@@ -92,15 +90,11 @@ class Shazam:
                 "Timedout getting media from the url, try again later."
             )
         except Exception as error:
-            log.exception(
-                "Something went wrong searching {}".format(url), exc_info=error
-            )
+            log.exception("Something went wrong searching {}".format(url), exc_info=error)
             raise commands.CheckFailure()
         return await response.read()
 
-    async def recognize(
-        self, media: Union[str, bytes], *, duration: int = 10
-    ) -> Shazamed:
+    async def recognize(self, media: Union[str, bytes], *, duration: int = 10) -> Shazamed:
         if isinstance(media, str):
             file: bytes = await self.__aio_get(media)
         else:

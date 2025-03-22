@@ -33,7 +33,8 @@ from redbot.core.utils.chat_formatting import humanize_list
 from redbot.core.utils.views import SimpleMenu
 from shazamio.serializers import PlayList
 
-from .client import Shazam as Client, Shazamed
+from .client import Shazam as Client
+from .client import Shazamed
 from .utils import TopFlags, is_valid_url, with_context_typing
 
 log: logging.Logger = logging.getLogger("red.seina.shazam")
