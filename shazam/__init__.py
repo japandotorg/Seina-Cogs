@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 import logging
+
 from redbot.core.bot import Red
 
 from .core import Shazam

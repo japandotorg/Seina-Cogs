@@ -38,8 +38,8 @@ from shazamio.exceptions import BadCityName, BadCountryName
 from shazamio.client import HTTPClient as SoundWaveNavigator
 from shazamio_core.shazamio_core import SearchParams as SonicBlueprint
 
-from .utils import TopFlags
 from .types import GENRE, Genre
+from .utils import TopFlags
 
 if TYPE_CHECKING:
     from .core import Shazam as Cog
@@ -154,9 +154,7 @@ class Shazam:
         playlists: List[PlayList] = Shazamalize.playlists(tracks)
         return playlists
 
-    async def top_city(
-        self, country: str, city: str, *, limit: int = 10
-    ) -> List[PlayList]:
+    async def top_city(self, country: str, city: str, *, limit: int = 10) -> List[PlayList]:
         tracks: Dict[str, Any] = await self.alchemist.top_city_tracks(
             country_code=country.upper(), city_name=city.title(), limit=limit
         )

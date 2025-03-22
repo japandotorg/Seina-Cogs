@@ -29,9 +29,9 @@ from typing import Final, List, Literal, Optional, TypeAlias
 import discord
 from redbot.core import commands
 from redbot.core.bot import Red
-from shazamio.serializers import PlayList
-from redbot.core.utils.views import SimpleMenu
 from redbot.core.utils.chat_formatting import humanize_list
+from redbot.core.utils.views import SimpleMenu
+from shazamio.serializers import PlayList
 
 from .client import Shazam as Client, Shazamed
 from .utils import TopFlags, is_valid_url, with_context_typing
@@ -181,9 +181,11 @@ class Shazam(commands.Cog):
                     disk=pl.attributes.disc_number,
                     release=pl.attributes.release_date,
                     genre=humanize_list(pl.attributes.genre_names),
-                    rating="- **Rating:** {}\n".format(rating.capitalize())
-                    if (rating := pl.attributes.content_rating)
-                    else "",
+                    rating=(
+                        "- **Rating:** {}\n".format(rating.capitalize())
+                        if (rating := pl.attributes.content_rating)
+                        else ""
+                    ),
                 )
             )
             embed.set_thumbnail(

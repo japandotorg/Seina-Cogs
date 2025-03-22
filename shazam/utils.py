@@ -23,7 +23,6 @@ SOFTWARE.
 """
 
 import functools
-from urllib import parse
 from typing import (
     Any,
     Awaitable,
@@ -34,11 +33,11 @@ from typing import (
     TypeVar,
     cast,
 )
+from urllib import parse
 
 from redbot.core import commands
 
 from .types import Genre
-
 
 T = TypeVar("T")
 P = ParamSpec("P")
@@ -52,9 +51,9 @@ def is_valid_url(url: str) -> bool:
     return all([par.scheme, par.netloc])
 
 
-def with_context_typing() -> Callable[
-    [Callable[P, Awaitable[T]]], Callable[P, Coroutine[Any, Any, T]]
-]:
+def with_context_typing() -> (
+    Callable[[Callable[P, Awaitable[T]]], Callable[P, Coroutine[Any, Any, T]]]
+):
     def decorator(
         func: Callable[P, Awaitable[T]],
     ) -> Callable[P, Coroutine[Any, Any, T]]:
