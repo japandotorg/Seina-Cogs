@@ -115,9 +115,9 @@ class ChooseChoicesModal(discord.ui.Modal):
             item: discord.ui.Item[discord.ui.View]
             item.disabled = True  # pyright: ignore[reportAttributeAccessIssue]
         with contextlib.suppress(discord.HTTPException):
-            await cast(discord.Message, self._message).edit(
+            await cast(discord.Message, self._message).edit(  # pyright: ignore[reportAttributeAccessIssue]
                 view=self
-            )  # pyright: ignore[reportAttributeAccessIssue]
+            )
 
     async def interaction_check(self, interaction: discord.Interaction[Red], /) -> bool:
         if interaction.user.id != self.user.id:
