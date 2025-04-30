@@ -22,26 +22,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Any, Dict, cast
+from typing import Any, Dict, List, cast
 
 import discord
 import TagScriptEngine as tse
+from redbot.core.utils import AsyncIter
 from redbot.core import app_commands, commands
 from redbot.core.utils.chat_formatting import box
 
-from ..abc import PipeMeta
-from ..common.exceptions import ApplicationError
-from ..common.models import Application, AppSettings, ButtonSettings
-from ..common.tagscript import DEFAULT_SETTINGS_MESSAGE, SettingsAdapter
-from ..common.utils import name_auto_complete
-from ..common.views import ApplicationView, DynamicApplyButton
-from ..pipes.groups import Groups
 
-application: commands.HybridGroup[Any, ..., Any] = cast(commands.HybridGroup, Groups.application)
+from ..abc import PipeMeta
+from ..pipes.groups import Groups
+from ..common.menus import EmojiMenu
+from ..common.utils import name_auto_complete
+from ..common.exceptions import ApplicationError
+from ..common.views import ApplicationView, DynamicApplyButton
+from ..common.models import Application, AppSettings, Buttons
+from ..common.tagscript import DEFAULT_SETTINGS_MESSAGE, SettingsAdapter
+
+application: commands.HybridGroup[Any, ..., Any] = cast(
+    commands.HybridGroup[Any, ..., Any], Groups.application
+)
 
 
 class SettingCommands(PipeMeta):
-
     @application.command(name="create", aliases=["+"])
     @app_commands.describe(
         name="short name for the application.",
@@ -103,7 +107,9 @@ class SettingCommands(PipeMeta):
         )
         message: discord.Message = await ctx.send(embed=embed)
         await ctx.send(
-            "**Message:**\n{message}".format(message=box(app.settings.message, lang="json")),
+            "**Message:**\n{message}".format(
+                message=box(app.settings.message, lang="json")
+            ),
             reference=message.to_reference(fail_if_not_exists=False),
         )
 
@@ -123,7 +129,11 @@ class SettingCommands(PipeMeta):
             await self.manager.delete(ctx.guild.id, name)
         except ApplicationError as exc:
             raise commands.UserFeedbackCheckFailure(exc)
-        await ctx.send("Successfully deleted the application named **{}**.".format(name.lower()))
+        await ctx.send(
+            "Successfully deleted the application named **{}**.".format(
+                name.lower()
+            )
+        )
 
     @application.command(name="post")
     @app_commands.describe(name="short name of the application")
@@ -138,15 +148,19 @@ class SettingCommands(PipeMeta):
         - `name :` short name of the application. (quotes are needed to use spaces)
         """
         try:
-            app: Application = await self.manager.get_application(ctx.guild.id, name=name.lower())
+            app: Application = await self.manager.get_application(
+                ctx.guild.id, name=name.lower()
+            )
         except ApplicationError as exc:
             await ctx.send(str(exc), ephemeral=True)
             return
         if not app.questions:
-            await ctx.send("No questions configured on this application.", ephemeral=True)
+            await ctx.send(
+                "No questions configured on this application.", ephemeral=True
+            )
             return
         settings: AppSettings = app.settings
-        button: ButtonSettings = app.buttons
+        button: Buttons = app.buttons
         kwargs: Dict[str, Any] = await self.manager.process_tagscript(
             settings.message,
             {
@@ -158,7 +172,10 @@ class SettingCommands(PipeMeta):
         )
         if not kwargs:
             await self.manager.edit_setting_for(
-                ctx.guild.id, name=name.lower(), object="message", value=DEFAULT_SETTINGS_MESSAGE
+                ctx.guild.id,
+                name=name.lower(),
+                object="message",
+                value=DEFAULT_SETTINGS_MESSAGE,
             )
             kwargs: Dict[str, Any] = await self.manager.process_tagscript(
                 DEFAULT_SETTINGS_MESSAGE,
@@ -179,3 +196,50 @@ class SettingCommands(PipeMeta):
             },
         )
         await ctx.send(**kwargs, view=view)
+
+    @application.command(
+        name="list", aliases=["view", "viewall", "showall", "all"]
+    )
+    async def application_list(self, ctx: commands.GuildContext) -> None:
+        """
+        View all configured applications in the current server.
+        """
+        await ctx.defer()
+        apps: List[Application] = await self.manager.get_all_applications(
+            ctx.guild.id
+        )
+        if not apps:
+            raise commands.UserFeedbackCheckFailure(
+                "There are no configured applications on this server."
+            )
+        embeds: List[discord.Embed] = []
+        async for idx, app in AsyncIter(enumerate(apps)):
+            embed: discord.Embed = discord.Embed(
+                title="Applications (Page {}/{})".format(idx + 1, len(apps)),
+                description=(
+                    "**Name**: {name}\n"
+                    "**Description**: {description}\n"
+                    "**Channel**: {channel}\n"
+                    "**Status**: {status}\n\n"
+                    "**NOTE: For more info about a specific application, use the "
+                    "`{prefix}application config view` command instead.**"
+                ).format(
+                    name=app.name,
+                    description=app.description,
+                    channel=(
+                        "{0.mention} ({0.id})".format(chan)
+                        if (chan := ctx.guild.get_channel(app.settings.channel))
+                        else "Unknown Channel {}".format(app.settings.channel)
+                    ),
+                    status="Submission open"
+                    if app.settings.open
+                    else "Submission closed",
+                    prefix=ctx.clean_prefix,
+                ),
+                color=discord.Color.from_str(app.settings.color),
+                timestamp=app.settings.time,
+            )
+            embed.set_footer(text="Created at")
+            embed.set_thumbnail(url=getattr(ctx.guild.icon, "url", None))
+            embeds.append(embed)
+        await EmojiMenu(pages=embeds).start(ctx)

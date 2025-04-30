@@ -34,9 +34,7 @@ if TYPE_CHECKING:
 TAGSCRIPT: Final[int] = 10_000
 
 
-DEFAULT_SETTINGS_MESSAGE: Final[
-    str
-] = """
+DEFAULT_SETTINGS_MESSAGE: Final[str] = """
 {embed({
     "title": "{settings(description)}",
     "color": "{settings(color)}",
@@ -53,17 +51,20 @@ DEFAULT_SETTINGS_MESSAGE: Final[
     ]
 })}
 """
-
-
-DEFAULT_TICKET_MESSAGE: Final[
-    str
-] = """
+DEFAULT_TICKET_MESSAGE: Final[str] = """
 {embed({
     "title": "{member(name)}'s Application Ticket!",
     "color": "{settings(color)}",
     "description": "Please wait patiently for the staff."
 })}
 """
+DEFAULT_NOTIFICATION_MESSAGE: Final[str] = """
+{embed({
+    "description": "New application submitted by {member(name)} for application **{app}** with response id {id}",
+    "color": "{color}"
+})}
+"""
+DEFAULT_THREAD_NAME: Final[str] = "Response {id}"
 
 
 BLOCKS: List[tse.Block] = [
@@ -105,8 +106,10 @@ class SettingsAdapter(SimpleAdapter["AppSettings"]):
             try:
                 value: Any = self._attributes[ctx.parameter]
             except KeyError:
-                return  # type: ignore
+                return  # pyright: ignore[reportReturnType]
             if isinstance(value, tuple):
                 value, should_escape = value
-            return_value: str = str(value) if value else None  # type: ignore
-        return tse.escape_content(return_value) if should_escape else return_value
+            return_value: str = str(value) if value else None  # pyright: ignore[reportAssignmentType]
+        return (
+            tse.escape_content(return_value) if should_escape else return_value
+        )

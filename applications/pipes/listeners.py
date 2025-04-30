@@ -22,10 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import asyncio
-import contextlib
 import logging
-from typing import Any, Dict, Optional
+import asyncio
+import datetime
+import contextlib
+from typing import Any, Dict, Optional, cast
 
 import discord
 import TagScriptEngine as tse
@@ -33,23 +34,36 @@ from redbot.core import commands
 from redbot.core.utils.chat_formatting import box
 
 from ..abc import PipeMeta
-from ..common.models import Answer, Application, Response, Types
-from ..common.tagscript import DEFAULT_SETTINGS_MESSAGE, SettingsAdapter
+from ..common.models import Answer, Application, ChoiceButtons, Response, Types
+from ..common.tagscript import (
+    DEFAULT_NOTIFICATION_MESSAGE,
+    DEFAULT_SETTINGS_MESSAGE,
+    DEFAULT_THREAD_NAME,
+    SettingsAdapter,
+)
 from ..common.utils import GuildInteraction
-from ..common.views import CancelButton, CancelView, ChoiceView, PatchedConfirmView, SkipButton
+from ..common.views import (
+    CancelButton,
+    CancelView,
+    ChoiceView,
+    PatchedConfirmView,
+    SkipButton,
+)
 
-log: logging.Logger = logging.getLogger("red.seina.applications.pipes.listeners")
+log: logging.Logger = logging.getLogger(
+    "red.seina.applications.pipes.listeners"
+)
 
 
 class Listeners(PipeMeta):
-
     @commands.Cog.listener()
     async def on_application_applied(
         self, interaction: GuildInteraction, app: Application
     ) -> None:
         if not app.questions:
             return await interaction.followup.send(
-                "There are no questions configured for this application!", ephemeral=True
+                "There are no questions configured for this application!",
+                ephemeral=True,
             )
         response: Response = Response(user=interaction.user.id)
         started_message: str = "\n".join(
@@ -70,7 +84,8 @@ class Listeners(PipeMeta):
             )
         except discord.Forbidden:
             return await interaction.followup.send(
-                "I failed to send you a dm, please check your dm settings.", ephemeral=True
+                "I failed to send you a dm, please check your dm settings.",
+                ephemeral=True,
             )
         except (ValueError, TypeError, discord.HTTPException) as exc:
             log.exception("Something went wrong!", exc_info=exc)
@@ -80,33 +95,46 @@ class Listeners(PipeMeta):
         for idx, question in enumerate(app.questions):
             embed: discord.Embed = discord.Embed(
                 title=app.description.title(),
-                description="**__Question {}__**\n{}".format(idx + 1, question.text),
+                description="**__Question {}__**\n{}".format(
+                    idx + 1, question.text
+                ),
                 color=discord.Color.from_str(app.settings.color),
             )
-            embed.set_thumbnail(url=getattr(interaction.guild.icon, "url", None))
-            embed.set_footer(text='click the "cancel" button to cancel the submission')
+            embed.set_thumbnail(
+                url=getattr(interaction.guild.icon, "url", None)
+            )
+            embed.set_footer(
+                text='click the "cancel" button to cancel the submission'
+            )
             content: str = discord.utils.MISSING
             type: Types = question.type
             if type.lower() == "text":
                 view: CancelView = CancelView(required=question.required)
                 try:
-                    view.message = await interaction.user.send(embed=embed, view=view)
+                    view.message = await interaction.user.send(
+                        embed=embed, view=view
+                    )
                 except discord.HTTPException:
                     return await interaction.followup.send(
-                        "Something went wrong, please try again later!", ephemeral=True
+                        "Something went wrong, please try again later!",
+                        ephemeral=True,
                     )
                 try:
-                    message: discord.Message = await interaction.client.wait_for(
-                        "message",
-                        check=lambda m: m.channel.id == original.channel.id,
-                        timeout=300.0,
+                    message: discord.Message = (
+                        await interaction.client.wait_for(
+                            "message",
+                            check=lambda m: m.channel.id == original.channel.id,
+                            timeout=300.0,
+                        )
                     )
                 except asyncio.TimeoutError:
                     await view.on_timeout()
                     with contextlib.suppress(discord.HTTPException):
                         await interaction.user.send(
                             "Application timed out while waiting for your response.",
-                            reference=original.to_reference(fail_if_not_exists=False),
+                            reference=original.to_reference(
+                                fail_if_not_exists=False
+                            ),
                         )
                     return await interaction.followup.send(
                         "Application timed out.", ephemeral=True
@@ -125,14 +153,20 @@ class Listeners(PipeMeta):
                     with contextlib.suppress(discord.HTTPException):
                         await interaction.user.send(
                             "Something went wrong, I failed to parse your response.",
-                            reference=original.to_reference(fail_if_not_exists=False),
+                            reference=original.to_reference(
+                                fail_if_not_exists=False
+                            ),
                         )
                     return await interaction.followup.send(
                         "Application failed, try again later.", ephemeral=True
                     )
             elif type.lower() == "choices" and len(question.choices) > 0:
-                choice: ChoiceView = ChoiceView(question, required=question.required)
-                choice.message = message = await interaction.user.send(embed=embed, view=choice)
+                choice: ChoiceView = ChoiceView(
+                    question, required=question.required
+                )
+                choice.message = message = await interaction.user.send(
+                    embed=embed, view=choice
+                )
                 if not await choice.wait():
                     await choice.on_timeout()
                 log.debug(choice.cancel)
@@ -146,7 +180,9 @@ class Listeners(PipeMeta):
                     with contextlib.suppress(discord.HTTPException):
                         await interaction.user.send(
                             "Something went wrong, I failed to parse your response.",
-                            reference=original.to_reference(fail_if_not_exists=False),
+                            reference=original.to_reference(
+                                fail_if_not_exists=False
+                            ),
                         )
                     return await interaction.followup.send(
                         "Application failed, try again later.", ephemeral=True
@@ -154,17 +190,20 @@ class Listeners(PipeMeta):
                 else:
                     content: str = choice.answer
             elif type.lower() == "boolean":
+                ch: ChoiceButtons = app.buttons.choice
                 confirm: PatchedConfirmView = PatchedConfirmView(
                     interaction.user, timeout=120.0, disable_buttons=True
                 )
-                confirm.confirm_button.label = None
-                confirm.confirm_button.emoji = "✔️"
-                confirm.dismiss_button.label = None
-                confirm.dismiss_button.emoji = "✖️"
+                confirm.confirm_button.label = ch.yes.label
+                confirm.confirm_button.emoji = ch.yes.emoji
+                confirm.dismiss_button.label = ch.no.label
+                confirm.dismiss_button.emoji = ch.no.emoji
                 confirm.add_item(CancelButton())
                 if not question.required:
                     confirm.add_item(SkipButton())
-                confirm.message = message = await interaction.user.send(embed=embed, view=confirm)
+                confirm.message = message = await interaction.user.send(
+                    embed=embed, view=confirm
+                )
                 await confirm.wait()
                 log.debug(confirm.cancel)
                 if confirm.cancel:
@@ -177,21 +216,28 @@ class Listeners(PipeMeta):
                     content: str = "Skipped"
                 elif confirm.result is None:
                     await confirm.on_timeout()
-                    with contextlib.suppress(discord.HTTPException):
-                        await interaction.user.send(
-                            "Application timed out while waiting for your response.",
-                            reference=original.to_reference(fail_if_not_exists=False),
+                    if ch.required:
+                        with contextlib.suppress(discord.HTTPException):
+                            await interaction.user.send(
+                                "Application timed out while waiting for your response.",
+                                reference=original.to_reference(
+                                    fail_if_not_exists=False
+                                ),
+                            )
+                        return await interaction.followup.send(
+                            "Application timed out.", ephemeral=True
                         )
-                    return await interaction.followup.send(
-                        "Application timed out.", ephemeral=True
-                    )
+                    else:
+                        content: str = "Skipped"
                 elif confirm.result is False:
                     content: str = "No"
                 else:
                     content: str = "Yes"
             else:
                 continue
-            answer: Answer = Answer(question=question.text, type=type.lower(), answer=content)
+            answer: Answer = Answer(
+                question=question.text, type=type.lower(), answer=content
+            )
             response.answers.append(answer)
             try:
                 await interaction.user.send(
@@ -204,6 +250,7 @@ class Listeners(PipeMeta):
                     "Something went wrong, I failed to send you a dm, please check your dm settings!",
                     ephemeral=True,
                 )
+        now: datetime.datetime = discord.utils.utcnow()
         embed: discord.Embed = discord.Embed(
             title="Response",
             description=(
@@ -217,10 +264,11 @@ class Listeners(PipeMeta):
                 user=interaction.user,
                 response=response.id,
             ),
-            timestamp=discord.utils.utcnow(),
+            timestamp=now,
         )
         embed.set_author(
-            name=interaction.user.global_name, icon_url=interaction.user.display_avatar.url
+            name=interaction.user.global_name,
+            icon_url=interaction.user.display_avatar.url,
         )
         for idx, answer in enumerate(response.answers[:25]):
             embed.add_field(
@@ -228,9 +276,10 @@ class Listeners(PipeMeta):
                 value="- **{}**\n- {}".format(answer.question, answer.answer),
                 inline=False,
             )
-        channel: Optional[discord.TextChannel] = interaction.guild.get_channel(
-            app.settings.channel
-        )  # type: ignore
+        channel: Optional[discord.TextChannel] = cast(
+            Optional[discord.TextChannel],
+            interaction.guild.get_channel(app.settings.channel),
+        )
         if not channel:
             with contextlib.suppress(discord.HTTPException):
                 await interaction.user.send(
@@ -244,6 +293,7 @@ class Listeners(PipeMeta):
         try:
             message: discord.Message = await channel.send(embed=embed)
         except discord.HTTPException:
+            app.responses.remove(response)
             with contextlib.suppress(discord.HTTPException):
                 await interaction.user.send(
                     "Something went wrong with the application settings, please contact an admin!",
@@ -253,21 +303,106 @@ class Listeners(PipeMeta):
                 "Something went wrong with the application settings, please contact an admin!",
                 ephemeral=True,
             )
-        if app.settings.thread:
+        if app.settings.notifications.toggle:
+            nargs: Dict[str, Any] = await self.manager.process_tagscript(
+                app.settings.notifications.content,
+                {
+                    "id": tse.StringAdapter(response.id),
+                    "app": tse.StringAdapter(app.settings.name),
+                    "color": tse.StringAdapter(app.settings.color),
+                    "member": tse.MemberAdapter(interaction.user),
+                    "user": tse.MemberAdapter(interaction.user),
+                    "time": tse.StringAdapter(
+                        now.strftime("%d:%m:%Y-%H:%M:%S")
+                    ),
+                    "timestamp": tse.IntAdapter(int(now.timestamp())),
+                    "guild": tse.GuildAdapter(interaction.guild),
+                },
+            )
+            if not nargs:
+                nargs: Dict[str, Any] = await self.manager.process_tagscript(
+                    DEFAULT_NOTIFICATION_MESSAGE,
+                    {
+                        "id": tse.StringAdapter(response.id),
+                        "app": tse.StringAdapter(app.settings.name),
+                        "color": tse.StringAdapter(app.settings.color),
+                        "member": tse.MemberAdapter(interaction.user),
+                        "user": tse.MemberAdapter(interaction.user),
+                        "time": tse.StringAdapter(
+                            now.strftime("%d:%m:%Y-%H:%M:%S")
+                        ),
+                        "timestamp": tse.IntAdapter(int(now.timestamp())),
+                        "guild": tse.GuildAdapter(interaction.guild),
+                    },
+                )
             with contextlib.suppress(discord.HTTPException):
-                await message.create_thread(name="Response {}".format(response.id))
-        app.responses.append(response)
-        async with self.config.guild_from_id(interaction.guild.id).apps() as apps:
+                print(app.settings.notifications.content)
+                await channel.send(
+                    **nargs,
+                    reference=message.to_reference(fail_if_not_exists=False),
+                    allowed_mentions=discord.AllowedMentions(
+                        **app.settings.notifications.mentions.model_dump(
+                            mode="python"
+                        )
+                    ),
+                )
+        if app.settings.thread.toggle:
+            targs: Dict[str, Any] = await self.manager.process_tagscript(
+                app.settings.thread.custom,
+                {
+                    "id": tse.StringAdapter(response.id),
+                    "member": tse.MemberAdapter(interaction.user),
+                    "user": tse.MemberAdapter(interaction.user),
+                    "time": tse.StringAdapter(
+                        now.strftime("%d:%m:%Y-%H:%M:%S")
+                    ),
+                    "timestamp": tse.IntAdapter(int(now.timestamp())),
+                    "guild": tse.GuildAdapter(interaction.guild),
+                },
+            )
+            if not targs:
+                await self.manager.edit_thread_settings(
+                    interaction.guild.id,
+                    name=app.name.lower(),
+                    toggle=True,
+                    value=DEFAULT_THREAD_NAME,
+                )
+                targs: Dict[str, Any] = await self.manager.process_tagscript(
+                    DEFAULT_THREAD_NAME,
+                    {
+                        "id": tse.StringAdapter(response.id),
+                        "member": tse.MemberAdapter(interaction.user),
+                        "user": tse.MemberAdapter(interaction.user),
+                        "time": tse.StringAdapter(
+                            now.strftime("%d:%m:%Y-%H:%M:%S")
+                        ),
+                        "timestamp": tse.IntAdapter(int(now.timestamp())),
+                        "guild": tse.GuildAdapter(interaction.guild),
+                    },
+                )
+            with contextlib.suppress(discord.HTTPException):
+                await message.create_thread(
+                    name="Response {}".format(response.id)
+                )
+        async with self.config.guild_from_id(
+            interaction.guild.id
+        ).apps() as apps:
             try:
-                apps[app.name.lower()]["responses"].append(response.model_dump(mode="python"))
+                apps[app.name.lower()]["responses"].append(
+                    response.model_dump(mode="python")
+                )
             except KeyError:
+                app.responses.remove(response)
                 with contextlib.suppress(discord.HTTPException):
                     await interaction.user.send(
                         "Something went wrong, the application doesn't seem to exist anymore!",
-                        reference=original.to_reference(fail_if_not_exists=False),
+                        reference=original.to_reference(
+                            fail_if_not_exists=False
+                        ),
                     )
                 return await interaction.followup.send(
-                    "Failed because the application doesn't seem to exist anymore!", ephemeral=True
+                    "Failed because the application doesn't seem to exist anymore!",
+                    ephemeral=True,
                 )
         kwargs: Dict[str, Any] = await self.manager.process_tagscript(
             app.settings.message,
@@ -298,10 +433,14 @@ class Listeners(PipeMeta):
             await interaction.edit_original_response(**kwargs)
         with contextlib.suppress(discord.HTTPException):
             await interaction.user.send(
-                "Application successfully submitted!\n\n**Response ID**: `{}`".format(response.id),
+                "Application successfully submitted!\n\n**Response ID**: `{}`".format(
+                    response.id
+                ),
                 reference=original.to_reference(fail_if_not_exists=False),
             )
         await interaction.followup.send(
-            "Application successfully submitted!\n\n**Response ID**: `{}`".format(response.id),
+            "Application successfully submitted!\n\n**Response ID**: `{}`".format(
+                response.id
+            ),
             ephemeral=True,
         )

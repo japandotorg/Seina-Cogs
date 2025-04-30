@@ -28,14 +28,19 @@ from typing import Any, Dict, List, Union
 import discord
 from redbot.core import commands
 from redbot.core.bot import Red
-from redbot.core.utils.views import _NavigateButton, _SimplePageSource, _StopButton
+from redbot.core.utils.views import (
+    _NavigateButton,
+    _SimplePageSource,
+    _StopButton,
+)
 
 from .constants import NavigationEmojis
 
 
 class EmojiMenu(discord.ui.View):
-
-    def __init__(self, pages: List[Union[str, discord.Embed]], timeout: float = 120.0) -> None:
+    def __init__(
+        self, pages: List[Union[str, discord.Embed]], timeout: float = 120.0
+    ) -> None:
         super().__init__(timeout=timeout)
         self._source: _SimplePageSource = _SimplePageSource(items=pages)
         self.current_page: int = 0
@@ -44,7 +49,9 @@ class EmojiMenu(discord.ui.View):
         self._message: discord.Message = discord.utils.MISSING
 
         self.force_left_button: _NavigateButton = _NavigateButton(
-            discord.ButtonStyle.grey, NavigationEmojis.FORCE_LEFT_ARROW, direction=0
+            discord.ButtonStyle.grey,
+            NavigationEmojis.FORCE_LEFT_ARROW,
+            direction=0,
         )
         self.left_button: _NavigateButton = _NavigateButton(
             discord.ButtonStyle.grey, NavigationEmojis.LEFT_ARROW, direction=-1
@@ -73,13 +80,15 @@ class EmojiMenu(discord.ui.View):
 
     async def on_timeout(self) -> None:
         for child in self.children:
-            child.disabled = True  # type: ignore
+            child.disabled = True  # pyright: ignore[reportAttributeAccessIssue]
 
         if self._message is not discord.utils.MISSING:
             with contextlib.suppress(discord.HTTPException):
                 await self._message.edit(view=self)
 
-    async def interaction_check(self, interaction: discord.Interaction[Red]) -> bool:
+    async def interaction_check(
+        self, interaction: discord.Interaction[Red]
+    ) -> bool:
         if interaction.user.id != self.ctx.author.id:
             await interaction.response.send_message(
                 "You're not allowed to use this button.", ephemeral=True
@@ -89,21 +98,31 @@ class EmojiMenu(discord.ui.View):
 
     async def get_page(self, number: int) -> Dict[str, Any]:
         try:
-            page: List[Union[str, discord.Embed]] = await self.source.get_page(number)
+            page: List[Union[str, discord.Embed]] = await self.source.get_page(
+                number
+            )
         except IndexError:
             self.current_page: int = 0
-            page: List[Union[str, discord.Embed]] = await self.source.get_page(self.current_page)
-        value: Union[str, discord.Embed] = await self.source.format_page(self, page)
+            page: List[Union[str, discord.Embed]] = await self.source.get_page(
+                self.current_page
+            )
+        value: Union[str, discord.Embed] = await self.source.format_page(
+            self, page
+        )
         ret: Dict[str, Any] = {"view": self}
         if isinstance(value, dict):
-            ret.update(value)  # type: ignore
+            ret.update(value)  # pyright: ignore[reportCallIssue]
         elif isinstance(value, str):
             ret.update({"content": value, "embed": None})
-        elif isinstance(value, discord.Embed):
+        elif isinstance(value, discord.Embed):  # pyright: ignore[reportUnnecessaryIsInstance]
             ret.update({"embed": value, "content": None})
         return ret
 
-    async def start(self, ctx: commands.Context, ephemeral: bool = False) -> None:
+    async def start(
+        self, ctx: commands.Context, ephemeral: bool = False
+    ) -> None:
         self.ctx: commands.Context = ctx
         kwargs: Dict[str, Any] = await self.get_page(self.current_page)
-        self._message: discord.Message = await ctx.send(**kwargs, ephemeral=ephemeral)
+        self._message: discord.Message = await ctx.send(
+            **kwargs, ephemeral=ephemeral
+        )

@@ -22,14 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from redbot.core import app_commands, commands
+from redbot.core import commands
 
 from ..abc import CompositeMetaClass, PipeMeta
 from ..common.utils import has_guild_permissions
 
 
 class Groups(PipeMeta, metaclass=CompositeMetaClass):
-
     @commands.hybrid_group(
         name="application",
         aliases=[

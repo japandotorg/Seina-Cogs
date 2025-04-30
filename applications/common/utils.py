@@ -22,11 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import TYPE_CHECKING, Callable, Dict, List, Optional, TypedDict, TypeVar, cast
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    TypedDict,
+    TypeVar,
+    Union,
+    cast,
+)
 
 import discord
-from redbot.core import app_commands, commands
 from redbot.core.bot import Red
+from redbot.core import app_commands, commands
 
 if TYPE_CHECKING:
     from ..core import Applications
@@ -35,26 +45,28 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 
 
-async def name_auto_complete(
-    interaction: discord.Interaction[Red], current: str
-) -> List[app_commands.Choice[str]]:
-    cog: "Applications" = interaction.client.get_cog("Applications")  # type: ignore
-    return [
-        app_commands.Choice(name=name, value=name)
-        for name in cog.cache[cast(discord.Guild, interaction.guild).id].keys()
-        if current.lower() in name.lower()
-    ][:25]
-
-
 def has_guild_permissions(**perms: bool) -> Callable[[T], T]:
     def decorator(func: T) -> T:
         commands.guild_only()(func)
         commands.admin_or_permissions(**perms)(func)
         app_commands.guild_only()(func)
-        # app_commands.default_permissions(**perms)(func)
+        app_commands.default_permissions(**perms)(func)
         return func
 
     return decorator
+
+
+async def name_auto_complete(
+    interaction: discord.Interaction[Red], current: str
+) -> List[app_commands.Choice[str]]:
+    cog: "Applications" = cast(
+        "Applications", interaction.client.get_cog("Applications")
+    )  # type: ignore
+    return [
+        app_commands.Choice(name=name, value=name)
+        for name in cog.cache[cast(discord.Guild, interaction.guild).id].keys()
+        if current.lower() in name.lower()
+    ][:25]
 
 
 class GuildInteraction(discord.Interaction[Red]):
@@ -64,6 +76,23 @@ class GuildInteraction(discord.Interaction[Red]):
         channel: discord.abc.GuildChannel
         user: discord.Member
         message: discord.Message
+
+
+class Threads(TypedDict):
+    toggle: bool
+    custom: str
+
+
+class Mentions(TypedDict):
+    users: bool
+    roles: bool
+    everyone: bool
+
+
+class Notifications(TypedDict):
+    toggle: bool
+    content: str
+    mentions: Mentions
 
 
 class AppSettings(TypedDict):
@@ -76,23 +105,37 @@ class AppSettings(TypedDict):
     open: bool
     cooldown: int
     dm: bool
-    thread: bool
+    thread: Union[bool, Threads]
+    notifications: Notifications
 
 
-class RoleSettings(TypedDict):
+class Roles(TypedDict):
     blacklist: List[int]
     whitelist: List[int]
 
 
-class TicketSettings(TypedDict):
+class Tickets(TypedDict):
     category: Optional[int]
     message: str
     toggle: bool
 
 
-class ButtonSettings(TypedDict):
+class ChoiceButtonType(TypedDict):
     label: Optional[str]
+    emoji: Optional[str]
+
+
+class ChoiceButtons(TypedDict):
+    yes: ChoiceButtonType
+    no: ChoiceButtonType
+    required: bool
+
+
+class Buttons(TypedDict):
+    label: Optional[str]
+    emoji: str
     style: str
+    choice: ChoiceButtons
 
 
 class Post(TypedDict):
@@ -113,8 +156,8 @@ class Response(TypedDict):
 class TypedConfig(TypedDict):
     settings: AppSettings
     questions: Dict[str, str]
-    roles: RoleSettings
-    tickets: TicketSettings
-    buttons: ButtonSettings
+    roles: Roles
+    tickets: Tickets
+    buttons: Buttons
     posts: List[Post]
     responses: List[Response]

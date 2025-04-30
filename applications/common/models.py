@@ -22,24 +22,65 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import uuid
 import asyncio
 import datetime
-import uuid
-from typing import TYPE_CHECKING, Annotated, Any, Dict, List, Literal, Optional, TypeAlias
+from typing import (
+    TYPE_CHECKING,
+    Annotated,
+    Any,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    TypeAlias,
+)
 
 from pydantic import BaseModel
 from pydantic.fields import Field
 
-from .tagscript import DEFAULT_SETTINGS_MESSAGE, DEFAULT_TICKET_MESSAGE
+from .tagscript import (
+    DEFAULT_NOTIFICATION_MESSAGE,
+    DEFAULT_SETTINGS_MESSAGE,
+    DEFAULT_THREAD_NAME,
+    DEFAULT_TICKET_MESSAGE,
+)
 
 if TYPE_CHECKING:
     from .utils import TypedConfig
 
 
-Styles: TypeAlias = Literal["green", "red", "gray", "blurple"]
+Styles: TypeAlias = Literal[
+    "green",
+    "success",
+    "red",
+    "danger",
+    "gray",
+    "grey",
+    "secondary",
+    "blurple",
+    "primary",
+]
 Status: TypeAlias = Literal["idle", "accepted", "rejected"]
 Events: TypeAlias = Literal["apply", "submit", "accept", "deny"]
 Types: TypeAlias = Literal["text", "boolean", "choices"]
+
+
+class Threads(BaseModel):
+    toggle: bool = Field(default=True)
+    custom: str = Field(default=DEFAULT_THREAD_NAME)
+
+
+class Mentions(BaseModel):
+    users: bool = Field(default=True)
+    roles: bool = Field(default=False)
+    everyone: bool = Field(default=False)
+
+
+class Notifications(BaseModel):
+    toggle: bool = Field(default=True)
+    content: str = Field(default=DEFAULT_NOTIFICATION_MESSAGE)
+    mentions: Mentions = Field(default_factory=lambda: Mentions())
 
 
 class AppSettings(BaseModel):
@@ -51,37 +92,61 @@ class AppSettings(BaseModel):
     open: bool = Field(default=True)
     cooldown: int = Field(default=0, lt=4320)  # minutes
     dm: bool = Field(default=False)
-    thread: bool = Field(default=True)
+    thread: Threads = Field(default_factory=lambda: Threads())
+    notifications: Notifications = Field(
+        default_factory=lambda: Notifications()
+    )
     created_at: float = Field(
-        default_factory=lambda: datetime.datetime.now(datetime.timezone.utc).timestamp()
+        default_factory=lambda: datetime.datetime.now(
+            datetime.timezone.utc
+        ).timestamp()
     )
 
     @property
-    def time(self):
+    def time(self) -> datetime.datetime:
         return datetime.datetime.fromtimestamp(self.created_at)
 
 
 class EventRoles(BaseModel):
     type: Events
+    mode: Literal["add", "remove"]
     roles: List[int] = Field(default_factory=list)
 
 
-class RoleSettings(BaseModel):
+class Roles(BaseModel):
     blacklist: List[int] = Field(default_factory=list)
     whitelist: List[int] = Field(default_factory=list)
     events: List[EventRoles] = Field(default_factory=list)
 
 
-class TicketSettings(BaseModel):
+class Tickets(BaseModel):
     category: Optional[int] = Field(default=None)
     message: str = Field(default=DEFAULT_TICKET_MESSAGE)  # fill later
     toggle: bool = Field(default=False)
 
 
-class ButtonSettings(BaseModel):
+class ChoiceButtonType(BaseModel):
+    label: Optional[str] = Field(default=None)
+    emoji: Optional[str] = Field(default=None)
+
+
+class ChoiceButtons(BaseModel):
+    yes: ChoiceButtonType = Field(
+        default_factory=lambda: ChoiceButtonType(
+            emoji="\N{HEAVY CHECK MARK}\N{VARIATION SELECTOR-16}"
+        )
+    )
+    no: ChoiceButtonType = Field(
+        default_factory=lambda: ChoiceButtonType(emoji="\N{CROSS MARK}")
+    )
+    required: bool = Field(default=False)
+
+
+class Buttons(BaseModel):
     label: Optional[str] = Field(default=None)
     emoji: str = Field(default="\N{TICKET}")
     style: Styles = Field(default="green")
+    choice: ChoiceButtons = Field(default_factory=lambda: ChoiceButtons())
 
 
 class Post(BaseModel):
@@ -101,7 +166,9 @@ class Response(BaseModel):
     answers: List[Answer] = Field(default_factory=list)
     status: Status = Field(default="idle")
     created_at: float = Field(
-        default_factory=lambda: datetime.datetime.now(datetime.timezone.utc).timestamp()
+        default_factory=lambda: datetime.datetime.now(
+            datetime.timezone.utc
+        ).timestamp()
     )
     ticket: Optional[int] = Field(default=None)
     mod: Optional[int] = Field(default=None)
@@ -122,9 +189,9 @@ class Question(BaseModel):
 class Application(BaseModel):
     settings: AppSettings
     questions: List[Question] = Field(default_factory=list)
-    roles: RoleSettings = Field(default_factory=lambda: RoleSettings())
-    tickets: TicketSettings = Field(default_factory=lambda: TicketSettings())
-    buttons: ButtonSettings = Field(default_factory=lambda: ButtonSettings())
+    roles: Roles = Field(default_factory=lambda: Roles())
+    tickets: Tickets = Field(default_factory=lambda: Tickets())
+    buttons: Buttons = Field(default_factory=lambda: Buttons())
     posts: List[Post] = Field(default_factory=list)
     responses: List[Response] = Field(default_factory=list)
 
@@ -143,7 +210,9 @@ class Application(BaseModel):
         return self.settings.description
 
     @classmethod
-    def create_model(cls, *, name: str, description: str, channel: int) -> "Application":
+    def create_model(
+        cls, *, name: str, description: str, channel: int
+    ) -> "Application":
         return cls(
             settings=AppSettings(
                 name=name,
@@ -153,5 +222,7 @@ class Application(BaseModel):
         )
 
     @classmethod
-    async def from_json(cls, data: Annotated["TypedConfig", Dict[str, Any]]) -> "Application":
-        return await asyncio.to_thread(cls.model_validate, data)
+    async def from_json(
+        cls, data: Annotated["TypedConfig", Dict[str, Any]]
+    ) -> "Application":
+        return await asyncio.to_thread(cls.model_validate, data, strict=True)

@@ -22,24 +22,214 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import contextlib
-import logging
 import re
-from typing import TYPE_CHECKING, Any, List, Optional, Union, cast
+import logging
+import contextlib
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Coroutine,
+    Dict,
+    List,
+    Optional,
+    Union,
+    cast,
+)
 
 import discord
-from redbot.core import commands
+import TagScriptEngine as tse
 from redbot.core.bot import Red
+from redbot.core import commands
+from discord.ext.commands import converter
 from redbot.core.utils.chat_formatting import box
-from redbot.core.utils.views import ConfirmView
+from redbot.core.utils.views import ConfirmView, SimpleMenu
 
-from ..common.utils import GuildInteraction
-from .models import Application, ButtonSettings, Question, Styles
+from .finders import EmojiFinder
+from .utils import GuildInteraction
+from ..common.tagscript import SettingsAdapter
+from ..common.exceptions import ApplicationError
+from ..common.tagscript import DEFAULT_SETTINGS_MESSAGE
+from .models import Application, Buttons, ChoiceButtons, Question, Styles
 
 if TYPE_CHECKING:
     from ..core import Applications
 
 log: logging.Logger = logging.getLogger("red.seina.applications.common.views")
+
+
+class InteractionSimpleMenu(SimpleMenu):
+    async def inter(
+        self, interaction: discord.Interaction[Red], *, ephemeral: bool = True
+    ) -> None:
+        self._fallback_author_to_ctx: bool = False
+        self.author: discord.abc.User = interaction.user
+        kwargs: Dict[str, Any] = await self.get_page(self.current_page)
+        self.message: discord.Message = await interaction.followup.send(
+            **kwargs, ephemeral=ephemeral
+        )
+
+
+class ChooseChoicesModal(discord.ui.Modal):
+    yl: discord.ui.TextInput[discord.ui.View] = discord.ui.TextInput(
+        label="yes label",
+        style=discord.TextStyle.paragraph,
+        placeholder="Specify the label for the `yes` button. (50 characters only)",
+        max_length=50,
+        required=False,
+    )
+    ye: discord.ui.TextInput[discord.ui.View] = discord.ui.TextInput(
+        label="yes emoji",
+        style=discord.TextStyle.paragraph,
+        placeholder="Specify the emoji for the `yes` button. (format - <a:name:id>)",
+        required=False,
+    )
+    nl: discord.ui.TextInput[discord.ui.View] = discord.ui.TextInput(
+        label="no label",
+        style=discord.TextStyle.paragraph,
+        placeholder="Specify the label for the `no` button. (50 characters only)",
+        required=False,
+    )
+    ne: discord.ui.TextInput[discord.ui.View] = discord.ui.TextInput(
+        label="no emoji",
+        style=discord.TextStyle.paragraph,
+        placeholder="Specify the emoji for the `no` button. (format - <a:name:id>)",
+        required=False,
+    )
+    out: discord.ui.TextInput[discord.ui.View] = discord.ui.TextInput(
+        label="timeout",
+        style=discord.TextStyle.paragraph,
+        placeholder=(
+            "Specify if the application should automcatically close if no choices are submitted."
+        ),
+        required=False,
+    )
+
+    def __init__(self, user: discord.User, *, application: Application) -> None:
+        super().__init__(title="Configure Boolean Buttons")
+        self.user: discord.User = user
+        self.app: Application = application
+
+    @staticmethod
+    async def tfn(self: discord.ui.View) -> None:
+        for item in self.children:
+            item: discord.ui.Item[discord.ui.View]
+            item.disabled = True  # pyright: ignore[reportAttributeAccessIssue]
+        with contextlib.suppress(discord.HTTPException):
+            await cast(discord.Message, self._message).edit(view=self)  # pyright: ignore[reportAttributeAccessIssue]
+
+    async def interaction_check(
+        self, interaction: discord.Interaction[Red], /
+    ) -> bool:
+        if interaction.user.id != self.user.id:
+            await interaction.response.send_message(
+                "You're not allowed to use this interaction!", ephemeral=True
+            )
+            return False
+        return True
+
+    @staticmethod
+    def to_embed(app: Application) -> discord.Embed:
+        embed: discord.Embed = discord.Embed(
+            title="__**Boolean Button Settings**__",
+            description=(
+                "__**Required**__: {required}\n\n"
+                "__**True**__\n"
+                "- **label**: {yes.label}\n"
+                "- **emoji**: {yes.emoji}\n"
+                "\n"
+                "__**False**__\n"
+                "- **label**: {no.label}\n"
+                "- **emoji**: {no.emoji}\n"
+            ).format(
+                required="Yes" if app.buttons.choice.required else "No",
+                yes=app.buttons.choice.yes,
+                no=app.buttons.choice.no,
+            ),
+            color=discord.Color.from_str(app.settings.color),
+        )
+        return embed
+
+    async def on_submit(self, interaction: discord.Interaction[Red], /) -> None:
+        await interaction.response.defer()
+        if not interaction.guild:
+            return await interaction.followup.send(
+                "Something went wrong, try again later!", ephemeral=True
+            )
+        cog: Optional["Applications"] = cast(
+            Optional["Applications"], interaction.client.get_cog("Applications")
+        )
+        if not cog:
+            log.exception(
+                "Attempted to utilize a feature of the Applications cog while it is currently unloaded."
+            )
+            return await interaction.followup.send(
+                "Something went wrong, try again later!", ephemeral=True
+            )
+        if not any(
+            [
+                (yl := self.yl._value),
+                (ye := self.ye._value),
+                (nl := self.nl._value),
+                (ne := self.ne._value),
+                (out := self.out._value),
+            ]
+        ):
+            return await interaction.followup.send(
+                "Submission terminated.",
+                embed=self.to_embed(self.app).set_thumbnail(
+                    url=getattr(interaction.guild.icon, "url", None)
+                ),
+            )
+        choice: ChoiceButtons = self.app.buttons.choice
+        yem, nem, tout = (
+            cast(Union[str, discord.Emoji, None], None),
+            cast(Union[str, discord.Emoji, None], None),
+            cast(Optional[bool], None),
+        )
+        if ye:
+            try:
+                yem: Union[
+                    str, discord.Emoji, None
+                ] = await EmojiFinder().finder(interaction, ye)
+            except commands.BadArgument as error:
+                return await interaction.followup.send(error, ephemeral=True)
+        if ne:
+            try:
+                nem: Union[
+                    str, discord.Emoji, None
+                ] = await EmojiFinder().finder(interaction, ne)
+            except commands.BadArgument as error:
+                return await interaction.followup.send(error, ephemeral=True)
+        if out:
+            try:
+                tout: Optional[bool] = converter._convert_to_bool(out)
+            except commands.BadArgument as error:
+                return await interaction.followup.send(
+                    "Expected boolean value, got {} instead.".format(
+                        str(error).lower()
+                    ),
+                    ephemeral=True,
+                )
+        if yl:
+            choice.yes.label = yl
+        if yem:
+            choice.yes.emoji = str(yem)
+        if nl:
+            choice.no.label = nl
+        if nem:
+            choice.no.emoji = str(yem)
+        if tout:
+            choice.required = tout
+        async with cog.config.guild(interaction.guild).apps() as apps:
+            apps.update(
+                **{self.app.name.lower(): self.app.model_dump(mode="python")}
+            )
+        await interaction.followup.send(
+            embed=self.to_embed(self.app).set_thumbnail(
+                url=getattr(interaction.guild.icon, "url", None)
+            )
+        )
 
 
 class QuestionChoicesModel(discord.ui.Modal):
@@ -54,12 +244,31 @@ class QuestionChoicesModel(discord.ui.Modal):
         ),
     )
 
-    def __init__(self, *, application: Application, question: Question) -> None:
-        super().__init__(title="Choices", custom_id="model:{}".format(id(question)))
+    def __init__(
+        self,
+        user: discord.User,
+        *,
+        application: Application,
+        question: Question,
+    ) -> None:
+        super().__init__(
+            title="Choices", custom_id="model:{}".format(id(question))
+        )
+        self.user: discord.User = user
         self.app: Application = application
         self.question: Question = question
 
-    async def on_submit(self, interaction: discord.Interaction[Red]) -> None:
+    async def interaction_check(
+        self, interaction: discord.Interaction[Red], /
+    ) -> bool:
+        if interaction.user.id != self.user.id:
+            await interaction.response.send_message(
+                "You're not allowed to use this interaction!", ephemeral=True
+            )
+            return False
+        return True
+
+    async def on_submit(self, interaction: discord.Interaction[Red], /) -> None:
         await interaction.response.defer()
         questions: List[str] = self.choices.value.strip().splitlines()[:10]
         self.question.choices.extend(questions)
@@ -75,7 +284,9 @@ class QuestionChoicesModel(discord.ui.Modal):
             ),
             color=discord.Color.green(),
         )
-        original: discord.InteractionMessage = await interaction.original_response()
+        original: discord.InteractionMessage = (
+            await interaction.original_response()
+        )
         view.message = await original.channel.send(
             embed=embed,
             view=view,
@@ -89,12 +300,13 @@ class QuestionChoicesModel(discord.ui.Modal):
             )
         else:
             self.question.other = False
-            await interaction.followup.send("Excluded an `other` option from the choices list!")
+            await interaction.followup.send(
+                "Excluded an `other` option from the choices list!"
+            )
         self.stop()
 
 
 class QuestionChoicesView(discord.ui.View):
-
     def __init__(
         self,
         user: discord.User,
@@ -116,13 +328,15 @@ class QuestionChoicesView(discord.ui.View):
     async def on_timeout(self) -> None:
         for child in self.children:
             child: discord.ui.Item["QuestionChoicesView"]
-            child.disabled = True  # type: ignore
+            child.disabled = True  # pyright: ignore[reportAttributeAccessIssue]
 
         if self._message is not discord.utils.MISSING:
             with contextlib.suppress(discord.HTTPException):
                 await self._message.edit(view=self)
 
-    async def interaction_check(self, interaction: discord.Interaction[Red]) -> bool:
+    async def interaction_check(
+        self, interaction: discord.Interaction[Red], /
+    ) -> bool:
         if interaction.user.id != self.user.id:
             await interaction.response.send_message(
                 "You're not allowed to use this interaction!", ephemeral=True
@@ -131,9 +345,13 @@ class QuestionChoicesView(discord.ui.View):
         return True
 
     @discord.ui.button(label="Choices", style=discord.ButtonStyle.green)
-    async def choices(self, interaction: discord.Interaction[Red], _: discord.ui.Button) -> None:
+    async def choices(
+        self,
+        interaction: discord.Interaction[Red],
+        _: discord.ui.Button["QuestionChoicesView"],
+    ) -> None:
         modal: QuestionChoicesModel = QuestionChoicesModel(
-            application=self.application, question=self.question
+            self.user, application=self.application, question=self.question
         )
         await interaction.response.send_modal(modal)
         if await modal.wait():
@@ -148,7 +366,8 @@ class QuestionChoicesView(discord.ui.View):
             return
         if not self.question.choices:
             return await interaction.followup.send(
-                "Something went wrong, failed to parse the answers.", ephemeral=True
+                "Something went wrong, failed to parse the answers.",
+                ephemeral=True,
             )
         if self.position == 0:
             self.application.questions.append(self.question)
@@ -156,7 +375,11 @@ class QuestionChoicesView(discord.ui.View):
             self.application.questions.insert(self.position - 1, self.question)
         async with cog.config.guild(interaction.guild).apps() as apps:
             apps.update(
-                **{self.application.name.lower(): self.application.model_dump(mode="python")}
+                **{
+                    self.application.name.lower(): self.application.model_dump(
+                        mode="python"
+                    )
+                }
             )
         await interaction.followup.send(
             content="Successfully added the following choices -\n{}".format(
@@ -173,7 +396,11 @@ class QuestionChoicesView(discord.ui.View):
         )
 
     @discord.ui.button(label="Cancel", style=discord.ButtonStyle.red)
-    async def cancel(self, interaction: discord.Interaction[Red], _: discord.ui.Button) -> None:
+    async def cancel(
+        self,
+        interaction: discord.Interaction[Red],
+        _: discord.ui.Button["QuestionChoicesView"],
+    ) -> None:
         await interaction.response.send_message(
             "The question was successfully discarded.", ephemeral=True
         )
@@ -186,23 +413,18 @@ class DynamicApplyButton(
 ):
     def __init__(self, guild_id: int, name: str, **kwargs: Any) -> None:
         super().__init__(
-            discord.ui.Button(**kwargs, custom_id="guild:{}:app:{}".format(guild_id, name)),
+            discord.ui.Button(
+                **kwargs, custom_id="guild:{}:app:{}".format(guild_id, name)
+            ),
         )
         self.guild_id: int = guild_id
         self.name: str = name
 
     @staticmethod
     def format_style(data: Styles) -> discord.ButtonStyle:
-        if data.lower() == "green":
-            return discord.ButtonStyle.green
-        elif data.lower() == "red":
-            return discord.ButtonStyle.red
-        elif data.lower() == "gray":
-            return discord.ButtonStyle.gray
-        elif data.lower() == "blurple":
-            return discord.ButtonStyle.blurple
-        else:
-            return discord.ButtonStyle.green
+        return getattr(
+            discord.ButtonStyle, data.lower(), discord.ButtonStyle.green
+        )
 
     @classmethod
     async def from_custom_id(
@@ -213,34 +435,93 @@ class DynamicApplyButton(
     ) -> "DynamicApplyButton":
         guild_id: int = int(match["id"])
         name: str = str(match["name"])
-        cog: Optional["Applications"] = interaction.client.get_cog("Applications")  # type: ignore
+        cog: Optional["Applications"] = cast(
+            Optional["Applications"], interaction.client.get_cog("Applications")
+        )
         if not cog:
-            log.error("No idea how this happened, but the application cog seems to be unloaded.")
+            log.error(
+                "No idea how this happened, but the application cog seems to be unloaded."
+            )
             raise commands.CheckFailure()
         try:
-            app: Application = cog.manager.cache[guild_id][name.lower()]
-        except KeyError:
+            app: Application = await cog.manager.get_application(
+                guild_id, name=name.lower()
+            )
+        except ApplicationError:
             raise commands.CheckFailure()
-        data: ButtonSettings = app.buttons
+        data: Buttons = app.buttons
         return cls(
-            guild_id, name, style=cls.format_style(data.style), label=data.label, emoji=data.emoji
+            guild_id,
+            name,
+            style=cls.format_style(data.style),
+            label=data.label,
+            emoji=data.emoji,
         )
 
+    async def edit(
+        self,
+        message: discord.Message,
+        application: Application,
+        content: str,
+        *,
+        process_tagscript: Callable[
+            [str, Dict[str, tse.Adapter]], Coroutine[Any, Any, Dict[str, Any]]
+        ],
+    ) -> None:
+        kwargs: Dict[str, Any] = await process_tagscript(
+            content,
+            {
+                "settings": SettingsAdapter(application.settings),
+                "guild": tse.GuildAdapter(message.guild),
+                "server": tse.GuildAdapter(message.guild),
+                "responses": tse.IntAdapter(len(application.responses)),
+            },
+        )
+        if not kwargs:
+            kwargs: Dict[str, Any] = await process_tagscript(
+                DEFAULT_SETTINGS_MESSAGE,
+                {
+                    "settings": SettingsAdapter(application.settings),
+                    "guild": tse.GuildAdapter(message.guild),
+                    "server": tse.GuildAdapter(message.guild),
+                    "responses": tse.IntAdapter(len(application.responses)),
+                },
+            )
+        view: "ApplicationView" = ApplicationView(
+            self.guild_id,
+            self.name.lower(),
+            label=application.buttons.label,
+            emoji=application.buttons.emoji,
+            style=self.format_style(application.buttons.style),
+        )
+        with contextlib.suppress(discord.HTTPException):
+            await message.edit(**kwargs, view=view)
+
     async def interaction_check(self, interaction: GuildInteraction) -> bool:
-        cog: Optional["Applications"] = interaction.client.get_cog("Applications")  # type: ignore
+        cog: Optional["Applications"] = cast(
+            Optional["Applications"], interaction.client.get_cog("Applications")
+        )
         if not cog:
-            log.error("No idea how this happened, but the application cog seems to be unloaded.")
+            log.error(
+                "No idea how this happened, but the application cog seems to be unloaded."
+            )
             await interaction.response.send_message(
                 "Something went wrong, try again later!", ephemeral=True
             )
             return False
         try:
-            app: Application = cog.manager.cache[self.guild_id][self.name.lower()]
-        except KeyError:
-            await interaction.response.send_message(
-                "Could not find an application attached to this button!", ephemeral=True
+            app: Application = await cog.manager.get_application(
+                self.guild_id, name=self.name.lower()
             )
+        except ApplicationError as error:
+            await interaction.followup.send(str(error), ephemeral=True)
             return False
+        await self.edit(
+            interaction.message,
+            app,
+            app.settings.message,
+            process_tagscript=cog.manager.process_tagscript,
+        )
         if white := app.roles.whitelist:
             if interaction.user.id not in white:
                 await interaction.response.send_message(
@@ -257,20 +538,23 @@ class DynamicApplyButton(
 
     async def callback(self, interaction: GuildInteraction) -> None:
         await interaction.response.defer()
-        log.debug("deffered")
-        cog: Optional["Applications"] = interaction.client.get_cog("Applications")  # type: ignore
+        cog: Optional["Applications"] = cast(
+            Optional["Applications"], interaction.client.get_cog("Applications")
+        )
         if not cog:
-            log.error("No idea how this happened, but the application cog seems to be unloaded.")
+            log.error(
+                "No idea how this happened, but the application cog seems to be unloaded."
+            )
             return await interaction.followup.send(
                 "No idea how this happened, but the application cog seems to be unloaded.",
                 ephemeral=True,
             )
         try:
-            app: Application = cog.manager.cache[self.guild_id][self.name.lower()]
-        except KeyError:
-            return await interaction.followup.send(
-                "Could not find an application attached to this button!", ephemeral=True
+            app: Application = await cog.manager.get_application(
+                self.guild_id, name=self.name.lower()
             )
+        except ApplicationError as error:
+            return await interaction.followup.send(str(error), ephemeral=True)
         interaction.client.dispatch("application_applied", interaction, app)
         log.debug("dispatched event on_application_applied")
         await interaction.followup.send(
@@ -287,7 +571,9 @@ class ApplicationView(discord.ui.View):
         self.add_item(DynamicApplyButton(guild_id, name, **kwargs))
 
 
-class SkipButton(discord.ui.Button[Union["ChoiceView", "CancelView", "PatchedConfirmView"]]):
+class SkipButton(
+    discord.ui.Button[Union["ChoiceView", "CancelView", "PatchedConfirmView"]]
+):
     view: Union["ChoiceView", "CancelView", "PatchedConfirmView"]
 
     def __init__(self) -> None:
@@ -299,7 +585,9 @@ class SkipButton(discord.ui.Button[Union["ChoiceView", "CancelView", "PatchedCon
         self.view.stop()
 
 
-class CancelButton(discord.ui.Button[Union["ChoiceView", "CancelView", "PatchedConfirmView"]]):
+class CancelButton(
+    discord.ui.Button[Union["ChoiceView", "CancelView", "PatchedConfirmView"]]
+):
     view: Union["ChoiceView", "CancelView", "PatchedConfirmView"]
 
     def __init__(self) -> None:
@@ -327,7 +615,11 @@ class ChoiceButton(discord.ui.Button["ChoiceView"]):
 
 class ChoiceView(discord.ui.View):
     def __init__(
-        self, question: Question, *, required: bool = True, timeout: float = 60.0
+        self,
+        question: Question,
+        *,
+        required: bool = True,
+        timeout: float = 60.0,
     ) -> None:
         super().__init__(timeout=timeout)
         self.question: Question = question
@@ -346,14 +638,16 @@ class ChoiceView(discord.ui.View):
         if not required:
             self.add_item(SkipButton())
 
-    def cancel_or_skip(self, *, cancel: bool = False, skip: bool = False) -> None:
+    def cancel_or_skip(
+        self, *, cancel: bool = False, skip: bool = False
+    ) -> None:
         self.cancel: bool = cancel
         self.skip: bool = skip
 
     async def on_timeout(self) -> None:
         for child in self.children:
             child: discord.ui.Item["ChoiceView"]
-            child.disabled = True  # type: ignore
+            child.disabled = True  # pyright: ignore[reportAttributeAccessIssue]
 
         if self.message is not discord.utils.MISSING:
             with contextlib.suppress(discord.HTTPException):
@@ -371,14 +665,16 @@ class CancelView(discord.ui.View):
         if not required:
             self.add_item(SkipButton())
 
-    def cancel_or_skip(self, *, cancel: bool = False, skip: bool = False) -> None:
+    def cancel_or_skip(
+        self, *, cancel: bool = False, skip: bool = False
+    ) -> None:
         self.cancel: bool = cancel
         self.skip: bool = skip
 
     async def on_timeout(self) -> None:
         for child in self.children:
             child: discord.ui.Item["CancelView"]
-            child.disabled = True  # type: ignore
+            child.disabled = True  # pyright: ignore[reportAttributeAccessIssue]
 
         if self.message is not discord.utils.MISSING:
             with contextlib.suppress(discord.HTTPException):
@@ -391,6 +687,8 @@ class PatchedConfirmView(ConfirmView):
         self.cancel: bool = False
         self.skip: bool = False
 
-    def cancel_or_skip(self, *, cancel: bool = False, skip: bool = False) -> None:
+    def cancel_or_skip(
+        self, *, cancel: bool = False, skip: bool = False
+    ) -> None:
         self.cancel: bool = cancel
         self.skip: bool = skip

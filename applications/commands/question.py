@@ -37,7 +37,7 @@ from ..common.views import QuestionChoicesView
 from ..pipes.groups import Groups
 
 application_question: commands.HybridGroup[Any, ..., Any] = cast(
-    commands.HybridGroup, Groups.application_question
+    commands.HybridGroup[Any, ..., Any], Groups.application_question
 )
 
 
