@@ -43,13 +43,11 @@ from redbot.core import commands
 from redbot.core.config import Config
 from redbot.core.utils import AsyncIter
 
-from .tagscript import BLOCKS, DEFAULT_NOTIFICATION_MESSAGE, DEFAULT_THREAD_NAME
-from .utils import (
-    ChoiceButtonType,
-    Mentions,
-    Notifications,
-    TypedConfig,
-    ChoiceButtons,
+from .exceptions import (
+    ApplicationDoesNotExist,
+    DuplicateApplicationError,
+    NoQuestionsConfiguredError,
+    TooManyQuestionsError,
 )
 from .models import (
     Application,
@@ -58,11 +56,13 @@ from .models import (
     Styles,
     Threads,
 )
-from .exceptions import (
-    ApplicationDoesNotExist,
-    DuplicateApplicationError,
-    NoQuestionsConfiguredError,
-    TooManyQuestionsError,
+from .tagscript import BLOCKS, DEFAULT_NOTIFICATION_MESSAGE, DEFAULT_THREAD_NAME
+from .utils import (
+    ChoiceButtons,
+    ChoiceButtonType,
+    Mentions,
+    Notifications,
+    TypedConfig,
 )
 
 if TYPE_CHECKING:
@@ -94,9 +94,7 @@ class ApplicationManager:
         output: tse.Response = await self.engine.process(content, variables)
         kwargs: Dict[str, Any] = {}
         if output.body:
-            kwargs["content"] = discord.utils.escape_mentions(
-                output.body[:2000]
-            )
+            kwargs["content"] = discord.utils.escape_mentions(output.body[:2000])
         if embed := output.actions.get("embed"):
             kwargs["embed"] = embed
         return kwargs
@@ -104,9 +102,7 @@ class ApplicationManager:
     async def populate(self) -> None:
         await self.do_migrate()
         await self.lock.acquire()
-        config: Dict[
-            int, Dict[str, Dict[str, TypedConfig]]
-        ] = await self.config.all_guilds()
+        config: Dict[int, Dict[str, Dict[str, TypedConfig]]] = await self.config.all_guilds()
         async for _id, data in AsyncIter(config.items()):
             async for name, app in AsyncIter(data["apps"].items()):
                 instance: Application = await Application.from_json(app)
@@ -115,9 +111,7 @@ class ApplicationManager:
 
     async def do_migrate(self) -> None:
         await self.lock.acquire()
-        config: Dict[
-            int, Dict[str, Dict[str, TypedConfig]]
-        ] = await self.config.all_guilds()
+        config: Dict[int, Dict[str, Dict[str, TypedConfig]]] = await self.config.all_guilds()
         async for _id, data in AsyncIter(config.items()):
             async for _, app in AsyncIter(data["apps"].items()):
                 with contextlib.suppress(KeyError):
@@ -136,9 +130,7 @@ class ApplicationManager:
                                 label=None,
                                 emoji="\N{HEAVY CHECK MARK}\N{VARIATION SELECTOR-16}",
                             ),
-                            no=ChoiceButtonType(
-                                label=None, emoji="\N{CROSS MARK}"
-                            ),
+                            no=ChoiceButtonType(label=None, emoji="\N{CROSS MARK}"),
                             required=False,
                         ),
                     )
@@ -150,9 +142,7 @@ class ApplicationManager:
                         Notifications(
                             toggle=True,
                             content=DEFAULT_NOTIFICATION_MESSAGE,
-                            mentions=Mentions(
-                                users=True, roles=False, everyone=False
-                            ),
+                            mentions=Mentions(users=True, roles=False, everyone=False),
                         ),
                     )
             await self.config.guild_from_id(_id).apps.set(data["apps"])
@@ -161,16 +151,12 @@ class ApplicationManager:
     async def get_application(self, guild: int, *, name: str) -> Application:
         cache: Dict[str, Application] = self.cache.setdefault(guild, {})
         if name.lower() not in cache.keys():
-            raise ApplicationDoesNotExist(
-                "Application with that name does not exist."
-            )
+            raise ApplicationDoesNotExist("Application with that name does not exist.")
         app: "Application" = cache[name.lower()]
         return app
 
     @staticmethod
-    async def get_response_from_application(
-        app: Application, *, response: str
-    ) -> Response:
+    async def get_response_from_application(app: Application, *, response: str) -> Response:
         async for resp in AsyncIter(app.responses):
             if resp.id == response:
                 respo: Response = resp
@@ -179,9 +165,7 @@ class ApplicationManager:
             raise commands.CheckFailure()
         return respo
 
-    async def get_response(
-        self, guild: int, *, name: str, response: str
-    ) -> Response:
+    async def get_response(self, guild: int, *, name: str, response: str) -> Response:
         try:
             app: Application = await self.get_application(guild, name=name)
         except ApplicationDoesNotExist:
@@ -192,14 +176,10 @@ class ApplicationManager:
         cache: Dict[str, Application] = self.cache.setdefault(guild, {})
         return [app for app in cache.values()]
 
-    async def create(
-        self, guild: int, name: str, description: str, channel: int
-    ) -> Application:
+    async def create(self, guild: int, name: str, description: str, channel: int) -> Application:
         cache: Dict[str, Application] = self.cache.setdefault(guild, {})
         if name.lower() in cache.keys():
-            raise DuplicateApplicationError(
-                "An application with this name already exists."
-            )
+            raise DuplicateApplicationError("An application with this name already exists.")
         app: Application = Application.create_model(
             name=name, description=description, channel=channel
         )
@@ -216,18 +196,14 @@ class ApplicationManager:
                 async with self.config.guild_from_id(guild).apps() as apps:
                     del apps[name.lower()]
             except KeyError:
-                raise ApplicationDoesNotExist(
-                    "Application with that name does not exist."
-                )
+                raise ApplicationDoesNotExist("Application with that name does not exist.")
 
     async def edit_setting_for(
         self,
         guild: int,
         *,
         name: str,
-        object: Literal[
-            "channel", "message", "color", "open", "cooldown", "dm"
-        ],
+        object: Literal["channel", "message", "color", "open", "cooldown", "dm"],
         value: Union[str, int, float, bool],
     ) -> Application:
         app: Application = await self.get_application(guild, name=name)
@@ -288,9 +264,7 @@ class ApplicationManager:
             apps.update(**{name.lower(): app.model_dump(mode="python")})
         return app
 
-    async def toggle_tickets(
-        self, guild: int, *, name: str, toggle: bool
-    ) -> Application:
+    async def toggle_tickets(self, guild: int, *, name: str, toggle: bool) -> Application:
         app: Application = await self.get_application(guild, name=name)
         app.tickets.toggle = toggle
         async with self.config.guild_from_id(guild).apps() as apps:
@@ -309,9 +283,7 @@ class ApplicationManager:
     ) -> Tuple[Application, Question]:
         cache: Dict[str, Application] = self.cache.setdefault(guild, {})
         if name.lower() not in cache.keys():
-            raise ApplicationDoesNotExist(
-                "Application with that name does not exist."
-            )
+            raise ApplicationDoesNotExist("Application with that name does not exist.")
         app: "Application" = cache[name.lower()]
         if position < 0:
             raise NoQuestionsConfiguredError("Cannot have a position below 1.")
@@ -338,18 +310,14 @@ class ApplicationManager:
     ) -> Tuple[Application, Question]:
         cache: Dict[str, Application] = self.cache.setdefault(guild, {})
         if name.lower() not in cache.keys():
-            raise ApplicationDoesNotExist(
-                "Application with that name does not exist."
-            )
+            raise ApplicationDoesNotExist("Application with that name does not exist.")
         app: "Application" = cache[name.lower()]
         if len(app.questions) < 1:
             raise NoQuestionsConfiguredError(
                 "There are no questions configured in this application."
             )
         if position < 1 and len(app.questions) < position and position > 10:
-            raise TooManyQuestionsError(
-                "Question does not exist in the application."
-            )
+            raise TooManyQuestionsError("Question does not exist in the application.")
         question: Question = app.questions[position - 1]
         app.questions.pop(position - 1)
         async with self.config.guild_from_id(guild).apps() as apps:

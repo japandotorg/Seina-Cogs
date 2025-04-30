@@ -8,7 +8,9 @@ from redbot.core.bot import Red
 try:
     from emoji import EMOJI_DATA
 except ImportError:
-    from emoji import UNICODE_EMOJI_ENGLISH as EMOJI_DATA  # pyright: ignore[reportAttributeAccessIssue]
+    from emoji import (
+        UNICODE_EMOJI_ENGLISH as EMOJI_DATA,  # pyright: ignore[reportAttributeAccessIssue]
+    )
 
 
 T = TypeVar("T")
@@ -16,16 +18,12 @@ T = TypeVar("T")
 
 class Finder(abc.ABC, Generic[T]):
     @abc.abstractmethod
-    async def finder(
-        self, interaction: discord.Interaction[Red], argument: str
-    ) -> T:
+    async def finder(self, interaction: discord.Interaction[Red], argument: str) -> T:
         raise NotImplementedError
 
 
 class EmojiFinder(Finder[Union[str, discord.Emoji]], commands.EmojiConverter):
-    async def convert(
-        self, ctx: commands.Context, argument: str
-    ) -> Union[str, discord.Emoji]:
+    async def convert(self, ctx: commands.Context, argument: str) -> Union[str, discord.Emoji]:
         if argument in EMOJI_DATA:
             return argument
         try:
@@ -40,12 +38,8 @@ class EmojiFinder(Finder[Union[str, discord.Emoji]], commands.EmojiConverter):
     ) -> Union[str, discord.Emoji]:
         if argument in EMOJI_DATA:
             return argument
-        ctx: commands.Context = await interaction.client.get_context(
-            interaction
-        )
+        ctx: commands.Context = await interaction.client.get_context(interaction)
         try:
             return await super().convert(ctx, argument=argument)
         except commands.BadArgument:
-            raise commands.BadArgument(
-                "Failed to get/convert the emoji, try again later."
-            )
+            raise commands.BadArgument("Failed to get/convert the emoji, try again later.")

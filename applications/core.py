@@ -55,12 +55,8 @@ class Applications(
         __default: Dict[str, Dict[str, utils.TypedConfig]] = {"apps": {}}
         self.config.register_guild(**__default)
 
-        self.cache: DefaultDict[int, Dict[str, models.Application]] = (
-            collections.defaultdict(dict)
-        )
-        self.manager: manager.ApplicationManager = manager.ApplicationManager(
-            self
-        )
+        self.cache: DefaultDict[int, Dict[str, models.Application]] = collections.defaultdict(dict)
+        self.manager: manager.ApplicationManager = manager.ApplicationManager(self)
 
     async def cog_load(self) -> None:
         self.manager.initialize()

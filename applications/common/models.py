@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import uuid
 import asyncio
 import datetime
+import uuid
 from typing import (
     TYPE_CHECKING,
     Annotated,
@@ -93,13 +93,9 @@ class AppSettings(BaseModel):
     cooldown: int = Field(default=0, lt=4320)  # minutes
     dm: bool = Field(default=False)
     thread: Threads = Field(default_factory=lambda: Threads())
-    notifications: Notifications = Field(
-        default_factory=lambda: Notifications()
-    )
+    notifications: Notifications = Field(default_factory=lambda: Notifications())
     created_at: float = Field(
-        default_factory=lambda: datetime.datetime.now(
-            datetime.timezone.utc
-        ).timestamp()
+        default_factory=lambda: datetime.datetime.now(datetime.timezone.utc).timestamp()
     )
 
     @property
@@ -136,9 +132,7 @@ class ChoiceButtons(BaseModel):
             emoji="\N{HEAVY CHECK MARK}\N{VARIATION SELECTOR-16}"
         )
     )
-    no: ChoiceButtonType = Field(
-        default_factory=lambda: ChoiceButtonType(emoji="\N{CROSS MARK}")
-    )
+    no: ChoiceButtonType = Field(default_factory=lambda: ChoiceButtonType(emoji="\N{CROSS MARK}"))
     required: bool = Field(default=False)
 
 
@@ -166,9 +160,7 @@ class Response(BaseModel):
     answers: List[Answer] = Field(default_factory=list)
     status: Status = Field(default="idle")
     created_at: float = Field(
-        default_factory=lambda: datetime.datetime.now(
-            datetime.timezone.utc
-        ).timestamp()
+        default_factory=lambda: datetime.datetime.now(datetime.timezone.utc).timestamp()
     )
     ticket: Optional[int] = Field(default=None)
     mod: Optional[int] = Field(default=None)
@@ -210,9 +202,7 @@ class Application(BaseModel):
         return self.settings.description
 
     @classmethod
-    def create_model(
-        cls, *, name: str, description: str, channel: int
-    ) -> "Application":
+    def create_model(cls, *, name: str, description: str, channel: int) -> "Application":
         return cls(
             settings=AppSettings(
                 name=name,
@@ -222,7 +212,5 @@ class Application(BaseModel):
         )
 
     @classmethod
-    async def from_json(
-        cls, data: Annotated["TypedConfig", Dict[str, Any]]
-    ) -> "Application":
+    async def from_json(cls, data: Annotated["TypedConfig", Dict[str, Any]]) -> "Application":
         return await asyncio.to_thread(cls.model_validate, data, strict=True)

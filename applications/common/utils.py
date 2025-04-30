@@ -35,8 +35,8 @@ from typing import (
 )
 
 import discord
-from redbot.core.bot import Red
 from redbot.core import app_commands, commands
+from redbot.core.bot import Red
 
 if TYPE_CHECKING:
     from ..core import Applications
