@@ -42,7 +42,7 @@ class Applications(
     """Create custom applications."""
 
     __author__: Final[List[str]] = ["inthedark.org"]
-    __version__: Final[str] = "0.0.2b"
+    __version__: Final[str] = "0.0.3b"
 
     def __init__(self, bot: Red) -> None:
         super().__init__()

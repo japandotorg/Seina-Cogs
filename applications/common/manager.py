@@ -251,13 +251,23 @@ class ApplicationManager:
         guild: int,
         *,
         name: str,
-        type: Literal["toggle", "content", "users", "roles", "everyone"],
+        type: Literal[
+            "toggle", "content", "channel", "users", "roles", "everyone"
+        ],
         value: Union[str, bool],
     ) -> Application:
         app: Application = await self.get_application(guild, name=name)
         if type.lower() == "toggle":
             value: Union[str, bool] = converter._convert_to_bool(value)
             setattr(app.settings.notifications, type.lower(), value)
+        elif type.lower() == "channel":
+            channels: List[str] = str(value).split(",")
+            for channel in channels:
+                with contextlib.suppress(ValueError):
+                    if int(channel) in app.settings.notifications.channels:
+                        app.settings.notifications.channels.remove(int(channel))
+                    else:
+                        app.settings.notifications.channels.append(int(channel))
         elif type.lower() in ["users", "roles", "everyone"]:
             value: Union[str, bool] = converter._convert_to_bool(value)
             setattr(app.settings.notifications.mentions, type.lower(), value)

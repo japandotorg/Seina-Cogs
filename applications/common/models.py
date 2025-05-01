@@ -81,6 +81,7 @@ class Notifications(BaseModel):
     toggle: bool = Field(default=True)
     content: str = Field(default=DEFAULT_NOTIFICATION_MESSAGE)
     mentions: Mentions = Field(default_factory=lambda: Mentions())
+    channels: List[int] = Field(default_factory=list)
 
 
 class AppSettings(BaseModel):

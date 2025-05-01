@@ -23,13 +23,14 @@ SOFTWARE.
 """
 
 import asyncio
-import contextlib
-import datetime
 import logging
-from typing import Any, Dict, Optional, cast
+import datetime
+import contextlib
+from typing import Any, Dict, Optional, Union, cast
 
 import discord
 from redbot.core import commands
+from redbot.core.utils import bounded_gather
 from redbot.core.utils.chat_formatting import box
 
 from ..abc import PipeMeta
@@ -300,7 +301,13 @@ class Listeners(PipeMeta):
                 "Something went wrong with the application settings, please contact an admin!",
                 ephemeral=True,
             )
-        if app.settings.notifications.toggle:
+        if app.settings.thread.toggle:
+            threads: Dict[str, Any] = await threadset(
+                self, interaction, app=app, response=response
+            )
+            with contextlib.suppress(discord.HTTPException, KeyError):
+                await message.create_thread(name=threads["content"])
+        if (notif := app.settings.notifications).toggle:
             notifs: Dict[str, Any] = await notifications(
                 self, interaction, app=app, response=response
             )
@@ -314,12 +321,23 @@ class Listeners(PipeMeta):
                         )
                     ),
                 )
-        if app.settings.thread.toggle:
-            threads: Dict[str, Any] = await threadset(
-                self, interaction, app=app, response=response
+
+            async def send(chan: int) -> None:
+                channel: Union[int, discord.abc.GuildChannel, None] = (
+                    interaction.guild.get_channel(chan)
+                )
+                if not channel or isinstance(
+                    channel, (discord.ForumChannel, discord.CategoryChannel)
+                ):
+                    return
+                with contextlib.suppress(discord.HTTPException):
+                    await channel.send(**notifs)
+
+            await bounded_gather(
+                *(send(chan) for chan in notif.channels),
+                limit=5,
+                semaphore=asyncio.Semaphore(5),
             )
-            with contextlib.suppress(discord.HTTPException, KeyError):
-                await message.create_thread(name=threads["content"])
         async with self.config.guild_from_id(
             interaction.guild.id
         ).apps() as apps:

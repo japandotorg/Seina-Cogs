@@ -230,7 +230,7 @@ class ConfigCommands(PipeMeta):
         self,
         ctx: commands.GuildContext,
         name: commands.Range[str, 1, 20],
-        type: Literal["toggle", "content", "users", "roles", "everyone"],
+        type: Literal["toggle", "content", "channel", "users", "roles", "everyone"],
         value: commands.clean_content,
     ) -> None:
         """
@@ -243,6 +243,8 @@ class ConfigCommands(PipeMeta):
 
         **Note:**
         - users, roles and everyone are of boolean type & are for managing the mentions of the notification message.
+        - the type **channel** is for sending notification messages to additional channels..
+        - for multiple channels separate **channel ids** by `,`. (only channel ids allowed/supported)
 
         **Examples:**
         - `[p]application config notifications "event manager" toggle true`
