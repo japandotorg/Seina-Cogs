@@ -28,6 +28,7 @@ from typing import (
     Dict,
     List,
     Optional,
+    Sequence,
     TypedDict,
     TypeVar,
     Union,
@@ -93,6 +94,7 @@ class Notifications(TypedDict):
     toggle: bool
     content: str
     mentions: Mentions
+    channels: Sequence[int]
 
 
 class AppSettings(TypedDict):

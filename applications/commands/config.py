@@ -287,7 +287,7 @@ class ConfigCommands(PipeMeta):
         - boolean is for configuring the buttons related to the boolean (True or False) question type. (see the `[p]app question` commands)
 
         **Examples:**
-        - `[p]application config button "event manager" choice`
+        - `[p]application config button "event manager" boolean`
         - `[p]application config button "event manager" emoji :myappemoji:`
         - `[p]application config button "event manager" label "Click Here To Apply!"`
         """
