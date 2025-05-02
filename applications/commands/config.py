@@ -46,9 +46,7 @@ application_config: commands.HybridGroup[Any, ..., Any] = cast(
 
 class ConfigCommands(PipeMeta):
     @application_config.command(name="channel", aliases=["responsechannel"])
-    @app_commands.describe(
-        name="short name of the application", channel="the response channel"
-    )
+    @app_commands.describe(name="short name of the application", channel="the response channel")
     @app_commands.autocomplete(name=name_auto_complete)
     async def application_config_channel(
         self,
@@ -79,9 +77,7 @@ class ConfigCommands(PipeMeta):
         )
 
     @application_config.command(name="message")
-    @app_commands.describe(
-        name="short name of the application", message="the new post message"
-    )
+    @app_commands.describe(name="short name of the application", message="the new post message")
     @app_commands.autocomplete(name=name_auto_complete)
     async def application_config_message(
         self,
@@ -157,14 +153,10 @@ class ConfigCommands(PipeMeta):
             raise commands.UserFeedbackCheckFailure(
                 "Couldn't convert `{}` to a valid color.".format(color)
             )
-        await self.manager.edit_setting_for(
-            ctx.guild.id, name=name, object="color", value=color
-        )
+        await self.manager.edit_setting_for(ctx.guild.id, name=name, object="color", value=color)
         await ctx.send(
             embed=discord.Embed(
-                description="Successfully changed the application color to `{}`.".format(
-                    color
-                ),
+                description="Successfully changed the application color to `{}`.".format(color),
                 color=discord_color,
             )
         )
@@ -244,18 +236,14 @@ class ConfigCommands(PipeMeta):
             )
         )
 
-    @application_config.command(
-        name="notifications", aliases=["notifs", "notif"]
-    )
+    @application_config.command(name="notifications", aliases=["notifs", "notif"])
     @app_commands.describe()
     @app_commands.autocomplete(name=name_auto_complete)
     async def application_config_notifications(
         self,
         ctx: commands.GuildContext,
         name: commands.Range[str, 1, 20],
-        type: Literal[
-            "toggle", "content", "channel", "users", "roles", "everyone"
-        ],
+        type: Literal["toggle", "content", "channel", "users", "roles", "everyone"],
         *,
         value: commands.Range[str, 1],
     ) -> None:
@@ -323,12 +311,8 @@ class ConfigCommands(PipeMeta):
         - `[p]application config button "event manager" label "Click Here To Apply!"`
         """
         if type.lower() == "boolean":
-            app: Application = await self.manager.get_application(
-                ctx.guild.id, name=name.lower()
-            )
-            modal: ChooseChoicesModal = ChooseChoicesModal(
-                ctx.author, application=app
-            )
+            app: Application = await self.manager.get_application(ctx.guild.id, name=name.lower())
+            modal: ChooseChoicesModal = ChooseChoicesModal(ctx.author, application=app)
             view: discord.ui.View = discord.ui.View(timeout=120.0)
             view.on_timeout = lambda: modal.tfn(view)
             button: discord.ui.Button[discord.ui.View] = discord.ui.Button(
@@ -336,9 +320,7 @@ class ConfigCommands(PipeMeta):
             )
 
             @staticmethod
-            async def clbk(
-                _: discord.ui.View, interaction: discord.Interaction[Red]
-            ) -> None:
+            async def clbk(_: discord.ui.View, interaction: discord.Interaction[Red]) -> None:
                 await interaction.response.send_modal(modal)
 
             button.callback = functools.partial(clbk, button)
@@ -355,9 +337,7 @@ class ConfigCommands(PipeMeta):
         else:
             if not value:
                 raise commands.UserFeedbackCheckFailure(
-                    "Value is a required argument for type **{}**.".format(
-                        type.lower()
-                    )
+                    "Value is a required argument for type **{}**.".format(type.lower())
                 )
             if type.lower() == "emoji":
                 value: str = str(await EmojiFinder().convert(ctx, value))
@@ -369,16 +349,12 @@ class ConfigCommands(PipeMeta):
                     description=(
                         "Configured {value} as the value of "
                         "**{object}** for the **{name}** application."
-                    ).format(
-                        value=value, object=type.lower(), name=name.lower()
-                    )
+                    ).format(value=value, object=type.lower(), name=name.lower())
                 ),
                 color=discord.Color.from_str(app.settings.color),
             )
 
-    @application_config.command(
-        name="view", aliases=["ss", "show", "settings", "showsettings"]
-    )
+    @application_config.command(name="view", aliases=["ss", "show", "settings", "showsettings"])
     @app_commands.describe(name="short name of the application")
     @app_commands.autocomplete(name=name_auto_complete)
     async def application_config_view(
@@ -392,9 +368,7 @@ class ConfigCommands(PipeMeta):
         """
         await ctx.defer()
         try:
-            app: Application = await self.manager.get_application(
-                ctx.guild.id, name=name.lower()
-            )
+            app: Application = await self.manager.get_application(ctx.guild.id, name=name.lower())
         except ApplicationError as exc:
             raise commands.UserFeedbackCheckFailure(str(exc))
         settings: AppSettings = app.settings
@@ -429,12 +403,8 @@ class ConfigCommands(PipeMeta):
         )
         embed.add_field(
             name="**__Button Settings__**",
-            value=(
-                "**Label**: {label}\n**Emoji**: {emoji}\n**Style**: {style}"
-            ).format(
-                label=label
-                if (label := app.buttons.label)
-                else "no label configured",
+            value=("**Label**: {label}\n**Emoji**: {emoji}\n**Style**: {style}").format(
+                label=label if (label := app.buttons.label) else "no label configured",
                 emoji=app.buttons.emoji,
                 style=app.buttons.style,
             ),
@@ -442,17 +412,10 @@ class ConfigCommands(PipeMeta):
         )
         embed.add_field(
             name="**__Boolean Button Settings__**",
-            value=(
-                "**__True__**:\n- {yl}\n- {ye}\n\n"
-                "**__False__**:\n- {nl}\n- {ne}\n"
-            ).format(
-                yl=label
-                if (label := app.buttons.choice.yes.label)
-                else "no label configured",
+            value=("**__True__**:\n- {yl}\n- {ye}\n\n" "**__False__**:\n- {nl}\n- {ne}\n").format(
+                yl=label if (label := app.buttons.choice.yes.label) else "no label configured",
                 ye=app.buttons.choice.yes.emoji,
-                nl=label
-                if (label := app.buttons.choice.no.label)
-                else "no label configured",
+                nl=label if (label := app.buttons.choice.no.label) else "no label configured",
                 ne=app.buttons.choice.no.emoji,
             ),
             inline=False,
@@ -460,18 +423,20 @@ class ConfigCommands(PipeMeta):
         embed.add_field(
             name="**__Notification Settings__**",
             value="**Toggle**: {status}\n**Channels**: {channels}\n".format(
-                status="enabled"
-                if (notifs := settings.notifications).toggle
-                else "disabled",
-                channels=", ".join(
-                    "{1}. {0.mention} (`{0.id}`)".format(channel, idx)
-                    if (channel := ctx.guild.get_channel(c))
-                    else "Unknown Channel (`{}`)".format(c)
-                    for idx, c in enumerate(channels[:4])
-                )
-                + ("..." if len(channels) > 4 else "")
-                if (channels := list(notifs.channels))
-                else "no additional channels configured",
+                status="enabled" if (notifs := settings.notifications).toggle else "disabled",
+                channels=(
+                    ", ".join(
+                        (
+                            "{1}. {0.mention} (`{0.id}`)".format(channel, idx)
+                            if (channel := ctx.guild.get_channel(c))
+                            else "Unknown Channel (`{}`)".format(c)
+                        )
+                        for idx, c in enumerate(channels[:4])
+                    )
+                    + ("..." if len(channels) > 4 else "")
+                    if (channels := list(notifs.channels))
+                    else "no additional channels configured"
+                ),
             ),
         )
         embed.set_thumbnail(url=getattr(ctx.guild.icon, "url", None))
@@ -497,11 +462,9 @@ class ConfigCommands(PipeMeta):
                 ).edit(view=self)
 
         view.on_timeout = lambda: tfn(view)
-        select: discord.ui.ChannelSelect[discord.ui.View] = (
-            discord.ui.ChannelSelect(
-                channel_types=[discord.ChannelType.text],
-                placeholder="edit the response logging channel!",
-            )
+        select: discord.ui.ChannelSelect[discord.ui.View] = discord.ui.ChannelSelect(
+            channel_types=[discord.ChannelType.text],
+            placeholder="edit the response logging channel!",
         )
 
         @staticmethod
@@ -524,9 +487,9 @@ class ConfigCommands(PipeMeta):
             item: discord.ui.ChannelSelect[discord.ui.View],
             interaction: discord.Interaction[Red],
         ) -> None:
-            chan: Union[
-                app_commands.AppCommandChannel, app_commands.AppCommandThread
-            ] = item.values[0]
+            chan: Union[app_commands.AppCommandChannel, app_commands.AppCommandThread] = (
+                item.values[0]
+            )
             settings.channel = item.values[0].id
             async with self.config.guild(ctx.guild).apps() as apps:
                 apps.update(**{app.name.lower(): app.model_dump(mode="python")})
@@ -546,9 +509,7 @@ class ConfigCommands(PipeMeta):
         select.callback = functools.partial(clbk, select)
         view.add_item(select)
 
-        message: discord.Message = await ctx.send(
-            embed=embed, **kwargs(ctx.message), view=view
-        )
+        message: discord.Message = await ctx.send(embed=embed, **kwargs(ctx.message), view=view)
         await ctx.send(
             "**Post Message:**\n" + box(app.settings.message, lang="json"),
             **kwargs(message),

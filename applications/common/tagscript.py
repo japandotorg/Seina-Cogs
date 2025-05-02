@@ -38,7 +38,9 @@ if TYPE_CHECKING:
 TAGSCRIPT: Final[int] = 10_000
 
 
-DEFAULT_SETTINGS_MESSAGE: Final[str] = """
+DEFAULT_SETTINGS_MESSAGE: Final[
+    str
+] = """
 {embed({
     "title": "{settings(description)}",
     "color": "{settings(color)}",
@@ -55,14 +57,18 @@ DEFAULT_SETTINGS_MESSAGE: Final[str] = """
     ]
 })}
 """
-DEFAULT_TICKET_MESSAGE: Final[str] = """
+DEFAULT_TICKET_MESSAGE: Final[
+    str
+] = """
 {embed({
     "title": "{member(name)}'s Application Ticket!",
     "color": "{settings(color)}",
     "description": "Please wait patiently for the staff."
 })}
 """
-DEFAULT_NOTIFICATION_MESSAGE: Final[str] = """
+DEFAULT_NOTIFICATION_MESSAGE: Final[
+    str
+] = """
 {embed({
     "description": "New application submitted by {member(name)} for application **{settings(name)}** with response id {id}",
     "color": "{settings(color)}"
@@ -177,9 +183,7 @@ async def messages(
         "server": tse.GuildAdapter(interaction.guild),
         "responses": tse.IntAdapter(len(app.responses)),
     }
-    kwargs: Dict[str, Any] = await cog.manager.process_tagscript(
-        app.settings.message, adapters
-    )
+    kwargs: Dict[str, Any] = await cog.manager.process_tagscript(app.settings.message, adapters)
     if not kwargs:
         await cog.manager.edit_setting_for(
             interaction.guild.id,
@@ -208,9 +212,7 @@ class SettingsAdapter(SimpleAdapter["AppSettings"]):
                 "cooldown": settings.cooldown,
                 "created": int(settings.created_at),
                 "thread": "{}\n{}".format(
-                    "Threads enabled"
-                    if settings.thread.toggle
-                    else "Threads disabled",
+                    "Threads enabled" if settings.thread.toggle else "Threads disabled",
                     box(settings.thread.custom, lang="json"),
                 ),
             }
@@ -227,7 +229,7 @@ class SettingsAdapter(SimpleAdapter["AppSettings"]):
                 return  # pyright: ignore[reportReturnType]
             if isinstance(value, tuple):
                 value, should_escape = value
-            return_value: str = str(value) if value else None  # pyright: ignore[reportAssignmentType]
-        return (
-            tse.escape_content(return_value) if should_escape else return_value
-        )
+            return_value: str = (
+                str(value) if value else None
+            )  # pyright: ignore[reportAssignmentType]
+        return tse.escape_content(return_value) if should_escape else return_value
