@@ -38,9 +38,7 @@ if TYPE_CHECKING:
 TAGSCRIPT: Final[int] = 10_000
 
 
-DEFAULT_SETTINGS_MESSAGE: Final[
-    str
-] = """
+DEFAULT_SETTINGS_MESSAGE: Final[str] = """
 {embed({
     "title": "{settings(description)}",
     "color": "{settings(color)}",
@@ -57,18 +55,14 @@ DEFAULT_SETTINGS_MESSAGE: Final[
     ]
 })}
 """
-DEFAULT_TICKET_MESSAGE: Final[
-    str
-] = """
+DEFAULT_TICKET_MESSAGE: Final[str] = """
 {embed({
     "title": "{member(name)}'s Application Ticket!",
     "color": "{settings(color)}",
     "description": "Please wait patiently for the staff."
 })}
 """
-DEFAULT_NOTIFICATION_MESSAGE: Final[
-    str
-] = """
+DEFAULT_NOTIFICATION_MESSAGE: Final[str] = """
 {embed({
     "description": "New application submitted by {member(name)} for application **{settings(name)}** with response id {id}",
     "color": "{settings(color)}"
@@ -112,14 +106,16 @@ async def threads(
     response: "Response",
     default: str = DEFAULT_THREAD_NAME,
 ) -> Dict[str, Any]:
-    adapters: Dict[str, Any] = DEFAULT_ADAPTERS(interaction.guild, interaction.user, app.settings)
+    adapters: Dict[str, tse.Adapter] = DEFAULT_ADAPTERS(
+        interaction.guild, interaction.user, app.settings
+    )
     adapters.update(
         **{
             "id": tse.StringAdapter(response.id),
         }
     )
     kwargs: Dict[str, Any] = await cog.manager.process_tagscript(
-        app.settings.thread.custom, adapters
+        app.settings.thread.custom, adapters, escape=(True, True)
     )
     if not kwargs:
         await cog.manager.edit_thread_settings(
@@ -142,18 +138,18 @@ async def notifications(
     response: "Response",
     default: str = DEFAULT_NOTIFICATION_MESSAGE,
 ) -> Dict[str, Any]:
-    adapters: Dict[str, tse.Adapter] = {
-        "id": tse.StringAdapter(response.id),
-        **DEFAULT_ADAPTERS(interaction.guild, interaction.user, app.settings),
-    }
+    adapters: Dict[str, tse.Adapter] = DEFAULT_ADAPTERS(
+        interaction.guild, interaction.user, app.settings
+    )
     adapters.update(
         **{
+            "id": tse.StringAdapter(response.id),
             "app": SettingsAdapter(app.settings),
             "color": tse.StringAdapter(app.settings.color),
         }
     )
     kwargs: Dict[str, Any] = await cog.manager.process_tagscript(
-        app.settings.notifications.content, adapters, escape=False
+        app.settings.notifications.content, adapters
     )
     if not kwargs:
         await cog.manager.edit_notification_settings(
@@ -181,7 +177,9 @@ async def messages(
         "server": tse.GuildAdapter(interaction.guild),
         "responses": tse.IntAdapter(len(app.responses)),
     }
-    kwargs: Dict[str, Any] = await cog.manager.process_tagscript(app.settings.message, adapters)
+    kwargs: Dict[str, Any] = await cog.manager.process_tagscript(
+        app.settings.message, adapters
+    )
     if not kwargs:
         await cog.manager.edit_setting_for(
             interaction.guild.id,
@@ -210,7 +208,9 @@ class SettingsAdapter(SimpleAdapter["AppSettings"]):
                 "cooldown": settings.cooldown,
                 "created": int(settings.created_at),
                 "thread": "{}\n{}".format(
-                    "Threads enabled" if settings.thread.toggle else "Threads disabled",
+                    "Threads enabled"
+                    if settings.thread.toggle
+                    else "Threads disabled",
                     box(settings.thread.custom, lang="json"),
                 ),
             }
@@ -227,7 +227,7 @@ class SettingsAdapter(SimpleAdapter["AppSettings"]):
                 return  # pyright: ignore[reportReturnType]
             if isinstance(value, tuple):
                 value, should_escape = value
-            return_value: str = (
-                str(value) if value else None
-            )  # pyright: ignore[reportAssignmentType]
-        return tse.escape_content(return_value) if should_escape else return_value
+            return_value: str = str(value) if value else None  # pyright: ignore[reportAssignmentType]
+        return (
+            tse.escape_content(return_value) if should_escape else return_value
+        )

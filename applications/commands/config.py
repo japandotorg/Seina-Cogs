@@ -22,8 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import contextlib
 import functools
-from typing import Any, Literal, Optional, cast
+from typing import Any, Callable, Dict, Literal, Optional, Union, cast
 
 import discord
 from redbot.core import app_commands, commands
@@ -45,7 +46,9 @@ application_config: commands.HybridGroup[Any, ..., Any] = cast(
 
 class ConfigCommands(PipeMeta):
     @application_config.command(name="channel", aliases=["responsechannel"])
-    @app_commands.describe(name="short name of the application", channel="the response channel")
+    @app_commands.describe(
+        name="short name of the application", channel="the response channel"
+    )
     @app_commands.autocomplete(name=name_auto_complete)
     async def application_config_channel(
         self,
@@ -54,7 +57,7 @@ class ConfigCommands(PipeMeta):
         channel: discord.TextChannel,
     ) -> None:
         """
-        Edit the response channel for the specific application.
+        Edit the response logging channel for the specific application.
 
         **Arguments:**
         - `name    :` short name of the application. (quotes are needed to use spaces)
@@ -63,9 +66,12 @@ class ConfigCommands(PipeMeta):
         **Examples:**
         - `[p]application config channel "event manager" #logging`
         """
-        await self.manager.edit_setting_for(
-            ctx.guild.id, name=name, object="channel", value=channel.id
-        )
+        try:
+            await self.manager.edit_setting_for(
+                ctx.guild.id, name=name, object="channel", value=channel.id
+            )
+        except ApplicationError as error:
+            raise commands.UserFeedbackCheckFailure(error)
         await ctx.send(
             "Successfully changed the response channel to {} ( `{}` ).".format(
                 channel.mention, channel.id
@@ -73,7 +79,9 @@ class ConfigCommands(PipeMeta):
         )
 
     @application_config.command(name="message")
-    @app_commands.describe(name="short name of the application", message="the new post message")
+    @app_commands.describe(
+        name="short name of the application", message="the new post message"
+    )
     @app_commands.autocomplete(name=name_auto_complete)
     async def application_config_message(
         self,
@@ -108,9 +116,12 @@ class ConfigCommands(PipeMeta):
         })}
         ```
         """
-        await self.manager.edit_setting_for(
-            ctx.guild.id, name=name, object="message", value=message
-        )
+        try:
+            await self.manager.edit_setting_for(
+                ctx.guild.id, name=name, object="message", value=message
+            )
+        except ApplicationError as error:
+            raise commands.UserFeedbackCheckFailure(error)
         await ctx.send(
             "Successfully changed the application message to -\n{}".format(
                 box(message, lang="json")
@@ -146,10 +157,14 @@ class ConfigCommands(PipeMeta):
             raise commands.UserFeedbackCheckFailure(
                 "Couldn't convert `{}` to a valid color.".format(color)
             )
-        await self.manager.edit_setting_for(ctx.guild.id, name=name, object="color", value=color)
+        await self.manager.edit_setting_for(
+            ctx.guild.id, name=name, object="color", value=color
+        )
         await ctx.send(
             embed=discord.Embed(
-                description="Successfully changed the application color to `{}`.".format(color),
+                description="Successfully changed the application color to `{}`.".format(
+                    color
+                ),
                 color=discord_color,
             )
         )
@@ -176,12 +191,15 @@ class ConfigCommands(PipeMeta):
         **Examples:**
         - `[p]application config status "event manager" close`
         """
-        await self.manager.edit_setting_for(
-            ctx.guild.id,
-            name=name,
-            object="open",
-            value=True if status.lower() == "open" else False,
-        )
+        try:
+            await self.manager.edit_setting_for(
+                ctx.guild.id,
+                name=name,
+                object="open",
+                value=True if status.lower() == "open" else False,
+            )
+        except ApplicationError as error:
+            raise commands.UserFeedbackCheckFailure(error)
         await ctx.send(
             "Successfully {} submissions for the application named **{}**.".format(
                 "opened" if status.lower() == "open" else "closed", name.lower()
@@ -214,23 +232,30 @@ class ConfigCommands(PipeMeta):
         - `[p]application config thread manager true`
         - `[p]application config thread "event manager" true {member(name)}`
         """
-        await self.manager.edit_thread_settings(
-            ctx.guild.id, name=name, toggle=toggle, value=custom
-        )
+        try:
+            await self.manager.edit_thread_settings(
+                ctx.guild.id, name=name, toggle=toggle, value=custom
+            )
+        except ApplicationError as error:
+            raise commands.UserFeedbackCheckFailure(error)
         await ctx.send(
             "Ok I'll {} threads on responses for the **{}** application from now.".format(
                 "open" if toggle else "not open", name.lower()
             )
         )
 
-    @application_config.command(name="notifications", aliases=["notifs", "notif"])
+    @application_config.command(
+        name="notifications", aliases=["notifs", "notif"]
+    )
     @app_commands.describe()
     @app_commands.autocomplete(name=name_auto_complete)
     async def application_config_notifications(
         self,
         ctx: commands.GuildContext,
         name: commands.Range[str, 1, 20],
-        type: Literal["toggle", "content", "channel", "users", "roles", "everyone"],
+        type: Literal[
+            "toggle", "content", "channel", "users", "roles", "everyone"
+        ],
         *,
         value: commands.Range[str, 1],
     ) -> None:
@@ -258,9 +283,12 @@ class ConfigCommands(PipeMeta):
         })}
         ```
         """
-        await self.manager.edit_notification_settings(
-            ctx.guild.id, name=name.lower(), type=type.lower(), value=value
-        )
+        try:
+            await self.manager.edit_notification_settings(
+                ctx.guild.id, name=name.lower(), type=type.lower(), value=value
+            )
+        except ApplicationError as error:
+            raise commands.UserFeedbackCheckFailure(error)
         await ctx.tick()
 
     @application_config.command(name="button", aliases=["buttons"])
@@ -295,8 +323,12 @@ class ConfigCommands(PipeMeta):
         - `[p]application config button "event manager" label "Click Here To Apply!"`
         """
         if type.lower() == "boolean":
-            app: Application = await self.manager.get_application(ctx.guild.id, name=name.lower())
-            modal: ChooseChoicesModal = ChooseChoicesModal(ctx.author, application=app)
+            app: Application = await self.manager.get_application(
+                ctx.guild.id, name=name.lower()
+            )
+            modal: ChooseChoicesModal = ChooseChoicesModal(
+                ctx.author, application=app
+            )
             view: discord.ui.View = discord.ui.View(timeout=120.0)
             view.on_timeout = lambda: modal.tfn(view)
             button: discord.ui.Button[discord.ui.View] = discord.ui.Button(
@@ -304,7 +336,9 @@ class ConfigCommands(PipeMeta):
             )
 
             @staticmethod
-            async def clbk(_: discord.ui.View, interaction: discord.Interaction[Red]) -> None:
+            async def clbk(
+                _: discord.ui.View, interaction: discord.Interaction[Red]
+            ) -> None:
                 await interaction.response.send_modal(modal)
 
             button.callback = functools.partial(clbk, button)
@@ -321,7 +355,9 @@ class ConfigCommands(PipeMeta):
         else:
             if not value:
                 raise commands.UserFeedbackCheckFailure(
-                    "Value is a required argument for type **{}**.".format(type.lower())
+                    "Value is a required argument for type **{}**.".format(
+                        type.lower()
+                    )
                 )
             if type.lower() == "emoji":
                 value: str = str(await EmojiFinder().convert(ctx, value))
@@ -333,12 +369,16 @@ class ConfigCommands(PipeMeta):
                     description=(
                         "Configured {value} as the value of "
                         "**{object}** for the **{name}** application."
-                    ).format(value=value, object=type.lower(), name=name.lower())
+                    ).format(
+                        value=value, object=type.lower(), name=name.lower()
+                    )
                 ),
                 color=discord.Color.from_str(app.settings.color),
             )
 
-    @application_config.command(name="view", aliases=["ss", "show", "settings", "showsettings"])
+    @application_config.command(
+        name="view", aliases=["ss", "show", "settings", "showsettings"]
+    )
     @app_commands.describe(name="short name of the application")
     @app_commands.autocomplete(name=name_auto_complete)
     async def application_config_view(
@@ -352,7 +392,9 @@ class ConfigCommands(PipeMeta):
         """
         await ctx.defer()
         try:
-            app: Application = await self.manager.get_application(ctx.guild.id, name=name.lower())
+            app: Application = await self.manager.get_application(
+                ctx.guild.id, name=name.lower()
+            )
         except ApplicationError as exc:
             raise commands.UserFeedbackCheckFailure(str(exc))
         settings: AppSettings = app.settings
@@ -362,18 +404,22 @@ class ConfigCommands(PipeMeta):
             "**Channel**: {channel}\n"
             "**Color**: {color}\n"
             "**Status**: {status}\n"
-            "**Thread**: {thread}\n"
+            "**__Thread__**:\n"
+            "- **toggle**: {thread}\n"
+            "- **message**:\n"
+            "{message}\n"
         ).format(
             name=settings.name,
             description=settings.description,
             channel=(
-                "{0.mention} {0.id}".format(chan)
+                "{0.mention} (`{0.id}`)".format(chan)
                 if (chan := ctx.guild.get_channel(settings.channel))
-                else "Unknown Channel {}".format(settings.channel)
+                else "unknown channel {}".format(settings.channel)
             ),
             color=settings.color,
-            status="Submission open" if settings.open else "Submission closed",
-            thread="enabled" if settings.thread else "disabled",
+            status="submission open" if settings.open else "submission closed",
+            thread="enabled" if settings.thread.toggle else "disabled",
+            message=box(settings.thread.custom, lang="json"),
         )
         embed: discord.Embed = discord.Embed(
             title="Application Config",
@@ -383,8 +429,12 @@ class ConfigCommands(PipeMeta):
         )
         embed.add_field(
             name="**__Button Settings__**",
-            value=("**Label**: {label}\n**Emoji**: {emoji}\n**Style**: {style}").format(
-                label=label if (label := app.buttons.label) else "no label configured",
+            value=(
+                "**Label**: {label}\n**Emoji**: {emoji}\n**Style**: {style}"
+            ).format(
+                label=label
+                if (label := app.buttons.label)
+                else "no label configured",
                 emoji=app.buttons.emoji,
                 style=app.buttons.style,
             ),
@@ -392,22 +442,118 @@ class ConfigCommands(PipeMeta):
         )
         embed.add_field(
             name="**__Boolean Button Settings__**",
-            value=("**__True__**:\n- {yl}\n- {ye}\n\n" "**__False__**:\n- {nl}\n- {ne}\n").format(
-                yl=label if (label := app.buttons.choice.yes.label) else "no label configured",
+            value=(
+                "**__True__**:\n- {yl}\n- {ye}\n\n"
+                "**__False__**:\n- {nl}\n- {ne}\n"
+            ).format(
+                yl=label
+                if (label := app.buttons.choice.yes.label)
+                else "no label configured",
                 ye=app.buttons.choice.yes.emoji,
-                nl=label if (label := app.buttons.choice.no.label) else "no label configured",
+                nl=label
+                if (label := app.buttons.choice.no.label)
+                else "no label configured",
                 ne=app.buttons.choice.no.emoji,
             ),
             inline=False,
         )
+        embed.add_field(
+            name="**__Notification Settings__**",
+            value="**Toggle**: {status}\n**Channels**: {channels}\n".format(
+                status="enabled"
+                if (notifs := settings.notifications).toggle
+                else "disabled",
+                channels=", ".join(
+                    "{1}. {0.mention} (`{0.id}`)".format(channel, idx)
+                    if (channel := ctx.guild.get_channel(c))
+                    else "Unknown Channel (`{}`)".format(c)
+                    for idx, c in enumerate(channels[:4])
+                )
+                + ("..." if len(channels) > 4 else "")
+                if (channels := list(notifs.channels))
+                else "no additional channels configured",
+            ),
+        )
         embed.set_thumbnail(url=getattr(ctx.guild.icon, "url", None))
         embed.set_footer(text="Created at")
+        kwargs: Callable[  # noqa: E731
+            [discord.Message],
+            Dict[str, Union[discord.MessageReference, discord.AllowedMentions]],
+        ] = lambda m: {
+            "reference": m.to_reference(fail_if_not_exists=False),
+            "allowed_mentions": discord.AllowedMentions.none(),
+        }
+        view: discord.ui.View = discord.ui.View(timeout=120.0)
+
+        @staticmethod
+        async def tfn(self: discord.ui.View) -> None:
+            for item in self.children:
+                item: discord.ui.Item[discord.ui.View]
+                item.disabled = True  # pyright: ignore[reportAttributeAccessIssue]
+            with contextlib.suppress(discord.HTTPException):
+                await cast(
+                    discord.Message,
+                    self._message,  # pyright: ignore[reportAttributeAccessIssue]
+                ).edit(view=self)
+
+        view.on_timeout = lambda: tfn(view)
+        select: discord.ui.ChannelSelect[discord.ui.View] = (
+            discord.ui.ChannelSelect(
+                channel_types=[discord.ChannelType.text],
+                placeholder="edit the response logging channel!",
+            )
+        )
+
+        @staticmethod
+        async def ichk(
+            _: discord.ui.ChannelSelect[discord.ui.View],
+            interaction: discord.Interaction[Red],
+            /,
+        ) -> bool:
+            if await interaction.client.is_admin(interaction.user):
+                return True
+            await interaction.response.send_message(
+                "You're not allowed to use this interaction!", ephemeral=True
+            )
+            return False
+
+        select.interaction_check = functools.partial(ichk, select)
+
+        @staticmethod
+        async def clbk(
+            item: discord.ui.ChannelSelect[discord.ui.View],
+            interaction: discord.Interaction[Red],
+        ) -> None:
+            chan: Union[
+                app_commands.AppCommandChannel, app_commands.AppCommandThread
+            ] = item.values[0]
+            settings.channel = item.values[0].id
+            async with self.config.guild(ctx.guild).apps() as apps:
+                apps.update(**{app.name.lower(): app.model_dump(mode="python")})
+            await interaction.response.send_message(
+                embed=discord.Embed(
+                    title="Application - **{}**".format(app.name.lower()),
+                    description="Configured {} (`{}`) as the new response logging channel.".format(
+                        chan.mention, chan.id
+                    ),
+                    color=discord.Color.from_str(settings.color),
+                    timestamp=discord.utils.utcnow(),
+                )
+                .set_thumbnail(url=getattr(ctx.guild.icon, "url", None))
+                .set_footer(text="edited at")
+            )
+
+        select.callback = functools.partial(clbk, select)
+        view.add_item(select)
+
         message: discord.Message = await ctx.send(
-            embed=embed,
-            reference=ctx.message.to_reference(fail_if_not_exists=False),
-            allowed_mentions=discord.AllowedMentions.none(),
+            embed=embed, **kwargs(ctx.message), view=view
         )
         await ctx.send(
-            "**Message:**\n" + box(app.settings.message, lang="json"),
-            reference=message.to_reference(fail_if_not_exists=False),
+            "**Post Message:**\n" + box(app.settings.message, lang="json"),
+            **kwargs(message),
+        )
+        await ctx.send(
+            "**Notification Message:**\n" + box(notifs.content, lang="json"),
+            **kwargs(message),
         )

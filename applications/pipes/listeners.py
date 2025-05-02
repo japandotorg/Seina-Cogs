@@ -234,6 +234,7 @@ class Listeners(PipeMeta):
                 user=interaction.user,
                 response=response.id,
             ),
+            color=discord.Color.from_str(app.settings.color),
             timestamp=now,
         )
         embed.set_author(
