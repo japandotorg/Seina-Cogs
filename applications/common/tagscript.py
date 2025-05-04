@@ -121,7 +121,7 @@ async def threads(
         }
     )
     kwargs: Dict[str, Any] = await cog.manager.process_tagscript(
-        app.settings.thread.custom, adapters, escape=(True, True)
+        app.settings.thread.custom, adapters
     )
     if not kwargs:
         await cog.manager.edit_thread_settings(
