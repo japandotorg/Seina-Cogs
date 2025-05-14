@@ -52,15 +52,6 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
             "buttonroles": {}
         }
 
-    async def cog_load(self) -> None:
-        """Start async task after Red is fully ready and config is registered."""
-        self._task = asyncio.create_task(self._initialize_button_roles())
-
-    async def cog_unload(self) -> None:
-        """Clean up tasks when cog unloads."""
-        if self._task:
-            self._task.cancel()
-
     async def initialize(self) -> None:
         """Initialize button roles."""
         log.debug("ButtonRoles Initialize")
