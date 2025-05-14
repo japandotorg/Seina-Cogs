@@ -45,7 +45,7 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
 
     def __init__(self, *_args: Any) -> None:
         super().__init__(*_args)
-        self.method: str = "build"
+        self.button_method: str = "build"
         self.cache["buttonroles"] = {"message_cache": set()}
 
         default_guild = {
@@ -328,13 +328,13 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
             if channel is None:
                 continue
             
-            if self.method == "fetch":
+            if self.button_method == "fetch":
                 try:
                     message: discord.Message = await channel.fetch_message(int(message_id))
                     link = message.jump_url
                 except discord.NotFound:
                     continue
-            elif self.method == "build":
+            elif self.button_method == "build":
                 link = f"https://discord.com/channels/{ctx.guild.id}/{channel.id}/{message_id}"
             else:
                 link = ""
