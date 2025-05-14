@@ -1,28 +1,3 @@
-"""
-MIT License
-
-Copyright (c) 2020-2023 PhenoM4n4n
-Copyright (c) 2023-present japandotorg
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
-
 import asyncio
 import discord
 import logging
@@ -47,12 +22,10 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
         super().__init__(*_args)
         self.method: str = "build"
         self.cache["buttonroles"] = {"message_cache": set()}
-        self._task: Optional[asyncio.Task] = None
 
         default_guild = {
             "buttonroles": {}
         }
-        self.config.register_guild(**default_guild)
 
     async def cog_load(self) -> None:
         """Start async task after Red is fully ready and config is registered."""
@@ -66,7 +39,8 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
     async def initialize(self) -> None:
         """Initialize button roles."""
         log.debug("ButtonRoles Initialize")
-        await self._update_cache()
+        self.create_task(self._load_existing_button_roles())
+        await self._update_button_cache()
         await super().initialize()
 
     async def _initialize_button_roles(self) -> None:
@@ -77,7 +51,7 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
         except Exception as e:
             log.exception("Failed to initialize button roles", exc_info=e)
 
-    async def _update_cache(self) -> None:
+    async def _update_button_cache(self) -> None:
         """Update the button roles message cache."""
         all_guilds = await self.config.all_guilds()
         for guild_id, guild_data in all_guilds.items():
