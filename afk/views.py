@@ -62,9 +62,8 @@ class AFKView(discord.ui.View):
         self.add_item(CloseButton())
 
     async def on_timeout(self) -> None:
-        disable_items(self)
         try:
-            await self._message.edit(view=self)  # type: ignore
+            await self._message.delete()  # type: ignore
         except discord.HTTPException:
             pass
 
