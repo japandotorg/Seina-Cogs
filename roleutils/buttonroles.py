@@ -28,7 +28,7 @@ import discord
 import logging
 from typing import Any, Dict, Optional, Union
 
-from redbot.core import commands, Config
+from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.utils import menus
 from redbot.core.utils.predicates import MessagePredicate
@@ -46,60 +46,35 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
     def __init__(self, *_args: Any) -> None:
         super().__init__(*_args)
         self.button_method: str = "build"
-        self.cache["buttonroles"] = {"message_cache": set()}
+        self.active_button_roles = {}  
+        self._task: Optional[asyncio.Task] = None
 
-        default_guild = {
-            "buttonroles": {}
-        }
+    async def cog_load(self) -> None:
+        """Start async task after Red is fully ready."""
+        self._task = asyncio.create_task(self._initialize_button_roles())
 
-    async def initialize(self) -> None:
-        """Initialize button roles."""
-        log.debug("ButtonRoles Initialize")
-        self.create_task(self._load_existing_button_roles())
-        await self._update_button_cache()
-        await super().initialize()
+    async def cog_unload(self) -> None:
+        """Clean up tasks when cog unloads."""
+        if self._task:
+            self._task.cancel()
 
     async def _initialize_button_roles(self) -> None:
         """Background task to initialize button roles."""
-        try:
-            await self.bot.wait_until_red_ready()
-            await self._load_existing_button_roles()
-        except Exception as e:
-            log.exception("Failed to initialize button roles", exc_info=e)
-
-    async def _update_button_cache(self) -> None:
-        """Update the button roles message cache."""
-        all_guilds = await self.config.all_guilds()
-        for guild_id, guild_data in all_guilds.items():
-            if "buttonroles" in guild_data:
-                for message_id in guild_data["buttonroles"]:
-                    self.cache["buttonroles"]["message_cache"].add(int(message_id))
-
-    async def _load_existing_button_roles(self) -> None:
-        """Load existing button roles from config."""
-        all_guilds = await self.config.all_guilds()
-        for guild in self.bot.guilds:
-            guild_data = all_guilds.get(str(guild.id), {})
-            if "buttonroles" not in guild_data:
-                continue
-
-            buttonroles = guild_data["buttonroles"]
-            for message_id, data in buttonroles.items():
-                channel = self.bot.get_channel(int(data["channel"]))
-                if channel:
-                    try:
-                        message = await channel.fetch_message(int(message_id))
-                        await self._add_buttons_to_message(message, data["bindings"])
-                    except (discord.NotFound, discord.Forbidden, discord.HTTPException) as e:
-                        log.debug(f"Failed to load button roles for message {message_id}: {e}")
-                        continue
+        await self.bot.wait_until_red_ready()
 
     async def _add_buttons_to_message(self, message: discord.Message, bindings: Dict[str, int]) -> None:
         """Add buttons to a message based on bindings."""
-        view = discord.ui.View(timeout=None)
+        if message.guild.id not in self.active_button_roles:
+            self.active_button_roles[message.guild.id] = {}
+            
+        self.active_button_roles[message.guild.id][message.id] = {
+            "channel": message.channel.id,
+            "bindings": bindings
+        }
 
+        view = discord.ui.View(timeout=None)
         for emoji, role_id in bindings.items():
-            role = message.guild.get_role(int(role_id))
+            role = message.guild.get_role(role_id)
             if role:
                 button = discord.ui.Button(
                     label=None,
@@ -161,31 +136,37 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Bind a button role to an emoji on a message."""
         emoji = str(emoji)
-        async with self.config.guild(ctx.guild).buttonroles() as br:
-            if str(message.id) not in br:
-                br[str(message.id)] = {"channel": message.channel.id, "bindings": {}}
-            
-            old_role_id = br[str(message.id)]["bindings"].get(emoji)
-            if old_role_id:
-                old_role = ctx.guild.get_role(old_role_id)
-                msg = await ctx.send(
-                    f"`{old_role}` is already binded to {emoji} on {message.jump_url}\n"
-                    "Would you like to override it?"
-                )
-                pred = MessagePredicate.yes_or_no(ctx)
-                try:
-                    await self.bot.wait_for("message", check=pred, timeout=60)
-                except asyncio.TimeoutError:
-                    return await ctx.send("Bind cancelled.")
-
-                if not pred.result:
-                    return await ctx.send("Bind cancelled.")
-
-            br[str(message.id)]["bindings"][emoji] = role.id
         
-        await self._add_buttons_to_message(message, {emoji: role.id})
+        if ctx.guild.id not in self.active_button_roles:
+            self.active_button_roles[ctx.guild.id] = {}
+            
+        if message.id not in self.active_button_roles[ctx.guild.id]:
+            self.active_button_roles[ctx.guild.id][message.id] = {
+                "channel": message.channel.id,
+                "bindings": {}
+            }
+        
+        bindings = self.active_button_roles[ctx.guild.id][message.id]["bindings"]
+        
+        if emoji in bindings:
+            old_role = ctx.guild.get_role(bindings[emoji])
+            msg = await ctx.send(
+                f"`{old_role}` is already binded to {emoji} on {message.jump_url}\n"
+                "Would you like to override it?"
+            )
+            pred = MessagePredicate.yes_or_no(ctx)
+            try:
+                await self.bot.wait_for("message", check=pred, timeout=60)
+            except asyncio.TimeoutError:
+                return await ctx.send("Bind cancelled.")
+
+            if not pred.result:
+                return await ctx.send("Bind cancelled.")
+
+        bindings[emoji] = role.id
+        
+        await self._add_buttons_to_message(message, bindings)
         await ctx.send(f"`{role}` has been binded to {emoji} on {message.jump_url}")
-        self.cache["buttonroles"]["message_cache"].add(message.id)
 
     @commands.bot_has_permissions(manage_roles=True, embed_links=True)
     @buttonrole.command(name="create")
@@ -198,13 +179,7 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
         *,
         name: Optional[str] = None,
     ):
-        """Create a button role.
-
-        Emoji and role groups should be seperated by a ';' and have no space.
-
-        Example:
-            - [p]buttonrole create 🎃;@SpookyRole 🅱️;MemeRole #role_channel Red
-        """
+        """Create a button role."""
         if not emoji_role_groups:
             raise commands.BadArgument
         channel = channel or ctx.channel
@@ -234,15 +209,12 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
 
         duplicates = {}
         bindings = {}
-        async with self.config.guild(ctx.guild).buttonroles() as br:
-            br[str(message.id)] = {"channel": message.channel.id, "bindings": {}}
-            for emoji, role in emoji_role_groups:
-                emoji_str = str(emoji)
-                if emoji_str in bindings or role.id in bindings.values():
-                    duplicates[emoji] = role
-                else:
-                    bindings[emoji_str] = role.id
-            br[str(message.id)]["bindings"] = bindings
+        for emoji, role in emoji_role_groups:
+            emoji_str = str(emoji)
+            if emoji_str in bindings or role.id in bindings.values():
+                duplicates[emoji] = role
+            else:
+                bindings[emoji_str] = role.id
         
         await self._add_buttons_to_message(message, bindings)
         
@@ -252,7 +224,6 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
                 dupes += f"{emoji};{role}\n"
             await ctx.send(dupes)
         await ctx.tick()
-        self.cache["buttonroles"]["message_cache"].add(message.id)
 
     @buttonrole.group(name="delete", aliases=["remove"], invoke_without_command=True)
     async def buttonrole_delete(
@@ -261,8 +232,7 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
         message: discord.Message,
     ):
         """Delete an entire button role for a message."""
-        message_data = await self.config.guild(ctx.guild).buttonroles.all()
-        if str(message.id) not in message_data or not message_data[str(message.id)].get("bindings"):
+        if ctx.guild.id not in self.active_button_roles or message.id not in self.active_button_roles[ctx.guild.id]:
             return await ctx.send("There are no button roles set up for that message.")
 
         msg = await ctx.send(
@@ -275,15 +245,12 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
             await ctx.send("Action cancelled.")
 
         if pred.result:
-            async with self.config.guild(ctx.guild).buttonroles() as br:
-                if str(message.id) in br:
-                    del br[str(message.id)]
+            del self.active_button_roles[ctx.guild.id][message.id]
             try:
                 await message.edit(view=None)
             except discord.HTTPException:
                 pass
             await ctx.send("Button roles cleared for that message.")
-            self.cache["buttonroles"]["message_cache"].discard(message.id)
         else:
             await ctx.send("Action cancelled.")
 
@@ -296,41 +263,40 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Delete an emoji-role bind for a button role."""
         emoji = str(emoji)
-        async with self.config.guild(ctx.guild).buttonroles() as br:
-            if str(message.id) not in br or emoji not in br[str(message.id)]["bindings"]:
-                return await ctx.send("That wasn't a valid emoji for that message.")
+        if (ctx.guild.id not in self.active_button_roles or 
+            message.id not in self.active_button_roles[ctx.guild.id] or
+            emoji not in self.active_button_roles[ctx.guild.id][message.id]["bindings"]):
+            return await ctx.send("That wasn't a valid emoji for that message.")
             
-            del br[str(message.id)]["bindings"][emoji]
-            if not br[str(message.id)]["bindings"]:
-                del br[str(message.id)]
-                try:
-                    await message.edit(view=None)
-                except discord.HTTPException:
-                    pass
-                self.cache["buttonroles"]["message_cache"].discard(message.id)
-            else:
-                await self._add_buttons_to_message(message, br[str(message.id)]["bindings"])
+        del self.active_button_roles[ctx.guild.id][message.id]["bindings"][emoji]
+        
+        if not self.active_button_roles[ctx.guild.id][message.id]["bindings"]:
+            del self.active_button_roles[ctx.guild.id][message.id]
+            try:
+                await message.edit(view=None)
+            except discord.HTTPException:
+                pass
+        else:
+            await self._add_buttons_to_message(message, self.active_button_roles[ctx.guild.id][message.id]["bindings"])
         
         await ctx.send(f"That button role bind was deleted.")
 
     @buttonrole.command(name="list")
     async def button_list(self, ctx: commands.Context):
         """View the button roles on this server."""
-        data = await self.config.guild(ctx.guild).buttonroles.all()
-        if not data:
+        if ctx.guild.id not in self.active_button_roles or not self.active_button_roles[ctx.guild.id]:
             return await ctx.send("There are no button roles set up here!")
 
         guild: discord.Guild = ctx.guild
-        to_delete_message_emoji_ids = {}
         button_roles = []
-        for index, (message_id, message_data) in enumerate(data.items(), start=1):
+        for index, (message_id, message_data) in enumerate(self.active_button_roles[ctx.guild.id].items(), start=1):
             channel: discord.TextChannel = guild.get_channel(message_data["channel"])
             if channel is None:
                 continue
             
             if self.button_method == "fetch":
                 try:
-                    message: discord.Message = await channel.fetch_message(int(message_id))
+                    message: discord.Message = await channel.fetch_message(message_id)
                     link = message.jump_url
                 except discord.NotFound:
                     continue
@@ -339,17 +305,12 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 link = ""
 
-            to_delete_emoji_ids = []
-
             buttons = [f"[Button Role #{index}]({link})"]
             for emoji, role_id in message_data["bindings"].items():
                 role = ctx.guild.get_role(role_id)
                 if role:
                     buttons.append(f"{emoji}: {role.mention}")
-                else:
-                    to_delete_emoji_ids.append(emoji)
-            if to_delete_emoji_ids:
-                to_delete_message_emoji_ids[message_id] = to_delete_emoji_ids
+
             if len(buttons) > 1:
                 button_roles.append("\n".join(buttons))
         if not button_roles:
@@ -370,62 +331,21 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
             embeds.append(e)
         await menus.menu(ctx, embeds, menus.DEFAULT_CONTROLS)
 
-        if to_delete_message_emoji_ids:
-            for message_id, emojis in to_delete_message_emoji_ids.items():
-                async with self.config.guild(ctx.guild).buttonroles() as br:
-                    if message_id in br:
-                        for emoji in emojis:
-                            if emoji in br[message_id]["bindings"]:
-                                del br[message_id]["bindings"][emoji]
-                        if not br[message_id]["bindings"]:
-                            del br[message_id]
-                            self.cache["buttonroles"]["message_cache"].discard(int(message_id))
-
-    @commands.is_owner()
-    @buttonrole.command(hidden=True)
-    async def clear(self, ctx: commands.Context):
-        """Clear all ButtonRole data."""
-        msg = await ctx.send("Are you sure you want to clear all button role data?")
-        pred = MessagePredicate.yes_or_no(ctx)
-        try:
-            await self.bot.wait_for("message", check=pred, timeout=60)
-        except asyncio.TimeoutError:
-            await ctx.send("Action cancelled.")
-
-        if pred.result:
-            await self.config.guild(ctx.guild).buttonroles.clear()
-            await ctx.send("Data cleared.")
-            self.cache["buttonroles"]["message_cache"].clear()
-        else:
-            await ctx.send("Action cancelled.")
-
     @commands.Cog.listener()
     async def on_raw_message_delete(self, payload: discord.RawMessageDeleteEvent):
         if payload.guild_id is None:
             return
 
-        if payload.message_id not in self.cache["buttonroles"]["message_cache"]:
-            return
-
-        if await self.bot.cog_disabled_in_guild_raw(self.qualified_name, payload.guild_id):
-            return
-
-        async with self.config.guild_from_id(payload.guild_id).buttonroles() as br:
-            if str(payload.message_id) in br:
-                del br[str(payload.message_id)]
-        self.cache["buttonroles"]["message_cache"].discard(payload.message_id)
+        if (payload.guild_id in self.active_button_roles and 
+            payload.message_id in self.active_button_roles[payload.guild_id]):
+            del self.active_button_roles[payload.guild_id][payload.message_id]
 
     @commands.Cog.listener()
     async def on_raw_bulk_message_delete(self, payload: discord.RawBulkMessageDeleteEvent):
         if payload.guild_id is None:
             return
 
-        if await self.bot.cog_disabled_in_guild_raw(self.qualified_name, payload.guild_id):
-            return
-
-        async with self.config.guild_from_id(payload.guild_id).buttonroles() as br:
+        if payload.guild_id in self.active_button_roles:
             for message_id in payload.message_ids:
-                if message_id in self.cache["buttonroles"]["message_cache"]:
-                    if str(message_id) in br:
-                        del br[str(message_id)]
-                    self.cache["buttonroles"]["message_cache"].discard(message_id)
+                if message_id in self.active_button_roles[payload.guild_id]:
+                    del self.active_button_roles[payload.guild_id][message_id]
