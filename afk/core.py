@@ -93,7 +93,7 @@ class AFK(commands.Cog):
 
     def _make_message(self, message: discord.Message) -> str:
         return (
-            f"` - ` {message.author.mention} [pinged you in]({message.jump_url}) "
+            f"{'` - `' if 759180080328081450 not in self.bot.owner_ids else '<a:mel_whitedot:930948764674449498>'} {message.author.mention} [pinged you in]({message.jump_url}) "
             f"{message.channel.mention} <t:{int(datetime.now(timezone.utc).timestamp())}:R>\n"  # type: ignore
             f"**Message Content**: {message.content}"
         )
@@ -257,7 +257,7 @@ class AFK(commands.Cog):
                 await ctx.send(
                     embed=discord.Embed(
                         title="You're now AFK!",
-                        description=f"**Message:**\n- {message}",
+                        description=f"**Message:**\n{'-' if 759180080328081450 not in self.bot.owner_ids else '<a:mel_whitedot:930948764674449498>'} {message}",
                         color=ctx.author.color,
                     ),
                     reference=ctx.message.to_reference(fail_if_not_exists=False),
@@ -496,7 +496,7 @@ class AFK(commands.Cog):
                 for i, (member, afk_time, message) in enumerate(entries, start=index + 1):
                     embed.add_field(
                         name=f"**{i}.** {member.name} ({member.id})",
-                        value=f"- {message} - <t:{afk_time}:R>",
+                        value=f"{'-' if 759180080328081450 not in self.bot.owner_ids else '<a:mel_whitedot:930948764674449498>'} {message} - <t:{afk_time}:R>",
                         inline=False,
                     )
 

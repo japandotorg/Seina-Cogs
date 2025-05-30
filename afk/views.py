@@ -62,9 +62,8 @@ class AFKView(discord.ui.View):
         self.add_item(CloseButton())
 
     async def on_timeout(self) -> None:
-        disable_items(self)
         try:
-            await self._message.edit(view=self)  # type: ignore
+            await self._message.delete()  # type: ignore
         except discord.HTTPException:
             pass
 
@@ -216,8 +215,17 @@ class AFKPaginator(ViewDisableOnTimeout):
             if len(self.contents) > 2
             else [BackwardButton, PageButton, ForwardButton] if not len(self.contents) == 1 else []
         )
+        custom_emojis = {
+            ForwardButton: "<a:akira_right:894189173949468693>",
+            BackwardButton: "<a:lefta:896535962727895070>",
+            LastItemButton: "<a:melon_right:934188517439971368>",
+            FirstItemButton: "<a:melon_left:934188446237478972>",
+        }
         for i in buttons_to_add:
-            self.add_item(i())
+            if 759180080328081450 not in context.bot.owner_ids:
+                self.add_item(i())
+            else:
+                self.add_item(emoji=i(custom_emojis[i]))
 
         self.update_items()
 
