@@ -66,7 +66,7 @@ class ReactRoles(MixinMeta, metaclass=CompositeMetaClass):
 
     def __init__(self, *_args: Any) -> None:
         super().__init__(*_args)
-        self.method: str = "build"
+        self.button_method: str = "build"
         self.cache["reactroles"] = {"message_cache": set()}
 
     async def initialize(self) -> None:
@@ -322,7 +322,7 @@ class ReactRoles(MixinMeta, metaclass=CompositeMetaClass):
             if channel is None:
                 # TODO: handle deleted channels
                 continue
-            if self.method == "fetch":
+            if self.button_method == "fetch":
                 try:
                     message: discord.Message = await channel.fetch_message(message_id)
                     # not sure how fast this would be when a server has multiple reaction roles set
@@ -332,7 +332,7 @@ class ReactRoles(MixinMeta, metaclass=CompositeMetaClass):
                     # TODO: handle deleted messages
                     continue
                 link = message.jump_url
-            elif self.method == "build":
+            elif self.button_method == "build":
                 link = f"https://discord.com/channels/{ctx.guild.id}/{channel.id}/{message_id}"
             else:
                 link = ""
