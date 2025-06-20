@@ -153,7 +153,7 @@ class Answer(BaseModel):
     question: Annotated[str, Field()]
     type: Types
     answer: Annotated[str, Field()]
-    
+
 
 class Voters(BaseModel):
     up: List[int] = Field(default_factory=list)
