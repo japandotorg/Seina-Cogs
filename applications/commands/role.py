@@ -152,7 +152,7 @@ class RoleCommands(PipeMeta):
         name: str,
         event: Literal["apply", "submit"],
         mode: Literal["add", "delete"],
-        roles: Optional[commands.Greedy[discord.Role]] = None,
+        roles: commands.Greedy[discord.Role] = None,
     ) -> None:
         """
         Manage the event roles for a specific application.

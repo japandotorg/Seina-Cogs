@@ -153,6 +153,12 @@ class Answer(BaseModel):
     question: Annotated[str, Field()]
     type: Types
     answer: Annotated[str, Field()]
+    
+
+class Voters(BaseModel):
+    up: List[int] = Field(default_factory=list)
+    down: List[int] = Field(default_factory=list)
+    null: List[int] = Field(default_factory=list)
 
 
 class Response(BaseModel):
