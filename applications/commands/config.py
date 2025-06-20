@@ -516,7 +516,7 @@ class ConfigCommands(PipeMeta):
         view.add_item(select)
 
         message: discord.Message = await ctx.send(embed=embed, **kwargs(ctx.message), view=view)
-        setattr(select, "_message", message)
+        setattr(view, "_message", message)
         await ctx.send(
             "**Post Message:**\n" + box(app.settings.message, lang="json"),
             **kwargs(message),

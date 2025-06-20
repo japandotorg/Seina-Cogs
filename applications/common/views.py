@@ -29,7 +29,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union, cast
 
 import discord
 from discord.ext.commands import converter
-from redbot.core import commands
+from redbot.core import app_commands, commands
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.views import ConfirmView, SimpleMenu
@@ -403,11 +403,11 @@ class DynamicApplyButton(
         )
         if not cog:
             log.error("No idea how this happened, but the application cog seems to be unloaded.")
-            raise commands.CheckFailure()
+            raise app_commands.CheckFailure()
         try:
             app: Application = await cog.manager.get_application(guild_id, name=name.lower())
         except ApplicationError:
-            raise commands.CheckFailure()
+            raise app_commands.CheckFailure()
         data: Buttons = app.buttons
         return cls(
             guild_id,

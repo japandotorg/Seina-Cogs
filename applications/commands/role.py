@@ -22,18 +22,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Any, List, Literal, cast
+from typing import Any, List, Literal, Optional, cast
 
 import discord
 from redbot.core import app_commands, commands
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify
 
 from ..abc import PipeMeta
-from ..common.exceptions import ApplicationError
-from ..common.menus import EmojiMenu
-from ..common.models import Application
-from ..common.utils import name_auto_complete
 from ..pipes.groups import Groups
+from ..common.menus import EmojiMenu
+from ..common.utils import name_auto_complete
+from ..common.exceptions import ApplicationError
+from ..common.models import Application, EventRoles
 
 application_role: commands.HybridGroup[Any, ..., Any] = cast(
     commands.HybridGroup[Any, ..., Any], Groups.application_role
@@ -64,7 +65,9 @@ class RoleCommands(PipeMeta):
         - `roles         :` list of roles separated by spaces.
         """
         try:
-            app: Application = await self.manager.get_application(ctx.guild.id, name=name)
+            app: Application = await self.manager.get_application(
+                ctx.guild.id, name=name
+            )
         except ApplicationError as error:
             raise commands.UserFeedbackCheckFailure(str(error))
         whitelist: List[int] = app.roles.whitelist
@@ -112,7 +115,9 @@ class RoleCommands(PipeMeta):
         - `roles         :` list of roles separated by spaces.
         """
         try:
-            app: Application = await self.manager.get_application(ctx.guild.id, name=name)
+            app: Application = await self.manager.get_application(
+                ctx.guild.id, name=name
+            )
         except ApplicationError as error:
             raise commands.UserFeedbackCheckFailure(str(error))
         blacklist: List[int] = app.roles.blacklist
@@ -137,8 +142,85 @@ class RoleCommands(PipeMeta):
             )
         )
 
+    @application_role.command(name="event", aliases=["events"])
+    @app_commands.describe(
+        name="short name of the application.",
+        event="the specifc event to trigger the role adding for.",
+        mode="add or delete entries.",
+        roles="list of roles separated by spaces."
+    )
+    @app_commands.autocomplete(name=name_auto_complete)
+    async def application_role_event(
+        self,
+        ctx: commands.GuildContext,
+        name: str,
+        event: Literal["apply", "submit"],
+        mode: Literal["add", "delete"],
+        roles: Optional[commands.Greedy[discord.Role]] = None,
+    ) -> None:
+        """
+        Manage the event roles for a specific application.
+
+        **Arguments:**
+        - `name  :` short name of the application. (quotes are needed to use spaces)
+        - `event :` the specifc event to trigger the role adding for.
+        - `mode` :` add or delete entries.
+        - `roles :` list of roles separated by spaces.
+        """
+        try:
+            app: Application = await self.manager.get_application(
+                ctx.guild.id, name=name
+            )
+        except ApplicationError as error:
+            raise commands.UserFeedbackCheckFailure(str(error))
+        events: List[EventRoles] = app.roles.events
+        modified: Optional[EventRoles] = None
+        async for evt in AsyncIter(events):
+            if event.lower() == evt.type.lower():
+                modified: Optional[EventRoles] = evt
+                break
+        if mode.lower() == "delete":
+            if not modified:
+                raise commands.UserFeedbackCheckFailure(
+                    "No entry for that event exists in the **{}** application.".format(
+                        name.lower()
+                    )
+                )
+            events.remove(modified)
+        elif not modified:
+            if not roles:
+                raise commands.UserFeedbackCheckFailure(
+                    "No roles were provided, try again later!"
+                )
+            modified: Optional[EventRoles] = EventRoles(
+                type=event.lower(),
+                mode=mode.lower(),
+                roles=[r.id async for r in AsyncIter(roles)],
+            )
+        else:
+            if not roles:
+                raise commands.UserFeedbackCheckFailure(
+                    "No roles were provided, try again later!"
+                )
+            async for role in AsyncIter(roles):
+                if mode.lower() == "add":
+                    if role.id not in modified.roles:
+                        modified.roles.append(role.id)
+                elif mode.lower() == "remove":
+                    if role.id in modified.roles:
+                        modified.roles.remove(role.id)
+                else:
+                    raise commands.UserFeedbackCheckFailure(
+                        "Uh Oh, something went wrong, try again later!"
+                    )
+        async with self.config.guild(ctx.guild).apps() as apps:
+            apps.update(**{name.lower(): app.model_dump(mode="python")})
+        await ctx.tick()
+
     @application_role.command(name="view", aliases=["list"])
-    @app_commands.describe(item="whitelist or blacklist", name="short name of the application")
+    @app_commands.describe(
+        item="whitelist or blacklist", name="short name of the application"
+    )
     @app_commands.autocomplete(name=name_auto_complete)
     async def application_role_view(
         self,
@@ -154,7 +236,9 @@ class RoleCommands(PipeMeta):
         - `name :` short name of the application. (quotes are needed to use spaces)
         """
         try:
-            app: Application = await self.manager.get_application(ctx.guild.id, name=name)
+            app: Application = await self.manager.get_application(
+                ctx.guild.id, name=name
+            )
         except ApplicationError as error:
             raise commands.UserFeedbackCheckFailure(str(error))
         if item.lower() == "whitelist":
@@ -164,7 +248,8 @@ class RoleCommands(PipeMeta):
                     "There are no whitelisted roles for this application."
                 )
             roles: str = "\n".join(
-                "{}. <@&{}>".format(idx + 1, role) for idx, role in enumerate(whitelist)
+                "{}. <@&{}>".format(idx + 1, role)
+                for idx, role in enumerate(whitelist)
             )
             pages: List[str] = list(pagify(roles))
             embeds: List[discord.Embed] = []
@@ -184,7 +269,8 @@ class RoleCommands(PipeMeta):
                     "There are no blacklisted roles for this application."
                 )
             roles: str = "\n".join(
-                "{}. <@&{}>".format(idx + 1, role) for idx, role in enumerate(blacklist)
+                "{}. <@&{}>".format(idx + 1, role)
+                for idx, role in enumerate(blacklist)
             )
             pages: List[str] = list(pagify(roles))
             embeds: List[discord.Embed] = []
