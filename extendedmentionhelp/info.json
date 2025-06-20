@@ -17,7 +17,9 @@
         "embed_links"
     ],
     "required_cogs": {},
-    "requirements": [],
+    "requirements": [
+        "AdvancedTagScriptEngine==3.2.2"
+    ],
     "short": "Customizable Mention Help Message (Supports TagScript).",
     "tags": [
         "utility",
