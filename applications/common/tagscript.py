@@ -26,13 +26,13 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, Final, List
 
 import discord
 import TagScriptEngine as tse
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box
 from TagScriptEngine.interface import SimpleAdapter
 
 if TYPE_CHECKING:
     from ..core import Applications
     from .models import Application, AppSettings, Response
-    from .utils import GuildInteraction
 
 
 TAGSCRIPT: Final[int] = 10_000
@@ -74,6 +74,16 @@ DEFAULT_NOTIFICATION_MESSAGE: Final[
     "color": "{settings(color)}"
 })}
 """
+DEFAULT_MEMBER_MESSAGE: Final[str] = """
+{embed({
+    "title": "{description}",
+    "color": "{color}",
+    "description": "Fill this application to apply as a {name} in {guild(name)}.",
+    "footer": {
+        "text": "Click below to apply to this application!"
+    }
+})}
+"""
 DEFAULT_THREAD_NAME: Final[str] = "Response {id}"
 
 
@@ -106,14 +116,15 @@ DEFAULT_ADAPTERS: Callable[  # noqa: E731
 
 async def threads(
     cog: "Applications",
-    interaction: "GuildInteraction",
+    interaction: discord.Interaction[Red],
+    guild: discord.Guild,
     *,
     app: "Application",
     response: "Response",
     default: str = DEFAULT_THREAD_NAME,
 ) -> Dict[str, Any]:
     adapters: Dict[str, tse.Adapter] = DEFAULT_ADAPTERS(
-        interaction.guild, interaction.user, app.settings
+        guild, interaction.user, app.settings
     )
     adapters.update(
         **{
@@ -125,7 +136,7 @@ async def threads(
     )
     if not kwargs:
         await cog.manager.edit_thread_settings(
-            interaction.guild.id,
+            guild.id,
             name=app.name.lower(),
             toggle=True,
             value=default or DEFAULT_THREAD_NAME,
@@ -138,14 +149,15 @@ async def threads(
 
 async def notifications(
     cog: "Applications",
-    interaction: "GuildInteraction",
+    interaction: discord.Interaction[Red],
+    guild: discord.Guild,
     *,
     app: "Application",
     response: "Response",
     default: str = DEFAULT_NOTIFICATION_MESSAGE,
 ) -> Dict[str, Any]:
     adapters: Dict[str, tse.Adapter] = DEFAULT_ADAPTERS(
-        interaction.guild, interaction.user, app.settings
+        guild, interaction.user, app.settings
     )
     adapters.update(
         **{
@@ -159,7 +171,7 @@ async def notifications(
     )
     if not kwargs:
         await cog.manager.edit_notification_settings(
-            interaction.guild.id,
+            guild.id,
             name=app.settings.name.lower(),
             type="content",
             value=default or DEFAULT_NOTIFICATION_MESSAGE,
@@ -172,21 +184,21 @@ async def notifications(
 
 async def messages(
     cog: "Applications",
-    interaction: "GuildInteraction",
+    guild: discord.Guild,
     *,
     app: "Application",
     default: str = DEFAULT_SETTINGS_MESSAGE,
 ) -> Dict[str, Any]:
     adapters: Dict[str, tse.Adapter] = {
         "settings": SettingsAdapter(app.settings),
-        "guild": tse.GuildAdapter(interaction.guild),
-        "server": tse.GuildAdapter(interaction.guild),
+        "guild": tse.GuildAdapter(guild),
+        "server": tse.GuildAdapter(guild),
         "responses": tse.IntAdapter(len(app.responses)),
     }
     kwargs: Dict[str, Any] = await cog.manager.process_tagscript(app.settings.message, adapters)
     if not kwargs:
         await cog.manager.edit_setting_for(
-            interaction.guild.id,
+            guild.id,
             name=app.name.lower(),
             object="message",
             value=default or DEFAULT_SETTINGS_MESSAGE,

@@ -22,21 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Any, Dict, List, cast
+import contextlib
+from typing import Any, Dict, List, Optional, cast
 
 import discord
 import TagScriptEngine as tse
 from redbot.core import app_commands, commands
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.views import SimpleMenu
 
 from ..abc import PipeMeta
 from ..common.exceptions import ApplicationError
 from ..common.menus import EmojiMenu
-from ..common.models import Application, AppSettings, Buttons
-from ..common.tagscript import DEFAULT_SETTINGS_MESSAGE, SettingsAdapter
+from ..common.models import Application, AppSettings, Buttons, Response
+from ..common.tagscript import (
+    DEFAULT_MEMBER_MESSAGE,
+    DEFAULT_SETTINGS_MESSAGE,
+    SettingsAdapter,
+)
 from ..common.utils import name_auto_complete
-from ..common.views import ApplicationView, DynamicApplyButton
+from ..common.views import (
+    ApplicationView,
+    DynamicApplyButton,
+    DynamicDMApplyButton,
+)
 from ..pipes.groups import Groups
 
 application: commands.HybridGroup[Any, ..., Any] = cast(
@@ -106,7 +116,9 @@ class SettingCommands(PipeMeta):
         )
         message: discord.Message = await ctx.send(embed=embed)
         await ctx.send(
-            "**Message:**\n{message}".format(message=box(app.settings.message, lang="json")),
+            "**Message:**\n{message}".format(
+                message=box(app.settings.message, lang="json")
+            ),
             reference=message.to_reference(fail_if_not_exists=False),
         )
 
@@ -126,7 +138,11 @@ class SettingCommands(PipeMeta):
             await self.manager.delete(ctx.guild.id, name)
         except ApplicationError as exc:
             raise commands.UserFeedbackCheckFailure(exc)
-        await ctx.send("Successfully deleted the application named **{}**.".format(name.lower()))
+        await ctx.send(
+            "Successfully deleted the application named **{}**.".format(
+                name.lower()
+            )
+        )
 
     @application.command(name="post")
     @app_commands.describe(name="short name of the application")
@@ -141,12 +157,16 @@ class SettingCommands(PipeMeta):
         - `name :` short name of the application. (quotes are needed to use spaces)
         """
         try:
-            app: Application = await self.manager.get_application(ctx.guild.id, name=name.lower())
+            app: Application = await self.manager.get_application(
+                ctx.guild.id, name=name.lower()
+            )
         except ApplicationError as exc:
             await ctx.send(str(exc), ephemeral=True)
             return
         if not app.questions:
-            await ctx.send("No questions configured on this application.", ephemeral=True)
+            await ctx.send(
+                "No questions configured on this application.", ephemeral=True
+            )
             return
         settings: AppSettings = app.settings
         button: Buttons = app.buttons
@@ -186,13 +206,17 @@ class SettingCommands(PipeMeta):
         )
         await ctx.send(**kwargs, view=view)
 
-    @application.command(name="list", aliases=["view", "viewall", "showall", "all"])
+    @application.command(
+        name="list", aliases=["view", "viewall", "showall", "all"]
+    )
     async def application_list(self, ctx: commands.GuildContext) -> None:
         """
         View all configured applications in the current server.
         """
         await ctx.defer()
-        apps: List[Application] = await self.manager.get_all_applications(ctx.guild.id)
+        apps: List[Application] = await self.manager.get_all_applications(
+            ctx.guild.id
+        )
         if not apps:
             raise commands.UserFeedbackCheckFailure(
                 "There are no configured applications on this server."
@@ -216,7 +240,9 @@ class SettingCommands(PipeMeta):
                         if (chan := ctx.guild.get_channel(app.settings.channel))
                         else "Unknown Channel {}".format(app.settings.channel)
                     ),
-                    status="Submission open" if app.settings.open else "Submission closed",
+                    status="Submission open"
+                    if app.settings.open
+                    else "Submission closed",
                     prefix=ctx.clean_prefix,
                 ),
                 color=discord.Color.from_str(app.settings.color),
@@ -226,3 +252,152 @@ class SettingCommands(PipeMeta):
             embed.set_thumbnail(url=getattr(ctx.guild.icon, "url", None))
             embeds.append(embed)
         await EmojiMenu(pages=embeds).start(ctx)
+
+    @application.command(name="responses")
+    @commands.admin_or_permissions(manage_guild=True)
+    @app_commands.autocomplete(name=name_auto_complete)
+    @commands.cooldown(1, 30, commands.BucketType.guild)
+    async def application_responses(
+        self,
+        ctx: commands.GuildContext,
+        name: str,
+        *,
+        user: Optional[discord.User] = None,
+    ) -> None:
+        """
+        Show all the responses or user specific responses for a specific application.
+        """
+        async with ctx.typing(ephemeral=False):
+            app: Application = await self.manager.get_application(
+                ctx.guild.id, name=name.lower()
+            )
+            reports: List[Response] = []
+            if user:
+                async for resp in AsyncIter(app.responses):
+                    if resp.user == user.id:
+                        reports.append(resp)
+            else:
+                reports.extend(app.responses)
+            embeds: List[discord.Embed] = []
+            async for idx, rep in AsyncIter(enumerate(reports)):
+                embed: discord.Embed = discord.Embed(
+                    description=(
+                        "Showing {type} for the **{app.name}** (**{app.description}**) application.\n"
+                        "```prolog\n"
+                        "Status    : {rep.status}\n"
+                        "ID        : {rep.id}\n"
+                        "Submitted : {submission}\n"
+                        "```"
+                    ).format(
+                        type="responses submitted by the user **{0.display_name}** (`{0.id}`)".format(
+                            user
+                        )
+                        if user
+                        else "all the responses",
+                        app=app,
+                        rep=rep,
+                        submission=rep.time.strftime("%a, %d %B %Y, %H:%M:%S"),
+                    )
+                )
+                embed.set_footer(text="Page {}/{}".format(idx + 1, len(reports)))
+                embeds.append(embed)
+        await SimpleMenu(pages=embeds, disable_after_timeout=True).start(ctx)
+
+    @application.command(name="send")
+    @commands.admin_or_permissions(manage_guild=True)
+    @app_commands.autocomplete(name=name_auto_complete)
+    @commands.cooldown(1, 120, commands.BucketType.guild)
+    async def application_send(
+        self,
+        ctx: commands.GuildContext,
+        name: str,
+        member: discord.Member,
+        *,
+        content: str = DEFAULT_MEMBER_MESSAGE,
+    ) -> None:
+        """
+        Send an application starter to a specific user while bypassing the whitelist and/or the blacklist.
+        
+        **Arguments:**
+        - `name    :` short name of the application. (quotes are needed to use spaces)
+        - `member  :` the specific member to send the submission starter to.
+        - `content :` send a custom message optionally. (supports tagscript)
+        
+        **Examples:**
+        - `[p]app send "event manager" @member Click below to apply for the {name} ({description}) position.`
+        - 
+        ```json
+        [p]app send "event manager" @member {embed({
+            "title": "{description}",
+            "color": "{color}",
+            "description": "Fill this application to apply as a {name} in {guild(name)}.",
+            "footer": {
+                "text": "Click below to apply to this application!"
+            }
+        })}
+        ```
+        """
+        async with ctx.typing(ephemeral=False):
+            app: Application = await self.manager.get_application(
+                ctx.guild.id, name=name.lower()
+            )
+            kwargs: Dict[str, Any] = await self.manager.process_tagscript(
+                content,
+                {
+                    "guild": tse.GuildAdapter(ctx.guild),
+                    "server": tse.GuildAdapter(ctx.guild),
+                    "member": tse.MemberAdapter(member),
+                    "user": tse.MemberAdapter(member),
+                    "color": tse.StringAdapter(app.settings.color),
+                    "description": tse.StringAdapter(app.settings.description),
+                    "name": tse.StringAdapter(app.name),
+                },
+            )
+            if not kwargs:
+                await ctx.send(
+                    "Uh oh, something went wrong with the tagscript, sending anyway using the default message.",
+                    reference=ctx.message.to_reference(
+                        fail_if_not_exists=False
+                    ),
+                    allowed_mentions=discord.AllowedMentions.none(),
+                )
+                kwargs: Dict[str, Any] = await self.manager.process_tagscript(
+                    DEFAULT_MEMBER_MESSAGE,
+                    {
+                        "guild": tse.GuildAdapter(ctx.guild),
+                        "server": tse.GuildAdapter(ctx.guild),
+                        "member": tse.MemberAdapter(member),
+                        "user": tse.MemberAdapter(member),
+                        "color": tse.StringAdapter(app.settings.color),
+                        "description": tse.StringAdapter(
+                            app.settings.description
+                        ),
+                        "name": tse.StringAdapter(app.name),
+                    },
+                )
+            message: discord.Message = await member.send(**kwargs)
+            extra: discord.Message = await member.send(
+                "Loading.... Please Wait!"
+            )
+            view: discord.ui.View = discord.ui.View(timeout=None)
+            view.add_item(
+                DynamicDMApplyButton(
+                    message.id,
+                    ctx.guild.id,
+                    name.lower(),
+                    style=DynamicDMApplyButton.format_style(app.buttons.style),
+                    label=app.buttons.label,
+                    emoji=app.buttons.emoji,
+                )
+            )
+            with contextlib.suppress(discord.HTTPException):
+                await message.edit(**kwargs, view=view)
+                await extra.delete()
+        await ctx.send(
+            (
+                "Successfully redirected the **{0}** application to "
+                "**{1.display_name}**'s (`{1.id}`) DMs."
+            ).format(name.lower(), member),
+            reference=ctx.message.to_reference(fail_if_not_exists=False),
+            allowed_mentions=discord.AllowedMentions(replied_user=False),
+        )

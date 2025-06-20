@@ -30,6 +30,7 @@ from typing import Any, Dict, Optional, Union, cast
 
 import discord
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.utils import bounded_gather
 from redbot.core.utils.chat_formatting import box
 
@@ -47,7 +48,6 @@ from ..common.tagscript import (
     notifications,
 )
 from ..common.tagscript import threads as threadset
-from ..common.utils import GuildInteraction
 from ..common.views import (
     CancelButton,
     CancelView,
@@ -62,7 +62,7 @@ log: logging.Logger = logging.getLogger("red.seina.applications.pipes.listeners"
 class Listeners(PipeMeta):
     @commands.Cog.listener()
     async def on_application_applied(
-        self, interaction: GuildInteraction, app: Application
+        self, interaction: discord.Interaction[Red], guild: discord.Guild, app: Application
     ) -> None:
         if not app.questions:
             return await interaction.followup.send(
@@ -88,8 +88,8 @@ class Listeners(PipeMeta):
                     description="**__Questions__**\n\n" + started_message,
                     timestamp=discord.utils.utcnow(),
                 )
-                .set_footer(text=interaction.guild.name)
-                .set_thumbnail(url=getattr(interaction.guild.icon, "url", None))
+                .set_footer(text=guild.name)
+                .set_thumbnail(url=getattr(guild.icon, "url", None))
             )
         except discord.Forbidden:
             return await interaction.followup.send(
@@ -107,7 +107,7 @@ class Listeners(PipeMeta):
                 description="**__Question {}__**\n{}".format(idx + 1, question.text),
                 color=discord.Color.from_str(app.settings.color),
             )
-            embed.set_thumbnail(url=getattr(interaction.guild.icon, "url", None))
+            embed.set_thumbnail(url=getattr(guild.icon, "url", None))
             embed.set_footer(text='click the "cancel" button to cancel the submission')
             content: str = discord.utils.MISSING
             type: Types = question.type
@@ -261,7 +261,7 @@ class Listeners(PipeMeta):
             )
         channel: Optional[discord.TextChannel] = cast(
             Optional[discord.TextChannel],
-            interaction.guild.get_channel(app.settings.channel),
+            guild.get_channel(app.settings.channel),
         )
         if not channel:
             with contextlib.suppress(discord.HTTPException):
@@ -288,13 +288,13 @@ class Listeners(PipeMeta):
             )
         if app.settings.thread.toggle:
             threads: Dict[str, Any] = await threadset(
-                self, interaction, app=app, response=response
+                self, interaction, guild, app=app, response=response
             )
             with contextlib.suppress(discord.HTTPException, KeyError):
                 await message.create_thread(name=threads["content"])
         if (notif := app.settings.notifications).toggle:
             notifs: Dict[str, Any] = await notifications(
-                self, interaction, app=app, response=response
+                self, interaction, guild, app=app, response=response
             )
             with contextlib.suppress(discord.HTTPException):
                 await channel.send(
@@ -307,7 +307,7 @@ class Listeners(PipeMeta):
 
             async def send(chan: int) -> None:
                 channel: Union[int, discord.abc.GuildChannel, None] = (
-                    interaction.guild.get_channel(chan)
+                    guild.get_channel(chan)
                 )
                 if not channel or isinstance(
                     channel, (discord.ForumChannel, discord.CategoryChannel)
@@ -321,7 +321,7 @@ class Listeners(PipeMeta):
                 limit=5,
                 semaphore=asyncio.Semaphore(5),
             )
-        async with self.config.guild_from_id(interaction.guild.id).apps() as apps:
+        async with self.config.guild_from_id(guild.id).apps() as apps:
             try:
                 apps[app.name.lower()]["responses"].append(response.model_dump(mode="python"))
             except KeyError:
@@ -340,7 +340,7 @@ class Listeners(PipeMeta):
         )
         if submitted:
             await self.manager.manage_event_roles(member=interaction.user, event=submitted)
-        kwargs: Dict[str, Any] = await messages(self, interaction, app=app)
+        kwargs: Dict[str, Any] = await messages(self, guild, app=app)
         with contextlib.suppress(discord.HTTPException):
             await interaction.edit_original_response(**kwargs)
         with contextlib.suppress(discord.HTTPException):
