@@ -25,6 +25,7 @@ SOFTWARE.
 import collections
 from typing import DefaultDict, Dict, Final, List
 
+import discord
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 
@@ -55,12 +56,19 @@ class Applications(
         __default: Dict[str, Dict[str, utils.TypedConfig]] = {"apps": {}}
         self.config.register_guild(**__default)
 
-        self.cache: DefaultDict[int, Dict[str, models.Application]] = collections.defaultdict(dict)
-        self.manager: manager.ApplicationManager = manager.ApplicationManager(self)
+        self.cache: DefaultDict[int, Dict[str, models.Application]] = (
+            collections.defaultdict(dict)
+        )
+        self.manager: manager.ApplicationManager = manager.ApplicationManager(
+            self
+        )
 
     async def cog_load(self) -> None:
         self.manager.initialize()
         self.bot.add_dynamic_items(views.DynamicApplyButton)
+        self.bot.tree.remove_command(
+            "application backup", type=discord.AppCommandType.chat_input
+        )
         # self.bot.add_dynamic_items(views.VotersButton)
 
     async def cog_unload(self) -> None:
