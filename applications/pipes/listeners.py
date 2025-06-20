@@ -306,9 +306,7 @@ class Listeners(PipeMeta):
                 )
 
             async def send(chan: int) -> None:
-                channel: Union[int, discord.abc.GuildChannel, None] = (
-                    guild.get_channel(chan)
-                )
+                channel: Union[int, discord.abc.GuildChannel, None] = guild.get_channel(chan)
                 if not channel or isinstance(
                     channel, (discord.ForumChannel, discord.CategoryChannel)
                 ):

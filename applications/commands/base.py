@@ -116,9 +116,7 @@ class SettingCommands(PipeMeta):
         )
         message: discord.Message = await ctx.send(embed=embed)
         await ctx.send(
-            "**Message:**\n{message}".format(
-                message=box(app.settings.message, lang="json")
-            ),
+            "**Message:**\n{message}".format(message=box(app.settings.message, lang="json")),
             reference=message.to_reference(fail_if_not_exists=False),
         )
 
@@ -138,11 +136,7 @@ class SettingCommands(PipeMeta):
             await self.manager.delete(ctx.guild.id, name)
         except ApplicationError as exc:
             raise commands.UserFeedbackCheckFailure(exc)
-        await ctx.send(
-            "Successfully deleted the application named **{}**.".format(
-                name.lower()
-            )
-        )
+        await ctx.send("Successfully deleted the application named **{}**.".format(name.lower()))
 
     @application.command(name="post")
     @app_commands.describe(name="short name of the application")
@@ -157,16 +151,12 @@ class SettingCommands(PipeMeta):
         - `name :` short name of the application. (quotes are needed to use spaces)
         """
         try:
-            app: Application = await self.manager.get_application(
-                ctx.guild.id, name=name.lower()
-            )
+            app: Application = await self.manager.get_application(ctx.guild.id, name=name.lower())
         except ApplicationError as exc:
             await ctx.send(str(exc), ephemeral=True)
             return
         if not app.questions:
-            await ctx.send(
-                "No questions configured on this application.", ephemeral=True
-            )
+            await ctx.send("No questions configured on this application.", ephemeral=True)
             return
         settings: AppSettings = app.settings
         button: Buttons = app.buttons
@@ -206,17 +196,13 @@ class SettingCommands(PipeMeta):
         )
         await ctx.send(**kwargs, view=view)
 
-    @application.command(
-        name="list", aliases=["view", "viewall", "showall", "all"]
-    )
+    @application.command(name="list", aliases=["view", "viewall", "showall", "all"])
     async def application_list(self, ctx: commands.GuildContext) -> None:
         """
         View all configured applications in the current server.
         """
         await ctx.defer()
-        apps: List[Application] = await self.manager.get_all_applications(
-            ctx.guild.id
-        )
+        apps: List[Application] = await self.manager.get_all_applications(ctx.guild.id)
         if not apps:
             raise commands.UserFeedbackCheckFailure(
                 "There are no configured applications on this server."
@@ -240,9 +226,7 @@ class SettingCommands(PipeMeta):
                         if (chan := ctx.guild.get_channel(app.settings.channel))
                         else "Unknown Channel {}".format(app.settings.channel)
                     ),
-                    status="Submission open"
-                    if app.settings.open
-                    else "Submission closed",
+                    status="Submission open" if app.settings.open else "Submission closed",
                     prefix=ctx.clean_prefix,
                 ),
                 color=discord.Color.from_str(app.settings.color),
@@ -268,9 +252,7 @@ class SettingCommands(PipeMeta):
         Show all the responses or user specific responses for a specific application.
         """
         async with ctx.typing(ephemeral=False):
-            app: Application = await self.manager.get_application(
-                ctx.guild.id, name=name.lower()
-            )
+            app: Application = await self.manager.get_application(ctx.guild.id, name=name.lower())
             reports: List[Response] = []
             if user:
                 async for resp in AsyncIter(app.responses):
@@ -289,11 +271,13 @@ class SettingCommands(PipeMeta):
                         "Submitted : {submission}\n"
                         "```"
                     ).format(
-                        type="responses submitted by the user **{0.display_name}** (`{0.id}`)".format(
-                            user
-                        )
-                        if user
-                        else "all the responses",
+                        type=(
+                            "responses submitted by the user **{0.display_name}** (`{0.id}`)".format(
+                                user
+                            )
+                            if user
+                            else "all the responses"
+                        ),
                         app=app,
                         rep=rep,
                         submission=rep.time.strftime("%a, %d %B %Y, %H:%M:%S"),
@@ -317,15 +301,15 @@ class SettingCommands(PipeMeta):
     ) -> None:
         """
         Send an application starter to a specific user while bypassing the whitelist and/or the blacklist.
-        
+
         **Arguments:**
         - `name    :` short name of the application. (quotes are needed to use spaces)
         - `member  :` the specific member to send the submission starter to.
         - `content :` send a custom message optionally. (supports tagscript)
-        
+
         **Examples:**
         - `[p]app send "event manager" @member Click below to apply for the {name} ({description}) position.`
-        - 
+        -
         ```json
         [p]app send "event manager" @member {embed({
             "title": "{description}",
@@ -338,9 +322,7 @@ class SettingCommands(PipeMeta):
         ```
         """
         async with ctx.typing(ephemeral=False):
-            app: Application = await self.manager.get_application(
-                ctx.guild.id, name=name.lower()
-            )
+            app: Application = await self.manager.get_application(ctx.guild.id, name=name.lower())
             kwargs: Dict[str, Any] = await self.manager.process_tagscript(
                 content,
                 {
@@ -356,9 +338,7 @@ class SettingCommands(PipeMeta):
             if not kwargs:
                 await ctx.send(
                     "Uh oh, something went wrong with the tagscript, sending anyway using the default message.",
-                    reference=ctx.message.to_reference(
-                        fail_if_not_exists=False
-                    ),
+                    reference=ctx.message.to_reference(fail_if_not_exists=False),
                     allowed_mentions=discord.AllowedMentions.none(),
                 )
                 kwargs: Dict[str, Any] = await self.manager.process_tagscript(
@@ -369,16 +349,12 @@ class SettingCommands(PipeMeta):
                         "member": tse.MemberAdapter(member),
                         "user": tse.MemberAdapter(member),
                         "color": tse.StringAdapter(app.settings.color),
-                        "description": tse.StringAdapter(
-                            app.settings.description
-                        ),
+                        "description": tse.StringAdapter(app.settings.description),
                         "name": tse.StringAdapter(app.name),
                     },
                 )
             message: discord.Message = await member.send(**kwargs)
-            extra: discord.Message = await member.send(
-                "Loading.... Please Wait!"
-            )
+            extra: discord.Message = await member.send("Loading.... Please Wait!")
             view: discord.ui.View = discord.ui.View(timeout=None)
             view.add_item(
                 DynamicDMApplyButton(

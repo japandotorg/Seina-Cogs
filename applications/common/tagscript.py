@@ -74,7 +74,9 @@ DEFAULT_NOTIFICATION_MESSAGE: Final[
     "color": "{settings(color)}"
 })}
 """
-DEFAULT_MEMBER_MESSAGE: Final[str] = """
+DEFAULT_MEMBER_MESSAGE: Final[
+    str
+] = """
 {embed({
     "title": "{description}",
     "color": "{color}",
@@ -123,9 +125,7 @@ async def threads(
     response: "Response",
     default: str = DEFAULT_THREAD_NAME,
 ) -> Dict[str, Any]:
-    adapters: Dict[str, tse.Adapter] = DEFAULT_ADAPTERS(
-        guild, interaction.user, app.settings
-    )
+    adapters: Dict[str, tse.Adapter] = DEFAULT_ADAPTERS(guild, interaction.user, app.settings)
     adapters.update(
         **{
             "id": tse.StringAdapter(response.id),
@@ -156,9 +156,7 @@ async def notifications(
     response: "Response",
     default: str = DEFAULT_NOTIFICATION_MESSAGE,
 ) -> Dict[str, Any]:
-    adapters: Dict[str, tse.Adapter] = DEFAULT_ADAPTERS(
-        guild, interaction.user, app.settings
-    )
+    adapters: Dict[str, tse.Adapter] = DEFAULT_ADAPTERS(guild, interaction.user, app.settings)
     adapters.update(
         **{
             "id": tse.StringAdapter(response.id),
