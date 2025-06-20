@@ -30,11 +30,11 @@ from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify
 
 from ..abc import PipeMeta
-from ..pipes.groups import Groups
-from ..common.menus import EmojiMenu
-from ..common.utils import name_auto_complete
 from ..common.exceptions import ApplicationError
+from ..common.menus import EmojiMenu
 from ..common.models import Application, EventRoles
+from ..common.utils import name_auto_complete
+from ..pipes.groups import Groups
 
 application_role: commands.HybridGroup[Any, ..., Any] = cast(
     commands.HybridGroup[Any, ..., Any], Groups.application_role
@@ -65,9 +65,7 @@ class RoleCommands(PipeMeta):
         - `roles         :` list of roles separated by spaces.
         """
         try:
-            app: Application = await self.manager.get_application(
-                ctx.guild.id, name=name
-            )
+            app: Application = await self.manager.get_application(ctx.guild.id, name=name)
         except ApplicationError as error:
             raise commands.UserFeedbackCheckFailure(str(error))
         whitelist: List[int] = app.roles.whitelist
@@ -115,9 +113,7 @@ class RoleCommands(PipeMeta):
         - `roles         :` list of roles separated by spaces.
         """
         try:
-            app: Application = await self.manager.get_application(
-                ctx.guild.id, name=name
-            )
+            app: Application = await self.manager.get_application(ctx.guild.id, name=name)
         except ApplicationError as error:
             raise commands.UserFeedbackCheckFailure(str(error))
         blacklist: List[int] = app.roles.blacklist
@@ -147,7 +143,7 @@ class RoleCommands(PipeMeta):
         name="short name of the application.",
         event="the specifc event to trigger the role adding for.",
         mode="add or delete entries.",
-        roles="list of roles separated by spaces."
+        roles="list of roles separated by spaces.",
     )
     @app_commands.autocomplete(name=name_auto_complete)
     async def application_role_event(
@@ -168,9 +164,7 @@ class RoleCommands(PipeMeta):
         - `roles :` list of roles separated by spaces.
         """
         try:
-            app: Application = await self.manager.get_application(
-                ctx.guild.id, name=name
-            )
+            app: Application = await self.manager.get_application(ctx.guild.id, name=name)
         except ApplicationError as error:
             raise commands.UserFeedbackCheckFailure(str(error))
         events: List[EventRoles] = app.roles.events
@@ -189,9 +183,7 @@ class RoleCommands(PipeMeta):
             events.remove(modified)
         elif not modified:
             if not roles:
-                raise commands.UserFeedbackCheckFailure(
-                    "No roles were provided, try again later!"
-                )
+                raise commands.UserFeedbackCheckFailure("No roles were provided, try again later!")
             modified: Optional[EventRoles] = EventRoles(
                 type=event.lower(),
                 mode=mode.lower(),
@@ -199,9 +191,7 @@ class RoleCommands(PipeMeta):
             )
         else:
             if not roles:
-                raise commands.UserFeedbackCheckFailure(
-                    "No roles were provided, try again later!"
-                )
+                raise commands.UserFeedbackCheckFailure("No roles were provided, try again later!")
             async for role in AsyncIter(roles):
                 if mode.lower() == "add":
                     if role.id not in modified.roles:
@@ -218,9 +208,7 @@ class RoleCommands(PipeMeta):
         await ctx.tick()
 
     @application_role.command(name="view", aliases=["list"])
-    @app_commands.describe(
-        item="whitelist or blacklist", name="short name of the application"
-    )
+    @app_commands.describe(item="whitelist or blacklist", name="short name of the application")
     @app_commands.autocomplete(name=name_auto_complete)
     async def application_role_view(
         self,
@@ -236,9 +224,7 @@ class RoleCommands(PipeMeta):
         - `name :` short name of the application. (quotes are needed to use spaces)
         """
         try:
-            app: Application = await self.manager.get_application(
-                ctx.guild.id, name=name
-            )
+            app: Application = await self.manager.get_application(ctx.guild.id, name=name)
         except ApplicationError as error:
             raise commands.UserFeedbackCheckFailure(str(error))
         if item.lower() == "whitelist":
@@ -248,8 +234,7 @@ class RoleCommands(PipeMeta):
                     "There are no whitelisted roles for this application."
                 )
             roles: str = "\n".join(
-                "{}. <@&{}>".format(idx + 1, role)
-                for idx, role in enumerate(whitelist)
+                "{}. <@&{}>".format(idx + 1, role) for idx, role in enumerate(whitelist)
             )
             pages: List[str] = list(pagify(roles))
             embeds: List[discord.Embed] = []
@@ -269,8 +254,7 @@ class RoleCommands(PipeMeta):
                     "There are no blacklisted roles for this application."
                 )
             roles: str = "\n".join(
-                "{}. <@&{}>".format(idx + 1, role)
-                for idx, role in enumerate(blacklist)
+                "{}. <@&{}>".format(idx + 1, role) for idx, role in enumerate(blacklist)
             )
             pages: List[str] = list(pagify(roles))
             embeds: List[discord.Embed] = []
