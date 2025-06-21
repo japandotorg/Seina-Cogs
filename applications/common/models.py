@@ -82,6 +82,13 @@ class Notifications(BaseModel):
     content: str = Field(default=DEFAULT_NOTIFICATION_MESSAGE)
     mentions: Mentions = Field(default_factory=lambda: Mentions())
     channels: List[int] = Field(default_factory=list)
+    
+
+class VoterSettings(BaseModel):
+    threshold: int = Field(default=0)
+    up: str = Field(default="\N{UPWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}")
+    down: str = Field(default="\N{DOWNWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}")
+    null: str = Field(default="\N{NO ENTRY SIGN}")
 
 
 class AppSettings(BaseModel):
@@ -95,6 +102,7 @@ class AppSettings(BaseModel):
     dm: bool = Field(default=False)
     thread: Threads = Field(default_factory=lambda: Threads())
     notifications: Notifications = Field(default_factory=lambda: Notifications())
+    voters: VoterSettings = Field(default_factory=lambda: VoterSettings())
     created_at: float = Field(
         default_factory=lambda: datetime.datetime.now(datetime.timezone.utc).timestamp()
     )
@@ -155,6 +163,12 @@ class Answer(BaseModel):
     answer: Annotated[str, Field()]
 
 
+class Voters(BaseModel):
+    up: List[int] = Field(default_factory=list)
+    down: List[int] = Field(default_factory=list)
+    null: List[int] = Field(default_factory=list)
+
+
 class Response(BaseModel):
     id: str = Field(default_factory=lambda: uuid.uuid4().hex)
     user: Annotated[int, Field()]
@@ -163,6 +177,7 @@ class Response(BaseModel):
     created_at: float = Field(
         default_factory=lambda: datetime.datetime.now(datetime.timezone.utc).timestamp()
     )
+    voters: Voters = Field(default_factory=lambda: Voters())
     ticket: Optional[int] = Field(default=None)
     mod: Optional[int] = Field(default=None)
 

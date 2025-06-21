@@ -95,6 +95,13 @@ class Notifications(TypedDict):
     content: str
     mentions: Mentions
     channels: Sequence[int]
+    
+
+class VoterSettings(TypedDict):
+    threshold: int
+    up: str
+    down: str
+    null: str
 
 
 class AppSettings(TypedDict):
@@ -109,6 +116,7 @@ class AppSettings(TypedDict):
     dm: bool
     thread: Union[bool, Threads]
     notifications: Notifications
+    voters: VoterSettings
 
 
 class Roles(TypedDict):
@@ -145,6 +153,12 @@ class Post(TypedDict):
     channel: int
 
 
+class Voters(TypedDict):
+    up: List[int]
+    down: List[int]
+    null: List[int]
+
+
 class Response(TypedDict):
     id: str
     channel: int
@@ -153,6 +167,7 @@ class Response(TypedDict):
     status: str
     time: float
     ticket: int
+    voters: Voters
 
 
 class TypedConfig(TypedDict):

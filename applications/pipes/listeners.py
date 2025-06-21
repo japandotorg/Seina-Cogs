@@ -54,26 +54,36 @@ from ..common.views import (
     ChoiceView,
     PatchedConfirmView,
     SkipButton,
+    VotersView,
 )
 
-log: logging.Logger = logging.getLogger("red.seina.applications.pipes.listeners")
+log: logging.Logger = logging.getLogger(
+    "red.seina.applications.pipes.listeners"
+)
 
 
 class Listeners(PipeMeta):
     @commands.Cog.listener()
     async def on_application_applied(
-        self, interaction: discord.Interaction[Red], guild: discord.Guild, app: Application
+        self,
+        interaction: discord.Interaction[Red],
+        guild: discord.Guild,
+        app: Application,
     ) -> None:
         if not app.questions:
             return await interaction.followup.send(
                 "There are no questions configured for this application!",
                 ephemeral=True,
             )
-        applied: Optional[EventRoles] = await self.manager.get_event_roles_from_application(
+        applied: Optional[
+            EventRoles
+        ] = await self.manager.get_event_roles_from_application(
             app, type="apply"
         )
         if applied:
-            await self.manager.manage_event_roles(member=interaction.user, event=applied)
+            await self.manager.manage_event_roles(
+                member=interaction.user, event=applied
+            )
         response: Response = Response(user=interaction.user.id)
         started_message: str = "\n".join(
             [
@@ -104,34 +114,44 @@ class Listeners(PipeMeta):
         for idx, question in enumerate(app.questions):
             embed: discord.Embed = discord.Embed(
                 title=app.description.title(),
-                description="**__Question {}__**\n{}".format(idx + 1, question.text),
+                description="**__Question {}__**\n{}".format(
+                    idx + 1, question.text
+                ),
                 color=discord.Color.from_str(app.settings.color),
             )
             embed.set_thumbnail(url=getattr(guild.icon, "url", None))
-            embed.set_footer(text='click the "cancel" button to cancel the submission')
+            embed.set_footer(
+                text='click the "cancel" button to cancel the submission'
+            )
             content: str = discord.utils.MISSING
             type: Types = question.type
             if type.lower() == "text":
                 view: CancelView = CancelView(required=question.required)
                 try:
-                    view.message = await interaction.user.send(embed=embed, view=view)
+                    view.message = await interaction.user.send(
+                        embed=embed, view=view
+                    )
                 except discord.HTTPException:
                     return await interaction.followup.send(
                         "Something went wrong, please try again later!",
                         ephemeral=True,
                     )
                 try:
-                    message: discord.Message = await interaction.client.wait_for(
-                        "message",
-                        check=lambda m: m.channel.id == original.channel.id,
-                        timeout=300.0,
+                    message: discord.Message = (
+                        await interaction.client.wait_for(
+                            "message",
+                            check=lambda m: m.channel.id == original.channel.id,
+                            timeout=300.0,
+                        )
                     )
                 except asyncio.TimeoutError:
                     await view.on_timeout()
                     with contextlib.suppress(discord.HTTPException):
                         await interaction.user.send(
                             "Application timed out while waiting for your response.",
-                            reference=original.to_reference(fail_if_not_exists=False),
+                            reference=original.to_reference(
+                                fail_if_not_exists=False
+                            ),
                         )
                     return await interaction.followup.send(
                         "Application timed out.", ephemeral=True
@@ -150,14 +170,20 @@ class Listeners(PipeMeta):
                     with contextlib.suppress(discord.HTTPException):
                         await interaction.user.send(
                             "Something went wrong, I failed to parse your response.",
-                            reference=original.to_reference(fail_if_not_exists=False),
+                            reference=original.to_reference(
+                                fail_if_not_exists=False
+                            ),
                         )
                     return await interaction.followup.send(
                         "Application failed, try again later.", ephemeral=True
                     )
             elif type.lower() == "choices" and len(question.choices) > 0:
-                choice: ChoiceView = ChoiceView(question, required=question.required)
-                choice.message = message = await interaction.user.send(embed=embed, view=choice)
+                choice: ChoiceView = ChoiceView(
+                    question, required=question.required
+                )
+                choice.message = message = await interaction.user.send(
+                    embed=embed, view=choice
+                )
                 if not await choice.wait():
                     await choice.on_timeout()
                 log.debug(choice.cancel)
@@ -171,7 +197,9 @@ class Listeners(PipeMeta):
                     with contextlib.suppress(discord.HTTPException):
                         await interaction.user.send(
                             "Something went wrong, I failed to parse your response.",
-                            reference=original.to_reference(fail_if_not_exists=False),
+                            reference=original.to_reference(
+                                fail_if_not_exists=False
+                            ),
                         )
                     return await interaction.followup.send(
                         "Application failed, try again later.", ephemeral=True
@@ -190,7 +218,9 @@ class Listeners(PipeMeta):
                 confirm.add_item(CancelButton())
                 if not question.required:
                     confirm.add_item(SkipButton())
-                confirm.message = message = await interaction.user.send(embed=embed, view=confirm)
+                confirm.message = message = await interaction.user.send(
+                    embed=embed, view=confirm
+                )
                 await confirm.wait()
                 if confirm.cancel:
                     await confirm.on_timeout()
@@ -206,7 +236,9 @@ class Listeners(PipeMeta):
                         with contextlib.suppress(discord.HTTPException):
                             await interaction.user.send(
                                 "Application timed out while waiting for your response.",
-                                reference=original.to_reference(fail_if_not_exists=False),
+                                reference=original.to_reference(
+                                    fail_if_not_exists=False
+                                ),
                             )
                         return await interaction.followup.send(
                             "Application timed out.", ephemeral=True
@@ -219,7 +251,9 @@ class Listeners(PipeMeta):
                     content: str = "Yes"
             else:
                 continue
-            answer: Answer = Answer(question=question.text, type=type.lower(), answer=content)
+            answer: Answer = Answer(
+                question=question.text, type=type.lower(), answer=content
+            )
             response.answers.append(answer)
             try:
                 await interaction.user.send(
@@ -273,10 +307,12 @@ class Listeners(PipeMeta):
                 "Something went wrong with the application settings, please contact an admin!",
                 ephemeral=True,
             )
+        subview: VotersView = VotersView(
+            app.name, response.id, app.settings.voters, response.voters
+        )
         try:
-            message: discord.Message = await channel.send(embed=embed)
+            message: discord.Message = await channel.send(embed=embed, view=subview)
         except discord.HTTPException:
-            app.responses.remove(response)
             with contextlib.suppress(discord.HTTPException):
                 await interaction.user.send(
                     "Something went wrong with the application settings, please contact an admin!",
@@ -301,12 +337,16 @@ class Listeners(PipeMeta):
                     **notifs,
                     reference=message.to_reference(fail_if_not_exists=False),
                     allowed_mentions=discord.AllowedMentions(
-                        **app.settings.notifications.mentions.model_dump(mode="python")
+                        **app.settings.notifications.mentions.model_dump(
+                            mode="python"
+                        )
                     ),
                 )
 
             async def send(chan: int) -> None:
-                channel: Union[int, discord.abc.GuildChannel, None] = guild.get_channel(chan)
+                channel: Union[int, discord.abc.GuildChannel, None] = (
+                    guild.get_channel(chan)
+                )
                 if not channel or isinstance(
                     channel, (discord.ForumChannel, discord.CategoryChannel)
                 ):
@@ -319,34 +359,47 @@ class Listeners(PipeMeta):
                 limit=5,
                 semaphore=asyncio.Semaphore(5),
             )
+        app.responses.append(response)
         async with self.config.guild_from_id(guild.id).apps() as apps:
             try:
-                apps[app.name.lower()]["responses"].append(response.model_dump(mode="python"))
+                apps[app.name.lower()]["responses"].append(
+                    response.model_dump(mode="python")
+                )
             except KeyError:
                 app.responses.remove(response)
                 with contextlib.suppress(discord.HTTPException):
                     await interaction.user.send(
                         "Something went wrong, the application doesn't seem to exist anymore!",
-                        reference=original.to_reference(fail_if_not_exists=False),
+                        reference=original.to_reference(
+                            fail_if_not_exists=False
+                        ),
                     )
                 return await interaction.followup.send(
                     "Failed because the application doesn't seem to exist anymore!",
                     ephemeral=True,
                 )
-        submitted: Optional[EventRoles] = await self.manager.get_event_roles_from_application(
+        submitted: Optional[
+            EventRoles
+        ] = await self.manager.get_event_roles_from_application(
             app, type="submit"
         )
         if submitted:
-            await self.manager.manage_event_roles(member=interaction.user, event=submitted)
+            await self.manager.manage_event_roles(
+                member=interaction.user, event=submitted
+            )
         kwargs: Dict[str, Any] = await messages(self, guild, app=app)
         with contextlib.suppress(discord.HTTPException):
             await interaction.edit_original_response(**kwargs)
         with contextlib.suppress(discord.HTTPException):
             await interaction.user.send(
-                "Application successfully submitted!\n\n**Response ID**: `{}`".format(response.id),
+                "Application successfully submitted!\n\n**Response ID**: `{}`".format(
+                    response.id
+                ),
                 reference=original.to_reference(fail_if_not_exists=False),
             )
         await interaction.followup.send(
-            "Application successfully submitted!\n\n**Response ID**: `{}`".format(response.id),
+            "Application successfully submitted!\n\n**Response ID**: `{}`".format(
+                response.id
+            ),
             ephemeral=True,
         )
