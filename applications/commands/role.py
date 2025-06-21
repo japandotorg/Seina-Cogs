@@ -189,6 +189,7 @@ class RoleCommands(PipeMeta):
                 mode=mode.lower(),
                 roles=[r.id async for r in AsyncIter(roles)],
             )
+            app.roles.events.append(modified)
         else:
             if not roles:
                 raise commands.UserFeedbackCheckFailure("No roles were provided, try again later!")
