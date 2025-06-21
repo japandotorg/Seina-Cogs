@@ -202,7 +202,7 @@ class ApplicationManager:
                 return
             with contextlib.suppress(discord.HTTPException):
                 await member.add_roles(
-                    *event.roles,
+                    *[role for r in event.roles if (role := member.guild.get_role(r))],
                     reason="[Applications] added '{0}' roles to {1.display_name} ({1.id})".format(
                         event.type.lower(), member
                     ),
@@ -212,7 +212,7 @@ class ApplicationManager:
                 return
             with contextlib.suppress(discord.HTTPException):
                 await member.remove_roles(
-                    *event.roles,
+                    *[role for r in event.roles if (role := member.guild.get_role(r))],
                     reason="[Applications] removed '{0}' roles from {1.display_name} ({1.id})".format(
                         event.type.lower(), member
                     ),
