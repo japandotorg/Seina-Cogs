@@ -95,7 +95,7 @@ class Notifications(TypedDict):
     content: str
     mentions: Mentions
     channels: Sequence[int]
-    
+
 
 class VoterSettings(TypedDict):
     threshold: int

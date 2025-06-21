@@ -82,7 +82,7 @@ class Notifications(BaseModel):
     content: str = Field(default=DEFAULT_NOTIFICATION_MESSAGE)
     mentions: Mentions = Field(default_factory=lambda: Mentions())
     channels: List[int] = Field(default_factory=list)
-    
+
 
 class VoterSettings(BaseModel):
     threshold: int = Field(default=0)

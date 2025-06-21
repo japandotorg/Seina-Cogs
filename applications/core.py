@@ -56,12 +56,8 @@ class Applications(
         __default: Dict[str, Dict[str, utils.TypedConfig]] = {"apps": {}}
         self.config.register_guild(**__default)
 
-        self.cache: DefaultDict[int, Dict[str, models.Application]] = (
-            collections.defaultdict(dict)
-        )
-        self.manager: manager.ApplicationManager = manager.ApplicationManager(
-            self
-        )
+        self.cache: DefaultDict[int, Dict[str, models.Application]] = collections.defaultdict(dict)
+        self.manager: manager.ApplicationManager = manager.ApplicationManager(self)
 
     async def cog_load(self) -> None:
         self.manager.initialize()
@@ -69,9 +65,7 @@ class Applications(
         self.bot.add_dynamic_items(views.DynamicUpVoteButton)
         self.bot.add_dynamic_items(views.DynamicNullVoteButton)
         self.bot.add_dynamic_items(views.DynamicDownVoteButton)
-        self.bot.tree.remove_command(
-            "application backup", type=discord.AppCommandType.chat_input
-        )
+        self.bot.tree.remove_command("application backup", type=discord.AppCommandType.chat_input)
 
     async def cog_unload(self) -> None:
         self.manager.close()
