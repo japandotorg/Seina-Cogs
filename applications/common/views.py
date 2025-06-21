@@ -477,7 +477,9 @@ class DynamicApplyButton(
 ):
     def __init__(self, guild_id: int, name: str, **kwargs: Any) -> None:
         super().__init__(
-            discord.ui.Button(**kwargs, custom_id="guild:{}:app:{}".format(guild_id, name.lower())),
+            discord.ui.Button(
+                **kwargs, custom_id="guild:{}:app:{}".format(guild_id, name.lower())
+            ),
         )
         self.guild_id: int = guild_id
         self.name: str = name
