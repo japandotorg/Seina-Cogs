@@ -344,7 +344,13 @@ class Listeners(PipeMeta):
             app, type="submit"
         )
         if submitted:
-            await self.manager.manage_event_roles(member=interaction.user, event=submitted)
+            if not isinstance(interaction.user, discord.Member):
+                member: discord.Member = cast(discord.Member, guild.get_member(interaction.user.id))
+                if not member:
+                    await interaction.followup.send("Uh oh! Something went wrong, please try again later!", ephemeral=True)
+            else:
+                member: discord.Member = interaction.user
+            await self.manager.manage_event_roles(member=member, event=submitted)
         kwargs: Dict[str, Any] = await messages(self, guild, app=app)
         with contextlib.suppress(discord.HTTPException):
             await interaction.edit_original_response(**kwargs)
