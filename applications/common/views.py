@@ -477,7 +477,7 @@ class DynamicApplyButton(
 ):
     def __init__(self, guild_id: int, name: str, **kwargs: Any) -> None:
         super().__init__(
-            discord.ui.Button(**kwargs, custom_id="guild:{}:app:{}".format(guild_id, name)),
+            discord.ui.Button(**kwargs, custom_id="guild:{}:app:{}".format(guild_id, name.lower())),
         )
         self.guild_id: int = guild_id
         self.name: str = name
@@ -508,7 +508,7 @@ class DynamicApplyButton(
         data: Buttons = app.buttons
         return cls(
             guild_id,
-            name,
+            name.lower(),
             style=cls.format_style(data.style),
             label=data.label,
             emoji=data.emoji,
@@ -719,7 +719,7 @@ class DynamicUpVoteButton(
                 label=label,
                 emoji=emoji,
                 style=discord.ButtonStyle.blurple,
-                custom_id="app:up:{}:{}".format(name, response_id),
+                custom_id="app:up:{}:{}".format(name.lower(), response_id),
             )
         )
         self.name: str = name
@@ -769,7 +769,7 @@ class DynamicUpVoteButton(
         )
         settings: VoterSettings = app.settings.voters
         voters: Voters = response.voters
-        return cls(name, response_id, emoji=settings.up, label=str(len(voters.up)))
+        return cls(name.lower(), response_id, emoji=settings.up, label=str(len(voters.up)))
 
     async def callback(self, interaction: GuildInteraction) -> None:
         await interaction.response.defer()
@@ -810,7 +810,7 @@ class DynamicDownVoteButton(
                 label=label,
                 emoji=emoji,
                 style=discord.ButtonStyle.blurple,
-                custom_id="app:down:{}:{}".format(name, response_id),
+                custom_id="app:down:{}:{}".format(name.lower(), response_id),
             )
         )
         self.name: str = name
@@ -860,7 +860,7 @@ class DynamicDownVoteButton(
         )
         settings: VoterSettings = app.settings.voters
         voters: Voters = response.voters
-        return cls(name, response_id, emoji=settings.down, label=str(len(voters.down)))
+        return cls(name.lower(), response_id, emoji=settings.down, label=str(len(voters.down)))
 
     async def callback(self, interaction: GuildInteraction) -> None:
         await interaction.response.defer()
@@ -901,7 +901,7 @@ class DynamicNullVoteButton(
                 label=label,
                 emoji=emoji,
                 style=discord.ButtonStyle.blurple,
-                custom_id="app:null:{}:{}".format(name, response_id),
+                custom_id="app:null:{}:{}".format(name.lower(), response_id),
             )
         )
         self.name: str = name
@@ -951,7 +951,7 @@ class DynamicNullVoteButton(
         )
         settings: VoterSettings = app.settings.voters
         voters: Voters = response.voters
-        return cls(name, response_id, emoji=settings.null, label=str(len(voters.null)))
+        return cls(name.lower(), response_id, emoji=settings.null, label=str(len(voters.null)))
 
     async def callback(self, interaction: GuildInteraction) -> None:
         await interaction.response.defer()
