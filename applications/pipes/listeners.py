@@ -345,9 +345,13 @@ class Listeners(PipeMeta):
         )
         if submitted:
             if not isinstance(interaction.user, discord.Member):
-                member: discord.Member = cast(discord.Member, guild.get_member(interaction.user.id))
+                member: discord.Member = cast(
+                    discord.Member, guild.get_member(interaction.user.id)
+                )
                 if not member:
-                    await interaction.followup.send("Uh oh! Something went wrong, please try again later!", ephemeral=True)
+                    await interaction.followup.send(
+                        "Uh oh! Something went wrong, please try again later!", ephemeral=True
+                    )
             else:
                 member: discord.Member = interaction.user
             await self.manager.manage_event_roles(member=member, event=submitted)
