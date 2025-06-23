@@ -215,9 +215,7 @@ class Roles(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Change a role's color."""
         await role.edit(color=color)
-        await ctx.send(
-            f"**{role}** color changed to **{color}**.", embed=await self.get_info(role)
-        )
+        await ctx.send(f"**{role}** color changed to **{color}**.", embed=await self.get_info(role))
 
     @commands.has_guild_permissions(manage_roles=True)
     @commands.bot_has_permissions(manage_roles=True)
@@ -312,9 +310,7 @@ class Roles(MixinMeta, metaclass=CompositeMetaClass):
     @commands.has_guild_permissions(manage_roles=True)
     @commands.bot_has_permissions(manage_roles=True)
     @role.command(require_var_positional=True)
-    async def removemulti(
-        self, ctx: commands.Context, role: StrictRole, *members: TouchableMember
-    ):
+    async def removemulti(self, ctx: commands.Context, role: StrictRole, *members: TouchableMember):
         """Remove a role from multiple members."""
         reason = get_audit_reason(ctx.author)
         pages = []
@@ -346,6 +342,7 @@ class Roles(MixinMeta, metaclass=CompositeMetaClass):
             timeout=120,
         ).start(ctx)
 
+    @commands.guild_only()
     @commands.has_guild_permissions(manage_roles=True)
     @commands.bot_has_permissions(manage_roles=True)
     @commands.group(invoke_without_command=True, require_var_positional=True)
@@ -476,9 +473,7 @@ class Roles(MixinMeta, metaclass=CompositeMetaClass):
     @commands.has_guild_permissions(manage_roles=True)
     @commands.bot_has_permissions(manage_roles=True)
     @role.command("in")
-    async def role_in(
-        self, ctx: commands.Context, target_role: FuzzyRole, *, add_role: StrictRole
-    ):
+    async def role_in(self, ctx: commands.Context, target_role: FuzzyRole, *, add_role: StrictRole):
         """Add a role to all members of a another role."""
         await self.super_massrole(
             ctx,
