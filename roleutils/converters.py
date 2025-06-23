@@ -103,15 +103,34 @@ class StrictRole(FuzzyRole):
 
     async def convert(self, ctx: commands.Context, argument: str) -> discord.Role:
         role = await super().convert(ctx, argument)
+
         if self.check_integrated and role.managed:
             raise commands.BadArgument(
-                f"`{role}` is an integrated role and cannot be assigned."
+                f"`{role}` is an integrated role and cannot be assigned." if self.response else None
+            )
+
+        perms = role.permissions
+        if (
+            perms.administrator
+            or perms.manage_channels
+            or perms.manage_guild
+            or perms.manage_roles
+            or perms.manage_messages
+            or perms.manage_webhooks
+            or perms.manage_nicknames
+            or perms.manage_emojis_and_stickers
+            or perms.manage_threads
+        ):
+            raise commands.BadArgument(
+                f"`{role}` has administrative or management permissions and cannot be assigned due to safety reasons."
                 if self.response
                 else None
             )
+
         allowed, message = await is_allowed_by_role_hierarchy(ctx.bot, ctx.me, ctx.author, role)
         if not allowed:
             raise commands.BadArgument(message if self.response else None)
+
         return role
 
 
