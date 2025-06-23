@@ -35,6 +35,7 @@ from redbot.core.utils.chat_formatting import humanize_list
 
 from .abc import CompositeMetaClass
 from .autorole import AutoRoles
+from .buttonroles import ButtonRoles
 from .reactroles import ReactRoles
 from .roles import Roles
 
@@ -47,6 +48,7 @@ class RoleUtils(
     Roles,
     AutoRoles,
     ReactRoles,
+    ButtonRoles,
     commands.Cog,
     metaclass=CompositeMetaClass,
 ):
@@ -57,6 +59,7 @@ class RoleUtils(
     """
 
     __author__: Final[List[str]] = ["inthedark.org", "PhenoM4n4n"]
+    __contributor__: Final[str] = "Evanroby"
     __version__: Final[str] = "1.6.2"
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
@@ -65,7 +68,8 @@ class RoleUtils(
         return (
             f"{pre_processed}{n}\n"
             f"Version: {self.__version__}\n"
-            f"Author: {humanize_list(self.__author__)}"
+            f"Author: {humanize_list(self.__author__)}\n"
+            f"Contributor: {self.__contributor__}"
         )
 
     def __init__(self, bot: Red, *_args: Any) -> None:
@@ -92,6 +96,7 @@ class RoleUtils(
                     "roles": [],
                 },
             },
+            "buttonroles": {}, 
         }
         default_role: Dict[str, bool] = {
             "sticky": False,
@@ -103,7 +108,10 @@ class RoleUtils(
         self.config.register_role(**default_role)
         self.config.register_member(**default_member)
 
-        default_guildmessage: Dict[str, Dict[str, Any]] = {"reactroles": {"react_to_roleid": {}}}
+        default_guildmessage: Dict[str, Dict[str, Any]] = {
+            "reactroles": {"react_to_roleid": {}},
+            "buttonroles": {"button_to_roleid": {}},
+        }
         self.config.init_custom("GuildMessage", 2)
         self.config.register_custom("GuildMessage", **default_guildmessage)
 

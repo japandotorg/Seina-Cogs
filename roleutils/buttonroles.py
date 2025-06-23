@@ -185,7 +185,6 @@ class ButtonRoles(MixinMeta, metaclass=CompositeMetaClass):
                 return await ctx.send("Bind cancelled.")
 
         bindings[emoji] = role.id
-
         await self._add_buttons_to_message(message, bindings)
         await ctx.send(f"`{role}` has been binded to {emoji} on {message.jump_url}")
 
