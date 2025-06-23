@@ -76,9 +76,7 @@ class Lock(commands.Cog):
                 del permissions[perm]
         overwrite.update(**permissions)
         if invalid_perms:
-            invalid = (
-                f"\nThe following permissions were invalid:\n{humanize_list(invalid_perms)}\n"
-            )
+            invalid = f"\nThe following permissions were invalid:\n{humanize_list(invalid_perms)}\n"
             possible = humanize_list([f"`{perm}`" for perm in base_perms])
             invalid += f"Possible permissions are:\n{possible}"
         else:
@@ -87,6 +85,7 @@ class Lock(commands.Cog):
 
     @commands.bot_has_permissions(manage_roles=True)
     @commands.admin_or_permissions(manage_roles=True)
+    @commands.guild_only()
     @commands.group(name="lock", invoke_without_command=True)
     async def _lock(
         self,
@@ -199,6 +198,7 @@ class Lock(commands.Cog):
 
     @commands.bot_has_permissions(manage_roles=True)
     @commands.admin_or_permissions(manage_roles=True)
+    @commands.guild_only()
     @commands.group(name="unlock", invoke_without_command=True)
     async def _unlock(
         self,
@@ -313,6 +313,7 @@ class Lock(commands.Cog):
 
     @commands.bot_has_permissions(manage_roles=True)
     @commands.admin_or_permissions(manage_roles=True)
+    @commands.guild_only()
     @commands.command(name="viewlock")
     async def _viewlock(
         self,
@@ -370,6 +371,7 @@ class Lock(commands.Cog):
 
     @commands.bot_has_permissions(manage_roles=True)
     @commands.admin_or_permissions(manage_roles=True)
+    @commands.guild_only()
     @commands.command(name="unviewlock", invoke_without_command=True)
     async def _unviewlock(
         self,
