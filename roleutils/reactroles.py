@@ -66,7 +66,7 @@ class ReactRoles(MixinMeta, metaclass=CompositeMetaClass):
 
     def __init__(self, *_args: Any) -> None:
         super().__init__(*_args)
-        self.button_method: str = "build"
+        self.method: str = "build"
         self.cache["reactroles"] = {"message_cache": set()}
 
     async def initialize(self) -> None:
@@ -274,9 +274,7 @@ class ReactRoles(MixinMeta, metaclass=CompositeMetaClass):
         if not message_data["reactroles"]["react_to_roleid"]:
             return await ctx.send("There are no reaction roles set up for that message.")
 
-        msg = await ctx.send(
-            "Are you sure you want to remove all reaction roles for that message?"
-        )
+        msg = await ctx.send("Are you sure you want to remove all reaction roles for that message?")
         start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS)
         pred = ReactionPredicate.yes_or_no(msg, ctx.author)
         try:
@@ -322,7 +320,7 @@ class ReactRoles(MixinMeta, metaclass=CompositeMetaClass):
             if channel is None:
                 # TODO: handle deleted channels
                 continue
-            if self.button_method == "fetch":
+            if self.method == "fetch":
                 try:
                     message: discord.Message = await channel.fetch_message(message_id)
                     # not sure how fast this would be when a server has multiple reaction roles set
@@ -332,7 +330,7 @@ class ReactRoles(MixinMeta, metaclass=CompositeMetaClass):
                     # TODO: handle deleted messages
                     continue
                 link = message.jump_url
-            elif self.button_method == "build":
+            elif self.method == "build":
                 link = f"https://discord.com/channels/{ctx.guild.id}/{channel.id}/{message_id}"
             else:
                 link = ""
@@ -427,9 +425,7 @@ class ReactRoles(MixinMeta, metaclass=CompositeMetaClass):
         reacts = await self.config.custom(
             "GuildMessage", guild.id, payload.message_id
         ).reactroles.all()
-        emoji_id = (
-            str(payload.emoji) if payload.emoji.is_unicode_emoji() else str(payload.emoji.id)
-        )
+        emoji_id = str(payload.emoji) if payload.emoji.is_unicode_emoji() else str(payload.emoji.id)
         role_id = reacts["react_to_roleid"].get(emoji_id)
         if not role_id:
             log.debug("No matched role id")
