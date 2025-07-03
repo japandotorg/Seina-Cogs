@@ -244,15 +244,14 @@ class Tags(
         output = self.engine.process(tagscript)
         if self.async_enabled:
             output = await output
-        is_owner = await self.bot.is_owner(ctx.author)
-        if is_owner:
+        if await self.bot.is_owner(ctx.author):
             return True
         author_perms = ctx.channel.permissions_for(ctx.author)
         if output.actions.get("overrides") and not author_perms.manage_guild:
             raise MissingTagPermissions(
                 "You must have **Manage Server** permissions to use the `override` block."
             )
-        if output.actions.get("allowed_mentions") and not is_owner:
+        if output.actions.get("allowed_mentions") and not author_perms.mention_everyone:
             raise MissingTagPermissions(
                 "You must have **Mention Everyone** permissions to use the `allowedmentions` block."
             )
