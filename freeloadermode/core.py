@@ -102,7 +102,9 @@ class FreeloaderMode(
 
         if 759180080328081450 in self.bot.owner_ids:  # type: ignore
             with contextlib.suppress(RuntimeError, ValueError):
-                self.bot.add_dev_env_value(self.__class__.__name__.lower(), lambda x: self)
+                self.bot.add_dev_env_value(
+                    self.__class__.__name__.lower(), lambda x: self
+                )
 
     @staticmethod
     def _task_done_callback(task: asyncio.Task[Any]) -> None:
@@ -305,7 +307,9 @@ class FreeloaderMode(
 
         try:
             await guild.ban(
-                member, reason=audit_reason, delete_message_days=0, delete_message_seconds=0
+                member,
+                reason=audit_reason,
+                delete_message_days=0,
             )
         except (discord.NotFound, discord.Forbidden, discord.HTTPException):
             return
@@ -349,7 +353,7 @@ class FreeloaderMode(
         if time is None:
             pass
         else:
-            if time - datetime.utcnow().timestamp() <= 0:
+            if time - datetime.now(timezone.utc).timestamp() <= 0:
                 await self.config.guild(guild).toggled.clear()
                 await self.config.guild(guild).untoggletime.clear()
                 return
@@ -378,7 +382,6 @@ class FreeloaderMode(
                     member,
                     reason="Member left while freeloader mode was toggled.",
                     delete_message_days=0,
-                    delete_message_seconds=0,
                 )
             except discord.NotFound:
                 return
@@ -427,7 +430,7 @@ class FreeloaderMode(
                 f"Username: {member.name}\n"
                 f"ID: {member.id}\n"
                 f"Joined: <t:{int(member.joined_at.timestamp())}:R>\n"  # type: ignore
-                f"Left: <t:{int(datetime.now().timestamp())}:R>"
+                f"Left: <t:{int(datetime.now(timezone.utc).timestamp())}:R>"
             ),
             color=await self.bot.get_embed_color(log_channel),
         )
