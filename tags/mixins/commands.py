@@ -55,7 +55,7 @@ from ..views import ConfirmationView
 
 TAG_RE: Pattern[str] = re.compile(r"(?i)(\[p\])?\btag'?s?\b")
 
-DOCS_URL: Final[str] = "https://cogs.melonbot.io/tags/"
+DOCS_URL: Final[str] = "https://cogs.jap4n.org/tags/"
 
 log: logging.Logger = logging.getLogger("red.seina.tags.commands")
 
@@ -234,7 +234,7 @@ class Commands(MixinMeta):
         Tag management with TagScript.
 
         These commands use TagScriptEngine.
-        Read the [TagScript documentation](https://cogs.melonbot.io/tags/) to learn how to use TagScript blocks.
+        Read the [TagScript documentation](https://cogs.jap4n.org/tags/) to learn how to use TagScript blocks.
         """
 
     @commands.mod_or_permissions(manage_guild=True)
@@ -249,7 +249,7 @@ class Commands(MixinMeta):
         """
         Add a tag with TagScript.
 
-        [Tag usage guide](https://cogs.melonbot.io/tags/blocks/)
+        [Tag usage guide](https://cogs.jap4n.org/tags/blocks/)
 
         **Example:**
         `[p]tag add lawsofmotion {embed(title):Newton's Laws of motion}
@@ -313,7 +313,7 @@ class Commands(MixinMeta):
         Edit a tag's TagScript.
 
         The passed tagscript will replace the tag's current tagscript.
-        View the [TagScript docs](https://cogs.melonbot.io/tags/) to find information on how to write valid tagscript.
+        View the [TagScript docs](https://cogs.jap4n.org/tags/) to find information on how to write valid tagscript.
 
         **Example:**
         `[p]tag edit rickroll Never gonna give you up!`
@@ -435,7 +435,7 @@ class Commands(MixinMeta):
         """
         Search the TagScript documentation for a block.
 
-        https://cogs.melonbot.io/tags/
+        https://cogs.jap4n.org/tags/
 
         **Example:**
         `[p]tag docs embed`
@@ -460,7 +460,7 @@ class Commands(MixinMeta):
             await ctx.send(
                 embed=discord.Embed(
                     **embed,
-                    description="Searched for [`{0}`](https://cogs.melonbot.io/find?q={0})!".format(
+                    description="Searched for [`{0}`](https://cogs.jap4n.org/find?q={0})!".format(
                         keyword
                     ),
                 ).set_footer(

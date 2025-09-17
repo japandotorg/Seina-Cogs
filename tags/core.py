@@ -64,7 +64,7 @@ class Tags(
     """
     Create and use tags.
 
-    The TagScript documentation can be found [here](https://cogs.melonbot.io/tags/).
+    The TagScript documentation can be found [here](https://cogs.jap4n.org/tags/).
     """
 
     __version__: Final[str] = "2.7.11"
